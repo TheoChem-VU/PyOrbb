@@ -1,5 +1,3 @@
-from typing import List
-
 from scm import plams
 import numpy as np
 import os
@@ -12,13 +10,6 @@ j = os.path.join
 
 class SFOs:
     def __init__(self, kfpath=None, reader=None, **kwargs):
-        self.is_unrestricted = None
-        self.uses_molecular_fragments = None
-        self.uses_atomic_fragments = None
-        self.is_relativistic = None
-        self.spins = None
-        self.symlabels = None
-        self.sfos = None
         assert reader or kfpath, 'Please provide a KFReader or path to a kf-file'
         self.reader = reader or plams.KFReader(kfpath)
         self.kfpath = kfpath
@@ -105,7 +96,6 @@ class SFOs:
         # if isinstance(key, int):
         #     return squeeze_list(self.get_sfo(index=key))
 
-        global start_decoded
         if isinstance(key, (tuple, list)):
             ret = []
             for key_ in key:
@@ -172,7 +162,6 @@ class SFOs:
         self.symlabels = calc_info['symlabels']
 
     def get_sfos(self):
-        global somo_idx, relname, relindex
         data = orbitals.info.read_SFO_data(self.reader)
         sfo_data = []
         for idx in range(data['nsfo']['total']):
@@ -267,25 +256,6 @@ class SFO:
     '''
 
     def __init__(self, **kwargs):
-        self.energy = None
-        self.symmetry = None
-        self.symmetry = None
-        self.spin = None
-        self.spin = None
-        self.overlaps = None
-        self.symmetry_type_index = None
-        self.fragment_unique_name = None
-        self.relname = None
-        self.index = None
-        self.symmetry = None
-        self.name = None
-        self.spin = None
-        self.spin = None
-        self.occupation = None
-        self.occupation = None
-        self.kfpath = None
-        self.index = None
-        self.symmetry = None
         for key, value in kwargs.items():
             setattr(self, key, value)
 
@@ -310,7 +280,7 @@ class SFO:
     def __rsub__(self, *args, **kwargs):
         return self.__sub__(*args, **kwargs)
 
-    def get_overlap(self, other: 'SFO') -> list[float]:
+    def get_overlap(self, other: 'SFO') -> float:
         '''
         Return overlap between two SFO objects
         SFOs must have same symmetry and spin, else overlap is 0
