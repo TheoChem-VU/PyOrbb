@@ -10,6 +10,13 @@ j = os.path.join
 
 class MOs:
     def __init__(self, kfpath=None, reader=None, moleculename=None, **kwargs):
+        self.is_unrestricted = None
+        self.uses_molecular_fragments = None
+        self.uses_atomic_fragments = None
+        self.is_relativistic = None
+        self.spins = None
+        self.symlabels = None
+        self.mos = None
         assert reader or kfpath, 'Please provide a KFReader or path to a kf-file'
         self.reader = reader or plams.KFReader(kfpath)
         self.kfpath = kfpath
@@ -181,6 +188,24 @@ class MO:
     '''
 
     def __init__(self, **kwargs):
+        self.symmetry = None
+        self.spin = None
+        self.spin = None
+        self.coeffs = None
+        self.spin = None
+        self.spin = None
+        self.name = None
+        self.spin = None
+        self.spin = None
+        self.relname = None
+        self.spin = None
+        self.spin = None
+        self.index = None
+        self.symmetry = None
+        self.occupation = None
+        self.kfpath = None
+        self.index = None
+        self.symmetry = None
         for key, value in kwargs.items():
             setattr(self, key, value)
 
