@@ -2,8 +2,7 @@ from scm import plams
 import numpy as np
 import os
 import matplotlib.pyplot as plt
-from yutility import log, units, ensure_list, squeeze_list, print_kf, run, plot, symmetry, decorators, orbitals
-from yutility.ytypes import Either
+from TCutility import ensure_list, squeeze_list
 
 j = os.path.join
 
