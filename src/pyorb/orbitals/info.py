@@ -1,5 +1,5 @@
 import numpy as np
-from yutility import ensure_list, symmetry
+from TCutility import ensure_list
 from scm import plams
 
 
@@ -28,9 +28,8 @@ def get_calc_info(reader):
         # get the symmetry labels
         if ('Symmetry', 'symlab') in reader:
             ret['symlabels'] = reader.read('Symmetry', 'symlab').strip().split()
-        elif ('Geometry', 'grouplabel') in reader:
-            ret['symlabels'] = symmetry.labels[reader.read('Geometry', 'grouplabel').strip()]
         else:
+            # if we cannot read the symlabels we default to NOSYM which has only the fully symmetric irrep "A"
             ret['symlabels'] = symmetry.labels['NOSYM']
 
         # determine if MOs are unrestricted or not

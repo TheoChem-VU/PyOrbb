@@ -1,6 +1,7 @@
-from yutility.orbitals import info
+from pyorb.orbitals import info
 import numpy as np
-from yutility import ensure_list, symmetry
+from TCutility import ensure_list
+
 
 
 def read_SFO_data(reader):  # noqa: N802
@@ -8,14 +9,14 @@ def read_SFO_data(reader):  # noqa: N802
         Srows = []
         for i in range(nmo):
             # start index will be the number of elements before this row
-            minidx1 = i * (i + 1) // 2
+            minidx1 = i * (i+1) // 2
             # stop index will be the number of elements of the next row
-            maxidx1 = (i + 1) * (i + 2) // 2
+            maxidx1 = (i+1) * (i+2) // 2
             Srows.append(S[minidx1:maxidx1])
         # then we go through rows again and add the remaining terms
         Srowsfixed = []
         for i, row in enumerate(Srows):
-            Srowsfixed.append(row + [row2[i] for row2 in Srows[i + 1:]])
+            Srowsfixed.append(row + [row2[i] for row2 in Srows[i+1:]])
         return Srowsfixed
 
     calc_info = info.get_calc_info(reader)
@@ -24,12 +25,11 @@ def read_SFO_data(reader):  # noqa: N802
     # symlabels
     if ('Symmetry', 'symlab') in reader:
         ret['symlabels'] = reader.read('Symmetry', 'symlab').strip().split()
-    elif ('Geometry', 'grouplabel') in reader:
-        ret['symlabels'] = symmetry.labels[reader.read('Geometry', 'grouplabel').strip()]
     else:
-        ret['symlabels'] = symmetry.labels['NOSYM']
+        # if we cannot read the symlabels we default to NOSYM which has only the fully symmetric irrep "A"
+        ret['symlabels'] = ['A']
 
-    ret['symlabel_by_sfo'] = []
+    ret['symlabel_by_sfo'] = [] 
 
     # number of SFOs per symlabel
     ret['nsfo'] = {}
@@ -44,7 +44,7 @@ def read_SFO_data(reader):  # noqa: N802
 
     # isfo, index of sfo in symlabel
     if ('SFOs', 'isfo') not in reader:
-        ret['isfo'] = range(1, total + 1)
+        ret['isfo'] = range(1, total+1)
     else:
         ret['isfo'] = reader.read('SFOs', 'isfo')
 
@@ -55,8 +55,8 @@ def read_SFO_data(reader):  # noqa: N802
     if ('SFOs', 'fragtype') not in reader:
         fragtypes = [typ.strip() for typ in reader.read('Geometry', 'fragmenttype').split()]
         frag_order = reader.read('Geometry', 'fragment and atomtype index')
-        frag_order = frag_order[len(frag_order) // 2:]
-        ret['fragtypes'] = [fragtypes[frag_order[i - 1] - 1] for i in ret['fragidx']]
+        frag_order = frag_order[len(frag_order)//2:]
+        ret['fragtypes'] = [fragtypes[frag_order[i-1]-1] for i in ret['fragidx']]
     else:
         ret['fragtypes'] = reader.read('SFOs', 'fragtype').strip().split()
 
@@ -69,7 +69,7 @@ def read_SFO_data(reader):  # noqa: N802
             ret['fraguniquenames'].append(name)
         else:
             ret['fraguniquenames'].append(f'{name}:{i}')
-
+            
     # fragorb, index of sfo in fragment
     if ('SFOs', 'fragorb') in reader:
         ret['fragorb'] = reader.read('SFOs', 'fragorb')
@@ -86,7 +86,7 @@ def read_SFO_data(reader):  # noqa: N802
     # fix the ordering of the atoms (i.e. fragment indices)
     if not calc_info['used_regions']:
         atom_order_index = reader.read('Geometry', 'atom order index')
-        atom_order_index = atom_order_index[:len(atom_order_index) // 2]
+        atom_order_index = atom_order_index[:len(atom_order_index)//2]
         ret['fragidx'] = [atom_order_index.index(i) + 1 for i in ret['fragidx']]
 
     # SFO energies
@@ -107,10 +107,10 @@ def read_SFO_data(reader):  # noqa: N802
             ret['energyidx'] = {'AB': np.argsort(ret['energy']['AB'])}
     else:
         ret['energy'] = {
-            'A': None,
-            'B': None,
-            'AB': None
-        }
+                'A': None,
+                'B': None,
+                'AB': None
+            }
 
     # SFO occupations
     if ('SFOs', 'occupation') in reader:
@@ -129,15 +129,15 @@ def read_SFO_data(reader):  # noqa: N802
         relindices = []
         newidx = 0
         homoidx = 0
-        for i in range(len(ret['ifo']) - 1):
+        for i in range(len(ret['ifo'])-1):
             occ = ret['occupations'][spin][i]
-            occ2 = ret['occupations'][spin][i + 1]
+            occ2 = ret['occupations'][spin][i+1]
             if occ > 0 and occ2 == 0:
                 homoidx = i
             if (occ == 0 and occ2 > 0):
                 relindices.extend(np.arange(newidx - homoidx, i - homoidx + 1))
                 newidx = i + 1
-            if i == len(ret['ifo']) - 2:
+            if i == len(ret['ifo'])-2:
                 relindices.extend(np.arange(newidx - homoidx, i - homoidx + 2))
         return np.array(relindices)
 
@@ -195,6 +195,7 @@ def read_MO_data(reader):  # noqa: N802
     ret['nmo'] = {}
     for symlabel in ret['symlabels']:
         if calc_info['unrestricted_mos']:
+            print(np.sqrt(len(reader.read(symlabel, 'Eig-CoreSFO_B'))))
             ret['nmo'][symlabel] = {
                 'A': int(np.sqrt(len(reader.read(symlabel, 'Eig-CoreSFO_A')))),
                 'B': int(np.sqrt(len(reader.read(symlabel, 'Eig-CoreSFO_B'))))
@@ -231,7 +232,7 @@ def read_MO_data(reader):  # noqa: N802
                 idx = ret['energy']['sorted']['A'].index(energy_A)
                 while idx in all_idx['A']:
                     idx += 1
-                idx_A.append(idx)
+                idx_A.append(idx) 
                 all_idx['A'].append(idx)
 
             energies_B = ensure_list(reader.read(symlabel, f'{energyprefix}_B'))
@@ -274,9 +275,8 @@ def read_MO_data(reader):  # noqa: N802
             }
         else:
             ret['occs'][symlabel] = {'AB': ensure_list(reader.read(symlabel, 'froc_A'))}
-            ret['noccs'][symlabel] = {
-                'AB': len([occ for occ in ensure_list(reader.read(symlabel, 'froc_A')) if occ > 0]), }
-
+            ret['noccs'][symlabel] = {'AB': len([occ for occ in ensure_list(reader.read(symlabel, 'froc_A')) if occ > 0]),}
+ 
     # MO coefficients
     ret['coeffs'] = {}
     for symlabel in ret['symlabels']:
@@ -289,8 +289,7 @@ def read_MO_data(reader):  # noqa: N802
             }
         else:
             c = ensure_list(reader.read(symlabel, 'Eig-CoreSFO_A'))
-            ret['coeffs'][symlabel] = {
-                'AB': np.array(c).reshape(ret['nmo'][symlabel]['AB'], ret['nmo'][symlabel]['AB'])}
+            ret['coeffs'][symlabel] = {'AB': np.array(c).reshape(ret['nmo'][symlabel]['AB'], ret['nmo'][symlabel]['AB'])}
 
     # get index of MO in symmetry label
     ret['symmidx'] = {}
