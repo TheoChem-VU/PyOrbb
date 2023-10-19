@@ -102,20 +102,20 @@ def required_variables(reader):
 def read_SFO_data(reader):
     program = get_calc_info(reader)['engine']
     if program == 'ADF':
-        from yutility.orbitals import adf
+        from TCutility.orbitals import adf
         return adf.read_SFO_data(reader)
 
     elif program == 'dftb':
-        from yutility.orbitals import dftb
+        from TCutility.orbitals import dftb
         return dftb.read_SFO_data(reader)
 
 
 def read_MO_data(reader):
     program = get_calc_info(reader)['engine']
     if program == 'ADF':
-        from yutility.orbitals import adf
+        from TCutility.orbitals import adf
         return adf.read_MO_data(reader)
 
     elif program == 'dftb':
-        from yutility.orbitals import dftb
+        from TCutility.orbitals import dftb
         return dftb.read_MO_data(reader)
