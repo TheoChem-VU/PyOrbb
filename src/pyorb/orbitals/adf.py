@@ -183,14 +183,6 @@ def read_MO_data(reader):  # noqa: N802
     calc_info = info.get_calc_info(reader)
 
     ret = {}
-    # symlabels
-    if ('Symmetry', 'symlab') in reader:
-        ret['symlabels'] = reader.read('Symmetry', 'symlab').strip().split()
-    elif ('Geometry', 'grouplabel') in reader:
-        ret['symlabels'] = symmetry.labels[reader.read('Geometry', 'grouplabel').strip()]
-    else:
-        ret['symlabels'] = symmetry.labels['NOSYM']
-
     # number of MOs
     ret['nmo'] = {}
     for symlabel in ret['symlabels']:
