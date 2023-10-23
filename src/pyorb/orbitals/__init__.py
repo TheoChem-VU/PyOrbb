@@ -1,4 +1,4 @@
-from pyorb.orbitals import sfo, mo, info, indirect
+from pyorb.orbitals import sfo, mo, info
 from scm import plams
 import numpy as np
 # import matplotlib.pyplot as plt
@@ -33,7 +33,6 @@ class Orbitals:
 
         The marginals of the resulting Mulliken contribution matrix $\hat{C}_{i\mu}$ should all equal one.
         '''
-
         # coefficient of all SFOs contributing to the selected MO
         c_iv = np.array(mo @ self.sfos.sfos)
         # coefficient of the selected SFO
@@ -79,8 +78,6 @@ def sort_orb_pairs(orbs1, orbs2, prop=None):
     return:
         list of tuples containing (sfo1, sfo2, prop(sfo1, sfo2)) sorted by prop(sfo1, sfo2)
         here sfo1 and sfo2 are taken from sfos1 and sfos2
-
-        Something changed here 
     '''
     M = prop(orbs1, orbs2)
     ret = []
@@ -188,7 +185,7 @@ if __name__ == '__main__':
     sfos1 = orbs.sfos[:'Donor(LUMO+4)']
     sfos2 = orbs.sfos[:'Acceptor(LUMO+4)']
 
-    plot_property(sfos1, sfos2, sfo.orbint, use_relname=True).show()
+    # plot_property(sfos1, sfos2, sfo.orbint, use_relname=True).show()
     best_pair = sort_orb_pairs(sfos1, sfos2, sfo.orbint)[-1]
     best_pair[1].generate_orbital().show()
 
@@ -202,7 +199,7 @@ if __name__ == '__main__':
         sfo.generate_orbital().show()
     mos = orbs.mos['HOMO-10':'LUMO+10']
 
-    plot_property(sfos1, sfos2, sfo.orbint, use_relname=True).show()
+    # plot_property(sfos1, sfos2, sfo.orbint, use_relname=True).show()
     pairs = sort_orb_pairs(sfos1, sfos2, sfo.orbint)
     print(pairs[-1])
 

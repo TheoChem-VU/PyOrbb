@@ -517,7 +517,7 @@ if __name__ == '__main__':
     sfos_c = sfos['substrate(HOMO-11)':'substrate(LUMO+3)']
     sfos_h = sfos[:'cat(LUMO+3)']
     # sfos_c_best, sfos_h_best, oi = sort_sfo_pairs(sfos_c, sfos_h, orbint)[-1]
-    plot_sfos_prop(sfos_c, sfos_h, overlap, use_relname=False, use_indexname=True).hold()
+    # plot_sfos_prop(sfos_c, sfos_h, overlap, use_relname=False, use_indexname=True).hold()
 
 
     # p = '../test/orbitals/rkf/substrate_cat_complex.rkf'
