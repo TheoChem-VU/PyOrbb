@@ -1,6 +1,5 @@
 from pyorb.orbitals import info
 import numpy as np
-from TCutility import ensure_list
 from scm import plams
 
 
