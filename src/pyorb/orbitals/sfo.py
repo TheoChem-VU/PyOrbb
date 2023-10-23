@@ -3,7 +3,7 @@ import numpy as np
 import os
 import matplotlib.pyplot as plt
 from TCutility import ensure_list, squeeze_list
-from pyorb.orbitals import info
+from pyorb.orbitals import info, mo
 
 j = os.path.join
 
@@ -262,12 +262,12 @@ class SFO:
         return self.full_name
 
     def __matmul__(self, other):
-        if isinstance(other, orbitals.mo.MO):
+        if isinstance(other, mo.MO):
             return other.__matmul__(self)
         return self.get_overlap(other)
 
     def __rmatmul__(self, other):
-        if isinstance(other, orbitals.mo.MO):
+        if isinstance(other, mo.MO):
             return other.__rmatmul__(self)
         return self.__matmul__(other)
 
@@ -334,9 +334,6 @@ class SFO:
     @property
     def singly_occupied(self):
         return self.occupation == 1
-
-    def generate_orbital(self):
-        return run.orbital_cub(self.kfpath, self.index, orbtype='SFO', symlabel=self.symmetry)
 
 
 def occ_virt_mask(sfos1: list[SFO] or SFO, sfos2: list[SFO] or SFO) -> float or np.ndarray:
