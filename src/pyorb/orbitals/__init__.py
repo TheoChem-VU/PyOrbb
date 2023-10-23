@@ -33,6 +33,7 @@ class Orbitals:
 
         The marginals of the resulting Mulliken contribution matrix $\hat{C}_{i\mu}$ should all equal one.
         '''
+
         # coefficient of all SFOs contributing to the selected MO
         c_iv = np.array(mo @ self.sfos.sfos)
         # coefficient of the selected SFO
@@ -78,6 +79,8 @@ def sort_orb_pairs(orbs1, orbs2, prop=None):
     return:
         list of tuples containing (sfo1, sfo2, prop(sfo1, sfo2)) sorted by prop(sfo1, sfo2)
         here sfo1 and sfo2 are taken from sfos1 and sfos2
+
+        Something changed here 
     '''
     M = prop(orbs1, orbs2)
     ret = []
