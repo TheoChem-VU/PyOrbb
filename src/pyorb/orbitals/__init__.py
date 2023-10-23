@@ -1,4 +1,4 @@
-from pyorb.orbitals import sfo, mo, info
+from pyorb.orbitals import sfo, mo
 from scm import plams
 import numpy as np
 # import matplotlib.pyplot as plt
@@ -195,8 +195,8 @@ if __name__ == '__main__':
     print(orbs.fragments)
 
     sfos = orbs.sfos['C:1(1P)']
-    for sfo in sfos:
-        sfo.generate_orbital().show()
+    for sfo_ in sfos:
+        sfo_.generate_orbital().show()
     mos = orbs.mos['HOMO-10':'LUMO+10']
 
     # plot_property(sfos1, sfos2, sfo.orbint, use_relname=True).show()
