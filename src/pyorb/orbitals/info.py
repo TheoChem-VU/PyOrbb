@@ -1,6 +1,3 @@
-import numpy as np
-from TCutility import ensure_list
-from scm import plams
 from pyorb import orbitals
 
 
@@ -49,20 +46,16 @@ def get_calc_info(reader):
 def read_SFO_data(reader):
     program = get_calc_info(reader)['engine']
     if program == 'ADF':
-        from orbitals import adf
-        return adf.read_SFO_data(reader)
+        return orbitals.adf.read_SFO_data(reader)
 
     elif program == 'dftb':
-        from orbitals import dftb
-        return dftb.read_SFO_data(reader)
+        return orbitals.dftb.read_SFO_data(reader)
 
 
 def read_MO_data(reader):
     program = get_calc_info(reader)['engine']
     if program == 'ADF':
-        from orbitals import adf
-        return adf.read_MO_data(reader)
+        return orbitals.adf.read_MO_data(reader)
 
     elif program == 'dftb':
-        from orbitals import dftb
-        return dftb.read_MO_data(reader)
+        return orbitals.dftb.read_MO_data(reader)
