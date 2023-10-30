@@ -64,7 +64,7 @@ git pull
 [should be included once this is known]
 [Figure horizontal si better than vertical]
 
-## Examples
+## Examples <a name=Examples></a>
 [insert example outputs]
 
 ## Get involved
@@ -77,7 +77,7 @@ Currently, the project is adopted by a team of active members of the TheoCheM gr
 
 Additionally, we are being consulted by Nadine Spychala (@NadineSpychala) from the University of Sussex as a part of cohort 8 in the Open Life Sciences Scheme (https://openlifesci.org/openseeds/ols-8/projects-participants.html, @openlifesci).
 
-## Contact us
+## Contact us <a name=Contact></a>
 If you want to report a problem or suggest an enhancement we'd encourage for you to open an issue in the GitHub repository.  Otherwise you can reach us by email (????) or twitter (????)
 [Add contact page from theochem website]
 
