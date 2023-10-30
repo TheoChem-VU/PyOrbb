@@ -1,9 +1,10 @@
 from scm import plams
 import numpy as np
 import os
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 from TCutility import ensure_list, squeeze_list
-from pyorb.orbitals import info
+from pyorb.orbitals import info, mo
+from typing import List
 
 j = os.path.join
 
@@ -262,12 +263,12 @@ class SFO:
         return self.full_name
 
     def __matmul__(self, other):
-        if isinstance(other, orbitals.mo.MO):
+        if isinstance(other, mo.MO):
             return other.__matmul__(self)
         return self.get_overlap(other)
 
     def __rmatmul__(self, other):
-        if isinstance(other, orbitals.mo.MO):
+        if isinstance(other, mo.MO):
             return other.__rmatmul__(self)
         return self.__matmul__(other)
 
@@ -335,11 +336,8 @@ class SFO:
     def singly_occupied(self):
         return self.occupation == 1
 
-    def generate_orbital(self):
-        return run.orbital_cub(self.kfpath, self.index, orbtype='SFO', symlabel=self.symmetry)
 
-
-def occ_virt_mask(sfos1: list[SFO] or SFO, sfos2: list[SFO] or SFO) -> float or np.ndarray:
+def occ_virt_mask(sfos1: List[SFO] or SFO, sfos2: List[SFO] or SFO) -> float or np.ndarray:
     '''
     Mask specifying whether a pair of SFOs has one occupied and one virtual orbital
     '''
@@ -351,7 +349,7 @@ def occ_virt_mask(sfos1: list[SFO] or SFO, sfos2: list[SFO] or SFO) -> float or 
     return np.array(ret).squeeze()
 
 
-def occ_occ_mask(sfos1: list[SFO] or SFO, sfos2: list[SFO] or SFO) -> float or np.ndarray:
+def occ_occ_mask(sfos1: List[SFO] or SFO, sfos2: List[SFO] or SFO) -> float or np.ndarray:
     ret = []
     for sfo1 in ensure_list(sfos1):
         ret.append([])
@@ -361,7 +359,7 @@ def occ_occ_mask(sfos1: list[SFO] or SFO, sfos2: list[SFO] or SFO) -> float or n
 
 
 # @decorators.add_to_func(title=r'$S$', scale=100)
-# def overlap(sfos1: list[SFO] or SFO, sfos2: list[SFO] or SFO) -> float or np.ndarray:
+# def overlap(sfos1: List[SFO] or SFO, sfos2: List[SFO] or SFO) -> float or np.ndarray:
 #     ret = []
 #     for sfo1 in ensure_list(sfos1):
 #         ret.append([])
@@ -371,7 +369,7 @@ def occ_occ_mask(sfos1: list[SFO] or SFO, sfos2: list[SFO] or SFO) -> float or n
 
 
 # @decorators.add_to_func(title=r'$\epsilon$', unit='eV')
-# def energy_gap(sfos1: list[SFO] or SFO, sfos2: list[SFO] or SFO) -> float or np.ndarray:
+# def energy_gap(sfos1: List[SFO] or SFO, sfos2: List[SFO] or SFO) -> float or np.ndarray:
 #     ret = []
 #     for sfo1 in ensure_list(sfos1):
 #         ret.append([])
@@ -381,7 +379,7 @@ def occ_occ_mask(sfos1: list[SFO] or SFO, sfos2: list[SFO] or SFO) -> float or n
 
 
 # @decorators.add_to_func(title=r'$\Delta E_{oi}$', scale=1e3, unit=r'10$^3$ eV$^{-1}$')
-# def orbint(sfos1: list[SFO] or SFO, sfos2: list[SFO] or SFO, use_mask: bool = True) -> float or np.ndarray:
+# def orbint(sfos1: List[SFO] or SFO, sfos2: List[SFO] or SFO, use_mask: bool = True) -> float or np.ndarray:
 #     S = overlap(sfos1, sfos2)
 #     dE = energy_gap(sfos1, sfos2)
 #     oi = np.array(S**2/dE)
@@ -392,7 +390,7 @@ def occ_occ_mask(sfos1: list[SFO] or SFO, sfos2: list[SFO] or SFO) -> float or n
 
 
 # @decorators.add_to_func(title=r'$\Delta E_{Pauli}$', cmap='Reds')
-# def pauli(sfos1: list[SFO] or SFO, sfos2: list[SFO] or SFO, use_mask: bool = True) -> float or np.ndarray:
+# def pauli(sfos1: List[SFO] or SFO, sfos2: List[SFO] or SFO, use_mask: bool = True) -> float or np.ndarray:
 #     S = overlap(sfos1, sfos2)
 #     pauli = np.array(S**2)
 #     if use_mask:
@@ -517,7 +515,7 @@ if __name__ == '__main__':
     sfos_c = sfos['substrate(HOMO-11)':'substrate(LUMO+3)']
     sfos_h = sfos[:'cat(LUMO+3)']
     # sfos_c_best, sfos_h_best, oi = sort_sfo_pairs(sfos_c, sfos_h, orbint)[-1]
-    plot_sfos_prop(sfos_c, sfos_h, overlap, use_relname=False, use_indexname=True).hold()
+    # plot_sfos_prop(sfos_c, sfos_h, overlap, use_relname=False, use_indexname=True).hold()
 
 
     # p = '../test/orbitals/rkf/substrate_cat_complex.rkf'

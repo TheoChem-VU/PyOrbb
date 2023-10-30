@@ -1,7 +1,5 @@
 from scm import plams
-import numpy as np
 import os
-import matplotlib.pyplot as plt
 from TCutility import ensure_list, squeeze_list
 from pyorb.orbitals import info
 
