@@ -24,17 +24,17 @@ We are striving to optimise our application to facilitate anyone’s journey int
 ## Motivation <a name=motivation></a>
 The PyOrb project aims to assist in advanced orbital analysis for computational chemistry calculations. PyOrb will generate important orbital interaction schemes and related orbital figures automatically, as well as summarise important information such as SFO coefficients, populations, orbital levels and more. These properties are commonly used in computational chemical research analyses.
 
-It is often said 
+People often run into the following challenges:
 - Hard to get a clear overview of relevant data.
-- Often done manually, which can be a chaotic and laborious task.
+- Data acquisition is often done manually, which can be a chaotic and laborious task.
 - The information overload in the output of quantum chemical programs can be intimidating.
 
-The aim of the PyOrb project:
+The aim of the PyOrb project is:
+- Enhance accesability to advanced orbital analyses
 - To provide an efficient way to isolate all the relevant data
-- Clear projection  of the data that is relevant (color and size)
-- Let you choose what data you want to include in your analysis
+- Create a clear graphical representation  of the relevant data that is relevant 
 
-Previous work by our group has focused on the automation of fragment approaches and their quantitative analyses along a reaction coordinate. This allowed users to perform the Activation Strain Model (AMS) and the canonical energy decomposition analysis (EDA) for a whole reaction profile with one single input (link).
+Previously, our group has published the [PyFrag 2019](https://onlinelibrary.wiley.com/doi/10.1002/jcc.25871) program for the automation of fragment approaches and their quantitative analyses along a reaction coordinate. This allowed users to perform the Activation Strain Model (AMS) and the canonical energy decomposition analysis (EDA) for a whole reaction profile with one single input.
 
 ## Installation <a name=installation></a>
 *Currently, the installation can be done by cloning this repository and having all necessary dependencies.*
@@ -73,18 +73,23 @@ At the moment, contribution to this project is limited to our research group. In
 ## Who are we? <a name=members></a>
 A preliminary version of PyOrb was roled out by Xiaobo Sun, who was a PostDoc in the TheoCheM group at the Vrije Universiteit Amsterdam.
 
-Currently, the project is adopted by a team of active members of the TheoCheM group consisting of Yuman Hordijk (@YumanHordijk), Tori Gijzen (@ToriGijzen), and dr. Trevor A. Hamlin (@TrevorAHamlin). 
+Currently, the project has been adopted by a team of active TheoCheM group members consisting of Yuman Hordijk ([@YumanHordijk](https://twitter.com/YumanHordijk)), Tori Gijzen ([@ToriGijzen](https://twitter.com/ToriGijzen)), and dr. Trevor A. Hamlin ([@TrevorAHamlin](https://twitter.com/TrevorAHamlin)). 
 
-Additionally, we are being consulted by Nadine Spychala (@NadineSpychala) from the University of Sussex as a part of cohort 8 in the Open Life Sciences Scheme (https://openlifesci.org/openseeds/ols-8/projects-participants.html, @openlifesci).
+Additionally, we are being consulted by Nadine Spychala ([@NadineSpychala](https://twitter.com/NadineSpychala)) from the University of Sussex as a part of cohort 8 in the Open Life Sciences Scheme (<https://openlifesci.org/openseeds/ols-8/projects-participants.html>, [@openlifesci](https://twitter.com/openlifesci)).
 
 ## Contact us <a name=contact></a>
-If you want to report a problem or suggest an enhancement we'd encourage for you to open an issue in the GitHub repository.  Otherwise you can reach us by email (????) or twitter (????)
-[Add contact page from theochem website]
+If you want to report a problem or suggest an enhancement we'd encourage for you to open an issue in the GitHub repository.  Otherwise you can reach us by email (<https://www.theochem.nl/contact>) or twitter ([@VU_TheoCheM](https://twitter.com/VU_TheoCheM))
+
 
 ## Find out more <a name=more_info></a>
-- The link to the theochem group - https://www.theochem.nl/ 
-- Link to pry-frag - https://www.theochem.nl/pyfrag2019
-- TC-utility - https://github.com/TheoChem-VU/TCutility
-- Reference paper for theory 
-    - https://doi.org/10.1038/s41596-019-0265-0 
-    - Should be more
+You Might be interested in"
+- The [TheoCheM group](https://www.theochem.nl/)
+- The [Vrije Universiteit Amsterdam](https://vu.nl/en)
+- The [PyFrag 2019](https://github.com/TheoChem-VU/PyFrag) program 
+- Our python library [TC-utility](https://github.com/TheoChem-VU/TCutility)
+- For a thorough overview of the theoretical background we recommend the following articles:
+    - P. Vermeeren, S.C.C. van der Lubbe, C. Fonseca Guerra, F.M. Bickelhaupt, T.A.
+Hamlin, _Nature Protoc._ **2020**, _15_, 649-667. (<https://doi.org/10.1038/s41596-019-0265-0>)
+    - T. A. Hamlin, P. Vermeeren, C. Fonseca Guerra, F. M. Bickelhaupt.
+In: _Complementary Bonding Analyses_; S. Grabowski, Ed.; De Gruyter: Berlin,
+2021, pp 199-212. (<https://doi.org/10.1515/9783110660074-008>)
