@@ -1,4 +1,6 @@
 GitPython
 TCutility
 numpy
+plams 
+matplotlib
 
