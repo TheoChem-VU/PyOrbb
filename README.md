@@ -10,18 +10,18 @@ Welcome to the PyOrb project repository. This project is currently led by member
 
 This README file serves as a central hub providing project-related information. Feel free to navigate directly to specific sections below or simply scroll down to learn more.
 
-- [Motivation](#Motivation)
-- [Installation](#Installation)
+- [Motivation](#motivation)
+- [Installation](#installation)
 - [Workflow](#workflow)
-- [Examples](#Examples)
+- [Examples](#examples)
 - [Get involved](#involved)
-- [Who are we?](#Who)
-- [Contact us](#Contact)
-- [Find out more](#more)
+- [Who are we?](#members)
+- [Contact us](#contact)
+- [Find out more](#more_info)
 
 We are striving to optimise our application to facilitate anyone’s journey into the realm of advanced orbital analysis. So if you see any points where we can improve, don’t hesitate to contact us or open an issue in this repository! 
 
-## Motivation 
+## Motivation <a name=motivation></a>
 The PyOrb project aims to assist in advanced orbital analysis for computational chemistry calculations. PyOrb will generate important orbital interaction schemes and related orbital figures automatically, as well as summarise important information such as SFO coefficients, populations, orbital levels and more. These properties are commonly used in computational chemical research analyses.
 
 It is often said 
@@ -36,7 +36,7 @@ The aim of the PyOrb project:
 
 Previous work by our group has focused on the automation of fragment approaches and their quantitative analyses along a reaction coordinate. This allowed users to perform the Activation Strain Model (AMS) and the canonical energy decomposition analysis (EDA) for a whole reaction profile with one single input (link).
 
-## Installation 
+## Installation <a name=installation></a>
 *Currently, the installation can be done by cloning this repository and having all necessary dependencies.*
 
 The following is for people who would like to install the repository themselves. For example, to edit and/or contribute code to the project.
@@ -64,24 +64,24 @@ git pull
 [should be included once this is known]
 [Figure horizontal si better than vertical]
 
-## Examples <a name=Examples></a>
+## Examples <a name=examples></a>
 [insert example outputs]
 
-## Get involved
+## Get involved <a name=involved></a>
 At the moment, contribution to this project is limited to our research group. In the foreseeable future, we want to open up to a greater community. This group will include users who a not necessarily familiar with computational analysis of molecular systems or fragment approaches. At the point of the first public rollout, we want to have such groups involved in the process of enhancing this repository. 
 
-## Who are we?
+## Who are we? <a name=members></a>
 A preliminary version of PyOrb was roled out by Xiaobo Sun, who was a PostDoc in the TheoCheM group at the Vrije Universiteit Amsterdam.
 
 Currently, the project is adopted by a team of active members of the TheoCheM group consisting of Yuman Hordijk (@YumanHordijk), Tori Gijzen (@ToriGijzen), and dr. Trevor A. Hamlin (@TrevorAHamlin). 
 
 Additionally, we are being consulted by Nadine Spychala (@NadineSpychala) from the University of Sussex as a part of cohort 8 in the Open Life Sciences Scheme (https://openlifesci.org/openseeds/ols-8/projects-participants.html, @openlifesci).
 
-## Contact us <a name=Contact></a>
+## Contact us <a name=contact></a>
 If you want to report a problem or suggest an enhancement we'd encourage for you to open an issue in the GitHub repository.  Otherwise you can reach us by email (????) or twitter (????)
 [Add contact page from theochem website]
 
-## Find out more
+## Find out more <a name=more_info></a>
 - The link to the theochem group - https://www.theochem.nl/ 
 - Link to pry-frag - https://www.theochem.nl/pyfrag2019
 - TC-utility - https://github.com/TheoChem-VU/TCutility
