@@ -1,4 +1,4 @@
-from pyorb.orbitals import sfo, mo, adf, dftb
+from pyorb.orbitals import sfo, mo, adf, dftb  # noqa
 from scm import plams
 import numpy as np
 # import matplotlib.pyplot as plt
