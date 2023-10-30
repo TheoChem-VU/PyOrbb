@@ -11,8 +11,13 @@ Welcome to the PyOrb project repository. This project is currently led by member
 This README file serves as a central hub providing project-related information. Feel free to navigate directly to specific sections below or simply scroll down to learn more.
 
 - [Motivation](#Motivation)
+- [Installation](#Installation)
 - [Workflow](#workflow)
-- Tab 3
+- [Examples](#Examples)
+- [Get involved](#involved)
+- [Who are we?](#Who)
+- [Contact us](#Contact)
+- [Find out more](#more)
 
 We are striving to optimise our application to facilitate anyone’s journey into the realm of advanced orbital analysis. So if you see any points where we can improve, don’t hesitate to contact us or open an issue in this repository! 
 
