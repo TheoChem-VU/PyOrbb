@@ -20,9 +20,10 @@ def get_calc_info(reader):
         # if it didnt, only variable 'energy' will be present
         ret['relativistic'] = ('SFOs', 'escale') in reader
 
+        ret['symlabels'] = reader.read('Symmetry', 'symlab').strip().split()
+        
         # determine if SFOs are unrestricted or not
         ret['unrestricted_sfos'] = ('SFOs', 'energy_B') in reader
-
 
         # determine if MOs are unrestricted or not
         ret['unrestricted_mos'] = (ret['symlabels'][0], 'eps_B') in reader
