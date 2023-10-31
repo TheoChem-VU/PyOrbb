@@ -71,7 +71,7 @@ git pull
 At the moment, contribution to this project is limited to our research group. In the foreseeable future, we want to open up to a greater community. This group will include users who a not necessarily familiar with computational analysis of molecular systems or fragment approaches. At the point of the first public rollout, we want to have such groups involved in the process of enhancing this repository. 
 
 ## Who are we? <a name=members></a>
-A preliminary version of PyOrb was roled out by Xiaobo Sun, who was a PostDoc in the TheoCheM group at the Vrije Universiteit Amsterdam.
+A preliminary version of PyOrb was roled out by Xiaobo Sun assited by Laurens Groot, who was a PostDoc in the TheoCheM group at the Vrije Universiteit Amsterdam.
 
 Currently, the project has been adopted by a team of active TheoCheM group members consisting of Yuman Hordijk ([@YumanHordijk](https://twitter.com/YumanHordijk)), Tori Gijzen ([@ToriGijzen](https://twitter.com/ToriGijzen)), and dr. Trevor A. Hamlin ([@TrevorAHamlin](https://twitter.com/TrevorAHamlin)). 
 
