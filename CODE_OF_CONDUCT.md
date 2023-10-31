@@ -84,6 +84,10 @@ behavior, harassment of an individual, or aggression toward or disparagement of 
 
 Consequence: A permanent ban from any sort of public interaction within the community.
 
+### Contact Us
+If you want to report a problem or suggest an enhancement, we'd encourage for you to open an issue in the GitHub repository. 
+Otherwise, you can reach us by email (https://www.theochem.nl/contact) or twitter (@VU_TheoCheM)
+
 ### Attribution
 This Code of Conduct is adapted from the Contributor Covenant, version 2.0.
 Available at https://www.contributor-covenant.org/version/2/0/code_of_conduct.html.
