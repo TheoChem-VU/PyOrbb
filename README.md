@@ -43,7 +43,7 @@ The following is for people who would like to install the repository themselves.
 
 First clone this repository:
 ```
-git clone https://github.com/TheoChem-VU/PyOrb.git
+git clone git@github.com:TheoChem-VU/PyOrb.git
 ```
 
 Then move into the new directory and install the package:
