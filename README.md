@@ -1,6 +1,6 @@
-[![Documentation](https://github.com/TheoChem-VU/PyOrb/actions/workflows/build_docs.yml/badge.svg)](https://github.com/TheoChem-VU/PyOrb/actions/workflows/build_docs.yml) 
-[![Testing](https://github.com/TheoChem-VU/PyOrb/actions/workflows/testing.yml/badge.svg)](https://github.com/TheoChem-VU/PyOrb/actions/workflows/testing.yml)
-[![Publishing to PyPI](https://github.com/TheoChem-VU/PyOrb/actions/workflows/pypi_publish.yml/badge.svg?branch=main)](https://github.com/TheoChem-VU/PyOrb/actions/workflows/pypi_publish.yml)
+[![Documentation](https://github.com/TheoChem-VU/PyFMO/actions/workflows/build_docs.yml/badge.svg)](https://github.com/TheoChem-VU/PyFMO/actions/workflows/build_docs.yml) 
+[![Testing](https://github.com/TheoChem-VU/PyFMO/actions/workflows/testing.yml/badge.svg)](https://github.com/TheoChem-VU/PyFMO/actions/workflows/testing.yml)
+[![Publishing to PyPI](https://github.com/TheoChem-VU/PyFMO/actions/workflows/pypi_publish.yml/badge.svg?branch=main)](https://github.com/TheoChem-VU/PyFMO/actions/workflows/pypi_publish.yml)
 
 # PyFMO
 Our group aims to empower chemists with state-of-the-art quantum-chemical analysis tools. The latest project is PyFMO, used for the automated analysis of complex molecular orbital interactions. PyFMO makes expert orbital analysis available to all chemists, regardless of their theoretical background, ensuring that knowledge knows no bounds!
@@ -43,7 +43,7 @@ The following is for people who would like to install the repository themselves.
 
 First, clone this repository:
 ```
-git clone git@github.com:TheoChem-VU/PyOrb.git
+git clone git@github.com:TheoChem-VU/PyFMO.git
 ```
 
 Then move into the new directory and install the package:
