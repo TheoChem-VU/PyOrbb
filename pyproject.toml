@@ -1,10 +1,10 @@
 [project]
-name = "pyorb"
+name = "pyfmo"
 authors = [
   { name="Yuman Hordijk", email="y.hordijk@vu.nl"},
   { name="Tori Gijzen", email="t.gijzen@vu.nl"},
   { name="Steven E. Beutick", email="s.e.beutick@vu.nl"}]
-description = "PyOrb is an automated orbital analysis tool used in the TheoCheM group at VU Amsterdam"
+description = "PyFMO is an automated orbital analysis tool used in the TheoCheM group at VU Amsterdam"
 readme = "README.md"
 requires-python = ">=3.7"
 classifiers = [
