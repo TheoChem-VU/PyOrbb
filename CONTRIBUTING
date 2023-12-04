@@ -1,12 +1,12 @@
-# To add something to PyOrb:
+# To add something to PyFMO:
 
 1. Create a new issue where you explain, preferably in steps, what you are going to add and how.
 2. On the issue page, click on the `create branch` button and create a branch for your issue.
 3. In sublime merge, on the left side, open the `Remote` menu and right-click on `origin` and click `fetch from origin` followed by the `enter` button to retrieve your new branch.
-4. Double click the branch to create a local copy.
-5. Add or change what you intended to do in your local branch and commit and push like you would normally.
-6. When you are done, open a pull-request on GitHub. Make sure you are merging the new branch into `main`. Add a reviewer (or 2) and assign some labels.
+4. Double-click the branch to create a local copy.
+5. Add or change what you intend to do in your local branch and commit and push like you would normally.
+6. When you are done, open a pull request on GitHub. Make sure you are merging the new branch into `main`. Add a reviewer (or 2) and assign some labels.
 7. Wait for the reviewers to review your work and implement their feedback.
-8. If you are done, press the `Merge pull-request` button to merge you branch into `main`.
+8. If you are done, press the `Merge pull-request` button to merge your branch into `main`.
 9. Remove the branch.
 10. Done!
