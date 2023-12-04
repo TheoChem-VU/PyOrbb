@@ -1,4 +1,4 @@
-from pyorb.orbitals import info
+from pyfmo.orbitals import info
 import numpy as np
 from TCutility import ensure_list
 
