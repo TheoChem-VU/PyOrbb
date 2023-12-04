@@ -1,4 +1,4 @@
-from pyorb import orbitals
+from pyfmo import orbitals
 
 
 def get_calc_info(reader):
