@@ -3,7 +3,7 @@ from scm import plams
 import numpy as np
 # import matplotlib.pyplot as plt
 # from yutility import plot, ensure_list
-from TCutility import ensure_list
+from tcutility import ensure_list
 
 
 class Orbitals:
@@ -31,7 +31,8 @@ class Orbitals:
             of SFO $\nu$ in MO $i$ and $S_{\mu\nu}$ is the overlap between SFOs
             $\mu$ and $\nu$.
 
-        The marginals of the resulting Mulliken contribution matrix $\hat{C}_{i\mu}$ should all equal one.
+        The marginals of the resulting Mulliken contribution matrix $\hat{C}_{i\mu}$ times the 
+        occupation is the gross Mulliken population of the orbital.
         '''
         # coefficient of all SFOs contributing to the selected MO
         c_iv = np.array(mo @ self.sfos.sfos)

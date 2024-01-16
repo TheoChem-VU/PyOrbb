@@ -1,6 +1,6 @@
 from scm import plams
 import os
-from TCutility import ensure_list, squeeze_list
+from tcutility import ensure_list, squeeze_list
 from pyfmo.orbitals import info
 
 j = os.path.join

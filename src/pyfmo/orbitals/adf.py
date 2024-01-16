@@ -1,6 +1,6 @@
 from pyfmo.orbitals import info
 import numpy as np
-from TCutility import ensure_list
+from tcutility import ensure_list
 
 
 
