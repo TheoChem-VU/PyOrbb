@@ -41,7 +41,7 @@ Previously, our group has published the [PyFrag 2019](https://onlinelibrary.wile
 
 The following is for people who would like to install the repository themselves. For example, to edit and/or contribute code to the project.
 
-First, clone this repository:
+Then, clone this repository:
 ```
 git clone git@github.com:TheoChem-VU/PyFMO.git
 ```
@@ -50,7 +50,7 @@ Then move into the new directory and install the package:
 
 ```
 cd PyFMO
-python -m pip install --upgrade build 
+python -m pip install --upgrade build pip 
 python -m build 
 python -m pip install -e .
 ```
