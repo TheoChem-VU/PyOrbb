@@ -3,6 +3,7 @@ import os
 
 j = os.path.join
 
+## orbital load test -- radicals ##
 
 def test_load_orbitals():
 	pyfmo.orbitals.Orbitals(j(os.path.split(__file__)[0], 'fixtures','RadicalAddition','adf.rkf'))
@@ -27,11 +28,27 @@ def test_energy4():
 	orbs = pyfmo.orbitals.Orbitals(j(os.path.split(__file__)[0], 'fixtures','RadicalAddition','adf.rkf'))
 	assert orbs.mos['SOMO'] == orbs.mos['13A_A']
 
-
 def test_energy5():
 	orbs = pyfmo.orbitals.Orbitals(j(os.path.split(__file__)[0], 'fixtures','RadicalAddition','adf.rkf'))
 	assert orbs.mos['SUMO'] == orbs.mos['13A_B']
 
+## symmetry test for E' symmetries ##
+
+def test_symm_orbitals():
+	pyfmo.orbitals.Orbitals(j(os.path.split(__file__)[0], 'fixtures','pentafluorophsophate','FragAnal.adf.rkf'))
+
+def test_symm_label():
+	orbs = pyfmo.orbitals.Orbitals(j(os.path.split(__file__)[0], 'fixtures','pentafluorophsophate','FragAnal.adf.rkf'))
+	assert orbs.mos['HOMO-4'] == orbs.mos['2 EEE1:1']
+
+def test_symm_energy1():
+	orbs = pyfmo.orbitals.Orbitals(j(os.path.split(__file__)[0], 'fixtures','pentafluorophsophate','FragAnal.adf.rkf'))
+	assert round(orbs.mos['2 EEE1:2'].energy, 2) == -10.420
+
+
+def test_symm_energy2():
+	orbs = pyfmo.orbitals.Orbitals(j(os.path.split(__file__)[0], 'fixtures','pentafluorophsophate','FragAnal.adf.rkf'))
+	assert round(orbs.mos['HOMO-16'].energy, 2) == -14.603
 
 if __name__ == '__main__':
 	import pytest
