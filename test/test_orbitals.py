@@ -39,16 +39,16 @@ def test_symm_orbitals():
 
 def test_symm_label():
 	orbs = pyfmo.orbitals.Orbitals(j(os.path.split(__file__)[0], 'fixtures','pentafluorophsophate','FragAnal.adf.rkf'))
-	assert orbs.mos['HOMO-4'] == orbs.mos['2 EEE1:1']
+	assert orbs.mos['HOMO-4'] == orbs.mos['EEE1:1']
 
 def test_symm_energy1():
 	orbs = pyfmo.orbitals.Orbitals(j(os.path.split(__file__)[0], 'fixtures','pentafluorophsophate','FragAnal.adf.rkf'))
-	assert round(orbs.mos['2 EEE1:2'].energy, 2) == -10.420
+	assert round(orbs.mos['2 EEE1:2'].energy, 3) == -10.420
 
 
 def test_symm_energy2():
 	orbs = pyfmo.orbitals.Orbitals(j(os.path.split(__file__)[0], 'fixtures','pentafluorophsophate','FragAnal.adf.rkf'))
-	assert round(orbs.mos['HOMO-16'].energy, 2) == -14.603
+	assert round(orbs.mos['HOMO-16'].energy, 3) == -14.603
 
 if __name__ == '__main__':
 	import pytest
