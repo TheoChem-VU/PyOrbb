@@ -170,7 +170,7 @@ class SFOs:
                 symlabel = data['symlabel_by_sfo'][idx]
                 isfo = data['isfo'][idx] - 1
                 subspecies = data['subspecies'][idx]
-                ifo = data['ifo'][idx]
+                # ifo = data['ifo'][idx]
                 if data['relindices'] is not None:
                     relindex = data['relindices'][spin][idx]
                     if relindex > 0:
