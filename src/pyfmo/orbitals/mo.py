@@ -122,7 +122,7 @@ class MOs:
                         'index':                mo_index + 1,
                         'relindex':             relindex,
                         'index_in_symlabel':    idx,
-                        'name':                 f'{mo_index + 1}{symlabel}',
+                        'name':                 f'{idx + 1}{symlabel}',
                         'moleculename':         self.moleculename,
                         'relname':              relname,
                         # 'fragment_index':       data['fragidx'][idx],

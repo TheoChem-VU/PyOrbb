@@ -187,7 +187,7 @@ class SFOs:
                 sfo_data.append({
                     'index':                idx + 1,
                     'relindex':             None if data['relindices'] is None else relindex,
-                    'name':                 f'{ifo}{subspecies}',
+                    'name':                 f'{isfo}{subspecies}',
                     'relname':              None if data['relindices'] is None else relname,
                     'fragment_index':       data['fragidx'][idx],
                     'fragment':             data['fragtypes'][idx],
