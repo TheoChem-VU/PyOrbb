@@ -171,24 +171,24 @@ class SFOs:
                 isfo = data['isfo'][idx] - 1
                 subspecies = data['subspecies'][idx]
                 ifo = data['ifo'][idx]
-                if data['relindices'] is not None:
-                    relindex = data['relindices'][spin][idx]
-                    if relindex > 0:
-                        if relindex == 1:
-                            relname = 'LUMO'
-                        else:
-                            relname = f'LUMO+{relindex-1}'
-                    else:
-                        if relindex == 0:
-                            relname = 'HOMO'
-                        else:
-                            relname = f'HOMO-{abs(relindex)}'
+                # if data['relindices'] is not None:
+                #     relindex = data['relindices'][spin][idx]
+                #     if relindex > 0:
+                #         if relindex == 1:
+                #             relname = 'LUMO'
+                #         else:
+                #             relname = f'LUMO+{relindex-1}'
+                #     else:
+                #         if relindex == 0:
+                #             relname = 'HOMO'
+                #         else:
+                #             relname = f'HOMO-{abs(relindex)}'
 
                 sfo_data.append({
                     'index':                idx + 1,
-                    'relindex':             None if data['relindices'] is None else relindex,
+                    # 'relindex':             None if data['relindices'] is None else relindex,
                     'name':                 f'{ifo}{subspecies}',
-                    'relname':              None if data['relindices'] is None else relname,
+                    # 'relname':              None if data['relindices'] is None else relname,
                     'fragment_index':       data['fragidx'][idx],
                     'fragment':             data['fragtypes'][idx],
                     'fragment_unique_name': data['fraguniquenames'][idx],
@@ -205,6 +205,64 @@ class SFOs:
                 })
 
         self.sfos = [SFO(**sfo_datum) for sfo_datum in sfo_data]
+
+        #sort the SFOs based on their energy 
+        self.sfos = sorted(self.sfos, key=lambda sfo: sfo.energy) 
+        
+        sfos_frag = {}
+
+        for sfo in self.sfos:
+            sfos_frag.setdefault(sfo.fragment_unique_name, [])
+            sfos_frag[sfo.fragment_unique_name].append(sfo)
+            
+        # print(sfos_frag)
+
+        # determine if there are degenerate MOs (mo.degenerate) and, if so, how many (mo.n_degenerate)
+        for frag, sfos_list in sfos_frag.items():
+            energies = []
+            for sfo in sfos_list:
+                energies.append(round(sfo.energy, 6))
+
+            for sfo in sfos_list:
+                degeneracy = energies.count(round(sfo.energy, 6))
+                sfo.n_degenerate = degeneracy
+                if degeneracy > 0:
+                    sfo.degenerate = True
+                else:
+                    sfo.degenerate = False
+
+
+            for sfo in sfos_list:
+                degeneracy = energies.count(round(sfo.energy, 6))
+                sfo.n_degenerate = degeneracy
+                if degeneracy > 1:
+                    sfo.degenerate = True
+                else:
+                    sfo.degenerate = False
+
+            # Assign name to SFOs in the HOMO LUMO nomenclature
+            for sfo in sfos_list:
+                if sfo.occupation == 0:
+                    index_LUMO = sfos_list.index(sfo)
+                    break
+
+            HOMO_list = [sfo for sfo in sfos_list if sfo.occupation > 0] 
+            LUMO_list = [sfo for sfo in sfos_list if sfo.occupation == 0]
+            
+            for index_LUMO, sfo_LUMO in enumerate(LUMO_list):
+                 sfo_LUMO.relindex = index_LUMO + 1 
+                 sfo_LUMO.relname = f'LUMO+{index_LUMO}' if index_LUMO > 0 else 'LUMO'
+            
+            max_HOMO_index = len(HOMO_list) - 1
+            for index_HOMO, sfo_HOMO in enumerate(HOMO_list):
+                sfo_HOMO.relindex = index_HOMO + 1 - len(HOMO_list)
+                sfo_HOMO.relname = f'HOMO-{max_HOMO_index - index_HOMO}' if max_HOMO_index - index_HOMO > 0 else 'HOMO'
+
+
+            # print([sfo.relname for sfo in sfos_list])
+            # print([sfo.relindex for sfo in sfos_list], [sfo.energy for sfo in sfos_list])
+            # for sfo in sfos_list:
+            #     print(sfo.relindex,sfo.relname,sfo.energy)
 
         # for unrestricted molecular fragments we want to assign the SOMO and SUMO and fix the HOMO and LUMO names
         if self.is_unrestricted and self.uses_molecular_fragments:
