@@ -41,11 +41,11 @@ def test_symm_orbitals():
 
 def test_degeneracy():
 	orbs = pyfmo.orbitals.Orbitals(j(os.path.split(__file__)[0], 'fixtures','pentafluorophsophate','FragAnal.adf.rkf'))
-	assert orbs.mos['5EE1:1'].degenerate == True
+	assert orbs.mos['5EE1:1'].degenerate is True
 
 def test_degeneracy2():
 	orbs = pyfmo.orbitals.Orbitals(j(os.path.split(__file__)[0], 'fixtures','pentafluorophsophate','FragAnal.adf.rkf'))
-	assert orbs.mos['1AA2'].degenerate == False
+	assert orbs.mos['1AA2'].degenerate is False
 
 def test_n_degeneracy():
 	orbs = pyfmo.orbitals.Orbitals(j(os.path.split(__file__)[0], 'fixtures','pentafluorophsophate','FragAnal.adf.rkf'))
@@ -70,11 +70,11 @@ def test_LUMO_lowered():
 
 def test_FMO_degeneracy():
 	orbs = pyfmo.orbitals.Orbitals(j(os.path.split(__file__)[0], 'fixtures','pentafluorophsophate','FragAnal.adf.rkf'))
-	assert orbs.sfos['2(HOMO-1)'].degenerate == True 
+	assert orbs.sfos['2(HOMO-1)'].degenerate is True 
 
-def test_FMO_degeneracy():
+def test_FMO_degeneracy2():
 	orbs = pyfmo.orbitals.Orbitals(j(os.path.split(__file__)[0], 'fixtures','pentafluorophsophate','FragAnal.adf.rkf'))
-	assert orbs.sfos['1(3S)'].degenerate == False
+	assert orbs.sfos['1(3S)'].degenerate is False
 
 def test_FMO_n_degeneracy():
 	orbs = pyfmo.orbitals.Orbitals(j(os.path.split(__file__)[0], 'fixtures','pentafluorophsophate','FragAnal.adf.rkf'))
