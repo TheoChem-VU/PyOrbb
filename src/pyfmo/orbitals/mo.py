@@ -112,11 +112,6 @@ class MOs:
                         'index_in_symlabel':    idx,
                         'name':                 f'{idx + 1}{symlabel}',
                         'moleculename':         self.moleculename,
-                        # 'relname':              relname,
-                        # 'fragment_index':       data['fragidx'][idx],
-                        # 'fragment':             data['fragtypes'][idx],
-                        # 'fragment_orb_index':   data['fragorb'][idx],
-                        # 'symmetry_type_index':  isfo,
                         'symmetry':             symlabel,
                         'energy':               energy * 27.21139664,
                         'spin':                 spin,
@@ -133,41 +128,26 @@ class MOs:
         self.mos = sorted(self.mos, key=lambda mo: mo.energy) 
         
         # determine if there are degenerate MOs (mo.degenerate) and, if so, how many (mo.n_degenerate)
-        energies = []
-        for mo in self.mos:
-            energies.append(round(mo.energy, 6))
+        energies = [round(mo.energy, 6) for mo in self.mos]
 
         for mo in self.mos:
             degeneracy = energies.count(round(mo.energy, 6))
             mo.n_degenerate = degeneracy
-            if degeneracy > 1:
-                mo.degenerate = True
-            else:
-                mo.degenerate = False
+            mo.degenerate = degeneracy > 1
 
-        # Assign name to MOs in the HOMO LUMO nomenclature
-        for mo in self.mos:
-            if mo.occupation == 0:
-                index_HOMO = self.mos.index(mo) - 1 
-                break
-        
-        #The relative index is relative to the HOMO (0), all lower orbitals are negagtive integers and all higher orbitals are positive intergers 
-        for mo_index, mo in enumerate(self.mos):
-            mo.relindex = mo_index - index_HOMO
 
-        #Assign correct HOMO-LUMO nomenclature, also in the case of a lower lying LUMO.
+        #Assign correct HOMO-LUMO nomenclature, Regardless of the sequence of the occupied and unoccupied orbitals 
         HOMO_list = [mo for mo in self.mos if mo.occupation > 0] 
         LUMO_list = [mo for mo in self.mos if mo.occupation == 0]
         
         for index_LUMO, mo_LUMO in enumerate(LUMO_list):
+             mo_LUMO.relindex = index_LUMO + 1
              mo_LUMO.relname = f'LUMO+{index_LUMO}' if index_LUMO > 0 else 'LUMO'
         
         max_HOMO_index = len(HOMO_list) - 1
         for index_HOMO, mo_HOMO in enumerate(HOMO_list):
+            mo_HOMO.relindex = index_HOMO + 1 - len(HOMO_list)
             mo_HOMO.relname = f'HOMO-{max_HOMO_index - index_HOMO}' if max_HOMO_index - index_HOMO > 0 else 'HOMO'
-
-        # print([mo.relname for mo in self.mos])
-        # print([mo.relindex for mo in self.mos])
 
 
         # Assign name to singly occupied orbitals in the HOMO LUMO nomenclature
