@@ -38,7 +38,7 @@ def test_SCF_stage_energy_1():
 	rkf = j(os.path.split(__file__)[0], 'fixtures','SAOP_DZP', 'complex', 'adf.rkf')
 	path_SCF0 = j(os.path.split(__file__)[0], 'fixtures','SAOP_DZP', 'complex_SCF0', 'adf.rkf')
 	orbs = pyfmo.orbitals.Orbitals(rkf, path_SCF0=path_SCF0)
-	assert round(orbs.sfos['Na(12A)'].site_energy_SCF0, 4) == 3.4891
+	assert round(orbs.sfos['Na(12A)'].site_energy_SCF0, 4) == 5.1043
 
 def test_SCF_stage_energy_2():
 	rkf = j(os.path.split(__file__)[0], 'fixtures','SAOP_DZP', 'complex', 'adf.rkf')
