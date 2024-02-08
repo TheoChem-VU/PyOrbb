@@ -1,0 +1,30 @@
+<Feb07-2024> <14:37:57>  AMS 2023.101  RunTime: Feb07-2024 14:37:57  ShM Nodes: 2  Procs: 32
+<Feb07-2024> <14:37:57>  ADF 2023.101  RunTime: Feb07-2024 14:37:57  ShM Nodes: 2  Procs: 32
+<Feb07-2024> <14:37:57>  *** (NO TITLE) ***
+<Feb07-2024> <14:37:58>  *** adf ***
+<Feb07-2024> <14:37:58>  Net Charge: 0 (Nuclei minus Electrons)
+<Feb07-2024> <14:37:58>  Symmetry  : NOSYM
+<Feb07-2024> <14:37:58>  >>>> FRAGM
+<Feb07-2024> <14:37:58>  Coordinates
+<Feb07-2024> <14:37:58>     Atom         X           Y           Z   (Angstrom)
+<Feb07-2024> <14:37:58>     1.Cl        0.000000    0.000000   -1.192418
+<Feb07-2024> <14:37:58>     2.Na        0.000000    0.000000    1.192418
+<Feb07-2024> <14:37:58>  >>>> CORORT
+<Feb07-2024> <14:37:58>  >>>> CLSMAT
+<Feb07-2024> <14:37:58>  >>>> ORTHON
+<Feb07-2024> <14:37:58>  >>>> GENPT
+<Feb07-2024> <14:37:58>  Block Length= 128
+<Feb07-2024> <14:37:58>  >>>> PTBAS
+<Feb07-2024> <14:37:58>  >>>> CYCLE
+<Feb07-2024> <14:38:03>              |Error|         MaxErr       Wt(A-DIIS)
+<Feb07-2024> <14:38:03>      1      1.00307022      0.51306122
+<Feb07-2024> <14:38:03>  >>>> TOTEN
+<Feb07-2024> <14:38:04>  >>>> POPAN
+<Feb07-2024> <14:38:04>  >>>> DEBYE
+<Feb07-2024> <14:38:04>  >>>> AMETS
+<Feb07-2024> <14:38:11>   Bond Energy          -0.21144293 a.u.
+<Feb07-2024> <14:38:11>   Bond Energy          -5.75365476 eV
+<Feb07-2024> <14:38:11>   Bond Energy        -132.68       kcal/mol
+<Feb07-2024> <14:38:11>  >>>> POPUL
+<Feb07-2024> <14:38:11>  ERROR: Engine ADF failed to solve for single point calculation.
+<Feb07-2024> <14:38:11>  NORMAL TERMINATION

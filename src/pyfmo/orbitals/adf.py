@@ -1,10 +1,11 @@
+from scm import plams
 from pyfmo.orbitals import info
 import numpy as np
 from tcutility import ensure_list
 
 
 
-def read_SFO_data(reader):  # noqa: N802
+def read_SFO_data(reader, path_SCF0=None):  # noqa: N802
     def square_overlaps(S, nmo):
         Srows = []
         for i in range(nmo):
@@ -111,6 +112,47 @@ def read_SFO_data(reader):  # noqa: N802
                 'B': None,
                 'AB': None
             }
+
+
+    # SFO energies from the diagonal of the fock matrix
+    # and get index if energies are sorted
+    # site_energy = 'escale' if calc_info['relativistic'] else 'energy'
+    if ('SFOs', 'site_energy') in reader:
+        if calc_info['unrestricted_sfos']:
+            ret['site_energy'] = {
+                'A': reader.read('SFOs', f"{'site_energy'}"),
+                'B': reader.read('SFOs', f"{'site_energy'}_B")
+            }
+        else:
+            ret['site_energy'] = {'AB': reader.read('SFOs', f"{'site_energy'}")}
+    else:
+        ret['site_energy'] = {
+                'A': None,
+                'B': None,
+                'AB': None
+            }
+
+
+    # SFO energies from the diagonal of the fock matrix
+    # and get index if energies are sorted
+    # site_energy = 'escale' if calc_info['relativistic'] else 'energy'
+    if path_SCF0 is not None:
+        reader_SCF0 = plams.KFReader(path_SCF0)
+        if ('SFOs', 'site_energy') in reader_SCF0:
+            if calc_info['unrestricted_sfos']:
+                ret['site_energy_SCF0'] = {
+                    'A': reader_SCF0.read('SFOs', f"{'site_energy'}"),
+                    'B': reader_SCF0.read('SFOs', f"{'site_energy'}_B")
+                }
+            else:
+                ret['site_energy_SCF0'] = {'AB': reader_SCF0.read('SFOs', f"{'site_energy'}")}
+        else:
+            ret['site_energy_SCF0'] = {
+                    'A': None,
+                    'B': None,
+                    'AB': None
+                }
+
 
     # SFO occupations
     if ('SFOs', 'occupation') in reader:

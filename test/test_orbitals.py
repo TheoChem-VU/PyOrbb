@@ -33,6 +33,28 @@ def test_energy5():
 	assert orbs.mos['SUMO'] == orbs.mos['13A_B']
 
 
+
+def test_SCF_stage_energy():
+	rkf = j(os.path.split(__file__)[0], 'fixtures','SAOP_DZP', 'complex', 'adf.rkf')
+	path_SCF0 = j(os.path.split(__file__)[0], 'fixtures','SAOP_DZP', 'complex_SCF0', 'adf.rkf')
+	orbs = pyfmo.orbitals.Orbitals(rkf, path_SCF0=path_SCF0)
+	assert round(orbs.sfos['Na(12A)'].site_energy_SCF0, 4) == 3.4891
+
+def test_SCF_stage_energy():
+	rkf = j(os.path.split(__file__)[0], 'fixtures','SAOP_DZP', 'complex', 'adf.rkf')
+	path_SCF0 = j(os.path.split(__file__)[0], 'fixtures','SAOP_DZP', 'complex_SCF0', 'adf.rkf')
+	orbs = pyfmo.orbitals.Orbitals(rkf, path_SCF0=path_SCF0)
+	assert round(orbs.sfos['Cl(9A)'].site_energy, 4) == -9.4931
+
+def test_SCF_stage_energy():
+	rkf = j(os.path.split(__file__)[0], 'fixtures','SAOP_DZP', 'complex', 'adf.rkf')
+	path_SCF0 = j(os.path.split(__file__)[0], 'fixtures','SAOP_DZP', 'complex_SCF0', 'adf.rkf')
+	orbs = pyfmo.orbitals.Orbitals(rkf, path_SCF0=path_SCF0)
+	assert orbs.sfos['Na(1A)'].energy != orbs.sfos['Na(1A)'].site_energy and orbs.sfos['Na(1A)'].site_energy != orbs.sfos['Na(1A)'].site_energy_SCF0
+	# assert orbs.sfos['Na(1A)'].energy != orbs.sfos['Na(1A)'].site_energy_SCF0 and orbs.sfos['Na(1A)'].energy != orbs.sfos['Na(1A)'].energy_approximation
+
+
+
 if __name__ == '__main__':
 	import pytest
 	print(j(os.path.split(__file__)[0], 'fixtures','RadicalAddition','adf.rkf'))

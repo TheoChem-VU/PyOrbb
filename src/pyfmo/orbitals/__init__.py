@@ -7,13 +7,13 @@ from tcutility import ensure_list
 
 
 class Orbitals:
-    def __init__(self, path, moleculename=None):
+    def __init__(self, path, path_SCF0=None, moleculename=None):
         if isinstance(path, (plams.KFReader, plams.KFFile)):
             self.reader = path
         else:
             self.reader = plams.KFReader(path)
         self.mos = mo.MOs(reader=self.reader, moleculename=moleculename)
-        self.sfos = sfo.SFOs(reader=self.reader)
+        self.sfos = sfo.SFOs(reader=self.reader, path_SCF0=path_SCF0)
         self.rename_fragments = self.sfos.rename_fragments
 
     def mulliken_contribution(self, sfo, mo):
