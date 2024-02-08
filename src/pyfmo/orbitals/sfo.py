@@ -171,24 +171,10 @@ class SFOs:
                 isfo = data['isfo'][idx] - 1
                 subspecies = data['subspecies'][idx]
                 ifo = data['ifo'][idx]
-                if data['relindices'] is not None:
-                    relindex = data['relindices'][spin][idx]
-                    if relindex > 0:
-                        if relindex == 1:
-                            relname = 'LUMO'
-                        else:
-                            relname = f'LUMO+{relindex-1}'
-                    else:
-                        if relindex == 0:
-                            relname = 'HOMO'
-                        else:
-                            relname = f'HOMO-{abs(relindex)}'
 
                 sfo_data.append({
                     'index':                idx + 1,
-                    'relindex':             None if data['relindices'] is None else relindex,
                     'name':                 f'{ifo}{subspecies}',
-                    'relname':              None if data['relindices'] is None else relname,
                     'fragment_index':       data['fragidx'][idx],
                     'fragment':             data['fragtypes'][idx],
                     'fragment_unique_name': data['fraguniquenames'][idx],
@@ -205,6 +191,40 @@ class SFOs:
                 })
 
         self.sfos = [SFO(**sfo_datum) for sfo_datum in sfo_data]
+
+        #sort the SFOs based on their energy 
+        self.sfos = sorted(self.sfos, key=lambda sfo: sfo.energy) 
+        
+        sfos_frag = {}
+
+        for sfo in self.sfos:
+            sfos_frag.setdefault(sfo.fragment_unique_name, [])
+            sfos_frag[sfo.fragment_unique_name].append(sfo)
+        
+
+        # determine if there are degenerate MOs (mo.degenerate) and, if so, how many (mo.n_degenerate)
+        for frag, sfos_list in sfos_frag.items():
+            energies = []
+            for sfo in sfos_list:
+                energies.append(round(sfo.energy, 6))
+
+            for sfo in sfos_list:
+                degeneracy = energies.count(round(sfo.energy, 6))
+                sfo.n_degenerate = degeneracy
+                sfo.degenerate = degeneracy > 1
+
+            HOMO_list = [sfo for sfo in sfos_list if sfo.occupation > 0] 
+            LUMO_list = [sfo for sfo in sfos_list if sfo.occupation == 0]
+            
+            for index_LUMO, sfo_LUMO in enumerate(LUMO_list):
+                 sfo_LUMO.relindex = index_LUMO + 1 
+                 sfo_LUMO.relname = f'LUMO+{index_LUMO}' if index_LUMO > 0 else 'LUMO'
+            
+            max_HOMO_index = len(HOMO_list) - 1
+            for index_HOMO, sfo_HOMO in enumerate(HOMO_list):
+                sfo_HOMO.relindex = index_HOMO + 1 - len(HOMO_list)
+                sfo_HOMO.relname = f'HOMO-{max_HOMO_index - index_HOMO}' if max_HOMO_index - index_HOMO > 0 else 'HOMO'
+
 
         # for unrestricted molecular fragments we want to assign the SOMO and SUMO and fix the HOMO and LUMO names
         if self.is_unrestricted and self.uses_molecular_fragments:

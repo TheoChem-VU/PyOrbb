@@ -1,0 +1,15 @@
+== Starting run at Mon Jan 29 10:04:45 CET 2024
+== Job ID: 648840
+== Node list: node112
+== Submit dir. : /scistor/tc/sbk238/PyOrb/testing/E_symm/pentafluorophsophate
+== Scratch dir. : /scratch/648840
+
+Currently Loaded Modules:
+  1) DefaultModules   3) 2022         5) slurm/bazis/23.02.7   7) adf/2019.102
+  2) shared           4) gcc/11.2.0   6) tc                    8) python/3.7.4
+
+ 
+
+NORMAL TERMINATION with warnings
+NORMAL TERMINATION with warnings
+NORMAL TERMINATION

@@ -1,0 +1,70 @@
+<Jan29-2024> <10:04:47>  AMS 2021.104  RunTime: Jan29-2024 10:04:47  ShM Nodes: 1  Procs: 16
+<Jan29-2024> <10:04:47>  ADF 2021.104  RunTime: Jan29-2024 10:04:47  ShM Nodes: 1  Procs: 16
+<Jan29-2024> <10:04:47>  *** (NO TITLE) ***
+<Jan29-2024> <10:04:48>  DIRAC 2021.104  RunTime: Jan29-2024 10:04:48  ShM Nodes: 1  Procs: 1
+<Jan29-2024> <10:04:48>  Phosphorus (TZ2P)
+<Jan29-2024> <10:04:48>  Net Charge: 0 (Nuclei minus Electrons)
+<Jan29-2024> <10:04:48>  Symmetry  : ATOM
+<Jan29-2024> <10:04:48>  Coordinates
+<Jan29-2024> <10:04:48>     Atom         X           Y           Z   (Angstrom)
+<Jan29-2024> <10:04:48>     1.P         0.000000    0.000000    0.000000
+<Jan29-2024> <10:04:48>  >>>> CORORT
+<Jan29-2024> <10:04:48>  >>>> CLSMAT
+<Jan29-2024> <10:04:48>  >>>> ORTHON
+<Jan29-2024> <10:04:48>  >>>> GENPT
+<Jan29-2024> <10:04:48>  Block Length=  89
+<Jan29-2024> <10:04:48>  >>>> PTBAS
+<Jan29-2024> <10:04:48>  >>>> CYCLE
+<Jan29-2024> <10:04:49>              |Error|         MaxErr       Wt(A-DIIS)
+<Jan29-2024> <10:04:49>      1      0.00000000      0.00000000
+<Jan29-2024> <10:04:49>      2     25.44115433      8.95919510    100.0
+<Jan29-2024> <10:04:49>      3     18.34065228      8.18076062    100.0
+<Jan29-2024> <10:04:49>      4      1.56361599      0.53365737    100.0
+<Jan29-2024> <10:04:49>      5      1.35058736      0.58183800    100.0
+<Jan29-2024> <10:04:49>      6      0.21531958      0.08401273     83.9
+<Jan29-2024> <10:04:49>      7      0.15258960      0.06180988     61.4
+<Jan29-2024> <10:04:49>      8      0.02954305      0.01096213     10.1
+<Jan29-2024> <10:04:49>      9      0.00223433      0.00082981      0.0
+<Jan29-2024> <10:04:49>     10      0.00000739      0.00000313      0.0
+<Jan29-2024> <10:04:49>     11      0.00000015      0.00000007      0.0
+<Jan29-2024> <10:04:49>     12      0.00000001      0.00000000      0.0
+<Jan29-2024> <10:04:49>  SCF converged
+<Jan29-2024> <10:04:49>     13      0.00000000      0.00000000      0.0
+<Jan29-2024> <10:04:49>  >>>> POPAN
+<Jan29-2024> <10:04:49>  >>>> DEBYE
+<Jan29-2024> <10:04:49>  *** adf ***
+<Jan29-2024> <10:04:49>  WARNING: Restricted Open-Shell calculation, Unrestricted setup may be needed
+<Jan29-2024> <10:04:49>  Net Charge: 0 (Nuclei minus Electrons)
+<Jan29-2024> <10:04:49>  Symmetry  : ATOM
+<Jan29-2024> <10:04:49>  >>>> FRAGM
+<Jan29-2024> <10:04:49>  Coordinates
+<Jan29-2024> <10:04:49>     Atom         X           Y           Z   (Angstrom)
+<Jan29-2024> <10:04:49>     1.P         0.000000    0.000000    0.000000
+<Jan29-2024> <10:04:49>  >>>> CORORT
+<Jan29-2024> <10:04:49>  >>>> CLSMAT
+<Jan29-2024> <10:04:49>  >>>> ORTHON
+<Jan29-2024> <10:04:49>  >>>> GENPT
+<Jan29-2024> <10:04:49>  Block Length=  89
+<Jan29-2024> <10:04:49>  >>>> PTBAS
+<Jan29-2024> <10:04:49>  >>>> CYCLE
+<Jan29-2024> <10:04:49>  Orbital Data from active fragment used
+<Jan29-2024> <10:04:49>              |Error|         MaxErr       Wt(A-DIIS)
+<Jan29-2024> <10:04:49>      1      0.00000000      0.00000000
+<Jan29-2024> <10:04:49>      2      0.00000000      0.00000000    100.0
+<Jan29-2024> <10:04:49>  SCF converged
+<Jan29-2024> <10:04:50>      3      0.00000000      0.00000000    100.0
+<Jan29-2024> <10:04:50>  WARNING: partially occupied orbitals
+<Jan29-2024> <10:04:50>   Solutions with partially occupied orbitals may not be
+<Jan29-2024> <10:04:50>   lowest in energy. You might consider lowering the
+<Jan29-2024> <10:04:50>   symmetry in the input and explicitly specifying integer
+<Jan29-2024> <10:04:50>   occupations. In that case always check that you obtain
+<Jan29-2024> <10:04:50>   an aufbau solution.
+<Jan29-2024> <10:04:50>  >>>> TOTEN
+<Jan29-2024> <10:04:50>  >>>> POPAN
+<Jan29-2024> <10:04:50>  >>>> DEBYE
+<Jan29-2024> <10:04:50>  >>>> AMETS
+<Jan29-2024> <10:04:50>   Bond Energy           0.00000000 a.u.
+<Jan29-2024> <10:04:50>   Bond Energy           0.00000000 eV
+<Jan29-2024> <10:04:50>   Bond Energy           0.00       kcal/mol
+<Jan29-2024> <10:04:50>  >>>> POPUL
+<Jan29-2024> <10:04:50>  NORMAL TERMINATION
