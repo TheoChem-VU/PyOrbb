@@ -120,11 +120,11 @@ def read_SFO_data(reader, path_SCF0=None):  # noqa: N802
     if ('SFOs', 'site_energy') in reader:
         if calc_info['unrestricted_sfos']:
             ret['site_energy'] = {
-                'A': reader.read('SFOs', f"{'site_energy'}"),
-                'B': reader.read('SFOs', f"{'site_energy'}_B")
+                'A': reader.read('SFOs', "site_energy"),
+                'B': reader.read('SFOs', "site_energy_B")
             }
         else:
-            ret['site_energy'] = {'AB': reader.read('SFOs', f"{'site_energy'}")}    
+            ret['site_energy'] = {'AB': reader.read('SFOs', "site_energy")}    
     
     # Look if There is a fock matrix printed the rkf file
     elif ('SFO_Fock') in reader._data or ('SFO_Fock_A') in reader._data:
@@ -153,7 +153,7 @@ def read_SFO_data(reader, path_SCF0=None):  # noqa: N802
                 SFO_Fock_matrix_B = ensure_list(reader.read('SFO_Fock_B', Fock_symlabel))
                 ret['site_energy'] = {
                     'A': ret['site_energy'].setdefault('A',[]) + [SFO_Fock_matrix_A[indices] for index_of_indices, indices in enumerate(diagonal_indices) if index_of_indices < ret['nsfo'][symlabel]],
-                    'B': ret['site_energy'].setdefault('B',[]) + [SFO_Fock_matrix_A[indices] for index_of_indices, indices in enumerate(diagonal_indices) if index_of_indices < ret['nsfo'][symlabel]]
+                    'B': ret['site_energy'].setdefault('B',[]) + [SFO_Fock_matrix_B[indices] for index_of_indices, indices in enumerate(diagonal_indices) if index_of_indices < ret['nsfo'][symlabel]]
                     }
             else:
                 SFO_Fock_matrix = ensure_list(reader.read('SFO_Fock', Fock_symlabel))
@@ -177,11 +177,11 @@ def read_SFO_data(reader, path_SCF0=None):  # noqa: N802
         if ('SFOs', 'site_energy') in reader_SCF0:
             if calc_info['unrestricted_sfos']:
                 ret['site_energy_SCF0'] = {
-                    'A': reader_SCF0.read('SFOs', f"{'site_energy'}"),
-                    'B': reader_SCF0.read('SFOs', f"{'site_energy'}_B")
+                    'A': reader_SCF0.read('SFOs', "site_energy"),
+                    'B': reader_SCF0.read('SFOs', "site_energy_B")
                 }
             else:
-                ret['site_energy_SCF0'] = {'AB': reader_SCF0.read('SFOs', f"{'site_energy'}")}
+                ret['site_energy_SCF0'] = {'AB': reader_SCF0.read('SFOs', "site_energy")}
 
         # Look if There is a fock matrix printed the rkf file
         elif ('SFO_Fock') in reader._data or ('SFO_Fock_A') in reader_SCF0._data:
@@ -210,7 +210,7 @@ def read_SFO_data(reader, path_SCF0=None):  # noqa: N802
                     SFO_Fock_matrix_B = ensure_list(reader_SCF0.read('SFO_Fock_B', Fock_symlabel))
                     ret['site_energy_SCF0'] = {
                         'A': ret['site_energy_SCF0'].setdefault('A',[]) + [SFO_Fock_matrix_A[indices] for index_of_indices, indices in enumerate(diagonal_indices) if index_of_indices < ret['nsfo'][symlabel]],
-                        'B': ret['site_energy_SCF0'].setdefault('B',[]) + [SFO_Fock_matrix_A[indices] for index_of_indices, indices in enumerate(diagonal_indices) if index_of_indices < ret['nsfo'][symlabel]]
+                        'B': ret['site_energy_SCF0'].setdefault('B',[]) + [SFO_Fock_matrix_B[indices] for index_of_indices, indices in enumerate(diagonal_indices) if index_of_indices < ret['nsfo'][symlabel]]
                         }
                 else:
                     SFO_Fock_matrix = ensure_list(reader_SCF0.read('SFO_Fock', Fock_symlabel))
