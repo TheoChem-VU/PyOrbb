@@ -165,7 +165,6 @@ class SFOs:
 
     def get_sfos(self):
         data = info.read_SFO_data(self.reader, path_SCF0=self.path_SCF0)
-        print(data.keys())
         sfo_data = []
         for idx in range(data['nsfo']['total']):
             for spin in self.spins:
@@ -185,7 +184,7 @@ class SFOs:
                             relname = 'HOMO'
                         else:
                             relname = f'HOMO-{abs(relindex)}'
-
+                
                 sfo_data.append({
                     'index':                idx + 1,
                     'relindex':             None if data['relindices'] is None else relindex,
@@ -225,7 +224,6 @@ class SFOs:
                 
                 # loop through all sfo's to locate the SOMO, this will be the index where the sum of occupations for a and b spin sfos is 1
                 for idx in range(1, len(fragsfos)//2 + 1):
-                    # print(fragsfos)
                     sfo_of_idx = [sfo for sfo in fragsfos if sfo.fragment_orb_index == idx]
                     if 0 < sfo_of_idx[0].occupation + sfo_of_idx[1].occupation < 2:
                         somo_idx = idx
