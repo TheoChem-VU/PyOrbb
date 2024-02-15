@@ -8,6 +8,23 @@ from tcutility import ensure_list
 
 class Orbitals:
     def __init__(self, path, path_SCF0=None, moleculename=None):
+        r'''
+        Two kind of readers are constucted.
+        1. On reading a fully converged calculation with a full SCF the path is given. From this reader all information 
+            about the fragment analysis are taken. This includes the SFO energies of the fully isolated fragments and, if 
+            available,  includes he site energies or Fock matrix, it can return the site energies (diagonal of the Fock matrix).
+
+            The energies taken from this file are the SFO energies of the fully isolated fragments and the site_energies 
+            (diagonal of the Fock matrix) of the fully relaxed complex.
+
+        2. The path_SCF0 is the path to the framgnet analysis where SCF is set to zero (SCF=0). this is necessary for 
+            reading the site energies (diagonal of the fock matrix) to get the corrected energies of the SFOs. no other 
+            information is read form this file. 
+
+            The energies taken from this file are the the site_energies (diagonal of the Fock matrix)  of the two fragments
+            in the field of the second framgent. This is a correction often considered better than the fully the SFO energies
+            for the full isolated fragments 
+        '''
         if isinstance(path, (plams.KFReader, plams.KFFile)):
             self.reader = path
         else:
