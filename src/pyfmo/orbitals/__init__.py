@@ -10,20 +10,21 @@ class Orbitals:
     def __init__(self, path, path_SCF0=None, moleculename=None):
         r'''
         Two kind of readers are constucted.
-        1. On reading a fully converged calculation with a full SCF the path is given. From this reader all information 
-            about the fragment analysis are taken. This includes the SFO energies of the fully isolated fragments and, if 
-            available,  includes he site energies or Fock matrix, it can return the site energies (diagonal of the Fock matrix).
+        1. path provides the path to a fully converged Fragment analyses calculation with a full SCF. From this, all 
+            information regarding the fragment analysis is extracted. This includes the SFO energies of the fully isolated 
+            fragments and, if available, the site energies or Fock matrix. From this can return the site energies (diagonal 
+            of the Fock matrix).
 
-            The energies taken from this file are the SFO energies of the fully isolated fragments and the site_energies 
+            The energies taken from this file are the SFO energies of the fully isolated fragments and the site energies 
             (diagonal of the Fock matrix) of the fully relaxed complex.
 
-        2. The path_SCF0 is the path to the framgnet analysis where SCF is set to zero (SCF=0). this is necessary for 
-            reading the site energies (diagonal of the fock matrix) to get the corrected energies of the SFOs. no other 
-            information is read form this file. 
+        2. The path_SCF0 is the pathway to the fragment analysis where SCF is set to zero (SCF=0). This is necessary for 
+            reading the site energies (diagonal of the Fock matrix) to obtain the corrected energies of the SFOs. No other 
+            information is read from this file.
 
-            The energies taken from this file are the the site_energies (diagonal of the Fock matrix)  of the two fragments
-            in the field of the second framgent. This is a correction often considered better than the fully the SFO energies
-            for the full isolated fragments 
+            The energies extracted from this file are the site energies (diagonal of the Fock matrix) of the two fragments 
+            in the field of the second respective fragment. This correction is often considered superior to the SFO energies 
+            for the fully isolated fragments.
         '''
         if isinstance(path, (plams.KFReader, plams.KFFile)):
             self.reader = path
