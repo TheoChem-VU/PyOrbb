@@ -3,4 +3,5 @@ TCutility
 numpy
 git+https://github.com/SCM-NV/PLAMS
 matplotlib
+matplotlib-label-lines
 
