@@ -1,10 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-import closed_interaction
-
-# pip install matplotlib-label-lines
 from labellines import labelLine, labelLines
-
 import pyfmo
 
 def degenarate_xvalues(Energies):
@@ -158,8 +154,6 @@ def diagram(MOs, orbitals, SFOsF1, SFOsF2, color='b'):
 
 
     # Plotting the scatters in the same plot
-    # fig = plt.figure(figsize=(12,12))
-    # ax1 = fig.add_subplot()
     ax1 = plt.gca()
 
     # MO
@@ -237,23 +231,7 @@ def diagram(MOs, orbitals, SFOsF1, SFOsF2, color='b'):
     ax1.spines['top'].set_visible(False)
     plt.xticks([-1, 0, 1], ['SFO1', "MO", 'SFO2'])
     plt.ylabel(r'$\epsilon$ / eV')
-    
-    # Plot
     plt.xlim(-1.7, 1.7)
-    # plt.show()
 
 
-
-if __name__ == '__main__':
-    fig = plt.figure(figsize=(12,12))
-    orbitals = pyfmo.orbitals.Orbitals('/Users/Tori/PyFMO/test/fixtures/NH3BH3/adf.rkf')
-    MOs = orbitals.mos['HOMO-3':'LUMO+3']
-    SFOsF1 = orbitals.sfos['Donor(HOMO-2)':'Donor(LUMO+2)']
-    SFOsF2 = orbitals.sfos['Acceptor(HOMO-2)':'Acceptor(LUMO+2)']
-    mixing2 = max(closed_interaction.get_2mixings(orbitals, orbitals.mos['HOMO-2']))
-    print(mixing2)
-    fragments = list(orbitals.fragments)
-    diagram(MOs, orbitals, SFOsF1, SFOsF2)
-    diagram(mixing2.mos, orbitals, [sfo for sfo in mixing2.sfos if sfo.fragment == fragments[0]], [sfo for sfo in mixing2.sfos if sfo.fragment == fragments[1]], color='r')
-    plt.show()
 
