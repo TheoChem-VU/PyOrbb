@@ -106,29 +106,12 @@ class MOs:
                 for idx in range(data['nmo'][symlabel][spin]):
                     energy = data['energy'][symlabel][spin][idx]
                     mo_index = data['energy_idx'][symlabel][spin][idx]
-                    relindex = mo_index + 1 - data['noccs'][symlabel][spin]
-                    if relindex > 0:
-                        if relindex == 1:
-                            relname = 'LUMO'
-                        else:
-                            relname = f'LUMO+{relindex-1}'
-                    else:
-                        if relindex == 0:
-                            relname = 'HOMO'
-                        else:
-                            relname = f'HOMO-{abs(relindex)}'
 
                     mo_data.append({
                         'index':                mo_index + 1,
-                        'relindex':             relindex,
                         'index_in_symlabel':    idx,
-                        'name':                 f'{mo_index + 1}{symlabel}',
+                        'name':                 f'{idx + 1}{symlabel}',
                         'moleculename':         self.moleculename,
-                        'relname':              relname,
-                        # 'fragment_index':       data['fragidx'][idx],
-                        # 'fragment':             data['fragtypes'][idx],
-                        # 'fragment_orb_index':   data['fragorb'][idx],
-                        # 'symmetry_type_index':  isfo,
                         'symmetry':             symlabel,
                         'energy':               energy * 27.21139664,
                         'spin':                 spin,
@@ -140,7 +123,34 @@ class MOs:
                         'atomic_fragments':     self.uses_atomic_fragments,
                     })
         self.mos = [MO(**mo_datum) for mo_datum in mo_data]
+        
+        #sort the MOs based on their energy 
+        self.mos = sorted(self.mos, key=lambda mo: mo.energy) 
+        
+        # determine if there are degenerate MOs (mo.degenerate) and, if so, how many (mo.n_degenerate)
+        energies = [round(mo.energy, 6) for mo in self.mos]
 
+        for mo in self.mos:
+            degeneracy = energies.count(round(mo.energy, 6))
+            mo.n_degenerate = degeneracy
+            mo.degenerate = degeneracy > 1
+
+
+        #Assign correct HOMO-LUMO nomenclature, Regardless of the sequence of the occupied and unoccupied orbitals 
+        HOMO_list = [mo for mo in self.mos if mo.occupation > 0] 
+        LUMO_list = [mo for mo in self.mos if mo.occupation == 0]
+        
+        for index_LUMO, mo_LUMO in enumerate(LUMO_list):
+             mo_LUMO.relindex = index_LUMO + 1
+             mo_LUMO.relname = f'LUMO+{index_LUMO}' if index_LUMO > 0 else 'LUMO'
+        
+        max_HOMO_index = len(HOMO_list) - 1
+        for index_HOMO, mo_HOMO in enumerate(HOMO_list):
+            mo_HOMO.relindex = index_HOMO + 1 - len(HOMO_list)
+            mo_HOMO.relname = f'HOMO-{max_HOMO_index - index_HOMO}' if max_HOMO_index - index_HOMO > 0 else 'HOMO'
+
+
+        # Assign name to singly occupied orbitals in the HOMO LUMO nomenclature
         somo_idx = None
         if self.is_unrestricted:
             for idx in range(1, len(self.mos)//2 + 1):
