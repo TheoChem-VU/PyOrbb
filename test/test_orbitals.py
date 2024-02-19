@@ -85,6 +85,33 @@ def test_FMO_n_degeneracy2():
 	assert orbs.sfos['1(2P:x)'].n_degenerate == 3
 
 
+
+def test_SCF_site_energy_1():
+	rkf = j(os.path.split(__file__)[0], 'fixtures','SAOP_DZP', 'complex', 'adf.rkf')
+	path_SCF0 = j(os.path.split(__file__)[0], 'fixtures','SAOP_DZP', 'complex_SCF0', 'adf.rkf')
+	orbs = pyfmo.orbitals.Orbitals(rkf, path_SCF0=path_SCF0)
+	assert round(orbs.sfos['Na(12A)'].site_energy_SCF0, 4) == 5.1043
+
+def test_SCF_site_energy_2():
+	rkf = j(os.path.split(__file__)[0], 'fixtures','SAOP_DZP', 'complex', 'adf.rkf')
+	path_SCF0 = j(os.path.split(__file__)[0], 'fixtures','SAOP_DZP', 'complex_SCF0', 'adf.rkf')
+	orbs = pyfmo.orbitals.Orbitals(rkf, path_SCF0=path_SCF0)
+	assert round(orbs.sfos['Cl(9A)'].site_energy, 4) == -9.4931
+
+def test_SCF_site_energy_3():
+	rkf = j(os.path.split(__file__)[0], 'fixtures','SAOP_DZP', 'complex', 'adf.rkf')
+	path_SCF0 = j(os.path.split(__file__)[0], 'fixtures','SAOP_DZP', 'complex_SCF0', 'adf.rkf')
+	orbs = pyfmo.orbitals.Orbitals(rkf, path_SCF0=path_SCF0)
+	assert orbs.sfos['Na(1A)'].energy != orbs.sfos['Na(1A)'].site_energy and orbs.sfos['Na(1A)'].site_energy != orbs.sfos['Na(1A)'].site_energy_SCF0
+	# assert orbs.sfos['Na(1A)'].energy != orbs.sfos['Na(1A)'].site_energy_SCF0 and orbs.sfos['Na(1A)'].energy != orbs.sfos['Na(1A)'].energy_approximation
+
+def test_Fock_matrix_diagonal():
+	rkf = j(os.path.split(__file__)[0], 'fixtures','FMAT_SFO', 'nh4.adf.rkf')
+	path_SCF0 = j(os.path.split(__file__)[0], 'fixtures','FMAT_SFO', 'nh4.adf.rkf')
+	orbs = pyfmo.orbitals.Orbitals(rkf, path_SCF0=path_SCF0)
+	assert orbs.sfos['nh3(3A1)'].energy != orbs.sfos['nh3(3A1)'].site_energy_SCF0
+	assert orbs.sfos['nh3(3A1)'].site_energy == orbs.sfos['nh3(3A1)'].site_energy_SCF0
+
 if __name__ == '__main__':
 	import pytest
 	print(j(os.path.split(__file__)[0], 'fixtures','RadicalAddition','adf.rkf'))

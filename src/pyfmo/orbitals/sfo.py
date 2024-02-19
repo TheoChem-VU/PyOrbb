@@ -10,10 +10,11 @@ j = os.path.join
 
 
 class SFOs:
-    def __init__(self, kfpath=None, reader=None, **kwargs):
+    def __init__(self, kfpath=None, reader=None, path_SCF0=None, **kwargs):
         assert reader or kfpath, 'Please provide a KFReader or path to a kf-file'
         self.reader = reader or plams.KFReader(kfpath)
         self.kfpath = kfpath
+        self.path_SCF0 = path_SCF0
         if not self.kfpath:
             self.kfpath = os.path.abspath(self.reader.path)
         else:
@@ -163,7 +164,7 @@ class SFOs:
         self.symlabels = calc_info['symlabels']
 
     def get_sfos(self):
-        data = info.read_SFO_data(self.reader)
+        data = info.read_SFO_data(self.reader, path_SCF0=self.path_SCF0)
         sfo_data = []
         for idx in range(data['nsfo']['total']):
             for spin in self.spins:
@@ -180,7 +181,7 @@ class SFOs:
                     'fragment_unique_name': data['fraguniquenames'][idx],
                     'fragment_orb_index':   None if data['fragorb'] is None else data['fragorb'][idx],
                     'symmetry_type_index':  isfo,
-                    'symmetry':             symlabel,
+                    'symmetry':             symlabel, 
                     'energy':               None if data['energy'][spin] is None else data['energy'][spin][idx] * 27.21139664,
                     'spin':                 spin,
                     'reader':               self.reader,
@@ -189,6 +190,11 @@ class SFOs:
                     'occupation':           None if data['occupations'] is None else data['occupations'][spin][idx],
                     'atomic_fragments':     self.uses_atomic_fragments,
                 })
+                if 'site_energy' in data:
+                    sfo_data[-1]['site_energy'] = None if data['site_energy'][spin] is None else data['site_energy'][spin][idx] * 27.21139664
+                if 'site_energy_SCF0' in data:
+                   sfo_data[-1]['site_energy_SCF0'] = None if data['site_energy_SCF0'][spin] is None else data['site_energy_SCF0'][spin][idx] * 27.21139664
+                
 
         self.sfos = [SFO(**sfo_datum) for sfo_datum in sfo_data]
 
@@ -238,7 +244,6 @@ class SFOs:
                 
                 # loop through all sfo's to locate the SOMO, this will be the index where the sum of occupations for a and b spin sfos is 1
                 for idx in range(1, len(fragsfos)//2 + 1):
-                    # print(fragsfos)
                     sfo_of_idx = [sfo for sfo in fragsfos if sfo.fragment_orb_index == idx]
                     if 0 < sfo_of_idx[0].occupation + sfo_of_idx[1].occupation < 2:
                         somo_idx = idx
