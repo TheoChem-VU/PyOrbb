@@ -1,9 +1,10 @@
 from pyfmo.orbitals import sfo, mo, adf, dftb  # noqa
 from scm import plams
 import numpy as np
-# import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 # from yutility import plot, ensure_list
-from tcutility import ensure_list
+from tcutility import ensure_list, pathfunc
+from typing import Union
 
 
 class Orbitals:
@@ -86,6 +87,45 @@ class Orbitals:
     @property
     def spins(self):
         return self.sfos.spins
+
+    def get_alike_orbital(self, other_orb: Union[sfo.SFO, mo.MO], kernel='abscosine', plot=False) -> Union[sfo.SFO, mo.MO]:
+        '''
+        Find an orbital in this collection of orbitals that looks like the given orbital.
+        The selection criterium is based on the coefficients that are applied to the SFO or are used for the MO.
+        '''
+        if isinstance(other_orb, sfo.SFO):
+            print(other_orb.coeffs)
+
+        elif isinstance(other_orb, mo.MO):
+            # if kernel == 'dot':
+            #     # k_dot = |A @ B|
+            #     kernel = lambda mo: abs(mo.coeffs @ other_orb.coeffs)
+            # elif kernel == 'rmsd':
+            #     # k_rmsd = 1 - sum((A - B)^2)/N
+            #     kernel = lambda mo: 1 - sum((mo.coeffs - other_orb.coeffs)**2)/len(other_orb.coeffs)
+            # elif kernel == 'cosine':
+            #     # k_cosine = |A @ B| / (||A|| ||B||)
+            #     kernel = lambda mo: abs(mo.coeffs @ other_orb.coeffs / ((mo.coeffs @ mo.coeffs) * (other_orb.coeffs @ other_orb.coeffs)))
+            # elif kernel == 'abscosine':
+            #     # k_cosine = |A| @ |B| / (||A|| ||B||)
+            #     kernel = lambda mo: abs(mo.coeffs) @ abs(other_orb.coeffs) / ((mo.coeffs @ mo.coeffs) * (other_orb.coeffs @ other_orb.coeffs))
+
+            abscosine = lambda A, B, C, D: abs(A) @ abs(B) / np.sqrt((C @ C) * (D @ D))
+            cosine = lambda A, B, C, D: abs(A @ B / np.sqrt((C @ C) * (D @ D)))
+
+            def kernel(mo):
+                ret = 0
+                for fragment in self.fragments:
+                    idx = [i for i, sfo in enumerate(self.sfos) if sfo.fragment == fragment]
+                    ret += abscosine(mo.coeffs[idx], other_orb.coeffs[idx], mo.coeffs, other_orb.coeffs)
+                return ret
+
+            most_similar = max(self.mos, key=kernel)
+            if plot:
+                plt.plot([kernel(mo) for mo in self.mos])
+                plt.show()
+
+            return most_similar
 
 
 def sort_orb_pairs(orbs1, orbs2, prop=None):
@@ -197,28 +237,96 @@ def sort_orb_pairs(orbs1, orbs2, prop=None):
 
 
 if __name__ == '__main__':
-    p = '../test/orbitals/rkf/BH3NH3.rkf'
-    orbs = Orbitals(p)
-    print(orbs.fragments)
+    import os 
 
-    sfos1 = orbs.sfos[:'Donor(LUMO+4)']
-    sfos2 = orbs.sfos[:'Acceptor(LUMO+4)']
+    # p = '../test/orbitals/rkf/BH3NH3.rkf'
+    # orbs = Orbitals(p)
+    # print(orbs.fragments)
 
-    # plot_property(sfos1, sfos2, sfo.orbint, use_relname=True).show()
-    best_pair = sort_orb_pairs(sfos1, sfos2, sfo.orbint)[-1]
-    best_pair[1].generate_orbital().show()
+    # sfos1 = orbs.sfos[:'Donor(LUMO+4)']
+    # sfos2 = orbs.sfos[:'Acceptor(LUMO+4)']
 
+    # # plot_property(sfos1, sfos2, sfo.orbint, use_relname=True).show()
+    # best_pair = sort_orb_pairs(sfos1, sfos2, sfo.orbint)[-1]
+    # best_pair[1].generate_orbital().show()
 
-    p = '../test/orbitals/rkf/substrate_cat_complex.rkf'
-    orbs = Orbitals(p)
-    print(orbs.fragments)
+    # p = '../test/orbitals/rkf/substrate_cat_complex.rkf'
+    # orbs = Orbitals(p)
+    # print(orbs.fragments)
 
-    sfos = orbs.sfos['C:1(1P)']
-    for sfo_ in sfos:
-        sfo_.generate_orbital().show()
-    mos = orbs.mos['HOMO-10':'LUMO+10']
+    # sfos = orbs.sfos['C:1(1P)']
+    # for sfo_ in sfos:
+    #     sfo_.generate_orbital().show()
+    # mos = orbs.mos['HOMO-10':'LUMO+10']
 
-    # plot_property(sfos1, sfos2, sfo.orbint, use_relname=True).show()
-    pairs = sort_orb_pairs(sfos1, sfos2, sfo.orbint)
-    print(pairs[-1])
+    # # plot_property(sfos1, sfos2, sfo.orbint, use_relname=True).show()
+    # pairs = sort_orb_pairs(sfos1, sfos2, sfo.orbint)
+    # print(pairs[-1])
 
+    dirs = pathfunc.get_subdirectories('../../../test/fixtures/pyfrag')
+    files = [os.path.join(d, 'adf.rkf') for d in sorted(dirs, key=lambda d: int(d.split('.')[-1]))]
+    orbs = [Orbitals(f) for f in files]
+    plt.plot([orb.mos['LUMO'].energy for orb in orbs], label='LUMO')
+    plt.plot([orb.mos['HOMO'].energy for orb in orbs], label='HOMO')
+    plt.plot([orb.mos['HOMO-1'].energy for orb in orbs], label='HOMO-1')
+    plt.xlabel('IRC Step')
+    plt.ylabel(r'$\epsilon$ (eV)')
+    plt.legend()
+
+    def MO_track(start_mo, orbs):
+        mos = [start_mo]
+        for orb in orbs[1:]:
+            best = orb.get_alike_orbital(mos[-1])
+            print(mos[-1], best)
+            mos.append(best)
+        return mos
+
+    # orb1 = orbs[0]
+    # homo = orb1.mos['HOMO-1']
+    # # homo_1 = orb1.mos['HOMO-1']
+    # energies_homo = [homo.energy]
+    # # energies_homo_1 = [homo_1.energy]
+    # for orb2 in orbs[1:]:
+    #     print(homo.index)
+    #     homo2 = orb2.get_alike_orbital(homo)
+    #     # if homo.index != homo2.index:
+    #         # orb2.get_alike_orbital(homo, plot=True, kernel='rmsd')
+
+    #     # homo_12 = orb2.get_alike_orbital(homo_1)
+    #     energies_homo.append(homo2.energy)
+    #     # energies_homo_1.append(homo_12.energy)
+    #     homo = homo2
+    #     # homo_1 = homo_12\
+
+    # MO_track(orbs[0].mos['HOMO'], orbs)
+    # orb_prev = orbs[1].mos['HOMO-1']
+    # for i, orb in enumerate(orbs[2:]):
+    #     plt.title(f"{i+1}: {orb_prev} -> {orb.get_alike_orbital(orb_prev)}")
+    #     # plt.plot(orb.mos['HOMO'].coeffs)
+    #     # plt.plot(orb_prev.mos['HOMO'].coeffs)
+    #     # plt.plot(orb.get_alike_orbital)
+    #     # plt.show()
+
+    #     orb_prev = orb.get_alike_orbital(orb_prev, plot=True)
+
+    plt.figure()
+    plt.plot([mo.energy for mo in MO_track(orbs[1].mos['LUMO'], orbs[1:-1])], label='LUMO')
+    plt.plot([mo.energy for mo in MO_track(orbs[1].mos['HOMO'], orbs[1:-1])], label='HOMO')
+    plt.plot([mo.energy for mo in MO_track(orbs[1].mos['HOMO-1'], orbs[1:-1])], label='HOMO-1')
+    plt.xlabel('IRC Step')
+    plt.ylabel(r'$\epsilon$ (eV)')
+    plt.legend()
+    plt.show()
+
+    # p1 = '../../../test/fixtures/pyfrag/complex.00024/adf.rkf'
+    # p2 = '../../../test/fixtures/pyfrag/complex.00025/adf.rkf'
+
+    # orbs1 = Orbitals(p1)
+    # orbs2 = Orbitals(p2)
+
+    # homo1 = orbs1.mos['HOMO']
+    # homo2 = orbs2.mos['HOMO']
+
+    # print(orbs2.get_alike_orbital(homo1))
+    # # print(homo1)
+    # print(homo2)
