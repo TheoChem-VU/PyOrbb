@@ -251,6 +251,14 @@ class MO:
 
         return grid.from_cub_file(job.output_cub_paths[0])
 
+    def draw(self, **kwargs):
+        import tcviewer
+
+        cub = self.cube_file(gridsize=kwargs.get('gridsize', 'medium'))
+
+        with tcviewer.Screen() as scr:
+            scr.draw_cub(cub, kwargs.get('isovalue', 0.03), material=tcviewer.materials.orbital_shiny)
+
 
 if __name__ == '__main__':
     # p = '../test/orbitals/rkf/methyl.rkf'
