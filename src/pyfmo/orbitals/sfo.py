@@ -361,6 +361,15 @@ class SFO:
     def singly_occupied(self):
         return self.occupation == 1
 
+    def cube_file(self, gridsize='medium'):
+        from tcutility.job.adf import DensfJob
+        from tcintegral import grid
+
+        with DensfJob(wait_for_finish=True) as job:
+            job.orbital(self)
+            job.gridsize(gridsize)
+
+        return grid.from_cub_file(job.output_cub_paths[0])
 
 def occ_virt_mask(sfos1: List[SFO] or SFO, sfos2: List[SFO] or SFO) -> float or np.ndarray:
     '''

@@ -241,8 +241,15 @@ class MO:
     def occupied(self):
         return self.occupation > 0
 
-    # def generate_orbital(self):
-    #     return run.orbital_cub(self.kfpath, self.index, orbtype='SCF', symlabel=self.symmetry)
+    def cube_file(self, gridsize='medium'):
+        from tcutility.job.adf import DensfJob
+        from tcintegral import grid
+
+        with DensfJob(wait_for_finish=True) as job:
+            job.orbital(self)
+            job.gridsize(gridsize)
+
+        return grid.from_cub_file(job.output_cub_paths[0])
 
 
 if __name__ == '__main__':
