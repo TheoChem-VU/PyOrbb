@@ -227,11 +227,11 @@ def read_SFO_data(reader, path_SCF0=None):  # noqa: N802
     if ('SFOs', 'occupation') in reader:
         if calc_info['unrestricted_sfos']:
             ret['occupations'] = {
-                'A': np.array(reader.read('SFOs', 'occupation')),
-                'B': np.array(reader.read('SFOs', 'occupation_B'))
+                'A': np.array(ensure_list(reader.read('SFOs', 'occupation'))),
+                'B': np.array(ensure_list(reader.read('SFOs', 'occupation_B')))
             }
         else:
-            ret['occupations'] = {'AB': np.array(reader.read('SFOs', 'occupation'))}
+            ret['occupations'] = {'AB': np.array(ensure_list(reader.read('SFOs', 'occupation')))}
     else:
         ret['occupations'] = None
 
