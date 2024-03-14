@@ -80,7 +80,7 @@ def read_SFO_data(reader, path_SCF0=None):  # noqa: N802
     ret['subspecies'] = reader.read('SFOs', 'subspecies').strip().split()
 
     # ifo, order of sfo
-    ret['ifo'] = reader.read('SFOs', 'ifo')
+    ret['ifo'] = ensure_list(reader.read('SFOs', 'ifo'))
 
     # if the calculation did not use regions we have to
     # fix the ordering of the atoms (i.e. fragment indices)
