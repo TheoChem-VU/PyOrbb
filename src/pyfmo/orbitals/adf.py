@@ -35,7 +35,7 @@ def read_SFO_data(reader, path_SCF0=None):  # noqa: N802
     ret['nsfo'] = {}
     total = 0
     for i, symlabel in enumerate(ret['symlabels']):
-        norb = int(np.sqrt(len(reader.read(symlabel, 'Eig-CoreSFO_A'))))
+        norb = int(np.sqrt(len(ensure_list(reader.read(symlabel, 'Eig-CoreSFO_A')))))
         total += norb
         ret['nsfo'][symlabel] = norb
         ret['symlabel_by_sfo'].extend(norb * [symlabel])
@@ -112,8 +112,6 @@ def read_SFO_data(reader, path_SCF0=None):  # noqa: N802
                 'AB': None
             }
 
-
-
     # SFO energies from the diagonal of the fock matrix if the FMAT SFO command is used
     # and get index if energies are sorted
     # site_energy = 'escale' if calc_info['relativistic'] else 'energy'
@@ -131,7 +129,7 @@ def read_SFO_data(reader, path_SCF0=None):  # noqa: N802
     elif ('SFO_Fock') in reader._data or ('SFO_Fock_A') in reader._data:
         ret['site_energy'] = {}
         
-        #devide based on symetry labels and then determine the indexnumber you want to read
+        # devide based on symetry labels and then determine the indexnumber you want to read
         for symlabel in ret['symlabels']:
             nsfo = ret['nsfo'][symlabel]
             step = 2
@@ -169,7 +167,6 @@ def read_SFO_data(reader, path_SCF0=None):  # noqa: N802
                 'AB': None
             }
 
-
     # SFO energies from the diagonal of the fock matrix
     # and get index if energies are sorted
     # site_energy = 'escale' if calc_info['relativistic'] else 'energy'
@@ -188,14 +185,14 @@ def read_SFO_data(reader, path_SCF0=None):  # noqa: N802
         elif ('SFO_Fock') in reader._data or ('SFO_Fock_A') in reader_SCF0._data:
             ret['site_energy_SCF0'] = {}
 
-            #devide based on symetry labels and then determine the indexnumber you want to read
+            # devide based on symetry labels and then determine the indexnumber you want to read
             for symlabel in ret['symlabels']:
                 nsfo = ret['nsfo'][symlabel]
                 step = 2
                 index = 0
                 diagonal_indices = []
 
-                #This is to correct for symlable being split up into :1, :2 and :3, thus 1E:1 becomes 1E
+                # This is to correct for symlable being split up into :1, :2 and :3, thus 1E:1 becomes 1E
                 if ':' in symlabel and symlabel.split(':')[1].isdigit():
                     Fock_symlabel = symlabel.split(':')[0]
                 else: 
@@ -225,7 +222,6 @@ def read_SFO_data(reader, path_SCF0=None):  # noqa: N802
                     'B': None,
                     'AB': None
                 }
-
 
     # SFO occupations
     if ('SFOs', 'occupation') in reader:
