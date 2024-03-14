@@ -95,15 +95,15 @@ def read_SFO_data(reader, path_SCF0=None):  # noqa: N802
     if ('SFOs', energyprefix) in reader:
         if calc_info['unrestricted_sfos']:
             ret['energy'] = {
-                'A': reader.read('SFOs', f'{energyprefix}'),
-                'B': reader.read('SFOs', f'{energyprefix}_B')
+                'A': ensure_list(reader.read('SFOs', f'{energyprefix}')),
+                'B': ensure_list(reader.read('SFOs', f'{energyprefix}_B'))
             }
             ret['energyidx'] = {
                 'A': np.argsort(ret['energy']['A']),
                 'B': np.argsort(ret['energy']['B']),
             }
         else:
-            ret['energy'] = {'AB': reader.read('SFOs', f'{energyprefix}')}
+            ret['energy'] = {'AB': ensure_list(reader.read('SFOs', f'{energyprefix}'))}
             ret['energyidx'] = {'AB': np.argsort(ret['energy']['AB'])}
     else:
         ret['energy'] = {
