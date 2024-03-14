@@ -46,7 +46,7 @@ def read_SFO_data(reader, path_SCF0=None):  # noqa: N802
     if ('SFOs', 'isfo') not in reader:
         ret['isfo'] = range(1, total+1)
     else:
-        ret['isfo'] = reader.read('SFOs', 'isfo')
+        ret['isfo'] = ensure_list(reader.read('SFOs', 'isfo'))
 
     # fragment, index of fragment sfo belongs to
     ret['fragidx'] = ensure_list(reader.read('SFOs', 'fragment'))
