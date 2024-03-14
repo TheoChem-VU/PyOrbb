@@ -304,7 +304,7 @@ def read_MO_data(reader):  # noqa: N802
                 'B': int(np.sqrt(len(ensure_list(reader.read(symlabel, 'Eig-CoreSFO_B')))))
             }
         else:
-            ret['nmo'][symlabel] = {'AB': int(np.sqrt(len(reader.read(symlabel, 'Eig-CoreSFO_A'))))}
+            ret['nmo'][symlabel] = {'AB': int(np.sqrt(len(ensure_list(reader.read(symlabel, 'Eig-CoreSFO_A')))))}
 
     # MO energies
     ret['energy'] = {}
