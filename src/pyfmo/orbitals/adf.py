@@ -72,7 +72,7 @@ def read_SFO_data(reader, path_SCF0=None):  # noqa: N802
             
     # fragorb, index of sfo in fragment
     if ('SFOs', 'fragorb') in reader:
-        ret['fragorb'] = reader.read('SFOs', 'fragorb')
+        ret['fragorb'] = ensure_list(reader.read('SFOs', 'fragorb'))
     else:
         ret['fragorb'] = None
 
