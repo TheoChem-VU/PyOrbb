@@ -58,7 +58,7 @@ def read_SFO_data(reader, path_SCF0=None):  # noqa: N802
         frag_order = frag_order[len(frag_order)//2:]
         ret['fragtypes'] = [fragtypes[frag_order[i-1]-1] for i in ret['fragidx']]
     else:
-        ret['fragtypes'] = reader.read('SFOs', 'fragtype').strip().split()
+        ret['fragtypes'] = ensure_list(reader.read('SFOs', 'fragtype').strip().split())
 
     # get fragment + index unique pairs to construct unique fragment names
     ret['fraguniquenames'] = []
