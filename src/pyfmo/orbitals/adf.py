@@ -303,7 +303,6 @@ def read_MO_data(reader):  # noqa: N802
     ret['symlabels'] = reader.read('Symmetry', 'symlab').strip().split()
     for symlabel in ret['symlabels']:
         if calc_info['unrestricted_mos']:
-            print(np.sqrt(len(reader.read(symlabel, 'Eig-CoreSFO_B'))))
             ret['nmo'][symlabel] = {
                 'A': int(np.sqrt(len(ensure_list(reader.read(symlabel, 'Eig-CoreSFO_A'))))),
                 'B': int(np.sqrt(len(ensure_list(reader.read(symlabel, 'Eig-CoreSFO_B')))))
