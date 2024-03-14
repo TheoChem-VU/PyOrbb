@@ -3,6 +3,7 @@ from pyfmo.orbitals import info
 import numpy as np
 from tcutility import ensure_list 
 
+
 def read_SFO_data(reader, path_SCF0=None):  # noqa: N802
     def square_overlaps(S, nmo):
         Srows = []
@@ -226,7 +227,6 @@ def read_SFO_data(reader, path_SCF0=None):  # noqa: N802
                 }
 
 
-
     # SFO occupations
     if ('SFOs', 'occupation') in reader:
         if calc_info['unrestricted_sfos']:
@@ -305,8 +305,8 @@ def read_MO_data(reader):  # noqa: N802
         if calc_info['unrestricted_mos']:
             print(np.sqrt(len(reader.read(symlabel, 'Eig-CoreSFO_B'))))
             ret['nmo'][symlabel] = {
-                'A': int(np.sqrt(len(reader.read(symlabel, 'Eig-CoreSFO_A')))),
-                'B': int(np.sqrt(len(reader.read(symlabel, 'Eig-CoreSFO_B'))))
+                'A': int(np.sqrt(len(ensure_list(reader.read(symlabel, 'Eig-CoreSFO_A'))))),
+                'B': int(np.sqrt(len(ensure_list(reader.read(symlabel, 'Eig-CoreSFO_B')))))
             }
         else:
             ret['nmo'][symlabel] = {'AB': int(np.sqrt(len(reader.read(symlabel, 'Eig-CoreSFO_A'))))}
