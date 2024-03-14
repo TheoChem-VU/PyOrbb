@@ -119,11 +119,11 @@ def read_SFO_data(reader, path_SCF0=None):  # noqa: N802
     if ('SFOs', 'site_energy') in reader:
         if calc_info['unrestricted_sfos']:
             ret['site_energy'] = {
-                'A': reader.read('SFOs', "site_energy"),
-                'B': reader.read('SFOs', "site_energy_B")
+                'A': ensure_list(reader.read('SFOs', "site_energy")),
+                'B': ensure_list(reader.read('SFOs', "site_energy_B"))
             }
         else:
-            ret['site_energy'] = {'AB': reader.read('SFOs', "site_energy")}    
+            ret['site_energy'] = {'AB': ensure_list(reader.read('SFOs', "site_energy"))}    
     
     # Look if There is a fock matrix printed the rkf file
     elif ('SFO_Fock') in reader._data or ('SFO_Fock_A') in reader._data:
