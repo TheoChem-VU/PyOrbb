@@ -361,7 +361,7 @@ class SFO:
     def singly_occupied(self):
         return self.occupation == 1
 
-    def cube_file(self, gridsize: str = 'medium') -> grid.Grid:
+    def cube_file(self, gridsize: str = 'medium'):
         '''
         Generate a cube-file for this SFO with a certain grid-size.
 

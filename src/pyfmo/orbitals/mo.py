@@ -241,7 +241,7 @@ class MO:
     def occupied(self):
         return self.occupation > 0
 
-    def cube_file(self, gridsize: str = 'medium') -> grid.Grid:
+    def cube_file(self, gridsize: str = 'medium'):
         '''
         Generate a cube-file for this MO with a certain grid-size.
 
