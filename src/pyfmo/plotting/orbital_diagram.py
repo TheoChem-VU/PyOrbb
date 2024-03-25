@@ -79,7 +79,7 @@ def energies_contribution(mos, sfos):
 
     return energies
 
-def xvalues_contributions(energycontribution_y_F1, contribution_xy, contribution_xy_F1):
+def xvalues_contributions(energycontribution_y_f1, contribution_xy, contribution_xy_f1):
 
     result_list = []
 
