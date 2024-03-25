@@ -46,7 +46,7 @@ def single_occupation(orbitals):
     occupations = []
     for orbital in orbitals:
         if orbital.occupation == 1:
-            if orb.spin == 'A':
+            if orbital.spin == 'A':
                 occupation = int(orbital.energy * 10) / 10
                 occupations.append(occupation)
 
@@ -83,11 +83,11 @@ def xvalues_contributions(energycontribution_y_f1, contribution_xy, contribution
 
     result_list = []
 
-    for pair in energycontribution_y_F1:
+    for pair in energycontribution_y_f1:
         found = False
         for x1 in contribution_xy:
             if pair[0] == x1[0]:
-                for x2 in contribution_xy_F1:
+                for x2 in contribution_xy_f1:
                     if pair[1] == x2[0]:
                         result_list.append([x1[1]+0.08, x2[1]-0.08])
                         found = True
@@ -102,7 +102,7 @@ def percentages(mos, sfos):
     percentages = []
     for mo in mos:
         for sfo in sfos:
-            percentage = pyfmo.orbitals.mulliken_contribution(SFO, MO) * 100
+            percentage = pyfmo.orbitals.mulliken_contribution(sfo, mo) * 100
             if percentage >= 1:
                 percentages.append(percentage)
 
@@ -112,7 +112,7 @@ def population(sfos):
 
     populations = []
     for sfo in sfos:
-        population = sum([pyfmo.orbitals.mulliken_contribution(mo, sfo) * mo.occupation for mo in orbitals.mos])
+        population = sum([pyfmo.Orbitals.mulliken_contribution(mo, sfo) * mo.occupation for mo in orbitals.mos])
         populations.append(population)
 
     return populations
@@ -126,7 +126,7 @@ def diagram(mos, orbitals, sfos_f1, sfos_f2, color='b'):
     single_occupations_mo = single_occupation(mos)
 
     # SFO1
-    energies_sfos_f1 = energy_yvalues(sfo_f1)
+    energies_sfos_f1 = energy_yvalues(sfos_f1)
     pair_occupations_sfos_f1 = pair_occupation(sfos_f1)
     single_occupations_sfos_f1 = single_occupation(sfos_f1)
 
@@ -164,7 +164,7 @@ def diagram(mos, orbitals, sfos_f1, sfos_f2, color='b'):
 
     # SFO1
     ax1.scatter(x2, energies_sfos_f1, s=1444, marker="_", linewidth=3, c='k')
-    ax1.scatter(x5, Pair_Occupations_SFOs1, s=200, marker="$⇅$", linewidth=0.2, c='k')
+    ax1.scatter(x5, pair_occupations_sfos_f1, s=200, marker="$⇅$", linewidth=0.2, c='k')
     if single_occupations_sfos_f1 != []:
         ax1.scatter(x8, single_occupations_sfos_f1, s=200, marker="$↑$", linewidth=0.2, c='k')
 
@@ -180,9 +180,9 @@ def diagram(mos, orbitals, sfos_f1, sfos_f2, color='b'):
     contribution_xy_f2 = [list(x) for x in zip(energies_sfos_f2, x3)]
 
     # generate the x and y-values
-    energycontribution_y_f1 = energies_contribution(MOs, sfos_f1)
+    energycontribution_y_f1 = energies_contribution(mos, sfos_f1)
     energycontribution_y_f2 = energies_contribution(sfos_f2, mos)
-    energycontribution_x_f1 = xvalues_contributions(energycontribution_y_f1, contribution_xy, contribution_xy_F1)
+    energycontribution_x_f1 = xvalues_contributions(energycontribution_y_f1, contribution_xy, contribution_xy_f1)
     energycontribution_x_f2 = xvalues_contributions(energycontribution_y_f2, contribution_xy_f2, contribution_xy)
 
     # Generate percentages to label the lines
