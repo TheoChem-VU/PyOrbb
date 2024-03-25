@@ -9,7 +9,6 @@ from matplotlib import colormaps
 from tcutility import ensure_list
 import numpy as np
 
-
 def to_excel(sfos1, sfos2, out_file: str = 'pyfmo.xlsx'):
     '''
     Write data about sfos1 and sfos2 to a nicely formatted excel file.
@@ -109,19 +108,19 @@ def to_excel(sfos1, sfos2, out_file: str = 'pyfmo.xlsx'):
         # add the data we want
         name = f"Overlap {spin}" if spin != 'AB' else "Overlap"
         title = f"Overlaps (spin {spin})" if spin != 'AB' else "Overlaps"
-        make_sheet(name, title, sfos1_spin, sfos2_spin, overlap_mat(sfos1_spin, sfos2_spin), number_format='0.0%')
+        make_sheet(name, title, sfos1_spin, sfos2_spin, pyfmo.orbitals.matrices.overlap_mat(sfos1_spin, sfos2_spin), number_format='0.0%')
 
         name = f"Overlap² {spin}" if spin != 'AB' else "Overlap²"
         title = f"Overlaps² (spin {spin})" if spin != 'AB' else "Overlaps²"
-        make_sheet(name, title, sfos1_spin, sfos2_spin, overlap_mat(sfos1_spin, sfos2_spin)**2, number_format='0.0%')
+        make_sheet(name, title, sfos1_spin, sfos2_spin, pyfmo.orbitals.matrices.overlap_mat(sfos1_spin, sfos2_spin)**2, number_format='0.0%')
 
         name = f"Δε {spin}" if spin != 'AB' else "Δε"
         title = f"Δε (spin {spin}) (eV)" if spin != 'AB' else "Δε (eV)"
-        make_sheet(name, title, sfos1_spin, sfos2_spin, energy_gap_mat(sfos1_spin, sfos2_spin), number_format='0.00')
+        make_sheet(name, title, sfos1_spin, sfos2_spin, pyfmo.orbitals.matrices.energy_gap_mat(sfos1_spin, sfos2_spin), number_format='0.00')
 
         name = f"Orbint {spin}" if spin != 'AB' else "Orbint"
         title = f"Orbital Interactions (spin {spin}) (1000/eV)" if spin != 'AB' else "Orbital Interactions (1000/eV)"
-        oi = orbint_mat(sfos1_spin, sfos2_spin)
+        oi = pyfmo.orbitals.matrices.orbint_mat(sfos1_spin, sfos2_spin)
         oi[~np.isnan(oi)] *= 1000  # in the case of orbital interactions, there is a mask applied to the matrix and we want to multiply each value with 1000 for easier reading
         make_sheet(name, title, sfos1_spin, sfos2_spin, oi, number_format='0.00')
 
