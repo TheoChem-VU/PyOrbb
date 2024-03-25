@@ -1,7 +1,7 @@
 from scm import plams
 import os
 from TCutility import ensure_list, squeeze_list
-from pyorb.orbitals import info
+from pyfmo.orbitals import info
 
 j = os.path.join
 

@@ -1,8 +1,7 @@
-from pyorb.orbitals import sfo, mo, adf, dftb  # noqa
+from pyfmo.orbitals import sfo, mo, adf, dftb
 from scm import plams
 import numpy as np
 import matplotlib.pyplot as plt
-# from yutility import plot, ensure_list
 from TCutility import ensure_list
 
 
