@@ -3,13 +3,13 @@ import matplotlib.pyplot as plt
 from labellines import labelLine, labelLines
 import pyfmo
 
-def degenarate_xvalues(Energies):
+def degenerate_xvalues(energies):
     
     # Setting the x-axis values for the scatters/energylevels     
     x = [0]
-    for energy in range(len(Energies) - 1):
-        current_energy = Energies[energy]
-        next_energy = Energies[energy + 1]
+    for energy in range(len(energies) - 1):
+        current_energy = energies[energy]
+        next_energy = energies[energy + 1]
         if int(current_energy) == int(next_energy):
             x[-1] = -0.2
             x.append(0.2)
@@ -19,45 +19,45 @@ def degenarate_xvalues(Energies):
 
     return x
 
-def energy_yvalues(Orbitals):
+def energy_yvalues(orbitals):
 
     # puts the associated energies for MO or SFO in a list
-    Energies = []
-    for orbital in Orbitals:
+    energies = []
+    for orbital in orbitals:
         energy = orbital.energy
-        Energies.append(energy)
+        energies.append(energy)
 
-    return Energies
+    return energies
 
-def pair_occupation(Orbitals):
+def pair_occupation(orbitals):
 
     # Puts the pair occupations for MO or SFO in a list
-    Occupations = []
-    for orbital in Orbitals:
+    occupations = []
+    for orbital in orbitals:
         if orbital.occupation == 2:
                 occupation = orbital.energy 
-                Occupations.append(occupation)
+                occupations.append(occupation)
 
-    return Occupations
+    return occupations
 
-def single_occupation(Orbitals):
+def single_occupation(orbitals):
     
     # Puts the single occupations for MO or SFO in a list
-    Occupations = []
-    for orbital in Orbitals:
+    occupations = []
+    for orbital in orbitals:
         if orbital.occupation == 1:
             if orb.spin == 'A':
                 occupation = int(orbital.energy * 10) / 10
-                Occupations.append(occupation)
+                occupations.append(occupation)
 
-    return Occupations
+    return occupations
 
-def occupation_xvalues(Occupations):
+def occupation_xvalues(occupations):
 
     x = [0]
-    for energy in range(len(Occupations) - 1):
-        current_energy = Occupations[energy]
-        next_energy = Occupations[energy + 1]
+    for energy in range(len(occupations) - 1):
+        current_energy = occupations[energy]
+        next_energy = occupations[energy + 1]
         if int(current_energy) == int(next_energy):
             x[-1] = -0.2
             x.append(0.2)
@@ -67,27 +67,27 @@ def occupation_xvalues(Occupations):
 
     return x
 
-def Energies_Contribution(MOs, SFOs):
+def energies_contribution(mos, sfos):
 
-    Energies = []  
-    for MO in MOs:
-        for SFO in SFOs:
-            if orbitals.mulliken_contribution(SFO, MO) * 100 >= 1:
-                SFO_energy = SFO.energy
-                MO_energy = MO.energy
-                Energies.append([MO_energy, SFO_energy])
+    energies = []  
+    for mo in mos:
+        for sfo in sfos:
+            if pyfmo.orbitals.mulliken_contribution(sfo, mo) * 100 >= 1:
+                sfo_energy = sfo.energy
+                mo_energy = mo.energy
+                energies.append([mo_energy, sfo_energy])
 
-    return Energies
+    return energies
 
-def xvalues_Contributions(ECysF1, Cxy, CF1xy):
+def xvalues_contributions(energycontribution_y_F1, contribution_xy, contribution_xy_F1):
 
     result_list = []
 
-    for pair in ECysF1:
+    for pair in energycontribution_y_F1:
         found = False
-        for x1 in Cxy:
+        for x1 in contribution_xy:
             if pair[0] == x1[0]:
-                for x2 in CF1xy:
+                for x2 in contribution_xy_F1:
                     if pair[1] == x2[0]:
                         result_list.append([x1[1]+0.08, x2[1]-0.08])
                         found = True
@@ -97,105 +97,105 @@ def xvalues_Contributions(ECysF1, Cxy, CF1xy):
 
     return result_list
 
-def percentages(MOs, SFOs):
+def percentages(mos, sfos):
 
     percentages = []
-    for MO in MOs:
-        for SFO in SFOs:
-            percentage = orbitals.mulliken_contribution(SFO, MO) * 100
+    for mo in mos:
+        for sfo in sfos:
+            percentage = pyfmo.orbitals.mulliken_contribution(SFO, MO) * 100
             if percentage >= 1:
                 percentages.append(percentage)
 
     return percentages
 
-def population(SFOs):
+def population(sfos):
 
     populations = []
-    for SFO in SFOs:
-        population = sum([orbitals.mulliken_contribution(MO, SFO) * MO.occupation for MO in orbitals.mos])
+    for sfo in sfos:
+        population = sum([pyfmo.orbitals.mulliken_contribution(mo, sfo) * mo.occupation for mo in orbitals.mos])
         populations.append(population)
 
     return populations
 
-def diagram(MOs, orbitals, SFOsF1, SFOsF2, color='b'):
+def diagram(mos, orbitals, sfos_f1, sfos_f2, color='b'):
 
     # Creating y-values
     # MO
-    Energies_MO = energy_yvalues(MOs)
-    Pair_Occupations_MO = pair_occupation(MOs)
-    Single_Occupations_MO = single_occupation(MOs)
+    energies_mo = energy_yvalues(mos)
+    pair_occupations_mo = pair_occupation(mos)
+    single_occupations_mo = single_occupation(mos)
 
     # SFO1
-    Energies_SFOs1 = energy_yvalues(SFOsF1)
-    Pair_Occupations_SFOs1 = pair_occupation(SFOsF1)
-    Single_Occupations_SFOs1 = single_occupation(SFOsF1)
+    energies_sfos_f1 = energy_yvalues(sfo_f1)
+    pair_occupations_sfos_f1 = pair_occupation(sfos_f1)
+    single_occupations_sfos_f1 = single_occupation(sfos_f1)
 
     # SFO2
-    Energies_SFOs2 = energy_yvalues(SFOsF2)
-    Pair_Occupations_SFOs2 = pair_occupation(SFOsF2)
-    Single_Occupations_SFOs2 = single_occupation(SFOsF2)
+    energies_sfos_f2 = energy_yvalues(sfos_f2)
+    pair_occupations_sfos_f2 = pair_occupation(sfos_f2)
+    single_occupations_sfos_f2 = single_occupation(sfos_f2)
 
 
     # Creating x-values
     # MO
-    x1 = degenarate_xvalues(Energies_MO)
-    x2 = [(x + 1) for x in degenarate_xvalues(Energies_SFOs1)] 
-    x3 = [(x - 1) for x in degenarate_xvalues(Energies_SFOs2)]
+    x1 = degenerate_xvalues(energies_mo)
+    x2 = [(x + 1) for x in degenerate_xvalues(energies_sfos_f1)] 
+    x3 = [(x - 1) for x in degenerate_xvalues(energies_sfos_f2)]
 
     # Pair SFO1 and SFO2
-    x4 = occupation_xvalues(Pair_Occupations_MO)
-    x5 = [(x + 1) for x in occupation_xvalues(Pair_Occupations_SFOs1)]
-    x6 = [(x - 1) for x in occupation_xvalues(Pair_Occupations_SFOs2)]
+    x4 = occupation_xvalues(pair_occupations_mo)
+    x5 = [(x + 1) for x in occupation_xvalues(pair_occupations_sfos_f1)]
+    x6 = [(x - 1) for x in occupation_xvalues(pair_occupations_sfos_f2)]
 
     # Single SFO1 and SFO2
-    x7 = occupation_xvalues(Single_Occupations_MO)
-    x8 = [(x + 1) for x in occupation_xvalues(Single_Occupations_SFOs1)]
-    x9 = [(x - 1) for x in occupation_xvalues(Single_Occupations_SFOs2)]
+    x7 = occupation_xvalues(single_occupations_mo)
+    x8 = [(x + 1) for x in occupation_xvalues(single_occupations_sfos_f1)]
+    x9 = [(x - 1) for x in occupation_xvalues(single_occupations_sfos_f2)]
 
 
     # Plotting the scatters in the same plot
     ax1 = plt.gca()
 
     # MO
-    ax1.scatter(x1, Energies_MO, s=1444, marker="_", linewidth=3, c='k')
-    ax1.scatter(x4, Pair_Occupations_MO, s=200, marker="$⇅$", linewidth=0.2, c='k')
-    if Single_Occupations_MO != []:
-        x1.scatter(x7, Single_Occupations_MO, s=200, marker="$↑$", linewidth=0.2, c='k')
+    ax1.scatter(x1, energies_mo, s=1444, marker="_", linewidth=3, c='k')
+    ax1.scatter(x4, pair_occupations_mo, s=200, marker="$⇅$", linewidth=0.2, c='k')
+    if single_occupations_mo != []:
+        x1.scatter(x7, single_occupations_mo, s=200, marker="$↑$", linewidth=0.2, c='k')
 
     # SFO1
-    ax1.scatter(x2, Energies_SFOs1, s=1444, marker="_", linewidth=3, c='k')
+    ax1.scatter(x2, energies_sfos_f1, s=1444, marker="_", linewidth=3, c='k')
     ax1.scatter(x5, Pair_Occupations_SFOs1, s=200, marker="$⇅$", linewidth=0.2, c='k')
-    if Single_Occupations_SFOs1 != []:
-        ax1.scatter(x8, Single_Occupations_SFOs1, s=200, marker="$↑$", linewidth=0.2, c='k')
+    if single_occupations_sfos_f1 != []:
+        ax1.scatter(x8, single_occupations_sfos_f1, s=200, marker="$↑$", linewidth=0.2, c='k')
 
     # SFO2
-    ax1.scatter(x3, Energies_SFOs2,  s=1444, marker="_", linewidth=3, c='k')
-    ax1.scatter(x6, Pair_Occupations_SFOs2, s=200, marker="$⇅$", linewidth=0.2, c='k')
-    if Single_Occupations_SFOs2 != []:
-        ax1.scatter(x9, Single_Occupations_SFOs2, s=200, marker="$↑$", linewidth=0.5, c='k')
+    ax1.scatter(x3, energies_sfos_f2,  s=1444, marker="_", linewidth=3, c='k')
+    ax1.scatter(x6, pair_occupations_sfos_f2, s=200, marker="$⇅$", linewidth=0.2, c='k')
+    if single_occupations_sfos_f2 != []:
+        ax1.scatter(x9, single_occupations_sfos_f2, s=200, marker="$↑$", linewidth=0.5, c='k')
 
     # Plotting the lines
-    Cxy = [list(x) for x in zip(Energies_MO, x1)]
-    CF1xy = [list(x) for x in zip(Energies_SFOs1, x2)]
-    CF2xy = [list(x) for x in zip(Energies_SFOs2, x3)]
+    contribution_xy = [list(x) for x in zip(energies_mo, x1)]
+    contribution_xy_f1 = [list(x) for x in zip(energies_sfos_f1, x2)]
+    contribution_xy_f2 = [list(x) for x in zip(energies_sfos_f2, x3)]
 
     # generate the x and y-values
-    ECysF1 = Energies_Contribution(MOs, SFOsF1)
-    ECysF2 = Energies_Contribution(SFOsF2, MOs)
-    ECxsF1 = xvalues_Contributions(ECysF1, Cxy, CF1xy)
-    ECxsF2 = xvalues_Contributions(ECysF2, CF2xy, Cxy)
+    energycontribution_y_f1 = energies_contribution(MOs, sfos_f1)
+    energycontribution_y_f2 = energies_contribution(sfos_f2, mos)
+    energycontribution_x_f1 = xvalues_contributions(energycontribution_y_f1, contribution_xy, contribution_xy_F1)
+    energycontribution_x_f2 = xvalues_contributions(energycontribution_y_f2, contribution_xy_f2, contribution_xy)
 
     # Generate percentages to label the lines
-    percentageF1 = percentages(MOs, SFOsF1)
-    percentageF2 = percentages(MOs, SFOsF2)
+    percentage_f1 = percentages(mos, sfos_f1)
+    percentage_f2 = percentages(mos, sfos_f2)
 
     # Plotting the lines
     xvals = []
-    for xpair, ypair, percentage in zip(ECxsF1, ECysF1, percentageF1):
+    for xpair, ypair, percentage in zip(energycontribution_x_f1, energycontribution_y_f1, percentage_f1):
         ax1.plot(xpair, ypair, alpha=0.5, ls='dashed', c=color, label=f"{int(percentage)/10 * 10} %")
         xvals.append(0.5)
 
-    for xpair2, ypair2, percentage2 in zip(ECxsF2, ECysF2, percentageF2):
+    for xpair2, ypair2, percentage2 in zip(energycontribution_x_f2, energycontribution_y_f2, percentage_f2):
         ax1.plot(xpair2, ypair2, alpha=0.5, ls='dashed', c=color, label=f"{int(percentage2)/10 * 10} %")
         xvals.append(-0.5)
 
@@ -204,24 +204,24 @@ def diagram(MOs, orbitals, SFOsF1, SFOsF2, color='b'):
 
 
     # Getting the populations
-    popF1 = population(SFOsF1)
-    popF2 = population(SFOsF2)
+    pop_f1 = population(sfos_f1)
+    pop_f2 = population(sfos_f2)
 
 
     # Plotting the orbital label and energies for MO, SFO1 and SFO2
     # MO
-    for i, j, l in zip(x1, Energies_MO, MOs):
+    for i, j, l in zip(x1, energies_mo, mos):
         ax1.annotate(l, xy=(i, j), xytext=(0,-10), size=7, ha="center", va="top", textcoords="offset points")
         ax1.annotate(f"{round(j, 2)} eV", xy=(i, j), xytext=(40,4), size=7, ha="center", va="top", textcoords="offset points")
 
     # SFO1
-    for i, j, l, pop in zip(x2, Energies_SFOs1, SFOsF1, popF1):
+    for i, j, l, pop in zip(x2, energies_sfos_f1, sfos_f1, pop_f1):
         ax1.annotate(l, xy=(i, j), xytext=(0,-10), size=7, ha="center", va="top", textcoords="offset points")
         ax1.annotate(f"{round(j, 2)} eV", xy=(i, j), xytext=(40,8), size=7, ha="center", va="top", textcoords="offset points", backgroundcolor="w")
         ax1.annotate(f"{round(pop, 2)} e", xy=(i, j), xytext=(40,-2), size=7, ha="center", va="top", textcoords="offset points", backgroundcolor="w")
 
     # SFO2
-    for i, j, l, pop in zip(x3, Energies_SFOs2, SFOsF2, popF2):
+    for i, j, l, pop in zip(x3, energies_sfos_f2, sfos_f2, pop_f2):
         ax1.annotate(l, xy=(i, j), xytext=(0,-10), size=7, ha="center", va="top", textcoords="offset points")
         ax1.annotate(f"{round(j, 2)} eV", xy=(i, j), xytext=(-40,8), size=7, ha="center", va="top", textcoords="offset points", backgroundcolor="w")
         ax1.annotate(f"{round(pop, 2)} e", xy=(i, j), xytext=(-40,-2), size=7, ha="center", va="top", textcoords="offset points", backgroundcolor="w")
