@@ -77,25 +77,25 @@ def get_3mixings(orbs, mo):
     mixing = max(mixings2)
 
     mixings = []
-    for k in mixing.sfos:
-        for r in orbs.mos:
-            if r in mixing:
+    for sfo_k in mixing.sfos:
+        for sfo_r in orbs.mos:
+            if sfo_r in mixing:
                 continue
 
-            Crk = orbs.mulliken_contribution(k, r)
+            Crk = orbs.mulliken_contribution(sfo_k, sfo_r)
 
-            for l in sfos1 + sfos2:
-                if l in mixing:
+            for sfo_l in sfos1 + sfos2:
+                if sfo_l in mixing:
                     continue
 
-                Crl = orbs.mulliken_contribution(l, r)
+                Crl = orbs.mulliken_contribution(sfo_l, sfo_r)
 
-                for t in mixing.mos:
-                    Ctl = orbs.mulliken_contribution(l, t)
-                    Ctk = orbs.mulliken_contribution(k, t)
+                for sfo_t in mixing.mos:
+                    Ctl = orbs.mulliken_contribution(sfo_l, sfo_t)
+                    Ctk = orbs.mulliken_contribution(sfo_k, sfo_t)
 
                     z = Crk * Crl * Ctl * Ctk
-                    mixings.append(Mixing(mixing.mos + [r], mixing.sfos + [l], mixing.z, z))
+                    mixings.append(Mixing(mixing.mos + [sfo_r], mixing.sfos + [sfo_l], mixing.z, z))
 
     return mixings
 

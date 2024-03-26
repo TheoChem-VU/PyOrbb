@@ -6,7 +6,6 @@ except ImportError:
     from openpyxl.utils import get_column_letter
 
 from matplotlib import colormaps
-from tcutility import ensure_list
 import numpy as np
 
 def to_excel(sfos1, sfos2, out_file: str = 'pyfmo.xlsx'):

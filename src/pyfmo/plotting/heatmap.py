@@ -61,11 +61,11 @@ def plot_property(orbs1, orbs2, prop=None, propargs={}, propkwargs={}, cmap='Gre
     try:
         psi1 = r'\phi_{' + orbs1[0].fragment_unique_name + r'}'
         psi2 = r'\phi_{' + orbs2[0].fragment_unique_name + r'}'
-    except:
+    except: # noqa
         try:
             psi1 = r'\phi_{' + orbs1[0].moleculename + r'}'
             psi2 = r'\phi_{' + orbs2[0].moleculename + r'}'
-        except:
+        except: # noqa
             psi1 = r'\phi_{' + 'Frag1' + r'}'
             psi2 = r'\phi_{' + 'Frag2' + r'}'
 

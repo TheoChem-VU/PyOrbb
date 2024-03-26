@@ -1,7 +1,6 @@
-import numpy as np
 import matplotlib.pyplot as plt
 from labellines import labelLines
-import pyfmo
+from pyfmo import orbitals
 
 def degenerate_xvalues(energies):
     
