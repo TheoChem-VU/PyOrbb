@@ -1,1 +1,3 @@
-from . import orbitals  # noqa F401
+from . import orbitals, plotting, report
+
+# noqa F401
