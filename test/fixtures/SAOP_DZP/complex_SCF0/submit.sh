@@ -1,1 +1,0 @@
-sbatch -p tc -n 32 --dependency=afterok:668775,afterok:668776 --kill-on-invalid-dep=Yes -D /scistor/tc/sbk238/PyOrb_test_calcs/basis_set_convergence/calculations/NaCl/SAOP_DZP/complex_SCF0 -J calculations/NaCl/SAOP_DZP/complex_SCF0 -o complex_SCF0.out complex_SCF0.run

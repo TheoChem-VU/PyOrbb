@@ -1,1 +1,0 @@
-sbatch -p tc -n 32 -D /scistor/tc/sbk238/PyOrb_test_calcs/basis_set_convergence/calculations/NaCl/SAOP_DZP/frag_Cl -J calculations/NaCl/SAOP_DZP/frag_Cl -o frag_Cl.out frag_Cl.run

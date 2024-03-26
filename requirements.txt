@@ -1,6 +1,6 @@
 GitPython
 TCutility
 numpy
-git+https://github.com/SCM-NV/PLAMS
+plams 
 matplotlib
 

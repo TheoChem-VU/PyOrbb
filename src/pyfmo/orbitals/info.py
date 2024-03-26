@@ -44,13 +44,13 @@ def get_calc_info(reader):
 
 
 
-def read_SFO_data(reader, **kwargs):
+def read_SFO_data(reader):
     program = get_calc_info(reader)['engine']
     if program == 'ADF':
-        return orbitals.adf.read_SFO_data(reader, **kwargs)
+        return orbitals.adf.read_SFO_data(reader)
 
     elif program == 'dftb':
-        return orbitals.dftb.read_SFO_data(reader, **kwargs)
+        return orbitals.dftb.read_SFO_data(reader)
 
 
 def read_MO_data(reader):
