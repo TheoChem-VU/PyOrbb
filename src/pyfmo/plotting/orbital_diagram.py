@@ -67,7 +67,7 @@ def occupation_xvalues(occupations):
 
     return x
 
-def energies_contribution(mos, sfos):
+def energies_contribution(mos, sfos, orbitals):
 
     energies = []  
     for mo in mos:
@@ -97,7 +97,7 @@ def xvalues_contributions(energycontribution_y_f1, contribution_xy, contribution
 
     return result_list
 
-def percentages(mos, sfos):
+def percentages(mos, sfos, orbitals):
 
     percentages = []
     for mo in mos:
@@ -108,7 +108,7 @@ def percentages(mos, sfos):
 
     return percentages
 
-def population(sfos):
+def population(sfos, orbitals):
 
     populations = []
     for sfo in sfos:
