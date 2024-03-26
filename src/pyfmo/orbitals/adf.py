@@ -1,9 +1,7 @@
-
 from scm import plams
 from pyfmo.orbitals import info
 import numpy as np
 from tcutility import ensure_list 
-
 
 
 def read_SFO_data(reader, path_SCF0=None):  # noqa: N802
