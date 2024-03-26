@@ -1,7 +1,4 @@
 import pyfmo
-import numpy as np
-import matplotlib.pyplot as plt
-
 
 class Mixing:
     def __init__(self, mos, sfos, z, r=None):

@@ -1,7 +1,6 @@
-from pyfmo.orbitals import sfo, mo, adf, dftb
+from pyfmo.orbitals import sfo, mo
 from scm import plams
 import numpy as np
-import matplotlib.pyplot as plt
 from tcutility import ensure_list
 
 

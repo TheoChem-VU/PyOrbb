@@ -1,5 +1,3 @@
-import pyfmo
-from matplotlib import colormaps
 from tcutility import ensure_list
 import numpy as np
 
