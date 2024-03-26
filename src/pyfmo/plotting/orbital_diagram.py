@@ -72,7 +72,7 @@ def energies_contribution(mos, sfos):
     energies = []  
     for mo in mos:
         for sfo in sfos:
-            if pyfmo.orbitals.mulliken_contribution(sfo, mo) * 100 >= 1:
+            if orbitals.mulliken_contribution(sfo, mo) * 100 >= 1:
                 sfo_energy = sfo.energy
                 mo_energy = mo.energy
                 energies.append([mo_energy, sfo_energy])
@@ -102,7 +102,7 @@ def percentages(mos, sfos):
     percentages = []
     for mo in mos:
         for sfo in sfos:
-            percentage = pyfmo.orbitals.mulliken_contribution(sfo, mo) * 100
+            percentage = orbitals.mulliken_contribution(sfo, mo) * 100
             if percentage >= 1:
                 percentages.append(percentage)
 
@@ -112,7 +112,7 @@ def population(sfos):
 
     populations = []
     for sfo in sfos:
-        population = sum([pyfmo.orbitals.mulliken_contribution(mo, sfo) * mo.occupation for mo in orbitals.mos])
+        population = sum([orbitals.mulliken_contribution(mo, sfo) * mo.occupation for mo in orbitals.mos])
         populations.append(population)
 
     return populations
@@ -139,7 +139,7 @@ def diagram(mos, orbitals, sfos_f1, sfos_f2, color='b'):
     # Creating x-values
     # MO
     x1 = degenerate_xvalues(energies_mo)
-    x2 = [(x + 1) for x in degenerate_xvalues(energies_sfos_f1)] 
+    x2 = [(x + 1) for x in degenerate_xvalues(energies_sfos_f1)]
     x3 = [(x - 1) for x in degenerate_xvalues(energies_sfos_f2)]
 
     # Pair SFO1 and SFO2
@@ -233,5 +233,18 @@ def diagram(mos, orbitals, sfos_f1, sfos_f2, color='b'):
     plt.ylabel(r'$\epsilon$ / eV')
     plt.xlim(-1.7, 1.7)
 
+
+if __name__ == '__main__':
+    fig = plt.figure(figsize=(12,12))
+    orbitals = pyfmo.orbitals.Orbitals('/Users/Tori/PyFMO/test/fixtures/NH3BH3/adf.rkf')
+    MOs = orbitals.mos['HOMO-6':'LUMO']
+    SFOsF1 = orbitals.sfos['Donor(HOMO-6)':'Donor(LUMO)']
+    SFOsF2 = orbitals.sfos['Acceptor(HOMO-3)':'Acceptor(LUMO)']
+ #   mixing2 = max(closed_interaction.get_2mixings(orbitals, orbitals.mos['HOMO-2']))
+ #   print(mixing2)
+ #   fragments = list(orbitals.fragments)
+    diagram(MOs, orbitals, SFOsF1, SFOsF2)
+ #   diagram(mixing2.mos, orbitals, [sfo for sfo in mixing2.sfos if sfo.fragment == fragments[0]], [sfo for sfo in mixing2.sfos if sfo.fragment == fragments[1]], color='r')
+    plt.show()
 
 

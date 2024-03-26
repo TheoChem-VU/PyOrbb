@@ -1,8 +1,8 @@
 from scm import plams
 import numpy as np
 import os
-# import matplotlib.pyplot as plt
-from TCutility import ensure_list, squeeze_list
+import matplotlib.pyplot as plt
+from tcutility import ensure_list, squeeze_list
 from pyfmo.orbitals import info, mo
 from typing import List
 

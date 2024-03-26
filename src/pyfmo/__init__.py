@@ -1,4 +1,3 @@
-from . import orbitals 
-from . import plotting
-from . import report
+from pyfmo import orbitals, plotting, report
+
 # noqa F401
