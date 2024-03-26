@@ -85,4 +85,4 @@ def plot_property(orbs1, orbs2, prop=None, propargs={}, propkwargs={}, cmap='Gre
     plt.title(title + r'$(' + psi1 + r', ' + psi2 + r')$ ' + unit, fontsize=16)
     plt.tight_layout()
 
-    return plot.ShowCaller()
+    return
