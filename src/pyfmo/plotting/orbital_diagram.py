@@ -112,7 +112,7 @@ def population(sfos):
 
     populations = []
     for sfo in sfos:
-        population = sum([pyfmo.Orbitals.mulliken_contribution(mo, sfo) * mo.occupation for mo in orbitals.mos])
+        population = sum([pyfmo.orbitals.mulliken_contribution(mo, sfo) * mo.occupation for mo in orbitals.mos])
         populations.append(population)
 
     return populations
