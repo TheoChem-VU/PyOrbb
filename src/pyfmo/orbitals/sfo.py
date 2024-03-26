@@ -10,10 +10,11 @@ j = os.path.join
 
 
 class SFOs:
-    def __init__(self, kfpath=None, reader=None, **kwargs):
+    def __init__(self, kfpath=None, reader=None, path_SCF0=None, **kwargs):
         assert reader or kfpath, 'Please provide a KFReader or path to a kf-file'
         self.reader = reader or plams.KFReader(kfpath)
         self.kfpath = kfpath
+        self.path_SCF0 = path_SCF0
         if not self.kfpath:
             self.kfpath = os.path.abspath(self.reader.path)
         else:
@@ -163,7 +164,7 @@ class SFOs:
         self.symlabels = calc_info['symlabels']
 
     def get_sfos(self):
-        data = info.read_SFO_data(self.reader)
+        data = info.read_SFO_data(self.reader, path_SCF0=self.path_SCF0)
         sfo_data = []
         for idx in range(data['nsfo']['total']):
             for spin in self.spins:
@@ -171,30 +172,16 @@ class SFOs:
                 isfo = data['isfo'][idx] - 1
                 subspecies = data['subspecies'][idx]
                 ifo = data['ifo'][idx]
-                if data['relindices'] is not None:
-                    relindex = data['relindices'][spin][idx]
-                    if relindex > 0:
-                        if relindex == 1:
-                            relname = 'LUMO'
-                        else:
-                            relname = f'LUMO+{relindex-1}'
-                    else:
-                        if relindex == 0:
-                            relname = 'HOMO'
-                        else:
-                            relname = f'HOMO-{abs(relindex)}'
 
                 sfo_data.append({
                     'index':                idx + 1,
-                    'relindex':             None if data['relindices'] is None else relindex,
                     'name':                 f'{ifo}{subspecies}',
-                    'relname':              None if data['relindices'] is None else relname,
                     'fragment_index':       data['fragidx'][idx],
                     'fragment':             data['fragtypes'][idx],
                     'fragment_unique_name': data['fraguniquenames'][idx],
                     'fragment_orb_index':   None if data['fragorb'] is None else data['fragorb'][idx],
                     'symmetry_type_index':  isfo,
-                    'symmetry':             symlabel,
+                    'symmetry':             symlabel, 
                     'energy':               None if data['energy'][spin] is None else data['energy'][spin][idx] * 27.21139664,
                     'spin':                 spin,
                     'reader':               self.reader,
@@ -203,8 +190,47 @@ class SFOs:
                     'occupation':           None if data['occupations'] is None else data['occupations'][spin][idx],
                     'atomic_fragments':     self.uses_atomic_fragments,
                 })
+                if 'site_energy' in data:
+                    sfo_data[-1]['site_energy'] = None if data['site_energy'][spin] is None else data['site_energy'][spin][idx] * 27.21139664
+                if 'site_energy_SCF0' in data:
+                   sfo_data[-1]['site_energy_SCF0'] = None if data['site_energy_SCF0'][spin] is None else data['site_energy_SCF0'][spin][idx] * 27.21139664
+                
 
         self.sfos = [SFO(**sfo_datum) for sfo_datum in sfo_data]
+
+        #sort the SFOs based on their energy 
+        self.sfos = sorted(self.sfos, key=lambda sfo: sfo.energy) 
+        
+        sfos_frag = {}
+
+        for sfo in self.sfos:
+            sfos_frag.setdefault(sfo.fragment_unique_name, [])
+            sfos_frag[sfo.fragment_unique_name].append(sfo)
+        
+
+        # determine if there are degenerate MOs (mo.degenerate) and, if so, how many (mo.n_degenerate)
+        for frag, sfos_list in sfos_frag.items():
+            energies = []
+            for sfo in sfos_list:
+                energies.append(round(sfo.energy, 6))
+
+            for sfo in sfos_list:
+                degeneracy = energies.count(round(sfo.energy, 6))
+                sfo.n_degenerate = degeneracy
+                sfo.degenerate = degeneracy > 1
+
+            HOMO_list = [sfo for sfo in sfos_list if sfo.occupation > 0] 
+            LUMO_list = [sfo for sfo in sfos_list if sfo.occupation == 0]
+            
+            for index_LUMO, sfo_LUMO in enumerate(LUMO_list):
+                 sfo_LUMO.relindex = index_LUMO + 1 
+                 sfo_LUMO.relname = f'LUMO+{index_LUMO}' if index_LUMO > 0 else 'LUMO'
+            
+            max_HOMO_index = len(HOMO_list) - 1
+            for index_HOMO, sfo_HOMO in enumerate(HOMO_list):
+                sfo_HOMO.relindex = index_HOMO + 1 - len(HOMO_list)
+                sfo_HOMO.relname = f'HOMO-{max_HOMO_index - index_HOMO}' if max_HOMO_index - index_HOMO > 0 else 'HOMO'
+
 
         # for unrestricted molecular fragments we want to assign the SOMO and SUMO and fix the HOMO and LUMO names
         if self.is_unrestricted and self.uses_molecular_fragments:
@@ -218,7 +244,6 @@ class SFOs:
                 
                 # loop through all sfo's to locate the SOMO, this will be the index where the sum of occupations for a and b spin sfos is 1
                 for idx in range(1, len(fragsfos)//2 + 1):
-                    # print(fragsfos)
                     sfo_of_idx = [sfo for sfo in fragsfos if sfo.fragment_orb_index == idx]
                     if 0 < sfo_of_idx[0].occupation + sfo_of_idx[1].occupation < 2:
                         somo_idx = idx
@@ -335,6 +360,47 @@ class SFO:
     @property
     def singly_occupied(self):
         return self.occupation == 1
+
+    def cube_file(self, gridsize: str = 'medium'):
+        '''
+        Generate a cube-file for this SFO with a certain grid-size.
+
+        Args:
+            gridsize: the size of the grid to generate the cube-file with.
+        '''
+        from tcutility.job.adf import DensfJob
+        from tcintegral import grid
+
+        # start a Densf job to calculate the cube-file. 
+        # We want to return the cube-file, so we should wait for it to finish.
+        with DensfJob(wait_for_finish=True) as job:
+            job.orbital(self)
+            job.gridsize(gridsize)
+
+        # output_cub_paths returns a list of cube-files generated by the job.
+        # we only generate one, so we simply return the first element
+        return grid.from_cub_file(job.output_cub_paths[0])
+
+    def draw(self, gridsize: str = 'medium', isovalue: float = 0.03):
+        '''
+        Generate and draw a cube-file for this SFO object.
+
+        Args:
+            gridsize: the size of the grid to generate the cube-file with.
+            isovalue: the value with which to generate the isosurface of this SFO.
+
+        .. seealso::
+            :meth:`SFO.cube_file` to generate and return a cube-file for this SFO.
+        '''
+        import tcviewer
+
+        # generate a cube-file or load an existing one
+        cub = self.cube_file(gridsize=gridsize)
+
+        # and draw it with a specified isovalue
+        with tcviewer.Screen() as scr:
+            scr.draw_cub(cub, isovalue, material=tcviewer.materials.orbital_shiny)
+
 
 
 def occ_virt_mask(sfos1: List[SFO] or SFO, sfos2: List[SFO] or SFO) -> float or np.ndarray:

@@ -1,17 +1,39 @@
-from pyfmo.orbitals import sfo, mo
+
+from pyfmo.orbitals import sfo, mo, adf, dftb  # noqa
 from scm import plams
 import numpy as np
+# import matplotlib.pyplot as plt
+# from yutility import plot, ensure_list
+
 from tcutility import ensure_list
 
 
 class Orbitals:
-    def __init__(self, path, moleculename=None):
+    def __init__(self, path, path_SCF0=None, moleculename=None):
+        r'''
+        Two kind of readers are constucted.
+        1. path provides the path to a fully converged Fragment analyses calculation with a full SCF. From this, all 
+            information regarding the fragment analysis is extracted. This includes the SFO energies of the fully isolated 
+            fragments and, if available, the site energies or Fock matrix. From this can return the site energies (diagonal 
+            of the Fock matrix).
+
+            The energies taken from this file are the SFO energies of the fully isolated fragments and the site energies 
+            (diagonal of the Fock matrix) of the fully relaxed complex.
+
+        2. The path_SCF0 is the pathway to the fragment analysis where SCF is set to zero (SCF=0). This is necessary for 
+            reading the site energies (diagonal of the Fock matrix) to obtain the corrected energies of the SFOs. No other 
+            information is read from this file.
+
+            The energies extracted from this file are the site energies (diagonal of the Fock matrix) of the two fragments 
+            in the field of the second respective fragment. This correction is often considered superior to the SFO energies 
+            for the fully isolated fragments.
+        '''
         if isinstance(path, (plams.KFReader, plams.KFFile)):
             self.reader = path
         else:
             self.reader = plams.KFReader(path)
         self.mos = mo.MOs(reader=self.reader, moleculename=moleculename)
-        self.sfos = sfo.SFOs(reader=self.reader)
+        self.sfos = sfo.SFOs(reader=self.reader, path_SCF0=path_SCF0)
         self.rename_fragments = self.sfos.rename_fragments
 
     def mulliken_contribution(self, sfo, mo):
@@ -29,7 +51,8 @@ class Orbitals:
             of SFO $\nu$ in MO $i$ and $S_{\mu\nu}$ is the overlap between SFOs
             $\mu$ and $\nu$.
 
-        The marginals of the resulting Mulliken contribution matrix $\hat{C}_{i\mu}$ should all equal one.
+        The marginals of the resulting Mulliken contribution matrix $\hat{C}_{i\mu}$ times the 
+        occupation is the gross Mulliken population of the orbital.
         '''
         # coefficient of all SFOs contributing to the selected MO
         c_iv = np.array(mo @ self.sfos.sfos)

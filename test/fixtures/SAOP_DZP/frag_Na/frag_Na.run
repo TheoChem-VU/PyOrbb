@@ -1,0 +1,8 @@
+#!/bin/sh
+
+module load ams/2023.101
+
+unset AMS_SWITCH_LOGFILE_AND_STDOUT
+unset SCM_LOGFILE
+AMS_JOBNAME="frag_Na" AMS_RESULTSDIR=. $AMSBIN/ams --input="frag_Na.in" < /dev/null
+

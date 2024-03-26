@@ -1,10 +1,12 @@
+
+from scm import plams
 from pyfmo.orbitals import info
 import numpy as np
-from tcutility import ensure_list
+from tcutility import ensure_list 
 
 
 
-def read_SFO_data(reader):  # noqa: N802
+def read_SFO_data(reader, path_SCF0=None):  # noqa: N802
     def square_overlaps(S, nmo):
         Srows = []
         for i in range(nmo):
@@ -35,7 +37,7 @@ def read_SFO_data(reader):  # noqa: N802
     ret['nsfo'] = {}
     total = 0
     for i, symlabel in enumerate(ret['symlabels']):
-        norb = int(np.sqrt(len(reader.read(symlabel, 'Eig-CoreSFO_A'))))
+        norb = int(np.sqrt(len(ensure_list(reader.read(symlabel, 'Eig-CoreSFO_A')))))
         total += norb
         ret['nsfo'][symlabel] = norb
         ret['symlabel_by_sfo'].extend(norb * [symlabel])
@@ -46,10 +48,10 @@ def read_SFO_data(reader):  # noqa: N802
     if ('SFOs', 'isfo') not in reader:
         ret['isfo'] = range(1, total+1)
     else:
-        ret['isfo'] = reader.read('SFOs', 'isfo')
+        ret['isfo'] = ensure_list(reader.read('SFOs', 'isfo'))
 
     # fragment, index of fragment sfo belongs to
-    ret['fragidx'] = reader.read('SFOs', 'fragment')
+    ret['fragidx'] = ensure_list(reader.read('SFOs', 'fragment'))
 
     # fragmenttype, name of fragment sfo belongs to
     if ('SFOs', 'fragtype') not in reader:
@@ -58,7 +60,7 @@ def read_SFO_data(reader):  # noqa: N802
         frag_order = frag_order[len(frag_order)//2:]
         ret['fragtypes'] = [fragtypes[frag_order[i-1]-1] for i in ret['fragidx']]
     else:
-        ret['fragtypes'] = reader.read('SFOs', 'fragtype').strip().split()
+        ret['fragtypes'] = ensure_list(reader.read('SFOs', 'fragtype').strip().split())
 
     # get fragment + index unique pairs to construct unique fragment names
     ret['fraguniquenames'] = []
@@ -72,7 +74,7 @@ def read_SFO_data(reader):  # noqa: N802
             
     # fragorb, index of sfo in fragment
     if ('SFOs', 'fragorb') in reader:
-        ret['fragorb'] = reader.read('SFOs', 'fragorb')
+        ret['fragorb'] = ensure_list(reader.read('SFOs', 'fragorb'))
     else:
         ret['fragorb'] = None
 
@@ -80,7 +82,7 @@ def read_SFO_data(reader):  # noqa: N802
     ret['subspecies'] = reader.read('SFOs', 'subspecies').strip().split()
 
     # ifo, order of sfo
-    ret['ifo'] = reader.read('SFOs', 'ifo')
+    ret['ifo'] = ensure_list(reader.read('SFOs', 'ifo'))
 
     # if the calculation did not use regions we have to
     # fix the ordering of the atoms (i.e. fragment indices)
@@ -95,15 +97,15 @@ def read_SFO_data(reader):  # noqa: N802
     if ('SFOs', energyprefix) in reader:
         if calc_info['unrestricted_sfos']:
             ret['energy'] = {
-                'A': reader.read('SFOs', f'{energyprefix}'),
-                'B': reader.read('SFOs', f'{energyprefix}_B')
+                'A': ensure_list(reader.read('SFOs', f'{energyprefix}')),
+                'B': ensure_list(reader.read('SFOs', f'{energyprefix}_B'))
             }
             ret['energyidx'] = {
                 'A': np.argsort(ret['energy']['A']),
                 'B': np.argsort(ret['energy']['B']),
             }
         else:
-            ret['energy'] = {'AB': reader.read('SFOs', f'{energyprefix}')}
+            ret['energy'] = {'AB': ensure_list(reader.read('SFOs', f'{energyprefix}'))}
             ret['energyidx'] = {'AB': np.argsort(ret['energy']['AB'])}
     else:
         ret['energy'] = {
@@ -112,15 +114,126 @@ def read_SFO_data(reader):  # noqa: N802
                 'AB': None
             }
 
+    # SFO energies from the diagonal of the fock matrix if the FMAT SFO command is used
+    # and get index if energies are sorted
+    # site_energy = 'escale' if calc_info['relativistic'] else 'energy'
+
+    if ('SFOs', 'site_energy') in reader:
+        if calc_info['unrestricted_sfos']:
+            ret['site_energy'] = {
+                'A': ensure_list(reader.read('SFOs', "site_energy")),
+                'B': ensure_list(reader.read('SFOs', "site_energy_B"))
+            }
+        else:
+            ret['site_energy'] = {'AB': ensure_list(reader.read('SFOs', "site_energy"))}    
+    
+    # Look if There is a fock matrix printed the rkf file
+    elif ('SFO_Fock') in reader._data or ('SFO_Fock_A') in reader._data:
+        ret['site_energy'] = {}
+        
+        # devide based on symetry labels and then determine the indexnumber you want to read
+        for symlabel in ret['symlabels']:
+            nsfo = ret['nsfo'][symlabel]
+            step = 2
+            index = 0
+            diagonal_indices = []
+
+            #This is to correct for symlable being split up into :1, :2 and :3, thus 1E:1 becomes 1E
+            if ':' in symlabel and symlabel.split(':')[1].isdigit():
+                Fock_symlabel = symlabel.split(':')[0]
+            else: 
+                Fock_symlabel = symlabel
+    
+            for _ in range(ret['nsfo'][symlabel]):
+                diagonal_indices.append(index)
+                index += step
+                step += 1
+            
+            if calc_info['unrestricted_sfos']:
+                SFO_Fock_matrix_A = ensure_list(reader.read('SFO_Fock_A', Fock_symlabel))
+                SFO_Fock_matrix_B = ensure_list(reader.read('SFO_Fock_B', Fock_symlabel))
+                ret['site_energy'] = {
+                    'A': ret['site_energy'].setdefault('A',[]) + [SFO_Fock_matrix_A[indices] for index_of_indices, indices in enumerate(diagonal_indices) if index_of_indices < ret['nsfo'][symlabel]],
+                    'B': ret['site_energy'].setdefault('B',[]) + [SFO_Fock_matrix_B[indices] for index_of_indices, indices in enumerate(diagonal_indices) if index_of_indices < ret['nsfo'][symlabel]]
+                    }
+            else:
+                SFO_Fock_matrix = ensure_list(reader.read('SFO_Fock', Fock_symlabel))
+                ret['site_energy'] = {
+                    'AB': ret['site_energy'].setdefault('AB',[]) + [SFO_Fock_matrix[indices] for index_of_indices, indices in enumerate(diagonal_indices) if index_of_indices < ret['nsfo'][symlabel]]
+                    }
+                
+    else:
+        ret['site_energy'] = {
+                'A': None,
+                'B': None,
+                'AB': None
+            }
+
+    # SFO energies from the diagonal of the fock matrix
+    # and get index if energies are sorted
+    # site_energy = 'escale' if calc_info['relativistic'] else 'energy'
+    if path_SCF0 is not None:
+        reader_SCF0 = plams.KFReader(path_SCF0)
+        if ('SFOs', 'site_energy') in reader_SCF0:
+            if calc_info['unrestricted_sfos']:
+                ret['site_energy_SCF0'] = {
+                    'A': reader_SCF0.read('SFOs', "site_energy"),
+                    'B': reader_SCF0.read('SFOs', "site_energy_B")
+                }
+            else:
+                ret['site_energy_SCF0'] = {'AB': reader_SCF0.read('SFOs', "site_energy")}
+
+        # Look if There is a fock matrix printed the rkf file
+        elif ('SFO_Fock') in reader._data or ('SFO_Fock_A') in reader_SCF0._data:
+            ret['site_energy_SCF0'] = {}
+
+            # devide based on symetry labels and then determine the indexnumber you want to read
+            for symlabel in ret['symlabels']:
+                nsfo = ret['nsfo'][symlabel]
+                step = 2
+                index = 0
+                diagonal_indices = []
+
+                # This is to correct for symlable being split up into :1, :2 and :3, thus 1E:1 becomes 1E
+                if ':' in symlabel and symlabel.split(':')[1].isdigit():
+                    Fock_symlabel = symlabel.split(':')[0]
+                else: 
+                    Fock_symlabel = symlabel
+
+                for _ in range(ret['nsfo'][symlabel]):
+                    diagonal_indices.append(index)
+                    index += step
+                    step += 1
+
+                if calc_info['unrestricted_sfos']:
+                    SFO_Fock_matrix_A = ensure_list(reader_SCF0.read('SFO_Fock_A', Fock_symlabel))
+                    SFO_Fock_matrix_B = ensure_list(reader_SCF0.read('SFO_Fock_B', Fock_symlabel))
+                    ret['site_energy_SCF0'] = {
+                        'A': ret['site_energy_SCF0'].setdefault('A',[]) + [SFO_Fock_matrix_A[indices] for index_of_indices, indices in enumerate(diagonal_indices) if index_of_indices < ret['nsfo'][symlabel]],
+                        'B': ret['site_energy_SCF0'].setdefault('B',[]) + [SFO_Fock_matrix_B[indices] for index_of_indices, indices in enumerate(diagonal_indices) if index_of_indices < ret['nsfo'][symlabel]]
+                        }
+                else:
+                    SFO_Fock_matrix = ensure_list(reader_SCF0.read('SFO_Fock', Fock_symlabel))
+                    ret['site_energy_SCF0'] = {
+                        'AB': ret['site_energy_SCF0'].setdefault('AB',[]) + [SFO_Fock_matrix[indices] for index_of_indices, indices in enumerate(diagonal_indices) if index_of_indices < ret['nsfo'][symlabel]]
+                        }
+
+        else:
+            ret['site_energy_SCF0'] = {
+                    'A': None,
+                    'B': None,
+                    'AB': None
+                }
+
     # SFO occupations
     if ('SFOs', 'occupation') in reader:
         if calc_info['unrestricted_sfos']:
             ret['occupations'] = {
-                'A': np.array(reader.read('SFOs', 'occupation')),
-                'B': np.array(reader.read('SFOs', 'occupation_B'))
+                'A': np.array(ensure_list(reader.read('SFOs', 'occupation'))),
+                'B': np.array(ensure_list(reader.read('SFOs', 'occupation_B')))
             }
         else:
-            ret['occupations'] = {'AB': np.array(reader.read('SFOs', 'occupation'))}
+            ret['occupations'] = {'AB': np.array(ensure_list(reader.read('SFOs', 'occupation')))}
     else:
         ret['occupations'] = None
 
@@ -188,13 +301,12 @@ def read_MO_data(reader):  # noqa: N802
     ret['symlabels'] = reader.read('Symmetry', 'symlab').strip().split()
     for symlabel in ret['symlabels']:
         if calc_info['unrestricted_mos']:
-            print(np.sqrt(len(reader.read(symlabel, 'Eig-CoreSFO_B'))))
             ret['nmo'][symlabel] = {
-                'A': int(np.sqrt(len(reader.read(symlabel, 'Eig-CoreSFO_A')))),
-                'B': int(np.sqrt(len(reader.read(symlabel, 'Eig-CoreSFO_B'))))
+                'A': int(np.sqrt(len(ensure_list(reader.read(symlabel, 'Eig-CoreSFO_A'))))),
+                'B': int(np.sqrt(len(ensure_list(reader.read(symlabel, 'Eig-CoreSFO_B')))))
             }
         else:
-            ret['nmo'][symlabel] = {'AB': int(np.sqrt(len(reader.read(symlabel, 'Eig-CoreSFO_A'))))}
+            ret['nmo'][symlabel] = {'AB': int(np.sqrt(len(ensure_list(reader.read(symlabel, 'Eig-CoreSFO_A')))))}
 
     # MO energies
     ret['energy'] = {}
