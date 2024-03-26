@@ -1,7 +1,5 @@
-import pyfmo
 import matplotlib.pyplot as plt
 import numpy as np
-from tcutility import plot, ensure_list
 
 
 def plot_property(orbs1, orbs2, prop=None, propargs={}, propkwargs={}, cmap='Greens', title=None, unit=None, use_relname=False, use_indexname=False, scale=None, **kwargs):

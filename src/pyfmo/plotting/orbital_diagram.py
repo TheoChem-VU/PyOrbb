@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from labellines import labelLine, labelLines
+from labellines import labelLines
 import pyfmo
 
 def degenerate_xvalues(energies):
@@ -210,19 +210,19 @@ def diagram(mos, orbitals, sfos_f1, sfos_f2, color='b'):
 
     # Plotting the orbital label and energies for MO, SFO1 and SFO2
     # MO
-    for i, j, l in zip(x1, energies_mo, mos):
-        ax1.annotate(l, xy=(i, j), xytext=(0,-10), size=7, ha="center", va="top", textcoords="offset points")
+    for i, j, k in zip(x1, energies_mo, mos):
+        ax1.annotate(k, xy=(i, j), xytext=(0,-10), size=7, ha="center", va="top", textcoords="offset points")
         ax1.annotate(f"{round(j, 2)} eV", xy=(i, j), xytext=(40,4), size=7, ha="center", va="top", textcoords="offset points")
 
     # SFO1
-    for i, j, l, pop in zip(x2, energies_sfos_f1, sfos_f1, pop_f1):
-        ax1.annotate(l, xy=(i, j), xytext=(0,-10), size=7, ha="center", va="top", textcoords="offset points")
+    for i, j, k, pop in zip(x2, energies_sfos_f1, sfos_f1, pop_f1):
+        ax1.annotate(k, xy=(i, j), xytext=(0,-10), size=7, ha="center", va="top", textcoords="offset points")
         ax1.annotate(f"{round(j, 2)} eV", xy=(i, j), xytext=(40,8), size=7, ha="center", va="top", textcoords="offset points", backgroundcolor="w")
         ax1.annotate(f"{round(pop, 2)} e", xy=(i, j), xytext=(40,-2), size=7, ha="center", va="top", textcoords="offset points", backgroundcolor="w")
 
     # SFO2
-    for i, j, l, pop in zip(x3, energies_sfos_f2, sfos_f2, pop_f2):
-        ax1.annotate(l, xy=(i, j), xytext=(0,-10), size=7, ha="center", va="top", textcoords="offset points")
+    for i, j, k, pop in zip(x3, energies_sfos_f2, sfos_f2, pop_f2):
+        ax1.annotate(k, xy=(i, j), xytext=(0,-10), size=7, ha="center", va="top", textcoords="offset points")
         ax1.annotate(f"{round(j, 2)} eV", xy=(i, j), xytext=(-40,8), size=7, ha="center", va="top", textcoords="offset points", backgroundcolor="w")
         ax1.annotate(f"{round(pop, 2)} e", xy=(i, j), xytext=(-40,-2), size=7, ha="center", va="top", textcoords="offset points", backgroundcolor="w")
 
@@ -233,18 +233,5 @@ def diagram(mos, orbitals, sfos_f1, sfos_f2, color='b'):
     plt.ylabel(r'$\epsilon$ / eV')
     plt.xlim(-1.7, 1.7)
 
-
-if __name__ == '__main__':
-    fig = plt.figure(figsize=(12,12))
-    orbitals = pyfmo.orbitals.Orbitals('/Users/Tori/PyFMO/test/fixtures/NH3BH3/adf.rkf')
-    MOs = orbitals.mos['HOMO-6':'LUMO']
-    SFOsF1 = orbitals.sfos['Donor(HOMO-6)':'Donor(LUMO)']
-    SFOsF2 = orbitals.sfos['Acceptor(HOMO-3)':'Acceptor(LUMO)']
- #   mixing2 = max(closed_interaction.get_2mixings(orbitals, orbitals.mos['HOMO-2']))
- #   print(mixing2)
- #   fragments = list(orbitals.fragments)
-    diagram(MOs, orbitals, SFOsF1, SFOsF2)
- #   diagram(mixing2.mos, orbitals, [sfo for sfo in mixing2.sfos if sfo.fragment == fragments[0]], [sfo for sfo in mixing2.sfos if sfo.fragment == fragments[1]], color='r')
-    plt.show()
 
 
