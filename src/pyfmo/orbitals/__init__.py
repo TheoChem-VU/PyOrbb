@@ -87,6 +87,11 @@ class Orbitals:
     def spins(self):
         return self.sfos.spins
 
+    def write_excel(self, out_file: str = 'pyfmo.xlsx'):
+        from pyfmo.report import write_excel
+
+        write_excel.to_excel(self.sfos.get_fragment_sfos(self.fragments[0]), self.sfos.get_fragment_sfos(self.fragments[1]))
+
 
 def sort_orb_pairs(orbs1, orbs2, prop=None):
     '''
