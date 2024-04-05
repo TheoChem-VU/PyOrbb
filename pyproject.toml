@@ -27,4 +27,4 @@ dev_template = "{tag}"
 dirty_template = "{tag}"
 
 [project.scripts]
-pyfmo = "tcutility.cli_scripts.pyfmoparser:main"
+pyfmo = "pyfmo.cli_scripts.pyfmoparser:main"
