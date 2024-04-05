@@ -138,11 +138,11 @@ def to_excel(orbs, out_file: str = 'pyfmo.xlsx'):
         dim_holder = xl.worksheet.dimensions.DimensionHolder(worksheet=sheet)
             
         # normalize the data for coloring later
+        clip = clip or (values.min(), values.max())
         if use_two_scale:
-            tsn = colors.TwoSlopeNorm(vcenter=0, vmin=values.min(), vmax=values.max())
+            tsn = colors.TwoSlopeNorm(vcenter=0, vmin=clip[0], vmax=clip[1])
             normed_values = tsn(values)
         else:
-            clip = clip or (values.min(), values.max())
             normed_values = (np.clip(values, *clip) - np.nanmin(np.clip(values, *clip)))/(np.nanmax(np.clip(values, *clip)) - np.nanmin(np.clip(values, *clip))) * 0.8
 
         for i, sfo1 in enumerate(sfos1):
