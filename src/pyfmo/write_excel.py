@@ -200,6 +200,30 @@ def to_excel(orbs, out_file: str = 'pyfmo.xlsx'):
             cell = sheet.cell(row=start_row + i + j + 1, column=start_column, value=f'{"*"*(j+1)} {asterisk}')
 
         return len(rows) + len(asterisks) + start_row
+    def make_table_sheet(sheet_name, sheet_title, rows, header):
+        sheet = wb.create_sheet(sheet_name)
+
+        title_cell = sheet.cell(row=1, column=1, value=sheet_title)
+        title_cell.font = xl.styles.Font(b=True, size=24)
+
+        dim_holder = xl.worksheet.dimensions.DimensionHolder(worksheet=sheet)
+
+        for j, col in enumerate(header):
+            cell = sheet.cell(row=3, column=j+2, value=col)
+            cell.font = xl.styles.Font(b=True)
+            cell.border = xl.styles.Border(bottom=xl.styles.Side(border_style="double"))
+
+        for i, row in enumerate(rows):
+            for j, val in enumerate(row):
+                cell = sheet.cell(row=i + 4, column=j+2, value=val)
+                if isinstance(val, float):
+                    cell.number_format = '0.00'
+                dim_holder.setdefault(get_column_letter(j+4), xl.worksheet.dimensions.ColumnDimension(sheet, min=j+4, max=j+4, bestFit=True))
+
+        # fixing the column widths
+        dim_holder['C'] = xl.worksheet.dimensions.ColumnDimension(sheet, index='C', auto_size=True)
+        sheet.column_dimensions = dim_holder
+        sheet.freeze_panes = sheet['D4']
 
     # open a new notebook
     wb = xl.Workbook()
