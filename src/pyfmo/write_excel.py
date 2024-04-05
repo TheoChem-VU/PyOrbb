@@ -379,7 +379,7 @@ def to_excel(orbs, out_file: str = 'pyfmo.xlsx'):
             title = f"MO Coefficients from {fragment} (spin {spin})" if spin != 'AB' else f"MO Coefficients from {fragment}"
             sfos_ = [sfo for sfo in sfos_spin if sfo.fragment == fragment]
             coeff = coefficient_mat(sfos_, mos_spin)
-            make_sheet(name, title, mos_spin, sfos_, coeff.T, number_format='0.00', cmap=cmap, use_two_scale=True)
+            make_sheet(name, title, mos_spin, sfos_, coeff.T, number_format='0.00', cmap=cmap, use_two_scale=True, clip=(-1, 1))
 
             name = f"Contributions {fragment} {spin}" if spin != 'AB' else f"Contributions {fragment}"
             title = f"Mulliken Contributions from {fragment} (spin {spin})" if spin != 'AB' else f"Mulliken Contributions from {fragment}"
