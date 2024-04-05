@@ -85,6 +85,26 @@ def get_molecules(reader):
     return ret
 
 
+def mo_activity_rank(orbs):
+    Pmo = np.sum(abs(P), axis=1)
+    Pmo_no_occ = abs(Pmo - np.array([mo.occupation for mo in orbs.mos.mos]))
+    mo_indices = np.argsort(Pmo_no_occ)
+
+    return mo_indices
+
+
+def sfo_activity_order(orbs):
+    Csfo = np.sum(abs(C), axis=0)
+    sfos = []
+    for frag in orbs.fragments:
+        frag_indices = [i for i, sfo in enumerate(orbs.sfos) if sfo.fragment == frag]
+        frag_sfos = [sfo for sfo in orbs.sfos if sfo.fragment == frag]
+        frag_sfo_indices = np.argsort(Csfo[frag_indices])
+        sfos.extend([frag_sfos[i] for i in frag_sfo_indices])
+
+    return sfos
+
+
 def to_excel(orbs, out_file: str = 'pyfmo.xlsx'):
     '''
     Write data about sfos1 and sfos2 to a nicely formatted excel file.
@@ -295,9 +315,10 @@ def to_excel(orbs, out_file: str = 'pyfmo.xlsx'):
         }
         next_row, _ = make_key_value_table(rows, next_row + 1, 2)
 
+    mo_ranks = mo_activity_rank(orbs)
     # write a table with MO and SFO energies
     rows = []
-    for mo in orbs.mos:
+    for mo, rank in enumerate(orbs.mos, mo_ranks):
         rows.append([
             mo.index,
             mo.name,
@@ -306,6 +327,7 @@ def to_excel(orbs, out_file: str = 'pyfmo.xlsx'):
             mo.spin,
             mo.symmetry,
             mo.energy,
+            rank + 1,
         ])
 
     headers = [
@@ -316,9 +338,11 @@ def to_excel(orbs, out_file: str = 'pyfmo.xlsx'):
         'Spin', 
         'Symmetry', 
         'Energy (eV)',
+        'Activity Rank'
     ]
     make_table_sheet('MOs', 'Molecular Orbitals', rows, headers)
 
+    sfo_order = sfo_activity_order(orbs)
     for fragment in orbs.fragments:
         rows = []
         for sfo in orbs.sfos.get_fragment_sfos(fragment):
@@ -331,6 +355,7 @@ def to_excel(orbs, out_file: str = 'pyfmo.xlsx'):
                 sfo.spin,
                 sfo.symmetry,
                 sfo.energy,
+                sfo_order.index(sfo),
             ])
 
         headers = [
@@ -342,6 +367,7 @@ def to_excel(orbs, out_file: str = 'pyfmo.xlsx'):
             'Spin', 
             'Symmetry', 
             'Energy (eV)',
+            'Activity Rank',
         ]
         make_table_sheet(f'SFOs {fragment}', f'Fragment Orbitals for Fragment {fragment}', rows, headers)
 
