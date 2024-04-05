@@ -67,7 +67,7 @@ def get_molecules(reader):
     return ret
 
 
-def to_excel(sfos1, sfos2, out_file: str = 'pyfmo.xlsx'):
+def to_excel(orbs, out_file: str = 'pyfmo.xlsx'):
     '''
     Write data about sfos1 and sfos2 to a nicely formatted excel file.
     Currently writes overlap matrices, square of overlap matrices, energy gap matrices and orbital interaction matrices.

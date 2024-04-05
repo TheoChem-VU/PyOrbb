@@ -90,8 +90,7 @@ class Orbitals:
     def write_excel(self, out_file: str = 'pyfmo.xlsx'):
         from pyfmo import write_excel
         
-        frag1, frag2 = tuple(self.fragments)
-        write_excel.to_excel(self.sfos.get_fragment_sfos(frag1), self.sfos.get_fragment_sfos(frag2))
+        write_excel.to_excel(self)
 
 
 def sort_orb_pairs(orbs1, orbs2, prop=None):
