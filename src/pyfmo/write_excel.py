@@ -238,12 +238,64 @@ def to_excel(orbs, out_file: str = 'pyfmo.xlsx'):
         }
         next_row = make_key_value_table(rows, next_row + 1, 2)
 
+    # write a table with MO and SFO energies
+    rows = []
+    for mo in orbs.mos:
+        rows.append([
+            mo.index,
+            mo.name,
+            mo.relname,
+            int(mo.occupation),
+            mo.spin,
+            mo.symmetry,
+            mo.energy,
+        ])
+
+    headers = [
+        'Index', 
+        'Name', 
+        'Relative Name', 
+        'Occupation', 
+        'Spin', 
+        'Symmetry', 
+        'Energy (eV)',
+    ]
+    make_table_sheet('MOs', 'Molecular Orbitals', rows, headers)
+
+    for fragment in orbs.fragments:
+        rows = []
+        for sfo in orbs.sfos.get_fragment_sfos(fragment):
+            rows.append([
+                sfo.index,
+                sfo.name,
+                sfo.relname,
+                int(sfo.occupation),
+                sum([orbs.mulliken_contribution(mo, sfo) * mo.occupation for mo in orbs.mos if mo.occupied]),
+                sfo.spin,
+                sfo.symmetry,
+                sfo.energy,
+            ])
+
+        headers = [
+            'Index', 
+            'Name', 
+            'Relative Name', 
+            'Occupation',
+            'Gross Pop.',
+            'Spin', 
+            'Symmetry', 
+            'Energy (eV)',
+        ]
+        make_table_sheet(f'SFOs {fragment}', f'Fragment Orbitals for Fragment {fragment}', rows, headers)
+
+
     # we add a new sheet for each spin species
-    spins = sorted(list(set(sfo.spin for sfo in sfos1 + sfos2)))  # becomes either ['A', 'B'] or ['AB']
-    for spin in spins:
+    for spin in orbs.spins:
         # we sort the sfos into similar spin species and invert their order (virtual left and up, occupied right and down)
-        sfos1_spin = [sfo for sfo in sfos1 if sfo.spin == spin]
-        sfos2_spin = [sfo for sfo in sfos2 if sfo.spin == spin]
+        sfos_spin = [sfo for sfo in orbs.sfos if sfo.spin == spin]
+        sfos1_spin = [sfo for sfo in sfos_spin if sfo.fragment == list(orbs.fragments)[0]]
+        sfos2_spin = [sfo for sfo in sfos_spin if sfo.fragment == list(orbs.fragments)[1]]
+        mos_spin = [mo for mo in orbs.mos if mo.spin == spin]
 
         # add the data we want
         name = f"Overlap {spin}" if spin != 'AB' else "Overlap"
