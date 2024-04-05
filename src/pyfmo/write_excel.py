@@ -8,6 +8,7 @@ except ImportError:
 from matplotlib import colormaps
 from tcutility import ensure_list
 import numpy as np
+from scm import plams
 
 
 def overlap_mat(sfos1, sfos2):
@@ -38,6 +39,32 @@ def orbint_mat(sfos1, sfos2):
             else:
                 ret[-1].append((sfo1 @ sfo2)**2/abs(sfo1.energy - sfo2.energy))
     return np.array(ret).squeeze()
+
+
+def get_molecules(reader):
+    fragments_names = np.array(reader.read('Geometry', 'fragmenttype').split())
+    coords = np.array(reader.read('Geometry', 'xyz')).reshape(-1, 3)
+    atoms = np.array(reader.read('Geometry', 'atomtype').split())
+
+    order_index = np.array(ensure_list(reader.read('Geometry', 'atom order index'))[:coords.shape[0]]) - 1
+    fragment_index = np.array(ensure_list(reader.read('Geometry', 'fragment and atomtype index'))[:coords.shape[0]]) - 1
+    symbol_index = np.array(ensure_list(reader.read('Geometry', 'fragment and atomtype index'))[coords.shape[0]:]) - 1
+
+    coords = coords[order_index]
+    atoms = atoms[symbol_index][order_index]
+    fragment = fragments_names[fragment_index][order_index]
+
+    ret = {'complex': plams.Molecule()}
+    [ret['complex'].add_atom(plams.Atom(symbol=atom, coords=coord)) for atom, coord in zip(atoms, coords)]
+    for name in fragments_names:
+        ret[name] = plams.Molecule()
+
+        for atom, coord, frag in zip(atoms, coords, fragment):
+            if frag != name:
+                continue
+            ret[name].add_atom(plams.Atom(symbol=atom, coords=coord))
+
+    return ret
 
 
 def to_excel(sfos1, sfos2, out_file: str = 'pyfmo.xlsx'):
@@ -129,6 +156,24 @@ def to_excel(sfos1, sfos2, out_file: str = 'pyfmo.xlsx'):
 
     # open a new notebook
     wb = xl.Workbook()
+    mols = get_molecules(sfos1[0].reader)
+    # we will write some basic info about the calcualtion in the first sheet
+    sheet = wb.worksheets[0]
+    sheet.title = 'Info'
+    # write the title cell
+    title_cell = sheet.cell(row=1, column=1, value='PyFMO Analysis')
+    title_cell.font = xl.styles.Font(b=True, size=24)
+    # write information about the molecule
+    for i, fragment in enumerate([sfos1[0].fragment, sfos2[0].fragment]):
+        cell = sheet.cell(row=3 + i*3 + 0, column=1, value='Fragment ')
+        cell.font = xl.styles.Font(b=True)
+
+        cell = sheet.cell(row=3 + i*3 + 0, column=2, value=fragment)
+        cell.font = xl.styles.Font(b=True)
+
+        cell = sheet.cell(row=3 + i*3 + 1, column=1, value='Coords:')
+        cell = sheet.cell(row=3 + i*3 + 1, column=2, value='\n'.join([f'{atom.symbol}\t{atom.x}\t{atom.y}\t{atom.z}' for atom in mols[fragment]]))
+
     # we add a new sheet for each spin species
     spins = sorted(list(set(sfo.spin for sfo in sfos1 + sfos2)))  # becomes either ['A', 'B'] or ['AB']
     for spin in spins:
@@ -159,10 +204,13 @@ def to_excel(sfos1, sfos2, out_file: str = 'pyfmo.xlsx'):
 
 
 if __name__ == '__main__':
-    rkffile = "Pd4.adf.rkf"
+    import yutility
+
+    rkffile = "../../test/fixtures/NH3BH3/adf.rkf"
+    # yutility.print_kf(rkffile, True)
+
     orbs = pyfmo.orbitals.Orbitals(rkffile)
-    orbs.rename_fragments(['f1', 'f2'], ['Pd', 'CH4'])
-    to_excel(orbs.sfos['Pd'], orbs.sfos['CH4'])
+    orbs.write_excel()
 
     # rkffile = r"D:\Users\Yuman\Desktop\PhD\PyOrb\test\fixtures\NH3BH3\adf.rkf"
     # orbs = pyfmo.Orbitals(rkffile)
