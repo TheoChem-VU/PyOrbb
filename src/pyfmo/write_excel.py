@@ -345,7 +345,6 @@ def to_excel(orbs, out_file: str = 'pyfmo.xlsx'):
         ]
         make_table_sheet(f'SFOs {fragment}', f'Fragment Orbitals for Fragment {fragment}', rows, headers)
 
-
     # we add a new sheet for each spin species
     for spin in orbs.spins:
         # we sort the sfos into similar spin species and invert their order (virtual left and up, occupied right and down)
@@ -374,7 +373,7 @@ def to_excel(orbs, out_file: str = 'pyfmo.xlsx'):
         make_sheet(name, title, sfos1_spin, sfos2_spin, oi, number_format='0.00')
 
         for fragment in orbs.fragments:
-            cmap = colors.LinearSegmentedColormap.from_list('RdGn', ['#67000dff', '#ffffffff', '#157E3AFF'])
+            cmap = colors.LinearSegmentedColormap.from_list('RdGn', ['#ad7a7fff', '#ffffffff', '#157e3bff'])
             name = f"Coefficients {fragment} {spin}" if spin != 'AB' else f"Coefficients {fragment}"
             title = f"MO Coefficients from {fragment} (spin {spin})" if spin != 'AB' else f"MO Coefficients from {fragment}"
             sfos_ = [sfo for sfo in sfos_spin if sfo.fragment == fragment]
