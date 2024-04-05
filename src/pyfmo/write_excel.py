@@ -173,9 +173,13 @@ def to_excel(orbs, out_file: str = 'pyfmo.xlsx'):
         return sheet
 
     def make_key_value_table(rows, start_row, start_column, asterisks=[]):
+        dim_holder = xl.worksheet.dimensions.DimensionHolder(worksheet=sheet)
+
         for i, (variable, value) in enumerate(rows.items()):
             cell_var = sheet.cell(row=start_row + i, column=start_column, value=variable)
             cell_val = sheet.cell(row=start_row + i, column=start_column + 1, value=value)
+            if isinstance(value, float):
+                    cell_val.number_format = '0.00'
             if i > 0:
                 cell_pad = sheet.cell(row=start_row + i, column=start_column + 2, value=" ")
 
