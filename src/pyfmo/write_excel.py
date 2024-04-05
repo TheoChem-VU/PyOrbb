@@ -227,31 +227,36 @@ def to_excel(orbs, out_file: str = 'pyfmo.xlsx'):
 
     # open a new notebook
     wb = xl.Workbook()
-    mols = get_molecules(sfos1[0].reader)
+
     # we will write some basic info about the calcualtion in the first sheet
     sheet = wb.worksheets[0]
     sheet.title = 'Info'
     # write the title cell
     title_cell = sheet.cell(row=1, column=1, value='PyFMO Analysis')
     title_cell.font = xl.styles.Font(b=True, size=24)
-    # write information about the molecule
+
+    cell = sheet.cell(row=4, column=6, value='Here I will write the mixing situations later')
+
+    # write information about the complex
+    mols = get_molecules(orbs.reader)
     rows = {
         'Complex': '',
         'Formula': formula.molecule(mols['complex']),
         'Coords': '\n'.join([f'{atom.symbol}\t{atom.x}\t{atom.y}\t{atom.z}' for atom in mols['complex']]),
-        'No. MOs': len(sfos1 + sfos2),
-        'No. occ. MOs': len([sfo for sfo in sfos1 + sfos2 if sfo.occupied]),
-        'No. virt. MOs': len([sfo for sfo in sfos1 + sfos2 if not sfo.occupied]),
-        'ΔE_int': sfos1[0].reader.read('Energy', 'Bond Energy') * 627.503,
-        'ΔE_Pauli': sfos1[0].reader.read('Energy', 'Pauli Total') * 627.503,
-        'ΔE_oi': sfos1[0].reader.read('Energy', 'Orb.Int. Total') * 627.503,
-        'ΔV_elstat': sfos1[0].reader.read('Energy', 'elstat') * 627.503,
-        'ΔE_disp': sfos1[0].reader.read('Energy', 'Dispersion Energy') * 627.503,
+        'No. MOs': len(orbs.mos.mos),
+        'No. occ. MOs': len([mo for mo in orbs.mos if mo.occupied]),
+        'No. virt. MOs': len([mo for mo in orbs.mos if not mo.occupied]),
+        'ΔE_int': orbs.reader.read('Energy', 'Bond Energy') * 627.503,
+        'ΔE_Pauli': orbs.reader.read('Energy', 'Pauli Total') * 627.503,
+        'ΔE_oi': orbs.reader.read('Energy', 'Orb.Int. Total') * 627.503,
+        'ΔV_elstat': orbs.reader.read('Energy', 'elstat') * 627.503,
+        'ΔE_disp': orbs.reader.read('Energy', 'Dispersion Energy') * 627.503,
     }
-    next_row = make_key_value_table(rows, 4, 2, asterisks=['EDA terms given in (kcal mol⁻¹)'])
+    next_row, _ = make_key_value_table(rows, 4, 2, asterisks=['EDA terms given in (kcal mol⁻¹)'])
 
-    for i, sfos in enumerate([sfos1, sfos2]):
-        fragment = sfos[0].fragment
+    # write information about the fragments
+    for i, fragment in enumerate(orbs.fragments):
+        sfos = orbs.sfos.get_fragment_sfos(fragment)
         rows = {
             'Fragment': fragment,
             'Formula': formula.molecule(mols[fragment]),
@@ -260,7 +265,7 @@ def to_excel(orbs, out_file: str = 'pyfmo.xlsx'):
             'No. occ. SFOs': len([sfo for sfo in sfos if sfo.occupied]),
             'No. virt. SFOs': len([sfo for sfo in sfos if not sfo.occupied]),
         }
-        next_row = make_key_value_table(rows, next_row + 1, 2)
+        next_row, _ = make_key_value_table(rows, next_row + 1, 2)
 
     # write a table with MO and SFO energies
     rows = []
