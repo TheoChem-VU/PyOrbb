@@ -194,10 +194,12 @@ def to_excel(orbs, out_file: str = 'pyfmo.xlsx'):
         for i, (variable, value) in enumerate(rows.items()):
             cell_var = sheet.cell(row=start_row + i, column=start_column, value=variable)
             cell_val = sheet.cell(row=start_row + i, column=start_column + 1, value=value)
+
             if isinstance(value, float):
-                    cell_val.number_format = '0.00'
+                cell_val.number_format = '0.00'
+
             if i > 0:
-                cell_pad = sheet.cell(row=start_row + i, column=start_column + 2, value=" ")
+                sheet.cell(row=start_row + i, column=start_column + 2, value=" ")
 
             if i == 0:
                 cell_var.font = xl.styles.Font(b=True, i=True, size=16)
@@ -220,7 +222,7 @@ def to_excel(orbs, out_file: str = 'pyfmo.xlsx'):
         dim_holder.setdefault(get_column_letter(start_column+1), xl.worksheet.dimensions.ColumnDimension(sheet, min=start_column+1, max=start_column+1, bestFit=True))
 
         for j, asterisk in enumerate(asterisks):
-            cell = sheet.cell(row=start_row + i + j + 1, column=start_column, value=f'{"*"*(j+1)} {asterisk}')
+            sheet.cell(row=start_row + i + j + 1, column=start_column, value=f'{"*"*(j+1)} {asterisk}')
         
         sheet.column_dimensions = dim_holder
         
@@ -261,7 +263,7 @@ def to_excel(orbs, out_file: str = 'pyfmo.xlsx'):
     title_cell = sheet.cell(row=1, column=1, value='PyFMO Analysis')
     title_cell.font = xl.styles.Font(b=True, size=24)
 
-    cell = sheet.cell(row=4, column=6, value='Here I will write the mixing situations later')
+    sheet.cell(row=4, column=6, value='Here I will write the mixing situations later')
 
     # write information about the complex
     mols = get_molecules(orbs.reader)
@@ -389,8 +391,6 @@ def to_excel(orbs, out_file: str = 'pyfmo.xlsx'):
 
 
 if __name__ == '__main__':
-    import yutility
-
     rkffile = "../../test/fixtures/NH3BH3/adf.rkf"
     # yutility.print_kf(rkffile, True)
 
