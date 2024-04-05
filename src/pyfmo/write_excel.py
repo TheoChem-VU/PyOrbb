@@ -5,7 +5,7 @@ try:
 except ImportError:
     from openpyxl.utils import get_column_letter
 
-from matplotlib import colormaps
+from matplotlib import colormaps, colors
 from tcutility import ensure_list, formula
 import numpy as np
 from scm import plams
@@ -92,7 +92,7 @@ def to_excel(orbs, out_file: str = 'pyfmo.xlsx'):
     Both restricted and unrestricted sfos are supported.
     '''
 
-    def make_sheet(sheet_name, sheet_title, sfos1, sfos2, values, number_format='0.00', cmap='Greens'):
+    def make_sheet(sheet_name, sheet_title, sfos1, sfos2, values, number_format='0.00', cmap='Greens', use_two_scale=False, clip=None):
         '''
         Create a new sheet and write data to it.
 
@@ -104,7 +104,8 @@ def to_excel(orbs, out_file: str = 'pyfmo.xlsx'):
             number_format: format code for the values, for example, 0.00% for percentages rounded to 2 decimals.
             cmap: colormap name to color the cells by their values.
         '''
-        cmap = colormaps[cmap]  # fetch the colormap from matplotlib
+        if isinstance(cmap, str):
+            cmap = colormaps[cmap]  # fetch the colormap from matplotlib
 
         sheet = wb.create_sheet(sheet_name)
 
@@ -112,11 +113,17 @@ def to_excel(orbs, out_file: str = 'pyfmo.xlsx'):
         title_cell.font = xl.styles.Font(b=True, size=24)
 
         # cells that contain the names of the fragments (C2 and B3)
-        f1_cell = sheet.cell(row=4, column=2, value=sfos1[0].fragment_unique_name)
+        if isinstance(sfos1[0], pyfmo.orbitals.sfo.SFO):
+            f1_cell = sheet.cell(row=4, column=2, value=sfos1[0].fragment_unique_name)
+        else:
+            f1_cell = sheet.cell(row=4, column=2, value='Complex MO')
         f1_cell.font = xl.styles.Font(b=True, size=16)
         f1_cell.alignment = xl.styles.Alignment(textRotation=90, horizontal="center", vertical="center")
 
-        f2_cell = sheet.cell(row=2, column=4, value=sfos2[0].fragment_unique_name)
+        if isinstance(sfos2[0], pyfmo.orbitals.sfo.SFO):
+            f2_cell = sheet.cell(row=2, column=4, value=sfos2[0].fragment_unique_name)
+        else:
+            f2_cell = sheet.cell(row=2, column=4, value='Complex MO')
         f2_cell.font = xl.styles.Font(b=True, size=16)
         f2_cell.alignment = xl.styles.Alignment(horizontal="center", vertical="center")
 
@@ -129,7 +136,15 @@ def to_excel(orbs, out_file: str = 'pyfmo.xlsx'):
 
         # dim_holder will be used to auto-format the columns
         dim_holder = xl.worksheet.dimensions.DimensionHolder(worksheet=sheet)
-        
+            
+        # normalize the data for coloring later
+        if use_two_scale:
+            tsn = colors.TwoSlopeNorm(vcenter=0, vmin=values.min(), vmax=values.max())
+            normed_values = tsn(values)
+        else:
+            clip = clip or (values.min(), values.max())
+            normed_values = (np.clip(values, *clip) - np.nanmin(np.clip(values, *clip)))/(np.nanmax(np.clip(values, *clip)) - np.nanmin(np.clip(values, *clip))) * 0.8
+
         for i, sfo1 in enumerate(sfos1):
             # this cell will hold the name of sfo1 in the column header
             name_cell = sheet.cell(row=i+4, column=3, value=sfo1.make_name(frag_name=False, spin=False, relative_name=False))
@@ -144,13 +159,15 @@ def to_excel(orbs, out_file: str = 'pyfmo.xlsx'):
                 name_cell.alignment = xl.styles.Alignment(horizontal="center", vertical="center")
 
                 # normalize the value of the cell to [0, 1] to determine the color
-                x = (values[i, j] - np.nanmin(values))/(np.nanmax(values) - np.nanmin(values)) * 0.8
-                color = cmap(x)  # get the RGB tuple of floats from the cmap
-                color = [int(x_*256) for x_ in color]  # convert the color from float to integer
+
+                color = cmap(normed_values[i, j])  # get the RGB tuple of floats from the cmap
+                color = [int(x_*255) for x_ in color]  # convert the color from float to integer
                 color = f'{color[0]:02x}{color[1]:02x}{color[2]:02x}'  # convert tuple of ints to a hex-code
 
                 # set the value of the cell
                 cell = sheet.cell(row=i+4, column=j+4, value=values[i, j])
+                cell.number_format = number_format
+
                 # if the value of the cell is None we should not color it (defaults to black for None-valued cells)
                 if not np.isnan(values[i, j]):
                     cell.fill = xl.styles.PatternFill(start_color=color, end_color=color, fill_type="solid")
@@ -163,7 +180,6 @@ def to_excel(orbs, out_file: str = 'pyfmo.xlsx'):
                 elif sfo1.make_name(frag_name=False, spin=False, relative_name=True) == 'LUMO':
                     cell.border = xl.styles.Border(top=xl.styles.Side(border_style="medium", color='808080'))
 
-                cell.number_format = number_format
                 dim_holder.setdefault(get_column_letter(j+4), xl.worksheet.dimensions.ColumnDimension(sheet, min=j+4, max=j+4, bestFit=True))
 
         # fixing the column widths
