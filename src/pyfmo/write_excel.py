@@ -6,7 +6,7 @@ except ImportError:
     from openpyxl.utils import get_column_letter
 
 from matplotlib import colormaps
-from tcutility import ensure_list
+from tcutility import ensure_list, formula
 import numpy as np
 from scm import plams
 
@@ -43,7 +43,7 @@ def orbint_mat(sfos1, sfos2):
 
 def get_molecules(reader):
     fragments_names = np.array(reader.read('Geometry', 'fragmenttype').split())
-    coords = np.array(reader.read('Geometry', 'xyz')).reshape(-1, 3)
+    coords = np.array(reader.read('Geometry', 'xyz')).reshape(-1, 3) * 0.529177249
     atoms = np.array(reader.read('Geometry', 'atomtype').split())
 
     order_index = np.array(ensure_list(reader.read('Geometry', 'atom order index'))[:coords.shape[0]]) - 1
@@ -138,11 +138,11 @@ def to_excel(sfos1, sfos2, out_file: str = 'pyfmo.xlsx'):
                     cell.fill = xl.styles.PatternFill(start_color=color, end_color=color, fill_type="solid")
 
                 # we draw a border if the cell is to the bottom-right of the HOMO-LUMO border
-                if sfo1.make_name(frag_name=False, spin=False, relative_name=True) == 'HOMO' and sfo2.make_name(frag_name=False, spin=False, relative_name=True) == 'HOMO':
+                if sfo1.make_name(frag_name=False, spin=False, relative_name=True) == 'LUMO' and sfo2.make_name(frag_name=False, spin=False, relative_name=True) == 'LUMO':
                     cell.border = xl.styles.Border(top=xl.styles.Side(border_style="medium", color='808080'), left=xl.styles.Side(border_style="medium", color='808080'))
-                elif sfo2.make_name(frag_name=False, spin=False, relative_name=True) == 'HOMO':
+                elif sfo2.make_name(frag_name=False, spin=False, relative_name=True) == 'LUMO':
                     cell.border = xl.styles.Border(left=xl.styles.Side(border_style="medium", color='808080'))
-                elif sfo1.make_name(frag_name=False, spin=False, relative_name=True) == 'HOMO':
+                elif sfo1.make_name(frag_name=False, spin=False, relative_name=True) == 'LUMO':
                     cell.border = xl.styles.Border(top=xl.styles.Side(border_style="medium", color='808080'))
 
                 cell.number_format = number_format
@@ -154,6 +154,35 @@ def to_excel(sfos1, sfos2, out_file: str = 'pyfmo.xlsx'):
         sheet.freeze_panes = sheet['D4']
         return sheet
 
+    def make_key_value_table(rows, start_row, start_column, asterisks=[]):
+        for i, (variable, value) in enumerate(rows.items()):
+            cell_var = sheet.cell(row=start_row + i, column=start_column, value=variable)
+            cell_val = sheet.cell(row=start_row + i, column=start_column + 1, value=value)
+            if i > 0:
+                cell_pad = sheet.cell(row=start_row + i, column=start_column + 2, value=" ")
+
+            if i == 0:
+                cell_var.font = xl.styles.Font(b=True, i=True, size=16)
+                cell_var.border = xl.styles.Border(bottom=xl.styles.Side(border_style="double"))
+
+                cell_val.font = xl.styles.Font(b=True, i=True, size=16)
+                cell_val.border = xl.styles.Border(bottom=xl.styles.Side(border_style="double"))
+
+            elif i == (len(rows) - 1):
+                cell_var.font = xl.styles.Font(b=True)
+                cell_var.border = xl.styles.Border(left=xl.styles.Side(border_style="thin"), bottom=xl.styles.Side(border_style="thin"))
+                cell_val.border = xl.styles.Border(right=xl.styles.Side(border_style="thin"), bottom=xl.styles.Side(border_style="thin"))
+
+            else:
+                cell_var.font = xl.styles.Font(b=True)
+                cell_var.border = xl.styles.Border(left=xl.styles.Side(border_style="thin"))
+                cell_val.border = xl.styles.Border(right=xl.styles.Side(border_style="thin"))
+
+        for j, asterisk in enumerate(asterisks):
+            cell = sheet.cell(row=start_row + i + j + 1, column=start_column, value=f'{"*"*(j+1)} {asterisk}')
+
+        return len(rows) + len(asterisks) + start_row
+
     # open a new notebook
     wb = xl.Workbook()
     mols = get_molecules(sfos1[0].reader)
@@ -164,22 +193,39 @@ def to_excel(sfos1, sfos2, out_file: str = 'pyfmo.xlsx'):
     title_cell = sheet.cell(row=1, column=1, value='PyFMO Analysis')
     title_cell.font = xl.styles.Font(b=True, size=24)
     # write information about the molecule
-    for i, fragment in enumerate([sfos1[0].fragment, sfos2[0].fragment]):
-        cell = sheet.cell(row=3 + i*3 + 0, column=1, value='Fragment ')
-        cell.font = xl.styles.Font(b=True)
+    rows = {
+        'Complex': '',
+        'Formula': formula.molecule(mols['complex']),
+        'Coords': '\n'.join([f'{atom.symbol}\t{atom.x}\t{atom.y}\t{atom.z}' for atom in mols['complex']]),
+        'No. MOs': len(sfos1 + sfos2),
+        'No. occ. MOs': len([sfo for sfo in sfos1 + sfos2 if sfo.occupied]),
+        'No. virt. MOs': len([sfo for sfo in sfos1 + sfos2 if not sfo.occupied]),
+        'ΔE_int': sfos1[0].reader.read('Energy', 'Bond Energy') * 627.503,
+        'ΔE_Pauli': sfos1[0].reader.read('Energy', 'Pauli Total') * 627.503,
+        'ΔE_oi': sfos1[0].reader.read('Energy', 'Orb.Int. Total') * 627.503,
+        'ΔV_elstat': sfos1[0].reader.read('Energy', 'elstat') * 627.503,
+        'ΔE_disp': sfos1[0].reader.read('Energy', 'Dispersion Energy') * 627.503,
+    }
+    next_row = make_key_value_table(rows, 4, 2, asterisks=['EDA terms given in (kcal mol⁻¹)'])
 
-        cell = sheet.cell(row=3 + i*3 + 0, column=2, value=fragment)
-        cell.font = xl.styles.Font(b=True)
-
-        cell = sheet.cell(row=3 + i*3 + 1, column=1, value='Coords:')
-        cell = sheet.cell(row=3 + i*3 + 1, column=2, value='\n'.join([f'{atom.symbol}\t{atom.x}\t{atom.y}\t{atom.z}' for atom in mols[fragment]]))
+    for i, sfos in enumerate([sfos1, sfos2]):
+        fragment = sfos[0].fragment
+        rows = {
+            'Fragment': fragment,
+            'Formula': formula.molecule(mols[fragment]),
+            'Coords': '\n'.join([f'{atom.symbol}\t{atom.x}\t{atom.y}\t{atom.z}' for atom in mols[fragment]]),
+            'No. SFOs': len(sfos),
+            'No. occ. SFOs': len([sfo for sfo in sfos if sfo.occupied]),
+            'No. virt. SFOs': len([sfo for sfo in sfos if not sfo.occupied]),
+        }
+        next_row = make_key_value_table(rows, next_row + 1, 2)
 
     # we add a new sheet for each spin species
     spins = sorted(list(set(sfo.spin for sfo in sfos1 + sfos2)))  # becomes either ['A', 'B'] or ['AB']
     for spin in spins:
         # we sort the sfos into similar spin species and invert their order (virtual left and up, occupied right and down)
-        sfos1_spin = [sfo for sfo in sfos1 if sfo.spin == spin][::-1]
-        sfos2_spin = [sfo for sfo in sfos2 if sfo.spin == spin][::-1]
+        sfos1_spin = [sfo for sfo in sfos1 if sfo.spin == spin]
+        sfos2_spin = [sfo for sfo in sfos2 if sfo.spin == spin]
 
         # add the data we want
         name = f"Overlap {spin}" if spin != 'AB' else "Overlap"
