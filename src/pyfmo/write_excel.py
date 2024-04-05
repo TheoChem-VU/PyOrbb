@@ -41,6 +41,24 @@ def orbint_mat(sfos1, sfos2):
     return np.array(ret).squeeze()
 
 
+def coefficient_mat(sfos, mos):
+    ret = []
+    for sfo in ensure_list(sfos):
+        ret.append([])
+        for mo in ensure_list(mos):
+            ret[-1].append(mo.get_coeff(sfo))
+    return np.array(ret).squeeze()
+
+
+def contribution_mat(orbs, sfos, mos):
+    ret = []
+    for sfo in ensure_list(sfos):
+        ret.append([])
+        for mo in ensure_list(mos):
+            ret[-1].append(orbs.mulliken_contribution(sfo, mo))
+    return np.array(ret).squeeze()
+
+
 def get_molecules(reader):
     fragments_names = np.array(reader.read('Geometry', 'fragmenttype').split())
     coords = np.array(reader.read('Geometry', 'xyz')).reshape(-1, 3) * 0.529177249
@@ -245,6 +263,20 @@ def to_excel(orbs, out_file: str = 'pyfmo.xlsx'):
         oi = orbint_mat(sfos1_spin, sfos2_spin)
         oi[~np.isnan(oi)] *= 1000  # in the case of orbital interactions, there is a mask applied to the matrix and we want to multiply each value with 1000 for easier reading
         make_sheet(name, title, sfos1_spin, sfos2_spin, oi, number_format='0.00')
+
+        for fragment in orbs.fragments:
+            cmap = colors.LinearSegmentedColormap.from_list('RdGn', ['#67000dff', '#ffffffff', '#157E3AFF'])
+            name = f"Coefficients {fragment} {spin}" if spin != 'AB' else f"Coefficients {fragment}"
+            title = f"MO Coefficients from {fragment} (spin {spin})" if spin != 'AB' else f"MO Coefficients from {fragment}"
+            sfos_ = [sfo for sfo in sfos_spin if sfo.fragment == fragment]
+            coeff = coefficient_mat(sfos_, mos_spin)
+            make_sheet(name, title, mos_spin, sfos_, coeff.T, number_format='0.00', cmap=cmap, use_two_scale=True)
+
+            name = f"Contributions {fragment} {spin}" if spin != 'AB' else f"Contributions {fragment}"
+            title = f"Mulliken Contributions from {fragment} (spin {spin})" if spin != 'AB' else f"Mulliken Contributions from {fragment}"
+            sfos_ = [sfo for sfo in sfos_spin if sfo.fragment == fragment]
+            contribs = contribution_mat(orbs, sfos_, mos_spin)
+            make_sheet(name, title, mos_spin, sfos_, contribs.T, number_format='0.00%', clip=(0, 1))
 
     wb.save(out_file)
 
