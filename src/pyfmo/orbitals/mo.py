@@ -213,6 +213,21 @@ class MO:
             
         return self.coeffs[other.symmetry_type_index]
 
+    def make_name(self, spin=True, relative_name=False, index_name=False, **kwargs):
+        name = ''
+
+        if relative_name:
+            name += self.relname
+        elif index_name:
+            name += str(self.index) + self.symmetry
+        else:
+            name += self.name
+
+        if self.spin != 'AB' and spin:
+            name += f'_{self.spin}'
+
+        return name
+
     @property
     def full_name(self):
         spin_part = ''
