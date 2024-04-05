@@ -5,7 +5,7 @@ import pyfmo
 
 def create_subparser(parent_parser: argparse.ArgumentParser):
     desc = "Read orbital information from an ADF calculation and write them to an Excel file."
-    subparser = parent_parser.add_parser('optimize', help=desc, description=desc)
+    subparser = parent_parser.add_parser('excel', help=desc, description=desc)
     subparser.add_argument("-o", "--output", 
                            type=str, 
                            help="Set the output Excel file to write to.", 
