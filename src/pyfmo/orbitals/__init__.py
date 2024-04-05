@@ -3,7 +3,7 @@ from scm import plams
 import numpy as np
 # import matplotlib.pyplot as plt
 # from yutility import plot, ensure_list
-from tcutility import ensure_list
+from tcutility import ensure_list, cache
 
 
 class Orbitals:
@@ -34,6 +34,7 @@ class Orbitals:
         self.sfos = sfo.SFOs(reader=self.reader, path_SCF0=path_SCF0)
         self.rename_fragments = self.sfos.rename_fragments
 
+    @cache.cache
     def mulliken_contribution(self, sfo, mo):
         r'''
         Calculate the Mulliken contribution of a selected SFO to a selected MO.
@@ -61,6 +62,7 @@ class Orbitals:
         # calculate the mulliken contribution
         return np.sum(c_iv*c_iu*S_uv)
 
+    @cache.cache
     def mulliken_population(self, sfo, mo):
         r'''
         Calculate the Mulliken population of a selected SFO to a selected MO.
