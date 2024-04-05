@@ -200,10 +200,16 @@ def to_excel(orbs, out_file: str = 'pyfmo.xlsx'):
                 cell_var.border = xl.styles.Border(left=xl.styles.Side(border_style="thin"))
                 cell_val.border = xl.styles.Border(right=xl.styles.Side(border_style="thin"))
 
+        dim_holder.setdefault(get_column_letter(start_column), xl.worksheet.dimensions.ColumnDimension(sheet, min=start_column, max=start_column, bestFit=True))
+        dim_holder.setdefault(get_column_letter(start_column+1), xl.worksheet.dimensions.ColumnDimension(sheet, min=start_column+1, max=start_column+1, bestFit=True))
+
         for j, asterisk in enumerate(asterisks):
             cell = sheet.cell(row=start_row + i + j + 1, column=start_column, value=f'{"*"*(j+1)} {asterisk}')
+        
+        sheet.column_dimensions = dim_holder
+        
+        return len(rows) + len(asterisks) + start_row, start_column + 1
 
-        return len(rows) + len(asterisks) + start_row
     def make_table_sheet(sheet_name, sheet_title, rows, header):
         sheet = wb.create_sheet(sheet_name)
 
