@@ -317,40 +317,48 @@ def to_excel(orbs, out_file: str = 'pyfmo.xlsx'):
     def make_key_value_table(rows, start_row, start_column, asterisks=[]):
         dim_holder = xl.worksheet.dimensions.DimensionHolder(worksheet=sheet)
 
-        for i, (variable, value) in enumerate(rows.items()):
-            cell_var = sheet.cell(row=start_row + i, column=start_column, value=variable)
-            cell_val = sheet.cell(row=start_row + i, column=start_column + 1, value=value)
+        widths = [0] * len(rows[0])
+        for i, row in enumerate(rows):
+            for j, x in enumerate(row):
+                try:
+                    cell = sheet.cell(row=start_row + i, column=start_column + j, value=x)
+                except ValueError:
+                    cell = sheet.cell(row=start_row + i, column=start_column + j, value=str(x))
 
-            if isinstance(value, float):
-                cell_val.number_format = '0.00'
+                if isinstance(x, float):
+                    cell.number_format = '0.00'
+                    widths[j] = max(widths[j], sum(CHAR_WIDTHS.get(char, 8) for char in str(round(x, 2))))
+                elif isinstance(x, str) and '\n' in x:
+                    widths[j] = max(widths[j], sum(CHAR_WIDTHS.get(char, 8) for char in x.split('\n')[0]))
+                else:
+                    widths[j] = max(widths[j], sum(CHAR_WIDTHS.get(char, 8) for char in str(x)))
+
+                if i == 0:
+                    cell.font = xl.styles.Font(b=True)
+                    cell.border = xl.styles.Border(bottom=xl.styles.Side(border_style="double"))
+
+                elif i == (len(rows) - 1):
+                    if j == 0:
+                        cell.border = xl.styles.Border(left=xl.styles.Side(border_style="thin"), bottom=xl.styles.Side(border_style="thin"))
+                        
+                    elif j == (len(row) - 1):
+                        cell.border = xl.styles.Border(right=xl.styles.Side(border_style="thin"), bottom=xl.styles.Side(border_style="thin"))
+
+                    else:
+                        cell.border = xl.styles.Border(bottom=xl.styles.Side(border_style="thin"))
+
+                else:
+                    if j == 0:
+                        cell.border = xl.styles.Border(left=xl.styles.Side(border_style="thin"))
+
+                    elif j == (len(row) - 1):
+                        cell.border = xl.styles.Border(right=xl.styles.Side(border_style="thin"))
 
             if i > 0:
-                sheet.cell(row=start_row + i, column=start_column + 2, value=" ")
+                sheet.cell(row=start_row + i, column=start_column + j + 1, value=" ")
 
-            if i == 0:
-                cell_var.font = xl.styles.Font(b=True, i=True, size=16)
-                cell_var.border = xl.styles.Border(bottom=xl.styles.Side(border_style="double"))
-
-                cell_val.font = xl.styles.Font(b=True, i=True, size=16)
-                cell_val.border = xl.styles.Border(bottom=xl.styles.Side(border_style="double"))
-
-            elif i == (len(rows) - 1):
-                cell_var.font = xl.styles.Font(b=True)
-                cell_var.border = xl.styles.Border(left=xl.styles.Side(border_style="thin"), bottom=xl.styles.Side(border_style="thin"))
-                cell_val.border = xl.styles.Border(right=xl.styles.Side(border_style="thin"), bottom=xl.styles.Side(border_style="thin"))
-
-            else:
-                cell_var.font = xl.styles.Font(b=True)
-                cell_var.border = xl.styles.Border(left=xl.styles.Side(border_style="thin"))
-                cell_val.border = xl.styles.Border(right=xl.styles.Side(border_style="thin"))
-
-        dim_holder.setdefault(get_column_letter(start_column), xl.worksheet.dimensions.ColumnDimension(sheet, min=start_column, max=start_column, bestFit=True))
-        dim_holder.setdefault(get_column_letter(start_column+1), xl.worksheet.dimensions.ColumnDimension(sheet, min=start_column+1, max=start_column+1, bestFit=True))
-
-        for j, asterisk in enumerate(asterisks):
-            sheet.cell(row=start_row + i + j + 1, column=start_column, value=f'{"*"*(j+1)} {asterisk}')
-        
-        sheet.column_dimensions = dim_holder
+        for j in range(len(rows[0])):
+            sheet.column_dimensions[get_column_letter(start_column+j)] = xl.worksheet.dimensions.ColumnDimension(sheet, index=get_column_letter(start_column+j), width=(widths[j] + 8)/7.6)
         
         return len(rows) + len(asterisks) + start_row, start_column + 1
 
@@ -392,37 +400,58 @@ def to_excel(orbs, out_file: str = 'pyfmo.xlsx'):
     title_cell = sheet.cell(row=1, column=1, value='PyFMO Analysis')
     title_cell.font = xl.styles.Font(b=True, size=24)
 
-    sheet.cell(row=4, column=6, value='Here I will write the mixing situations later')
 
     # write information about the complex
     mols = get_molecules(orbs.reader)
-    rows = {
-        'Complex': '',
-        'Formula': formula.molecule(mols['complex']),
-        'Coords': '\n'.join([f'{atom.symbol}\t{atom.x}\t{atom.y}\t{atom.z}' for atom in mols['complex']]),
-        'No. MOs': len(orbs.mos.mos),
-        'No. occ. MOs': len([mo for mo in orbs.mos if mo.occupied]),
-        'No. virt. MOs': len([mo for mo in orbs.mos if not mo.occupied]),
-        'ΔE_int': orbs.reader.read('Energy', 'Bond Energy') * 627.503,
-        'ΔE_Pauli': orbs.reader.read('Energy', 'Pauli Total') * 627.503,
-        'ΔE_oi': orbs.reader.read('Energy', 'Orb.Int. Total') * 627.503,
-        'ΔV_elstat': orbs.reader.read('Energy', 'elstat') * 627.503,
-        'ΔE_disp': orbs.reader.read('Energy', 'Dispersion Energy') * 627.503,
-    }
-    next_row, _ = make_key_value_table(rows, 4, 2, asterisks=['EDA terms given in (kcal mol⁻¹)'])
+    rows = [
+        ['Complex', ''],
+        ['Formula', formula.molecule(mols['complex'])],
+        ['Coords', '[COPY THIS]\n     ' + '\n'.join([f'{atom.symbol}\t{atom.x}\t{atom.y}\t{atom.z}' for atom in mols['complex']])],
+        ['No. MOs', len(orbs.mos.mos)],
+        ['No. occ. MOs', len([mo for mo in orbs.mos if mo.occupied])],
+        ['No. virt. MOs', len([mo for mo in orbs.mos if not mo.occupied])],
+        ['ΔE_int', orbs.reader.read('Energy', 'Bond Energy') * 627.503],
+        ['ΔE_Pauli', orbs.reader.read('Energy', 'Pauli Total') * 627.503],
+        ['ΔE_oi', orbs.reader.read('Energy', 'Orb.Int. Total') * 627.503],
+        ['ΔV_elstat', orbs.reader.read('Energy', 'elstat') * 627.503],
+        ['ΔE_disp', orbs.reader.read('Energy', 'Dispersion Energy') * 627.503],
+    ]
+    next_row, _ = make_key_value_table(rows, 5, 2, asterisks=['EDA terms given in (kcal mol⁻¹)'])
 
     # write information about the fragments
     for i, fragment in enumerate(orbs.fragments):
         sfos = orbs.sfos.get_fragment_sfos(fragment)
-        rows = {
-            'Fragment': fragment,
-            'Formula': formula.molecule(mols[fragment]),
-            'Coords': '\n'.join([f'{atom.symbol}\t{atom.x}\t{atom.y}\t{atom.z}' for atom in mols[fragment]]),
-            'No. SFOs': len(sfos),
-            'No. occ. SFOs': len([sfo for sfo in sfos if sfo.occupied]),
-            'No. virt. SFOs': len([sfo for sfo in sfos if not sfo.occupied]),
-        }
-        next_row, _ = make_key_value_table(rows, next_row + 1, 2)
+        rows = [
+            ['Fragment', fragment],
+            ['Formula', formula.molecule(mols[fragment])],
+            ['Coords', '[COPY THIS]\n     ' + '\n'.join([f'{atom.symbol}\t{atom.x}\t{atom.y}\t{atom.z}' for atom in mols[fragment]])],
+            ['No. SFOs', len(sfos)],
+            ['No. occ. SFOs', len([sfo for sfo in sfos if sfo.occupied])],
+            ['No. virt. SFOs', len([sfo for sfo in sfos if not sfo.occupied])],
+        ]
+        next_row, next_col = make_key_value_table(rows, next_row + 1, 2)
+
+    rows = [['Index', 'SFO1', '', 'SFO2', '', 'MO1', '', 'MO2', 'Strength']]
+    for i, mix in enumerate(pyfmo.analysis.closed_interactions.get_two_mixing(orbs)[:25]):
+        rows.append([i, mix.sfos[0].make_name(frag_name=True, relative_name=True), '+', mix.sfos[1].make_name(frag_name=True, relative_name=True), '->', mix.mos[0].relative_name, '+', mix.mos[1].relative_name, mix.strength])
+
+    make_key_value_table(rows, 5, 6)
+
+
+    rows = [['Index', 'SFO1', '', 'SFO2', '', 'SFO3', '', 'MO1', '', 'MO2', '', 'MO3', 'Strength']]
+    for i, mix in enumerate(pyfmo.analysis.closed_interactions.get_three_mixing(orbs)[:25]):
+        rows.append([i, mix.sfos[0].make_name(frag_name=True, relative_name=True), '+', mix.sfos[1].make_name(frag_name=True, relative_name=True), '+', mix.sfos[2].make_name(frag_name=True, relative_name=True), '->', mix.mos[0].relative_name, '+', mix.mos[1].relative_name, '+', mix.mos[2].relative_name, mix.strength])
+
+    make_key_value_table(rows, 5, 17)
+
+    cell = sheet.cell(row=3, column=2, value='System:')
+    cell.font = xl.styles.Font(b=True, size=16)
+
+    cell = sheet.cell(row=3, column=6, value='Two-Mixing:')
+    cell.font = xl.styles.Font(b=True, size=16)
+
+    cell = sheet.cell(row=3, column=17, value='Three-Mixing:')
+    cell.font = xl.styles.Font(b=True, size=16)
 
     mo_ranks = mo_activity_rank(orbs)
     # write a table with MO and SFO energies
