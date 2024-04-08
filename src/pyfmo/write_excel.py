@@ -200,12 +200,14 @@ def sfo_activity_order(orbs):
 
     return [orbs.sfos.sfos[i] for i in sfo_indices][::-1]
 
+
 def sfo_activity_order_in_frag(orbs):
     C = contribution_mat(orbs, orbs.sfos.sfos, orbs.mos.mos)
     Csfo = np.sum(abs(C), axis=0)
     sfo_indices = np.argsort(Csfo)
     order = [orbs.sfos.sfos[i] for i in sfo_indices][::-1]
     return {frag: [sfo for sfo in order if sfo.fragment == frag] for frag in orbs.fragments}
+
 
 def to_excel(orbs, out_file: str = 'pyfmo.xlsx'):
     '''
@@ -236,14 +238,16 @@ def to_excel(orbs, out_file: str = 'pyfmo.xlsx'):
 
         # cells that contain the names of the fragments (C2 and B3)
         if isinstance(sfos1[0], pyfmo.orbitals.sfo.SFO):
-            f1_cell = sheet.cell(row=4, column=2, value=sfos1[0].fragment_unique_name)
+            frag = sfos1[0].fragment_unique_name
+            f1_cell = sheet.cell(row=4, column=2, value=f'{frag} ({formula.molecule(mols[frag])})')
         else:
             f1_cell = sheet.cell(row=4, column=2, value='Complex MO')
         f1_cell.font = xl.styles.Font(b=True, size=16)
         f1_cell.alignment = xl.styles.Alignment(textRotation=90, horizontal="center", vertical="center")
 
         if isinstance(sfos2[0], pyfmo.orbitals.sfo.SFO):
-            f2_cell = sheet.cell(row=2, column=4, value=sfos2[0].fragment_unique_name)
+            frag = sfos2[0].fragment_unique_name
+            f2_cell = sheet.cell(row=2, column=4, value=f'{frag} ({formula.molecule(mols[frag])})')
         else:
             f2_cell = sheet.cell(row=2, column=4, value='Complex MO')
         f2_cell.font = xl.styles.Font(b=True, size=16)
@@ -527,11 +531,11 @@ def to_excel(orbs, out_file: str = 'pyfmo.xlsx'):
 
 
 if __name__ == '__main__':
-    rkffile = "../../test/fixtures/NH3BH3/adf.rkf"
-    # yutility.print_kf(rkffile, True)
-
-    orbs = pyfmo.orbitals.Orbitals(rkffile)
-    orbs.write_excel()
+    pyfmo.orbitals.Orbitals("../../test/fixtures/NH3BH3/adf.rkf").write_excel('NH3BH3.xlsx')
+    # pyfmo.orbitals.Orbitals("../../test/fixtures/RadicalAddition/adf.rkf").write_excel('RadicalAddition.xlsx')
+    pyfmo.orbitals.Orbitals("../../test/fixtures/homo/FragAnal.adf.rkf").write_excel('homo.xlsx')
+    pyfmo.orbitals.Orbitals("../../test/fixtures/hetero/FragAnal.adf.rkf").write_excel('hetero.xlsx')
+    pyfmo.orbitals.Orbitals("../../test/fixtures/pentafluorophsophate/FragAnal.adf.rkf").write_excel('pentafluorophsophate.xlsx')
 
     # rkffile = r"D:\Users\Yuman\Desktop\PhD\PyOrb\test\fixtures\NH3BH3\adf.rkf"
     # orbs = pyfmo.Orbitals(rkffile)
