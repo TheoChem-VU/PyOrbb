@@ -92,7 +92,7 @@ class Orbitals:
     def write_excel(self, out_file: str = 'pyfmo.xlsx'):
         from pyfmo import write_excel
         
-        write_excel.to_excel(self)
+        write_excel.to_excel(self, out_file)
 
 
 def sort_orb_pairs(orbs1, orbs2, prop=None):
