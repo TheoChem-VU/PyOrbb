@@ -2,7 +2,6 @@ import pyfmo
 import numpy as np
 import matplotlib as mpl
 import matplotlib.pyplot as plt
-import os
 
 font = {'family': 'helvetica',
         'size': 7}
@@ -84,28 +83,24 @@ class Mixing:
         for sfo in self.sfos:
             for mo in self.mos:
                 if sfo in sfos1:
-                    rect = plt.Rectangle((sfos1.index(sfo)-.5, mos.index(mo)-.5), 1, 1, fill=False, color=c, linewidth=linewidth, zorder=9)
-                    # axes[frag1].add_patch(rect)
-                    handle = axes[frag1].plot((sfos1.index(sfo), len(sfos1)-.5), [mos.index(mo), mos.index(mo)], c=c, label=label, zorder=10)
+                    plt.Rectangle((sfos1.index(sfo)-.5, mos.index(mo)-.5), 1, 1, fill=False, color=c, linewidth=linewidth, zorder=9)
+                    axes[frag1].plot((sfos1.index(sfo), len(sfos1)-.5), [mos.index(mo), mos.index(mo)], c=c, label=label, zorder=10)
 
                 else:
-                    rect = plt.Rectangle((sfos2.index(sfo)-.5, mos.index(mo)-.5), 1, 1, fill=False, color=c, linewidth=linewidth, zorder=9)
-                    # axes[frag2].add_patch(rect)
-                    handle = axes[frag2].plot((-.5, sfos2.index(sfo)), [mos.index(mo), mos.index(mo)], c=c, label=label, zorder=10)
+                    plt.Rectangle((sfos2.index(sfo)-.5, mos.index(mo)-.5), 1, 1, fill=False, color=c, linewidth=linewidth, zorder=9)
+                    axes[frag2].plot((-.5, sfos2.index(sfo)), [mos.index(mo), mos.index(mo)], c=c, label=label, zorder=10)
             
             mo_min = min([mos.index(mo) for mo in self.mos])
             mo_max = max([mos.index(mo) for mo in self.mos])
             if sfo in sfos1:
-                handle = axes[frag1].plot((sfos1.index(sfo), sfos1.index(sfo)), [mo_min, mo_max], c=c, linewidth=linewidth, label=label, zorder=10)
+                axes[frag1].plot((sfos1.index(sfo), sfos1.index(sfo)), [mo_min, mo_max], c=c, linewidth=linewidth, label=label, zorder=10)
             if sfo in sfos2:
-                handle = axes[frag2].plot((sfos2.index(sfo), sfos2.index(sfo)), [mo_min, mo_max], c=c, linewidth=linewidth, label=label, zorder=10)
-        # return handle
+                axes[frag2].plot((sfos2.index(sfo), sfos2.index(sfo)), [mo_min, mo_max], c=c, linewidth=linewidth, label=label, zorder=10)
+
         lims = np.min(np.hstack([frag1_contr, frag2_contr])), np.max(np.hstack([frag1_contr, frag2_contr]))
         im.set_clim(*lims)
         plt.colorbar(im, label='Mulliken Contributions')
-        # fig.legend(handles=handle)
         plt.tight_layout()
-        # plt.show()
 
 
 class Mixing2(Mixing):
