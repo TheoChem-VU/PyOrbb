@@ -94,6 +94,14 @@ class Orbitals:
         
         write_excel.to_excel(self, out_file)
 
+    @cache.cache
+    def mulliken_contribution_matrix(self):
+        return np.array([[self.mulliken_contribution(sfo, mo) for sfo in self.sfos.sfos] for mo in self.mos.mos])
+
+    @cache.cache
+    def mulliken_population_matrix(self):
+        return np.array([[self.mulliken_population(sfo, mo) for sfo in self.sfos.sfos] for mo in self.mos.mos])
+
 
 def sort_orb_pairs(orbs1, orbs2, prop=None):
     '''
