@@ -133,7 +133,7 @@ class Mixing3(Mixing):
 
 
 def select_mos(orbs, n_mo=10):
-    activities = pyfmo.analysis.selection.mo_activity(orbs)
+    activities = pyfmo.analysis.orbital_activity.mos(orbs)
     indices = np.argsort(-activities)
     occ_mos = [orbs.mos.mos[i] for i in indices if orbs.mos.mos[i].occupied][:n_mo]
     virt_mos = [orbs.mos.mos[i] for i in indices if not orbs.mos.mos[i].occupied][:n_mo]
@@ -141,7 +141,7 @@ def select_mos(orbs, n_mo=10):
 
 
 def select_sfos(orbs, n_sfo=10):
-    activities = pyfmo.analysis.selection.sfo_activity(orbs)
+    activities = pyfmo.analysis.orbital_activity.sfos(orbs)
     indices = np.argsort(-activities)
     sorted_sfos = [orbs.sfos.sfos[i] for i in indices]
     ret = {}
@@ -229,12 +229,12 @@ if __name__ == '__main__':
     orbs.write_excel('/Users/yumanhordijk/PhD/TheoCheM_stack/calculations/PyOrb_testing_2022/TransitionState/DielsAlder.results/pyorb.xlsx')
     mixing = get_two_mixing(orbs)
     print(len(mixing))
-    for mix in sorted(mixing, reverse=True):
+    for mix in mixing:
         print(mix)
 
     mixing = get_three_mixing(orbs)
     print(len(mixing))
-    for mix in sorted(mixing, reverse=True):
+    for mix in mixing:
         print(mix)
 
     exit()
