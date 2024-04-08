@@ -3,7 +3,6 @@ import numpy as np
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import os
-from time import perf_counter
 
 font = {'family': 'helvetica',
         'size': 7}

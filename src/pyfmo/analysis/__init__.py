@@ -1,1 +1,1 @@
-from . import orbital_activity, closed_interactions
+from . import orbital_activity, closed_interactions  # noqa
