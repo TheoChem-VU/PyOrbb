@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
-import pyfmo
-from pyfmo.orbitals import matrices
+import pyfmo # noqa
+from pyfmo.orbitals import matrices # noqa
 
 def plot_property(orbs1, orbs2, prop=None, propargs={}, propkwargs={}, cmap='Greens', title=None, unit=None, use_relname=False, use_indexname=False, scale=None, **kwargs):
     if cmap is None:
