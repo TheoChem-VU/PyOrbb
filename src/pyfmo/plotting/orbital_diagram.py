@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 from labellines import labelLines
-#import pyfmo
+import pyfmo
 
 def degenerate_xvalues(energies):
     

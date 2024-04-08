@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
-
+import pyfmo
+from pyfmo.orbitals import matrices
 
 def plot_property(orbs1, orbs2, prop=None, propargs={}, propkwargs={}, cmap='Greens', title=None, unit=None, use_relname=False, use_indexname=False, scale=None, **kwargs):
     if cmap is None:
@@ -35,6 +36,7 @@ def plot_property(orbs1, orbs2, prop=None, propargs={}, propkwargs={}, cmap='Gre
         M = prop(orbs1, orbs2, *propargs, **propkwargs)
     else:
         M = prop
+
 
     plotname = orbs1[0].spin + ' ' + orbs1[0].kfpath
     plt.figure(figsize=kwargs.get('figsize', (10, 8)), label=f'{prop_name} {plotname}')
@@ -86,3 +88,15 @@ def plot_property(orbs1, orbs2, prop=None, propargs={}, propkwargs={}, cmap='Gre
     plt.tight_layout()
 
     return
+
+
+
+# if __name__ == '__main__':
+#     p = '/Users/Tori/PyFMO/test/fixtures/NH3BH3/adf.rkf'
+#     orbs = pyfmo.orbitals.Orbitals(p)
+#     orbs1 = orbs.sfos[:'Donor(LUMO+4)']
+#     orbs2 = orbs.sfos[:'Acceptor(LUMO+4)']
+#     heatmap = pyfmo.orbitals.matrices.overlap_mat(orbs1, orbs2)
+#     plot_property(orbs1, orbs2, heatmap)
+#     plt.show()
+
