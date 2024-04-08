@@ -25,3 +25,6 @@ enabled = true
 template = "{tag}"
 dev_template = "{tag}"
 dirty_template = "{tag}"
+
+[project.scripts]
+pyfmo = "pyfmo.cli_scripts.pyfmoparser:main"

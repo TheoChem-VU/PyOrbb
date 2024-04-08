@@ -3,7 +3,7 @@ from scm import plams
 import numpy as np
 # import matplotlib.pyplot as plt
 # from yutility import plot, ensure_list
-from tcutility import ensure_list
+from tcutility import ensure_list, cache
 
 
 class Orbitals:
@@ -34,6 +34,7 @@ class Orbitals:
         self.sfos = sfo.SFOs(reader=self.reader, path_SCF0=path_SCF0)
         self.rename_fragments = self.sfos.rename_fragments
 
+    @cache.cache
     def mulliken_contribution(self, sfo, mo):
         r'''
         Calculate the Mulliken contribution of a selected SFO to a selected MO.
@@ -61,6 +62,7 @@ class Orbitals:
         # calculate the mulliken contribution
         return np.sum(c_iv*c_iu*S_uv)
 
+    @cache.cache
     def mulliken_population(self, sfo, mo):
         r'''
         Calculate the Mulliken population of a selected SFO to a selected MO.
@@ -86,6 +88,11 @@ class Orbitals:
     @property
     def spins(self):
         return self.sfos.spins
+
+    def write_excel(self, out_file: str = 'pyfmo.xlsx'):
+        from pyfmo import write_excel
+        
+        write_excel.to_excel(self, out_file)
 
 
 def sort_orb_pairs(orbs1, orbs2, prop=None):
@@ -197,28 +204,29 @@ def sort_orb_pairs(orbs1, orbs2, prop=None):
 
 
 if __name__ == '__main__':
-    p = '../test/orbitals/rkf/BH3NH3.rkf'
+    p = '../../../test/fixtures/NH3BH3/adf.rkf'
     orbs = Orbitals(p)
-    print(orbs.fragments)
+    orbs.write_excel()
+    # print(orbs.fragments)
 
-    sfos1 = orbs.sfos[:'Donor(LUMO+4)']
-    sfos2 = orbs.sfos[:'Acceptor(LUMO+4)']
+    # sfos1 = orbs.sfos[:'Donor(LUMO+4)']
+    # sfos2 = orbs.sfos[:'Acceptor(LUMO+4)']
 
-    # plot_property(sfos1, sfos2, sfo.orbint, use_relname=True).show()
-    best_pair = sort_orb_pairs(sfos1, sfos2, sfo.orbint)[-1]
-    best_pair[1].generate_orbital().show()
+    # # plot_property(sfos1, sfos2, sfo.orbint, use_relname=True).show()
+    # best_pair = sort_orb_pairs(sfos1, sfos2, sfo.orbint)[-1]
+    # best_pair[1].generate_orbital().show()
 
 
-    p = '../test/orbitals/rkf/substrate_cat_complex.rkf'
-    orbs = Orbitals(p)
-    print(orbs.fragments)
+    # p = '../test/orbitals/rkf/substrate_cat_complex.rkf'
+    # orbs = Orbitals(p)
+    # print(orbs.fragments)
 
-    sfos = orbs.sfos['C:1(1P)']
-    for sfo_ in sfos:
-        sfo_.generate_orbital().show()
-    mos = orbs.mos['HOMO-10':'LUMO+10']
+    # sfos = orbs.sfos['C:1(1P)']
+    # for sfo_ in sfos:
+    #     sfo_.generate_orbital().show()
+    # mos = orbs.mos['HOMO-10':'LUMO+10']
 
-    # plot_property(sfos1, sfos2, sfo.orbint, use_relname=True).show()
-    pairs = sort_orb_pairs(sfos1, sfos2, sfo.orbint)
-    print(pairs[-1])
+    # # plot_property(sfos1, sfos2, sfo.orbint, use_relname=True).show()
+    # pairs = sort_orb_pairs(sfos1, sfos2, sfo.orbint)
+    # print(pairs[-1])
 
