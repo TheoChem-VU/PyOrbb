@@ -1,1 +1,1 @@
-from . import orbitals  # noqa F401
+from . import orbitals, analysis  # noqa F401
