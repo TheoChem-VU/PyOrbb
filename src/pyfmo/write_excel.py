@@ -5,9 +5,8 @@ try:
 except ImportError:
     from openpyxl.utils import get_column_letter
 
-import xlsxwriter
 from matplotlib import colormaps, colors
-from tcutility import ensure_list, formula, cache
+from tcutility import ensure_list, formula
 import numpy as np
 from scm import plams
 
