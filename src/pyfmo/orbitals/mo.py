@@ -33,13 +33,17 @@ class MOs:
         '''
 
         # get spin from the key
-        if '_' in key:
+        index = None
+        orbname = None
+        spin = None
+        if isinstance(key, int):
+            index = key
+        elif '_' in key:
             orbname, spin = key.split('_')
         else:
-            spin = None
             orbname = key
 
-        return {'orbname': orbname, 'spin': spin}
+        return {'orbname': orbname, 'spin': spin, 'index': index}
 
     def get_mo(self, orbname=None, spin=None, index=None):
         ret = []
@@ -75,7 +79,7 @@ class MOs:
         if isinstance(key, slice):
             start_decoded = self._decode_key(key.start)
             stop_decoded = self._decode_key(key.stop)
-
+            
             start_sfo = ensure_list(self.get_mo(**start_decoded))
             stop_sfo = ensure_list(self.get_mo(**stop_decoded))
 
