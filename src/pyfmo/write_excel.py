@@ -24,20 +24,20 @@ CHAR_WIDTHS = {
     ")": 5,
     "*": 7,
     "+": 7,
-    ",": 4,
+    ",": 8,
     "-": 5,
-    ".": 4,
+    ".": 8,
     "/": 6,
-    "0": 7,
-    "1": 7,
-    "2": 7,
-    "3": 7,
-    "4": 7,
-    "5": 7,
-    "6": 7,
-    "7": 7,
-    "8": 7,
-    "9": 7,
+    "0": 8,
+    "1": 8,
+    "2": 8,
+    "3": 8,
+    "4": 8,
+    "5": 8,
+    "6": 8,
+    "7": 8,
+    "8": 8,
+    "9": 8,
     ":": 4,
     ";": 4,
     "<": 7,
@@ -108,6 +108,10 @@ CHAR_WIDTHS = {
     "}": 5,
     "~": 7,
 }
+
+def text_width(text):
+    return (sum(CHAR_WIDTHS.get(char, 8) for char in str(text)) + 8.57) * 0.1318
+
 
 def overlap_mat(sfos1, sfos2):
     ret = []
@@ -236,6 +240,7 @@ def to_excel(orbs, out_file: str = 'pyfmo.xlsx'):
         title_cell = sheet.cell(row=1, column=1, value=sheet_title)
         title_cell.font = xl.styles.Font(b=True, size=24)
 
+
         # cells that contain the names of the fragments (C2 and B3)
         if isinstance(sfos1[0], pyfmo.orbitals.sfo.SFO):
             frag = sfos1[0].fragment_unique_name
@@ -244,6 +249,7 @@ def to_excel(orbs, out_file: str = 'pyfmo.xlsx'):
             f1_cell = sheet.cell(row=4, column=2, value='Complex MO')
         f1_cell.font = xl.styles.Font(b=True, size=16)
         f1_cell.alignment = xl.styles.Alignment(textRotation=90, horizontal="center", vertical="center")
+
 
         if isinstance(sfos2[0], pyfmo.orbitals.sfo.SFO):
             frag = sfos2[0].fragment_unique_name
@@ -259,9 +265,6 @@ def to_excel(orbs, out_file: str = 'pyfmo.xlsx'):
 
         # we set the borders of the upper left corner to make it fit with the other borders
         sheet['C3'].border = xl.styles.Border(right=xl.styles.Side(border_style="thick"), bottom=xl.styles.Side(border_style="thick"))
-
-        # dim_holder will be used to auto-format the columns
-        dim_holder = xl.worksheet.dimensions.DimensionHolder(worksheet=sheet)
             
         # normalize the data for coloring later
         clip = clip or (values.min(), values.max())
@@ -270,13 +273,14 @@ def to_excel(orbs, out_file: str = 'pyfmo.xlsx'):
             normed_values = tsn(values)
         else:
             normed_values = (np.clip(values, *clip) - np.nanmin(np.clip(values, *clip)))/(np.nanmax(np.clip(values, *clip)) - np.nanmin(np.clip(values, *clip))) * 0.8
-
+        
+        column_widths = [0] * len(sfos2)
         for i, sfo1 in enumerate(sfos1):
             # this cell will hold the name of sfo1 in the column header
             name_cell = sheet.cell(row=i+4, column=3, value=sfo1.make_name(frag_name=False, spin=False, relative_name=False))
             name_cell.font = xl.styles.Font(b=True)
             name_cell.border = xl.styles.Border(right=xl.styles.Side(border_style="thick"))
-
+            
             for j, sfo2 in enumerate(sfos2):
                 # this cell will hold the name of sfo2 in the row header
                 name_cell = sheet.cell(row=3, column=j+4, value=sfo2.make_name(frag_name=False, spin=False, relative_name=False))
@@ -284,6 +288,7 @@ def to_excel(orbs, out_file: str = 'pyfmo.xlsx'):
                 name_cell.border = xl.styles.Border(bottom=xl.styles.Side(border_style="thick"))
                 name_cell.alignment = xl.styles.Alignment(horizontal="center", vertical="center")
 
+                column_widths[j] = max(column_widths[j], text_width(name_cell.value))
                 # normalize the value of the cell to [0, 1] to determine the color
 
                 color = cmap(normed_values[i, j])  # get the RGB tuple of floats from the cmap
@@ -293,6 +298,12 @@ def to_excel(orbs, out_file: str = 'pyfmo.xlsx'):
                 # set the value of the cell
                 cell = sheet.cell(row=i+4, column=j+4, value=values[i, j])
                 cell.number_format = number_format
+                if not number_format.endswith('%'):
+                    ndec = number_format.split('.')[1].count('0')
+                    column_widths[j] = max(column_widths[j], text_width(str(round(values[i, j], ndec))))
+                else:
+                    ndec = number_format.split('.')[1].count('0')
+                    column_widths[j] = max(column_widths[j], text_width(str(round(values[i, j]*100, ndec)) + '%'))
 
                 # if the value of the cell is None we should not color it (defaults to black for None-valued cells)
                 if not np.isnan(values[i, j]):
@@ -306,17 +317,13 @@ def to_excel(orbs, out_file: str = 'pyfmo.xlsx'):
                 elif sfo1.make_name(frag_name=False, spin=False, relative_name=True) == 'LUMO':
                     cell.border = xl.styles.Border(top=xl.styles.Side(border_style="medium", color='808080'))
 
-                dim_holder.setdefault(get_column_letter(j+4), xl.worksheet.dimensions.ColumnDimension(sheet, min=j+4, max=j+4, bestFit=True))
-
-        # fixing the column widths
-        dim_holder['C'] = xl.worksheet.dimensions.ColumnDimension(sheet, index='C', auto_size=True)
-        sheet.column_dimensions = dim_holder
+        for j in range(len(sfos2)):
+            sheet.column_dimensions[get_column_letter(j+4)] = xl.worksheet.dimensions.ColumnDimension(sheet, index=get_column_letter(j+4), width=column_widths[j])
+        
         sheet.freeze_panes = sheet['D4']
         return sheet
 
     def make_key_value_table(rows, start_row, start_column, asterisks=[]):
-        dim_holder = xl.worksheet.dimensions.DimensionHolder(worksheet=sheet)
-
         widths = [0] * len(rows[0])
         for i, row in enumerate(rows):
             for j, x in enumerate(row):
@@ -327,11 +334,11 @@ def to_excel(orbs, out_file: str = 'pyfmo.xlsx'):
 
                 if isinstance(x, float):
                     cell.number_format = '0.00'
-                    widths[j] = max(widths[j], sum(CHAR_WIDTHS.get(char, 8) for char in str(round(x, 2))))
+                    widths[j] = max(widths[j], text_width(round(x, 2)))
                 elif isinstance(x, str) and '\n' in x:
-                    widths[j] = max(widths[j], sum(CHAR_WIDTHS.get(char, 8) for char in x.split('\n')[0]))
+                    widths[j] = max(widths[j], text_width(x.split('\n')[0]))
                 else:
-                    widths[j] = max(widths[j], sum(CHAR_WIDTHS.get(char, 8) for char in str(x)))
+                    widths[j] = max(widths[j], text_width(x))
 
                 if i == 0:
                     cell.font = xl.styles.Font(b=True)
@@ -358,7 +365,7 @@ def to_excel(orbs, out_file: str = 'pyfmo.xlsx'):
                 sheet.cell(row=start_row + i, column=start_column + j + 1, value=" ")
 
         for j in range(len(rows[0])):
-            sheet.column_dimensions[get_column_letter(start_column+j)] = xl.worksheet.dimensions.ColumnDimension(sheet, index=get_column_letter(start_column+j), width=(widths[j] + 8)/7.6)
+            sheet.column_dimensions[get_column_letter(start_column+j)] = xl.worksheet.dimensions.ColumnDimension(sheet, index=get_column_letter(start_column+j), width=widths[j])
         
         return len(rows) + len(asterisks) + start_row, start_column + 1
 
@@ -373,7 +380,7 @@ def to_excel(orbs, out_file: str = 'pyfmo.xlsx'):
             cell = sheet.cell(row=3, column=j+2, value=col)
             cell.font = xl.styles.Font(b=True)
             cell.border = xl.styles.Border(bottom=xl.styles.Side(border_style="double"))
-            widths.append(sum(CHAR_WIDTHS.get(char, 8) for char in col))
+            widths.append(text_width(col))
 
         for i, row in enumerate(rows):
             for j, val in enumerate(row):
@@ -381,12 +388,12 @@ def to_excel(orbs, out_file: str = 'pyfmo.xlsx'):
                 if isinstance(val, float):
                     cell.number_format = '0.00'
                     val = round(val, 2)
-                widths[j] = max(widths[j], sum(CHAR_WIDTHS.get(char, 8) for char in str(val)))
+                widths[j] = max(widths[j], text_width(val))
 
         # fixing the column widths
         dim_holder = xl.worksheet.dimensions.DimensionHolder(worksheet=sheet)
         for j in range(len(header)):
-            dim_holder[get_column_letter(j+2)] = xl.worksheet.dimensions.ColumnDimension(sheet, index=get_column_letter(j+2), width=(widths[j] + 8)/7.6)
+            dim_holder[get_column_letter(j+2)] = xl.worksheet.dimensions.ColumnDimension(sheet, index=get_column_letter(j+2), width=widths[j])
         sheet.column_dimensions = dim_holder
         sheet.freeze_panes = sheet['E4']
 
@@ -562,9 +569,9 @@ def to_excel(orbs, out_file: str = 'pyfmo.xlsx'):
 if __name__ == '__main__':
     pyfmo.orbitals.Orbitals("../../test/fixtures/NH3BH3/adf.rkf").write_excel('NH3BH3.xlsx')
     # pyfmo.orbitals.Orbitals("../../test/fixtures/RadicalAddition/adf.rkf").write_excel('RadicalAddition.xlsx')
-    pyfmo.orbitals.Orbitals("../../test/fixtures/homo/FragAnal.adf.rkf").write_excel('homo.xlsx')
-    pyfmo.orbitals.Orbitals("../../test/fixtures/hetero/FragAnal.adf.rkf").write_excel('hetero.xlsx')
-    pyfmo.orbitals.Orbitals("../../test/fixtures/pentafluorophsophate/FragAnal.adf.rkf").write_excel('pentafluorophsophate.xlsx')
+    # pyfmo.orbitals.Orbitals("../../test/fixtures/homo/FragAnal.adf.rkf").write_excel('homo.xlsx')
+    # pyfmo.orbitals.Orbitals("../../test/fixtures/hetero/FragAnal.adf.rkf").write_excel('hetero.xlsx')
+    # pyfmo.orbitals.Orbitals("../../test/fixtures/pentafluorophsophate/FragAnal.adf.rkf").write_excel('pentafluorophsophate.xlsx')
 
     # rkffile = r"D:\Users\Yuman\Desktop\PhD\PyOrb\test\fixtures\NH3BH3\adf.rkf"
     # orbs = pyfmo.Orbitals(rkffile)
