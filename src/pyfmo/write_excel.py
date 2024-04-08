@@ -440,14 +440,18 @@ def to_excel(orbs, out_file: str = 'pyfmo.xlsx'):
 
     rows = [['Index', 'SFO1', '', 'SFO2', '', 'MO1', '', 'MO2', 'Strength']]
     for i, mix in enumerate(pyfmo.analysis.closed_interactions.get_two_mixing(orbs)[:25]):
-        rows.append([i, mix.sfos[0].make_name(frag_name=True, relative_name=True), '+', mix.sfos[1].make_name(frag_name=True, relative_name=True), '->', mix.mos[0].relative_name, '+', mix.mos[1].relative_name, mix.strength])
+        sfo_names = [sfo.make_name(frag_name=True, relative_name=True) for sfo in mix.sfos]
+        mo_names = [mo.relative_name for mo in mix.mos]
+        rows.append([i, sfo_names[0], '+', sfo_names[1], '->', mo_names[0], '+', mo_names[1], mix.strength])
 
     make_key_value_table(rows, 5, 6)
 
 
     rows = [['Index', 'SFO1', '', 'SFO2', '', 'SFO3', '', 'MO1', '', 'MO2', '', 'MO3', 'Strength']]
     for i, mix in enumerate(pyfmo.analysis.closed_interactions.get_three_mixing(orbs)[:25]):
-        rows.append([i, mix.sfos[0].make_name(frag_name=True, relative_name=True), '+', mix.sfos[1].make_name(frag_name=True, relative_name=True), '+', mix.sfos[2].make_name(frag_name=True, relative_name=True), '->', mix.mos[0].relative_name, '+', mix.mos[1].relative_name, '+', mix.mos[2].relative_name, mix.strength])
+        sfo_names = [sfo.make_name(frag_name=True, relative_name=True) for sfo in mix.sfos]
+        mo_names = [mo.relative_name for mo in mix.mos]
+        rows.append([i, sfo_names[0], '+', sfo_names[1], '+', sfo_names[2], '->', mo_names[0], '+', mo_names[1], '+', mo_names[2], mix.strength])
 
     make_key_value_table(rows, 5, 17)
 
