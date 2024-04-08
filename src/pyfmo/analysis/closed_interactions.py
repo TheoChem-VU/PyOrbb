@@ -12,7 +12,8 @@ mpl.rc('font', **font)
 
 
 class Mixing:
-    def __init__(self, mos, sfos, strength):
+    def __init__(self, orbs, mos, sfos, strength):
+        self.orbs = orbs
         self.mos = mos
         self.sfos = sfos
         self.strength = strength
@@ -42,7 +43,7 @@ class Mixing:
         frag1_sfos = [sfo for sfo in self.sfos if sfo.fragment == frags[0]]
         frag2_sfos = [sfo for sfo in self.sfos if sfo.fragment == frags[1]]
 
-        orbital_diagram.diagram(self.mos, orbs, frag1_sfos, frag2_sfos)
+        orbital_diagram.diagram(self.mos, self.orbs, frag1_sfos, frag2_sfos)
 
     def draw_mixing(self, c='red', linewidth=2, label=None):
         if label is None:
@@ -54,17 +55,17 @@ class Mixing:
         frag2_sfo_idx = [sfo.index for sfo in self.sfos if sfo.fragment == frags[1]]
         mo_idx = [mo.index for mo in self.mos]
 
-        sfos1 = orbs.sfos[min(frag1_sfo_idx)-2:max(frag1_sfo_idx)+2]
-        sfos2 = orbs.sfos[min(frag2_sfo_idx)-2:max(frag2_sfo_idx)+2]
-        mos = orbs.mos[min(mo_idx)-2:max(mo_idx)+2]
+        sfos1 = self.orbs.sfos[min(frag1_sfo_idx)-2:max(frag1_sfo_idx)+2]
+        sfos2 = self.orbs.sfos[min(frag2_sfo_idx)-2:max(frag2_sfo_idx)+2]
+        mos = self.orbs.mos[min(mo_idx)-2:max(mo_idx)+2]
 
         frag1_contr = np.zeros((len(mos), len(sfos1)))
         frag2_contr = np.zeros((len(mos), len(sfos2)))
         for i, mo in enumerate(mos):
             for j, sfo in enumerate(sfos1):
-                frag1_contr[i, j] = orbs.mulliken_contribution(sfo, mo)
+                frag1_contr[i, j] = self.orbs.mulliken_contribution(sfo, mo)
             for j, sfo in enumerate(sfos2):
-                frag2_contr[i, j] = orbs.mulliken_contribution(sfo, mo)
+                frag2_contr[i, j] = self.orbs.mulliken_contribution(sfo, mo)
 
         fig, axes = plt.subplot_mosaic([[frag1, frag2]])
         plt.suptitle('Closed Interactions')
@@ -169,7 +170,7 @@ def get_two_mixing(orbs, n_mo=15, n_sfo=10):
                     mul12 = orbs.mulliken_contribution(sfo1, mo2)
                     mul22 = orbs.mulliken_contribution(sfo2, mo2)
                     strength = mul11 * mul12 * mul21 * mul22
-                    m = Mixing2([mo1, mo2], [sfo1, sfo2], strength)
+                    m = Mixing2(orbs, [mo1, mo2], [sfo1, sfo2], strength)
                     mixings.append(m)
 
     return sorted(mixings, reverse=True)
@@ -201,7 +202,7 @@ def get_three_mixing(orbs, N=10, n_sfo=15, n_mo=10):
                 mul33 = orbs.mulliken_contribution(sfo3, mo3)
 
                 strength = mix.strength * mul13 * mul23 * mul31 * mul32 * mul33
-                m = Mixing3([mo1, mo2, mo3], [sfo1, sfo2, sfo3], strength)
+                m = Mixing3(orbs, [mo1, mo2, mo3], [sfo1, sfo2, sfo3], strength)
                 mixings.append(m)
 
     return sorted(mixings, reverse=True)
