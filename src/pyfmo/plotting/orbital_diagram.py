@@ -1,6 +1,9 @@
 import matplotlib.pyplot as plt
 from labellines import labelLines
 import pyfmo # noqa
+import sys
+sys.path.append('/Users/Tori/Dropbox/Work/PyOrb/Scripts')
+import closed_interaction
 
 def degenerate_xvalues(energies):
     
@@ -36,6 +39,9 @@ def pair_occupation(orbitals):
         if orbital.occupation == 2:
                 occupation = orbital.energy 
                 occupations.append(occupation)
+        elif orbital.occupation == 0:
+                occupation = 0
+                occupations.append(occupation)
 
     return occupations
 
@@ -47,6 +53,9 @@ def single_occupation(orbitals):
         if orbital.occupation == 1:
             if orbital.spin == 'A':
                 occupation = int(orbital.energy * 10) / 10
+                occupations.append(occupation)
+        elif orbital.occupation == 0:
+                occupation = 0
                 occupations.append(occupation)
 
     return occupations
@@ -155,23 +164,38 @@ def diagram(mos, orbitals, sfos_f1, sfos_f2, color='b'):
     # Plotting the scatters in the same plot
     ax1 = plt.gca()
 
-    # MO
+    # Plot energies MOs and SFOs
     ax1.scatter(x1, energies_mo, s=1444, marker="_", linewidth=3, c='k')
-    ax1.scatter(x4, pair_occupations_mo, s=200, marker="$⇅$", linewidth=0.2, c='k')
-    if single_occupations_mo != []:
-        x1.scatter(x7, single_occupations_mo, s=200, marker="$↑$", linewidth=0.2, c='k')
-
-    # SFO1
     ax1.scatter(x2, energies_sfos_f1, s=1444, marker="_", linewidth=3, c='k')
-    ax1.scatter(x5, pair_occupations_sfos_f1, s=200, marker="$⇅$", linewidth=0.2, c='k')
-    if single_occupations_sfos_f1 != []:
-        ax1.scatter(x8, single_occupations_sfos_f1, s=200, marker="$↑$", linewidth=0.2, c='k')
-
-    # SFO2
     ax1.scatter(x3, energies_sfos_f2,  s=1444, marker="_", linewidth=3, c='k')
-    ax1.scatter(x6, pair_occupations_sfos_f2, s=200, marker="$⇅$", linewidth=0.2, c='k')
-    if single_occupations_sfos_f2 != []:
-        ax1.scatter(x9, single_occupations_sfos_f2, s=200, marker="$↑$", linewidth=0.5, c='k')
+
+    # Plotting double arrows for occupation 2
+    for mo, sfo1, sfo2 in zip(pair_occupations_mo, pair_occupations_sfos_f1, pair_occupations_sfos_f2):
+
+        index = pair_occupations_mo.index(mo)
+        index2 = pair_occupations_sfos_f1.index(sfo1)
+        index3 = pair_occupations_sfos_f2.index(sfo2)
+
+        if mo != 0:
+            ax1.scatter(x4[index], pair_occupations_mo[index], s=200, marker="$⇅$", linewidth=0.2, c='k')
+        if sfo1 != 0:
+            ax1.scatter(x5[index2], pair_occupations_sfos_f1[index2], s=200, marker="$⇅$", linewidth=0.2, c='k')
+        if sfo2 != 0:
+            ax1.scatter(x6[index3], pair_occupations_sfos_f2[index3], s=200, marker="$⇅$", linewidth=0.2, c='k')
+    
+    # Plotting single arrows for occupation 1
+    for mo, sfo1, sfo2 in zip(single_occupations_mo, single_occupations_sfos_f1, single_occupations_sfos_f2):
+
+        index4 = single_occupations_mo.index(mo)
+        index5 = single_occupations_sfos_f1.index(sfo1)
+        index6 = single_occupations_sfos_f2.index(sfo2)
+
+        if single_occupations_mo != [] and mo != 0:
+            x1.scatter(x7[index4], single_occupations_mo[index4], s=200, marker="$↑$", linewidth=0.2, c='k')
+        if single_occupations_sfos_f1 != [] and sfo1 != 0:
+            ax1.scatter(x8[index5], single_occupations_sfos_f1[index5], s=200, marker="$↑$", linewidth=0.2, c='k')
+        if single_occupations_sfos_f2 != [] and sfo2 != 0:
+            ax1.scatter(x9[index6], single_occupations_sfos_f2[index6], s=200, marker="$↑$", linewidth=0.5, c='k')
 
     # Plotting the lines
     contribution_xy = [list(x) for x in zip(energies_mo, x1)]
@@ -232,16 +256,25 @@ def diagram(mos, orbitals, sfos_f1, sfos_f2, color='b'):
     plt.ylabel(r'$\epsilon$ / eV')
     plt.xlim(-1.7, 1.7)
 
-#if __name__ == '__main__':
+# if __name__ == '__main__':
 #    fig = plt.figure(figsize=(12,12))
 #    orbitals = pyfmo.orbitals.Orbitals('/Users/Tori/PyFMO/test/fixtures/NH3BH3/adf.rkf')
 #    MOs = orbitals.mos['HOMO-6':'LUMO']
-#    SFOsF1 = orbitals.sfos['Donor(HOMO-6)':'Donor(LUMO)']
-#    SFOsF2 = orbitals.sfos['Acceptor(HOMO-3)':'Acceptor(LUMO)']
- #   mixing2 = max(closed_interaction.get_2mixings(orbitals, orbitals.mos['HOMO-2']))
- #   print(mixing2)
- #   fragments = list(orbitals.fragments)
- #   diagram(MOs, orbitals, SFOsF1, SFOsF2)
- #   diagram(mixing2.mos, orbitals, [sfo for sfo in mixing2.sfos if sfo.fragment == fragments[0]], [sfo for sfo in mixing2.sfos if sfo.fragment == fragments[1]], color='r')
- #   plt.show()
+#    SFOsF1 = orbitals.sfos['Donor(HOMO-2)':'Donor(LUMO)']
+#    SFOsF2 = orbitals.sfos['Acceptor(HOMO-2)':'Acceptor(LUMO)']
+#    mixing2 = max(closed_interaction.get_2mixings(orbitals, orbitals.mos['HOMO-2']))
+#    print(mixing2)
+#    diagram(MOs, orbitals, SFOsF1, SFOsF2)
+#    diagram(mixing2.mos, orbitals, [sfo for sfo in mixing2.sfos if sfo.fragment == orbitals.fragments[0]], [sfo for sfo in mixing2.sfos if sfo.fragment == orbitals.fragments[1]], color='r')
+#    plt.show()
+
+
+if __name__ == '__main__':
+   fig = plt.figure(figsize=(12,12))
+   orbitals = pyfmo.orbitals.Orbitals('/Users/Tori/PyFMO/test/fixtures/NH3BH3/adf.rkf')
+   mos = orbitals.mos['HOMO-2', 'LUMO+4']
+   sfos1 = [orbitals.sfos['Acceptor(LUMO)']]
+   sfos2 = [orbitals.sfos['Donor(HOMO)']]
+   diagram(mos, orbitals, sfos1, sfos2, color='r')
+   plt.show()
 
