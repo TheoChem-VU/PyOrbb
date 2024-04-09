@@ -367,7 +367,7 @@ def to_excel(orbs, out_file: str = 'pyfmo.xlsx'):
         for j in range(len(rows[0])):
             sheet.column_dimensions[get_column_letter(start_column+j)] = xl.worksheet.dimensions.ColumnDimension(sheet, index=get_column_letter(start_column+j), width=widths[j])
         
-        return len(rows) + len(asterisks) + start_row, start_column + 1
+        return len(rows) + len(asterisks) + start_row, len(rows[0]) + start_column + 1
 
     def make_table_sheet(sheet_name, sheet_title, rows, header):
         sheet = wb.create_sheet(sheet_name)
@@ -438,22 +438,22 @@ def to_excel(orbs, out_file: str = 'pyfmo.xlsx'):
         ]
         next_row, next_col = make_key_value_table(rows, next_row + 1, 2)
 
-    rows = [['Index', 'SFO1', '', 'SFO2', '', 'MO1', '', 'MO2', 'Strength']]
+    rows = [['Index', 'SFO1', '', 'SFO2', '', 'MO1', '', 'MO2', 'Strength', 'Spin', 'Symmetry']]
     for i, mix in enumerate(pyfmo.analysis.closed_interactions.get_two_mixing(orbs)[:25]):
         sfo_names = [sfo.make_name(frag_name=True, relative_name=True) for sfo in mix.sfos]
         mo_names = [mo.relative_name for mo in mix.mos]
-        rows.append([i, sfo_names[0], '+', sfo_names[1], '->', mo_names[0], '+', mo_names[1], mix.strength])
+        rows.append([i, sfo_names[0], '+', sfo_names[1], '->', mo_names[0], '+', mo_names[1], mix.strength, mix.spin, mix.symmetry])
 
-    make_key_value_table(rows, 5, 6)
+    next_row, next_col = make_key_value_table(rows, 5, 6)
 
 
-    rows = [['Index', 'SFO1', '', 'SFO2', '', 'SFO3', '', 'MO1', '', 'MO2', '', 'MO3', 'Strength']]
+    rows = [['Index', 'SFO1', '', 'SFO2', '', 'SFO3', '', 'MO1', '', 'MO2', '', 'MO3', 'Strength', 'Spin', 'Symmetry']]
     for i, mix in enumerate(pyfmo.analysis.closed_interactions.get_three_mixing(orbs)[:25]):
         sfo_names = [sfo.make_name(frag_name=True, relative_name=True) for sfo in mix.sfos]
         mo_names = [mo.relative_name for mo in mix.mos]
-        rows.append([i, sfo_names[0], '+', sfo_names[1], '+', sfo_names[2], '->', mo_names[0], '+', mo_names[1], '+', mo_names[2], mix.strength])
+        rows.append([i, sfo_names[0], '+', sfo_names[1], '+', sfo_names[2], '->', mo_names[0], '+', mo_names[1], '+', mo_names[2], mix.strength, mix.spin, mix.symmetry])
 
-    make_key_value_table(rows, 5, 17)
+    make_key_value_table(rows, 5, next_col+2)
 
     cell = sheet.cell(row=3, column=2, value='System:')
     cell.font = xl.styles.Font(b=True, size=16)
@@ -461,7 +461,7 @@ def to_excel(orbs, out_file: str = 'pyfmo.xlsx'):
     cell = sheet.cell(row=3, column=6, value='Two-Mixing:')
     cell.font = xl.styles.Font(b=True, size=16)
 
-    cell = sheet.cell(row=3, column=17, value='Three-Mixing:')
+    cell = sheet.cell(row=3, column=next_col+2, value='Three-Mixing:')
     cell.font = xl.styles.Font(b=True, size=16)
 
     mo_ranks = mo_activity_rank(orbs)
@@ -538,7 +538,7 @@ def to_excel(orbs, out_file: str = 'pyfmo.xlsx'):
             'Activity Rank',
             'Activity Rank (in fragment)',
         ]
-        print(include_site, include_site_scf0)
+
         if include_site:
             headers.append('Site Energy (eV)')
 
