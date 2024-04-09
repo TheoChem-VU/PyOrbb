@@ -493,6 +493,8 @@ def to_excel(orbs, out_file: str = 'pyfmo.xlsx'):
 
     sfo_order = sfo_activity_order(orbs)
     sfo_order_frag = sfo_activity_order_in_frag(orbs)
+    include_site = False
+    include_site_scf0 = False
     for fragment in orbs.fragments:
         rows = []
         for sfo in orbs.sfos:
@@ -512,6 +514,18 @@ def to_excel(orbs, out_file: str = 'pyfmo.xlsx'):
                 sfo_order_frag[fragment].index(sfo) + 1,
             ])
 
+            if hasattr(sfo, 'site_energy'):
+                include_site = True
+
+            if hasattr(sfo, 'site_energy_SCF0'):
+                include_site_scf0 = True
+
+            if include_site:
+                rows[-1].append(sfo.site_energy)
+
+            if include_site_scf0:
+                rows[-1].append(sfo.site_energy_SCF0)
+
         headers = [
             'Index', 
             'Name', 
@@ -524,6 +538,14 @@ def to_excel(orbs, out_file: str = 'pyfmo.xlsx'):
             'Activity Rank',
             'Activity Rank (in fragment)',
         ]
+        print(include_site, include_site_scf0)
+        if include_site:
+            headers.append('Site Energy (eV)')
+
+        if include_site_scf0:
+            headers.append('Site Energy SCF0 (eV)')
+
+
         make_table_sheet(f'SFOs {fragment}', f'Fragment Orbitals for Fragment {fragment}', rows, headers)
 
     # we add a new sheet for each spin species
