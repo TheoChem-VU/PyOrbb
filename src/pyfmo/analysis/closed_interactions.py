@@ -102,6 +102,18 @@ class Mixing:
         plt.colorbar(im, label='Mulliken Contributions')
         plt.tight_layout()
 
+    @property
+    def spin(self):
+        spins = list(set(mo.spin for mo in self.mos) & set(sfo.spin for sfo in self.sfos))
+        assert len(spins) == 1
+        return spins[0]
+
+    @property
+    def symmetry(self):
+        symmetries = list(set(mo.symmetry for mo in self.mos) & set(sfo.symmetry for sfo in self.sfos))
+        assert len(symmetries) == 1
+        return symmetries[0]
+
 
 class Mixing2(Mixing):
     @property
