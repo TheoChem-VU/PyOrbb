@@ -1,9 +1,6 @@
 import matplotlib.pyplot as plt
 from labellines import labelLines
 import pyfmo # noqa
-import sys
-sys.path.append('/Users/Tori/Dropbox/Work/PyOrb/Scripts')
-import closed_interaction
 
 def degenerate_xvalues(energies):
     
@@ -269,12 +266,12 @@ def diagram(mos, orbitals, sfos_f1, sfos_f2, color='b'):
 #    plt.show()
 
 
-if __name__ == '__main__':
-   fig = plt.figure(figsize=(12,12))
-   orbitals = pyfmo.orbitals.Orbitals('/Users/Tori/PyFMO/test/fixtures/NH3BH3/adf.rkf')
-   mos = orbitals.mos['HOMO-2', 'LUMO+4']
-   sfos1 = [orbitals.sfos['Acceptor(LUMO)']]
-   sfos2 = [orbitals.sfos['Donor(HOMO)']]
-   diagram(mos, orbitals, sfos1, sfos2, color='r')
-   plt.show()
+# if __name__ == '__main__':
+#    fig = plt.figure(figsize=(12,12))
+#    orbitals = pyfmo.orbitals.Orbitals('/Users/Tori/PyFMO/test/fixtures/NH3BH3/adf.rkf')
+#    mos = orbitals.mos['HOMO-2', 'LUMO+4']
+#    sfos1 = [orbitals.sfos['Acceptor(LUMO)']]
+#    sfos2 = [orbitals.sfos['Donor(HOMO)']]
+#    diagram(mos, orbitals, sfos1, sfos2, color='r')
+#    plt.show()
 
