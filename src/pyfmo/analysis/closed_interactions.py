@@ -140,17 +140,18 @@ class Mixing3(Mixing):
 
 
 def select_mos(orbs, n_mo=10):
-    activities = pyfmo.analysis.orbital_activity.mos(orbs)
-    indices = np.argsort(-activities)
-    occ_mos = [orbs.mos.mos[i] for i in indices if orbs.mos.mos[i].occupied][:n_mo]
-    virt_mos = [orbs.mos.mos[i] for i in indices if not orbs.mos.mos[i].occupied][:n_mo]
+    sorted_mos = pyfmo.analysis.orbital_activity.mos(orbs)
+    # indices = np.argsort(-activities)
+    # sorted_mos = 
+    occ_mos = [mo for mo in sorted_mos if mo.occupied][:n_mo]
+    virt_mos = [mo for mo in sorted_mos if not mo.occupied][:n_mo]
     return occ_mos + virt_mos
 
 
 def select_sfos(orbs, n_sfo=10):
-    activities = pyfmo.analysis.orbital_activity.sfos(orbs)
-    indices = np.argsort(-activities)
-    sorted_sfos = [orbs.sfos.sfos[i] for i in indices]
+    sorted_sfos = pyfmo.analysis.orbital_activity.sfos(orbs)
+    # indices = np.argsort(-activities)
+    # sorted_sfos = [orbs.sfos.sfos[i] for i in indices]
     ret = {}
     for frag in orbs.fragments:
         frag_sfos = [sfo for sfo in sorted_sfos if sfo.fragment == frag][:n_sfo]

@@ -187,30 +187,30 @@ def get_molecules(reader):
     return ret
 
 
-def mo_activity_rank(orbs):
-    C = contribution_mat(orbs, tuple(orbs.sfos.sfos), tuple(orbs.mos.mos))
-    P = C * np.array([[sfo.occupation for sfo in orbs.sfos.sfos] for mo in orbs.mos.mos])
-    Pmo = np.sum(abs(P), axis=1)
-    Pmo_no_occ = abs(Pmo - np.array([mo.occupation for mo in orbs.mos.mos]))
-    mo_indices = np.argsort(Pmo_no_occ)
+# def mo_activity_rank(orbs):
+#     C = contribution_mat(orbs, tuple(orbs.sfos.sfos), tuple(orbs.mos.mos))
+#     P = C * np.array([[sfo.occupation for sfo in orbs.sfos.sfos] for mo in orbs.mos.mos])
+#     Pmo = np.sum(abs(P), axis=1)
+#     Pmo_no_occ = abs(Pmo - np.array([mo.occupation for mo in orbs.mos.mos]))
+#     mo_indices = np.argsort(Pmo_no_occ)
 
-    return [orbs.mos.mos[i] for i in mo_indices][::-1]
-
-
-def sfo_activity_order(orbs):
-    C = contribution_mat(orbs, orbs.sfos.sfos, orbs.mos.mos)
-    Csfo = np.sum(abs(C), axis=0)
-    sfo_indices = np.argsort(Csfo)
-
-    return [orbs.sfos.sfos[i] for i in sfo_indices][::-1]
+#     return [orbs.mos.mos[i] for i in mo_indices][::-1]
 
 
-def sfo_activity_order_in_frag(orbs):
-    C = contribution_mat(orbs, orbs.sfos.sfos, orbs.mos.mos)
-    Csfo = np.sum(abs(C), axis=0)
-    sfo_indices = np.argsort(Csfo)
-    order = [orbs.sfos.sfos[i] for i in sfo_indices][::-1]
-    return {frag: [sfo for sfo in order if sfo.fragment == frag] for frag in orbs.fragments}
+# def sfo_activity_order(orbs):
+#     C = contribution_mat(orbs, orbs.sfos.sfos, orbs.mos.mos)
+#     Csfo = np.sum(abs(C), axis=0)
+#     sfo_indices = np.argsort(Csfo)
+
+#     return [orbs.sfos.sfos[i] for i in sfo_indices][::-1]
+
+
+# def sfo_activity_order_in_frag(orbs):
+#     C = contribution_mat(orbs, orbs.sfos.sfos, orbs.mos.mos)
+#     Csfo = np.sum(abs(C), axis=0)
+#     sfo_indices = np.argsort(Csfo)
+#     order = [orbs.sfos.sfos[i] for i in sfo_indices][::-1]
+#     return {frag: [sfo for sfo in order if sfo.fragment == frag] for frag in orbs.fragments}
 
 
 def to_excel(orbs, out_file: str = 'pyfmo.xlsx'):
@@ -333,8 +333,12 @@ def to_excel(orbs, out_file: str = 'pyfmo.xlsx'):
                     cell = sheet.cell(row=start_row + i, column=start_column + j, value=str(x))
 
                 if isinstance(x, float):
-                    cell.number_format = '0.00'
-                    widths[j] = max(widths[j], text_width(round(x, 2)))
+                    if round(x, 2) == 0.00:
+                        cell.number_format = '0.00E+0'
+                        widths[j] = max(widths[j], text_width('{:.2g}'.format(x)))
+                    else:
+                        cell.number_format = '0.00'
+                        widths[j] = max(widths[j], text_width(round(x, 2)))
                 elif isinstance(x, str) and '\n' in x:
                     widths[j] = max(widths[j], text_width(x.split('\n')[0]))
                 else:
@@ -464,7 +468,7 @@ def to_excel(orbs, out_file: str = 'pyfmo.xlsx'):
     cell = sheet.cell(row=3, column=next_col+2, value='Three-Mixing:')
     cell.font = xl.styles.Font(b=True, size=16)
 
-    mo_ranks = mo_activity_rank(orbs)
+    mo_order = pyfmo.analysis.orbital_activity.mos(orbs)
     # write a table with MO and SFO energies
     rows = []
     for mo in orbs.mos:
@@ -476,7 +480,7 @@ def to_excel(orbs, out_file: str = 'pyfmo.xlsx'):
             mo.spin,
             mo.symmetry,
             mo.energy,
-            mo_ranks.index(mo) + 1,
+            mo_order.index(mo) + 1,
         ])
 
     headers = [
@@ -491,8 +495,8 @@ def to_excel(orbs, out_file: str = 'pyfmo.xlsx'):
     ]
     make_table_sheet('MOs', 'Molecular Orbitals', rows, headers)
 
-    sfo_order = sfo_activity_order(orbs)
-    sfo_order_frag = sfo_activity_order_in_frag(orbs)
+    sfo_order = pyfmo.analysis.orbital_activity.sfos(orbs)
+    sfo_order_frag = {frag: [sfo for sfo in sfo_order if sfo.fragment == frag] for frag in orbs.fragments}
     include_site = False
     include_site_scf0 = False
     for fragment in orbs.fragments:
