@@ -83,7 +83,6 @@ class Orbitals:
 
     @property
     def fragments(self):
-
         return self.sfos.fragments
 
     @property
