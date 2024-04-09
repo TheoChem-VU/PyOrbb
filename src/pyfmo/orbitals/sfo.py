@@ -141,7 +141,15 @@ class SFOs:
 
     @property
     def fragments(self):
-        return set([sfo.fragment_unique_name for sfo in self.sfos])
+
+        unsorted_fragments = [sfo.fragment_unique_name for sfo in self.sfos]
+        fragments = []
+
+        for fragment in unsorted_fragments:
+            if fragment not in fragments:
+                fragments.append(fragment)
+
+        return fragments
 
     def rename_fragments(self, old, new):
         old = ensure_list(old)
@@ -574,13 +582,15 @@ if __name__ == '__main__':
     # sfos = SFOs(reader=reader)
 
     # p = '/Users/yumanhordijk/PhD/ychem/calculations2/c1d4ca95a3911eb1f79bf4ef91cc7a88b479d7dc8357860bfdb3e577747ebc3a/transitionstate/EDA/EDA/full/adf.rkf'
-    p = '../test/orbitals/rkf/substrate_cat_complex_dftb.rkf'
+    p = '/Users/Tori/PyFMO/test/fixtures/NH3BH3/adf.rkf'
     sfos = SFOs(kfpath=p)
     for sfo in sfos:
         print(sfo, sfo.relative_name)
-    sfos_c = sfos['substrate(HOMO-11)':'substrate(LUMO+3)']
-    sfos_h = sfos[:'cat(LUMO+3)']
-    # sfos_c_best, sfos_h_best, oi = sort_sfo_pairs(sfos_c, sfos_h, orbint)[-1]
+
+    print(sfos.fragments)
+    # sfos_c = sfos['substrate(HOMO-11)':'substrate(LUMO+3)']
+    # sfos_h = sfos[:'cat(LUMO+3)']
+    # # sfos_c_best, sfos_h_best, oi = sort_sfo_pairs(sfos_c, sfos_h, orbint)[-1]
     # plot_sfos_prop(sfos_c, sfos_h, overlap, use_relname=False, use_indexname=True).hold()
 
 

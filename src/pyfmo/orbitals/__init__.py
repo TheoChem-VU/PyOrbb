@@ -83,6 +83,7 @@ class Orbitals:
 
     @property
     def fragments(self):
+
         return self.sfos.fragments
 
     @property
@@ -204,7 +205,7 @@ def sort_orb_pairs(orbs1, orbs2, prop=None):
 
 
 if __name__ == '__main__':
-    p = '../../../test/fixtures/NH3BH3/adf.rkf'
+    p = '/Users/Tori/PyFMO/test/fixtures/NH3BH3/adf.rkf'
     orbs = Orbitals(p)
     orbs.write_excel()
     # print(orbs.fragments)
@@ -213,7 +214,7 @@ if __name__ == '__main__':
     # sfos2 = orbs.sfos[:'Acceptor(LUMO+4)']
 
     # # plot_property(sfos1, sfos2, sfo.orbint, use_relname=True).show()
-    # best_pair = sort_orb_pairs(sfos1, sfos2, sfo.orbint)[-1]
+    # #best_pair = sort_orb_pairs(sfos1, sfos2, sfo.orbint)[-1]
     # best_pair[1].generate_orbital().show()
 
 
