@@ -14,14 +14,14 @@ def create_subparser(parent_parser: argparse.ArgumentParser):
     subparser.add_argument("rkf",
                            type=str,
                            help="The path to the `adf.rkf` file to view in an png file.")
-    # subparser.add_argument("orb",
-    #                        type=str,
-    #                        help="Set the orbital to view.",
-    #                        default="HOMO")
-    # subparser.add_argument("mat",
-    #                        type=str,
-    #                        help="Set the material to view the orbital.",
-    #                        default=materials.orbital_matte)
+    subparser.add_argument("orb",
+                           type=str,
+                           help="Set the orbital to view.",
+                           default="HOMO")
+    subparser.add_argument("mat",
+                           type=str,
+                           help="Set the material to view the orbital.",
+                           default="tcviewer.materials.orbital_matte")
 
 
 
@@ -29,10 +29,10 @@ def main(args: argparse.Namespace):
     
     # load orbital and choose an MO to draw
     orbs = pyfmo.orbitals.Orbitals(args.rkf)
-    orbital = orbs.mos['HOMO']
+    orbital = orbs.mos[orb]
 
     # generate a cub file
-    cub = orbital.generate_orbital()
+    cub = orbital.gerate_orbital()
     
     with Screen() as scr:
-        scr.draw_cub(cub, material=materials.orbital_matte)
+        scr.draw_cub(cub, material=mat)

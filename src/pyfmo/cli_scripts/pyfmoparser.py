@@ -7,7 +7,6 @@ from pyfmo.cli_scripts import excel, orbital_viewer
 sub_programs = {
     "excel": excel,
     "show": orbital_viewer,
-    "draw": draw_molecule,
 }
 
 
