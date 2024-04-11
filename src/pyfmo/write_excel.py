@@ -266,7 +266,7 @@ def to_excel(orbs, out_file: str = 'pyfmo.xlsx'):
         sheet['C3'].border = xl.styles.Border(right=xl.styles.Side(border_style="thick"), bottom=xl.styles.Side(border_style="thick"))
             
         # normalize the data for coloring later
-        clip = clip or (values.nanmin(), values.nanmax())
+        clip = clip or (np.nanmin(values), np.nanmax(values))
         if use_two_scale:
             tsn = colors.TwoSlopeNorm(vcenter=0, vmin=clip[0], vmax=clip[1])
             normed_values = tsn(values)
