@@ -2,6 +2,7 @@ import pyfmo
 import numpy as np
 import matplotlib as mpl
 import matplotlib.pyplot as plt
+from tcutility import ensure_list
 
 font = {'family': 'helvetica',
         'size': 7}
@@ -161,13 +162,80 @@ def select_sfos(orbs, n_sfo=10):
     return ret
 
 
+def orbint_mat(sfos1, sfos2):
+    ret = []
+    for sfo1 in ensure_list(sfos1):
+        ret.append([])
+        for sfo2 in ensure_list(sfos2):
+            if sfo1.occupation == sfo2.occupation:
+                ret[-1].append(np.NaN)
+            else:
+                ret[-1].append((sfo1 @ sfo2)**2/abs(sfo1.energy - sfo2.energy))
+    return np.array(ret).squeeze()
+
+def overlap_mat(sfos1, sfos2):
+    ret = []
+    for sfo1 in ensure_list(sfos1):
+        ret.append([])
+        for sfo2 in ensure_list(sfos2):
+            ret[-1].append(abs(sfo1 @ sfo2))
+    return np.array(ret).squeeze()
+
+
+def select_orbs(orbs, n_oi=5, n_pauli=5, n_mo_per_sfo=3):
+    # first split the sfos by fragment type
+    frag1, frag2 = tuple(orbs.fragments)
+    sfos1 = orbs.sfos.get_fragment_sfos(frag1)
+    sfos2 = orbs.sfos.get_fragment_sfos(frag2)
+
+    # then select based on OI terms
+    oi = orbint_mat(sfos1, sfos2)
+    # we set the NaN values to the lowest to prevent some errors
+    oi[np.isnan(oi)] = np.nanmin(oi)
+    # choose the N highest values for the OIs
+    top_N_highest = np.sort(oi.flatten())[-n_oi:]
+    # and get their indices
+    # here the left column in indices will be for sfos1 
+    # and the right column for sfos2
+    indices = np.argwhere(np.isin(oi, top_N_highest))
+    # get the sfos that correspond to the indices
+    oi_sfos = {sfos1[i] for i in indices[:, 0]} | {sfos2[i] for i in indices[:, 1]}
+
+    # for pauli sfos we first get only the occupied sfos
+    sfos1_occ = [sfo for sfo in sfos1 if sfo.occupied]
+    sfos2_occ = [sfo for sfo in sfos2 if sfo.occupied]
+
+    # we now use the overlap matrix instead of the OI matrix
+    S = overlap_mat(sfos1_occ, sfos2_occ)
+    # again get the highest N values
+    top_N_highest = np.sort(S.flatten())[-n_pauli:]
+    # and their indices
+    indices = np.argwhere(np.isin(S, top_N_highest))
+    # get the sfos that have the biggest overlaps
+    pauli_sfos = {sfos1[i] for i in indices[:, 0]} | {sfos2[i] for i in indices[:, 1]}
+
+    # the total SFOs will be the union of the two sets
+    selected_sfos = oi_sfos | pauli_sfos
+
+    # with the SFOs selected we can select the MOs
+    selected_mos = set()
+    # for each SFO we have selected we select the N MOs that it has the highest contributions to
+    for sfo in selected_sfos:
+        # sort the MOs by contribution of the SFO and select the top N
+        mos = set(sorted(orbs.mos.mos, key=lambda mo: -abs(orbs.mulliken_contribution(sfo, mo)))[:n_mo_per_sfo])
+        # add the MOs to the set of selected MOs
+        selected_mos |= mos
+
+    return list(selected_sfos), list(selected_mos)
+    
+
 def get_two_mixing(orbs, n_mo=15, n_sfo=10):
     # split fragment names
     frag1, frag2 = tuple(orbs.fragments)
 
     # select MOs and SFOs by their activity
-    selected_sfos = select_sfos(orbs, n_sfo=n_sfo)
-    selected_mos = select_mos(orbs, n_mo=n_mo)
+    selected_sfos, selected_mos = select_orbs(orbs)
+    selected_sfos = {frag: [sfo for sfo in selected_sfos if sfo.fragment == frag] for frag in orbs.fragments}
 
     mixings = []
     for i, mo1 in enumerate(selected_mos):
@@ -186,10 +254,11 @@ def get_two_mixing(orbs, n_mo=15, n_sfo=10):
 
 
 def get_three_mixing(orbs, N=10, n_sfo=15, n_mo=10):
+    # split fragment names
+    frag1, frag2 = tuple(orbs.fragments)
+
     ## select the MOs and SFOs that have the most important contributions
-    selected_sfos = select_sfos(orbs, n_sfo=n_sfo)
-    selected_sfos = sum(selected_sfos.values(), start=[])
-    selected_mos = select_mos(orbs, n_mo=n_mo)
+    selected_sfos, selected_mos = select_orbs(orbs)
 
     mixings = []
     for mix in get_two_mixing(orbs, n_sfo=n_sfo, n_mo=n_mo)[:N]:
@@ -231,3 +300,15 @@ def offset_grid(axis, **kwargs):
 
     for y in range(ny):
         axis.plot(xlim, (y+.5, y+.5), **kwargs)
+
+
+if __name__ == '__main__':
+    orbs = pyfmo.orbitals.Orbitals("/Users/yumanhordijk/Downloads/FeCO4CH4.adf.rkf")
+    # select_orbs(orbs)
+    mixing = get_two_mixing(orbs)
+    for mix in mixing:
+        print(mix)
+
+    mixing = get_three_mixing(orbs)
+    for mix in mixing:
+        print(mix)
