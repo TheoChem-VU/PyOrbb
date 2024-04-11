@@ -250,7 +250,6 @@ def to_excel(orbs, out_file: str = 'pyfmo.xlsx'):
         f1_cell.font = xl.styles.Font(b=True, size=16)
         f1_cell.alignment = xl.styles.Alignment(textRotation=90, horizontal="center", vertical="center")
 
-
         if isinstance(sfos2[0], pyfmo.orbitals.sfo.SFO):
             frag = sfos2[0].fragment_unique_name
             f2_cell = sheet.cell(row=2, column=4, value=f'{frag} ({formula.molecule(mols[frag])})')
@@ -267,7 +266,7 @@ def to_excel(orbs, out_file: str = 'pyfmo.xlsx'):
         sheet['C3'].border = xl.styles.Border(right=xl.styles.Side(border_style="thick"), bottom=xl.styles.Side(border_style="thick"))
             
         # normalize the data for coloring later
-        clip = clip or (values.min(), values.max())
+        clip = clip or (values.nanmin(), values.nanmax())
         if use_two_scale:
             tsn = colors.TwoSlopeNorm(vcenter=0, vmin=clip[0], vmax=clip[1])
             normed_values = tsn(values)
@@ -443,7 +442,8 @@ def to_excel(orbs, out_file: str = 'pyfmo.xlsx'):
         next_row, next_col = make_key_value_table(rows, next_row + 1, 2)
 
     rows = [['Index', 'SFO1', '', 'SFO2', '', 'MO1', '', 'MO2', 'Strength', 'Spin', 'Symmetry']]
-    for i, mix in enumerate(pyfmo.analysis.closed_interactions.get_two_mixing(orbs)[:25]):
+    mixings = [mix for mix in pyfmo.analysis.closed_interactions.get_two_mixing(orbs) if mix.nocc > 0]
+    for i, mix in enumerate(mixings[:25]):
         sfo_names = [sfo.make_name(frag_name=True, relative_name=True) for sfo in mix.sfos]
         mo_names = [mo.relative_name for mo in mix.mos]
         rows.append([i, sfo_names[0], '+', sfo_names[1], '->', mo_names[0], '+', mo_names[1], mix.strength, mix.spin, mix.symmetry])
@@ -452,7 +452,8 @@ def to_excel(orbs, out_file: str = 'pyfmo.xlsx'):
 
 
     rows = [['Index', 'SFO1', '', 'SFO2', '', 'SFO3', '', 'MO1', '', 'MO2', '', 'MO3', 'Strength', 'Spin', 'Symmetry']]
-    for i, mix in enumerate(pyfmo.analysis.closed_interactions.get_three_mixing(orbs)[:25]):
+    mixings = [mix for mix in pyfmo.analysis.closed_interactions.get_three_mixing(orbs) if mix.nocc > 0]
+    for i, mix in enumerate(mixings[:25]):
         sfo_names = [sfo.make_name(frag_name=True, relative_name=True) for sfo in mix.sfos]
         mo_names = [mo.relative_name for mo in mix.mos]
         rows.append([i, sfo_names[0], '+', sfo_names[1], '+', sfo_names[2], '->', mo_names[0], '+', mo_names[1], '+', mo_names[2], mix.strength, mix.spin, mix.symmetry])
@@ -577,6 +578,7 @@ def to_excel(orbs, out_file: str = 'pyfmo.xlsx'):
         title = f"Orbital Interactions (spin {spin}) (1000/eV)" if spin != 'AB' else "Orbital Interactions (1000/eV)"
         oi = orbint_mat(sfos1_spin, sfos2_spin)
         oi[~np.isnan(oi)] *= 1000  # in the case of orbital interactions, there is a mask applied to the matrix and we want to multiply each value with 1000 for easier reading
+        # print(oi.min(), oi.max(), np.count_nonzero(np.isnan(oi)), oi.size)
         make_matrix_sheet(name, title, sfos1_spin, sfos2_spin, oi, number_format='0.00')
 
         for fragment in orbs.fragments:
@@ -597,7 +599,8 @@ def to_excel(orbs, out_file: str = 'pyfmo.xlsx'):
 
 
 if __name__ == '__main__':
-    pyfmo.orbitals.Orbitals("../../test/fixtures/NH3BH3/adf.rkf").write_excel('NH3BH3.xlsx')
+    # pyfmo.orbitals.Orbitals("../../test/fixtures/NH3BH3/adf.rkf").write_excel('NH3BH3.xlsx')
+    pyfmo.orbitals.Orbitals("/Users/yumanhordijk/Downloads/FeCO4CH4.adf.rkf").write_excel('FeCO4CH4.xlsx')
     # pyfmo.orbitals.Orbitals("../../test/fixtures/RadicalAddition/adf.rkf").write_excel('RadicalAddition.xlsx')
     # pyfmo.orbitals.Orbitals("../../test/fixtures/homo/FragAnal.adf.rkf").write_excel('homo.xlsx')
     # pyfmo.orbitals.Orbitals("../../test/fixtures/hetero/FragAnal.adf.rkf").write_excel('hetero.xlsx')
