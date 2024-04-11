@@ -114,28 +114,30 @@ class Mixing:
         assert len(symmetries) == 1
         return symmetries[0]
 
+    @property
+    def nocc(self):
+        return len([sfo for sfo in self.sfos if sfo.occupied])
+
 
 class Mixing2(Mixing):
     @property
     def type(self):
-        nocc = len([sfo for sfo in self.sfos if sfo.occupied])
-        if nocc == 0:
+        if self.nocc == 0:
             return 'LUMO-LUMO'
-        if nocc == 1:
+        if self.nocc == 1:
             return 'Charge-Transfer'
-        if nocc == 2:
+        if self.nocc == 2:
             return 'Pauli'
 
 
 class Mixing3(Mixing):
     @property
     def type(self):
-        nocc = len([sfo for sfo in self.sfos if sfo.occupied])
-        if nocc == 0:
+        if self.nocc == 0:
             return 'LUMO-LUMO'
-        if nocc == 1:
+        if self.nocc == 1:
             return 'Charge-Transfer'
-        if nocc == 2:
+        if self.nocc == 2:
             return 'Pauli'
 
 
