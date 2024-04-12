@@ -264,7 +264,7 @@ def to_excel(orbs, out_file: str = 'pyfmo.xlsx'):
 
         # we set the borders of the upper left corner to make it fit with the other borders
         sheet['C3'].border = xl.styles.Border(right=xl.styles.Side(border_style="thick"), bottom=xl.styles.Side(border_style="thick"))
-            
+
         # normalize the data for coloring later
         clip = clip or (np.nanmin(values), np.nanmax(values))
         if use_two_scale:
@@ -272,7 +272,7 @@ def to_excel(orbs, out_file: str = 'pyfmo.xlsx'):
             normed_values = tsn(values)
         else:
             normed_values = (np.clip(values, *clip) - np.nanmin(np.clip(values, *clip)))/(np.nanmax(np.clip(values, *clip)) - np.nanmin(np.clip(values, *clip))) * 0.8
-        
+
         column_widths = [0] * len(sfos2)
         for i, sfo1 in enumerate(sfos1):
             # this cell will hold the name of sfo1 in the column header
@@ -442,7 +442,7 @@ def to_excel(orbs, out_file: str = 'pyfmo.xlsx'):
         next_row, next_col = make_key_value_table(rows, next_row + 1, 2)
 
     rows = [['Index', 'SFO1', '', 'SFO2', '', 'MO1', '', 'MO2', 'Strength', 'Spin', 'Symmetry']]
-    mixings = [mix for mix in pyfmo.analysis.closed_interactions.get_two_mixing(orbs) if mix.nocc > 0]
+    mixings = [mix for mix in pyfmo.analysis.closed_interactions.get_two_mixing(orbs) if mix.nocc == 1]
     for i, mix in enumerate(mixings[:25]):
         sfo_names = [sfo.make_name(frag_name=True, relative_name=True) for sfo in mix.sfos]
         mo_names = [mo.relative_name for mo in mix.mos]
@@ -450,24 +450,46 @@ def to_excel(orbs, out_file: str = 'pyfmo.xlsx'):
 
     next_row, next_col = make_key_value_table(rows, 5, 6)
 
+    cell = sheet.cell(row=3, column=6, value='Two-Mixing (Charge-Transfer):')
+    cell.font = xl.styles.Font(b=True, size=16)
+
+    rows = [['Index', 'SFO1', '', 'SFO2', '', 'MO1', '', 'MO2', 'Strength', 'Spin', 'Symmetry']]
+    mixings = [mix for mix in pyfmo.analysis.closed_interactions.get_two_mixing(orbs) if mix.nocc == 2]
+    for i, mix in enumerate(mixings[:25]):
+        sfo_names = [sfo.make_name(frag_name=True, relative_name=True) for sfo in mix.sfos]
+        mo_names = [mo.relative_name for mo in mix.mos]
+        rows.append([i, sfo_names[0], '+', sfo_names[1], '->', mo_names[0], '+', mo_names[1], mix.strength, mix.spin, mix.symmetry])
+
+    cell = sheet.cell(row=3, column=next_col+1, value='Two-Mixing (Pauli):')
+    cell.font = xl.styles.Font(b=True, size=16)
+    next_row, next_col = make_key_value_table(rows, 5, next_col+1)
 
     rows = [['Index', 'SFO1', '', 'SFO2', '', 'SFO3', '', 'MO1', '', 'MO2', '', 'MO3', 'Strength', 'Spin', 'Symmetry']]
-    mixings = [mix for mix in pyfmo.analysis.closed_interactions.get_three_mixing(orbs) if mix.nocc > 0]
+    mixings = [mix for mix in pyfmo.analysis.closed_interactions.get_three_mixing(orbs) if mix.nocc in [1, 2]]
     for i, mix in enumerate(mixings[:25]):
         sfo_names = [sfo.make_name(frag_name=True, relative_name=True) for sfo in mix.sfos]
         mo_names = [mo.relative_name for mo in mix.mos]
         rows.append([i, sfo_names[0], '+', sfo_names[1], '+', sfo_names[2], '->', mo_names[0], '+', mo_names[1], '+', mo_names[2], mix.strength, mix.spin, mix.symmetry])
 
-    make_key_value_table(rows, 5, next_col+2)
+    cell = sheet.cell(row=3, column=next_col+1, value='Three-Mixing (Charge-Transfer):')
+    cell.font = xl.styles.Font(b=True, size=16)
+    next_row, next_col = make_key_value_table(rows, 5, next_col+1)
+
+
+    rows = [['Index', 'SFO1', '', 'SFO2', '', 'SFO3', '', 'MO1', '', 'MO2', '', 'MO3', 'Strength', 'Spin', 'Symmetry']]
+    mixings = [mix for mix in pyfmo.analysis.closed_interactions.get_three_mixing(orbs) if mix.nocc == 3]
+    for i, mix in enumerate(mixings[:25]):
+        sfo_names = [sfo.make_name(frag_name=True, relative_name=True) for sfo in mix.sfos]
+        mo_names = [mo.relative_name for mo in mix.mos]
+        rows.append([i, sfo_names[0], '+', sfo_names[1], '+', sfo_names[2], '->', mo_names[0], '+', mo_names[1], '+', mo_names[2], mix.strength, mix.spin, mix.symmetry])
+
+    cell = sheet.cell(row=3, column=next_col+1, value='Three-Mixing (Pauli):')
+    cell.font = xl.styles.Font(b=True, size=16)
+    next_row, next_col = make_key_value_table(rows, 5, next_col+1)
 
     cell = sheet.cell(row=3, column=2, value='System:')
     cell.font = xl.styles.Font(b=True, size=16)
 
-    cell = sheet.cell(row=3, column=6, value='Two-Mixing:')
-    cell.font = xl.styles.Font(b=True, size=16)
-
-    cell = sheet.cell(row=3, column=next_col+2, value='Three-Mixing:')
-    cell.font = xl.styles.Font(b=True, size=16)
 
     mo_order = pyfmo.analysis.orbital_activity.mos(orbs)
     # write a table with MO and SFO energies
@@ -578,7 +600,6 @@ def to_excel(orbs, out_file: str = 'pyfmo.xlsx'):
         title = f"Orbital Interactions (spin {spin}) (1000/eV)" if spin != 'AB' else "Orbital Interactions (1000/eV)"
         oi = orbint_mat(sfos1_spin, sfos2_spin)
         oi[~np.isnan(oi)] *= 1000  # in the case of orbital interactions, there is a mask applied to the matrix and we want to multiply each value with 1000 for easier reading
-        # print(oi.min(), oi.max(), np.count_nonzero(np.isnan(oi)), oi.size)
         make_matrix_sheet(name, title, sfos1_spin, sfos2_spin, oi, number_format='0.00')
 
         for fragment in orbs.fragments:
@@ -599,8 +620,8 @@ def to_excel(orbs, out_file: str = 'pyfmo.xlsx'):
 
 
 if __name__ == '__main__':
-    # pyfmo.orbitals.Orbitals("../../test/fixtures/NH3BH3/adf.rkf").write_excel('NH3BH3.xlsx')
-    pyfmo.orbitals.Orbitals("/Users/yumanhordijk/Downloads/FeCO4CH4.adf.rkf").write_excel('FeCO4CH4.xlsx')
+    pyfmo.orbitals.Orbitals("../../test/fixtures/NH3BH3/adf.rkf").write_excel('NH3BH3.xlsx')
+    # pyfmo.orbitals.Orbitals("/Users/yumanhordijk/Downloads/FeCO4CH4.adf.rkf").write_excel('FeCO4CH4.xlsx')
     # pyfmo.orbitals.Orbitals("../../test/fixtures/RadicalAddition/adf.rkf").write_excel('RadicalAddition.xlsx')
     # pyfmo.orbitals.Orbitals("../../test/fixtures/homo/FragAnal.adf.rkf").write_excel('homo.xlsx')
     # pyfmo.orbitals.Orbitals("../../test/fixtures/hetero/FragAnal.adf.rkf").write_excel('hetero.xlsx')
