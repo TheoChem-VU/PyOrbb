@@ -441,11 +441,12 @@ def to_excel(orbs, out_file: str = 'pyfmo.xlsx'):
         ]
         next_row, next_col = make_key_value_table(rows, next_row + 1, 2)
 
+    # CHARGE-TRANSFER 2MIXING
     rows = [['Index', 'SFO1', '', 'SFO2', '', 'MO1', '', 'MO2', 'Strength', 'Spin', 'Symmetry']]
     mixings = [mix for mix in pyfmo.analysis.closed_interactions.get_two_mixing(orbs) if mix.nocc == 1]
     for i, mix in enumerate(mixings[:25]):
-        sfo_names = [sfo.make_name(frag_name=True, relative_name=True) for sfo in mix.sfos]
-        mo_names = [mo.relative_name for mo in mix.mos]
+        sfo_names = [sfo.make_name(frag_name=True, relative_name=False) for sfo in mix.sfos]
+        mo_names = [mo.name for mo in mix.mos]
         rows.append([i, sfo_names[0], '+', sfo_names[1], '->', mo_names[0], '+', mo_names[1], mix.strength, mix.spin, mix.symmetry])
 
     next_row, next_col = make_key_value_table(rows, 5, 6)
@@ -453,22 +454,37 @@ def to_excel(orbs, out_file: str = 'pyfmo.xlsx'):
     cell = sheet.cell(row=3, column=6, value='Two-Mixing (Charge-Transfer):')
     cell.font = xl.styles.Font(b=True, size=16)
 
+    # PAULI 2MIXING
     rows = [['Index', 'SFO1', '', 'SFO2', '', 'MO1', '', 'MO2', 'Strength', 'Spin', 'Symmetry']]
     mixings = [mix for mix in pyfmo.analysis.closed_interactions.get_two_mixing(orbs) if mix.nocc == 2]
     for i, mix in enumerate(mixings[:25]):
-        sfo_names = [sfo.make_name(frag_name=True, relative_name=True) for sfo in mix.sfos]
-        mo_names = [mo.relative_name for mo in mix.mos]
+        sfo_names = [sfo.make_name(frag_name=True, relative_name=False) for sfo in mix.sfos]
+        mo_names = [mo.name for mo in mix.mos]
         rows.append([i, sfo_names[0], '+', sfo_names[1], '->', mo_names[0], '+', mo_names[1], mix.strength, mix.spin, mix.symmetry])
 
     cell = sheet.cell(row=3, column=next_col+1, value='Two-Mixing (Pauli):')
     cell.font = xl.styles.Font(b=True, size=16)
     next_row, next_col = make_key_value_table(rows, 5, next_col+1)
 
+    # LUMO-LUMO 2MIXING
+    rows = [['Index', 'SFO1', '', 'SFO2', '', 'MO1', '', 'MO2', 'Strength', 'Spin', 'Symmetry']]
+    mixings = [mix for mix in pyfmo.analysis.closed_interactions.get_two_mixing(orbs) if mix.nocc == 0]
+    for i, mix in enumerate(mixings[:25]):
+        sfo_names = [sfo.make_name(frag_name=True, relative_name=False) for sfo in mix.sfos]
+        mo_names = [mo.name for mo in mix.mos]
+        rows.append([i, sfo_names[0], '+', sfo_names[1], '->', mo_names[0], '+', mo_names[1], mix.strength, mix.spin, mix.symmetry])
+
+    cell = sheet.cell(row=3, column=next_col+1, value='Two-Mixing (LUMO-LUMO):')
+    cell.font = xl.styles.Font(b=True, size=16)
+    next_row, next_col = make_key_value_table(rows, 5, next_col+1)
+
+
+    # CHARGE-TRANSFER 3MIXING
     rows = [['Index', 'SFO1', '', 'SFO2', '', 'SFO3', '', 'MO1', '', 'MO2', '', 'MO3', 'Strength', 'Spin', 'Symmetry']]
     mixings = [mix for mix in pyfmo.analysis.closed_interactions.get_three_mixing(orbs) if mix.nocc in [1, 2]]
     for i, mix in enumerate(mixings[:25]):
-        sfo_names = [sfo.make_name(frag_name=True, relative_name=True) for sfo in mix.sfos]
-        mo_names = [mo.relative_name for mo in mix.mos]
+        sfo_names = [sfo.make_name(frag_name=True, relative_name=False) for sfo in mix.sfos]
+        mo_names = [mo.name for mo in mix.mos]
         rows.append([i, sfo_names[0], '+', sfo_names[1], '+', sfo_names[2], '->', mo_names[0], '+', mo_names[1], '+', mo_names[2], mix.strength, mix.spin, mix.symmetry])
 
     cell = sheet.cell(row=3, column=next_col+1, value='Three-Mixing (Charge-Transfer):')
@@ -476,14 +492,28 @@ def to_excel(orbs, out_file: str = 'pyfmo.xlsx'):
     next_row, next_col = make_key_value_table(rows, 5, next_col+1)
 
 
+    # PAULI 3MIXING
     rows = [['Index', 'SFO1', '', 'SFO2', '', 'SFO3', '', 'MO1', '', 'MO2', '', 'MO3', 'Strength', 'Spin', 'Symmetry']]
     mixings = [mix for mix in pyfmo.analysis.closed_interactions.get_three_mixing(orbs) if mix.nocc == 3]
     for i, mix in enumerate(mixings[:25]):
-        sfo_names = [sfo.make_name(frag_name=True, relative_name=True) for sfo in mix.sfos]
-        mo_names = [mo.relative_name for mo in mix.mos]
+        sfo_names = [sfo.make_name(frag_name=True, relative_name=False) for sfo in mix.sfos]
+        mo_names = [mo.name for mo in mix.mos]
         rows.append([i, sfo_names[0], '+', sfo_names[1], '+', sfo_names[2], '->', mo_names[0], '+', mo_names[1], '+', mo_names[2], mix.strength, mix.spin, mix.symmetry])
 
     cell = sheet.cell(row=3, column=next_col+1, value='Three-Mixing (Pauli):')
+    cell.font = xl.styles.Font(b=True, size=16)
+    next_row, next_col = make_key_value_table(rows, 5, next_col+1)
+
+
+    # LUMO-LUMO 3MIXING
+    rows = [['Index', 'SFO1', '', 'SFO2', '', 'SFO3', '', 'MO1', '', 'MO2', '', 'MO3', 'Strength', 'Spin', 'Symmetry']]
+    mixings = [mix for mix in pyfmo.analysis.closed_interactions.get_three_mixing(orbs) if mix.nocc == 0]
+    for i, mix in enumerate(mixings[:25]):
+        sfo_names = [sfo.make_name(frag_name=True, relative_name=False) for sfo in mix.sfos]
+        mo_names = [mo.name for mo in mix.mos]
+        rows.append([i, sfo_names[0], '+', sfo_names[1], '+', sfo_names[2], '->', mo_names[0], '+', mo_names[1], '+', mo_names[2], mix.strength, mix.spin, mix.symmetry])
+
+    cell = sheet.cell(row=3, column=next_col+1, value='Three-Mixing (LUMO-LUMO):')
     cell.font = xl.styles.Font(b=True, size=16)
     next_row, next_col = make_key_value_table(rows, 5, next_col+1)
 
