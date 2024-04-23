@@ -6,7 +6,8 @@ from pyfmo.cli_scripts import excel, orbital_viewer
 # 3. Add it to the dictionary below {program_name: script-module}.
 sub_programs = {
     "excel": excel,
-    "show": orbital_viewer,
+    "showmo": mo_viewer,
+    "showsfo": sfo_viewer,
 }
 
 
