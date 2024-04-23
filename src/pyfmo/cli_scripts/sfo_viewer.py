@@ -6,7 +6,7 @@ from tcviewer import Screen, materials
 
 def create_subparser(parent_parser: argparse.ArgumentParser):
     desc = "Read orbital information from an ADF calculation and draw the given orbital"
-    subparser = parent_parser.add_parser('show', help=desc, description=desc)
+    subparser = parent_parser.add_parser('showsfo', help=desc, description=desc)
     subparser.add_argument("-o", "--output", 
                            type=str, 
                            help="Set the output png file to write to.", 
@@ -32,12 +32,3 @@ def main(args: argparse.Namespace):
     orb = orbs.mos[args.orb]
 
     orb.draw() 
-    # generate a cub file
-    #cub = orb.generate_orbital()
-    
-    # with Screen() as scr:
-    #     scr.draw_cub(orb, material=args.mat)
-
-
-    #gridsize en iso waarde als optional argument
-    # opacity

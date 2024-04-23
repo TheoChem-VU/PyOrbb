@@ -1,4 +1,4 @@
-from pyfmo.cli_scripts import excel, orbital_viewer
+from pyfmo.cli_scripts import excel, mo_viewer, sfo_viewer
 
 # to add a script:
 # 1. Add a create_subparser function and main function to your script.

@@ -6,7 +6,7 @@ from tcviewer import Screen, materials
 
 def create_subparser(parent_parser: argparse.ArgumentParser):
     desc = "Read orbital information from an ADF calculation and draw the given orbital"
-    subparser = parent_parser.add_parser('show', help=desc, description=desc)
+    subparser = parent_parser.add_parser('showmo', help=desc, description=desc)
     subparser.add_argument("-o", "--output", 
                            type=str, 
                            help="Set the output png file to write to.", 
