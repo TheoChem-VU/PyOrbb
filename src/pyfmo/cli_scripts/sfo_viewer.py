@@ -31,7 +31,13 @@ def create_subparser(parent_parser: argparse.ArgumentParser):
                            default="medium")
     subparser.add_argument("-f", "--flip",
                            type=str,
-                           help="flips the colors")
+                           help="Flips the colors")
+    subparser.add_argument("-r", "--reverse",
+                           type=str,
+                           help="Reverse the colors")
+    subparser.add_argument("-o", "--overlap",
+                           type=str,
+                           help="Plot the overlap between f1 and f2")
 
 
 

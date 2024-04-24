@@ -26,7 +26,12 @@ def create_subparser(parent_parser: argparse.ArgumentParser):
                            type=str,
                            help="Set the gridsize",
                            default="medium")
-
+    subparser.add_argument("-f", "--flip",
+                           type=str,
+                           help="flips the colors")
+    subparser.add_argument("-r", "--reverse",
+                           type=str,
+                           help="reverse the colors")
 
 
 def main(args: argparse.Namespace):
@@ -37,3 +42,4 @@ def main(args: argparse.Namespace):
 
 
     orb.draw(isovalue=args.isovalue, gridsize=args.grid) 
+
