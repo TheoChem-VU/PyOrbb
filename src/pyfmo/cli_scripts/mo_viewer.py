@@ -1,6 +1,7 @@
 """ Module containing functions for quickly viewing orbitals via the command line """
 import argparse
 from pyfmo import orbitals
+import tcviewer
 
 
 
@@ -21,6 +22,10 @@ def create_subparser(parent_parser: argparse.ArgumentParser):
                            type=float,
                            help="Set the isovalue",
                            default="0.03")
+    subparser.add_argument("-g", "--grid",
+                           type=str,
+                           help="Set the gridsize",
+                           default="medium")
 
 
 
@@ -30,5 +35,5 @@ def main(args: argparse.Namespace):
     orbs = orbitals.Orbitals(args.rkf)
     orb = orbs.mos[args.orb]
 
-    orb.draw(isovalue=args.isovalue) 
 
+    orb.draw(isovalue=args.isovalue, gridsize=args.grid) 
