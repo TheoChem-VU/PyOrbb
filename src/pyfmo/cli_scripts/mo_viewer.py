@@ -1,7 +1,7 @@
 """ Module containing functions for quickly viewing orbitals via the command line """
 import argparse
 from pyfmo import orbitals
-from tcviewer import Screen, materials
+
 
 
 def create_subparser(parent_parser: argparse.ArgumentParser):
@@ -17,11 +17,10 @@ def create_subparser(parent_parser: argparse.ArgumentParser):
     subparser.add_argument("orb",
                            type=str,
                            help="Set the orbital to view")
-    subparser.add_argument("mat",
-                           nargs="?",
-                           type=str,
-                           help="Set the material to view the orbital",
-                           default="tcviewer.materials.orbital_matte")
+    subparser.add_argument("-i", "--isovalue",
+                           type=float,
+                           help="Set the isovalue",
+                           default="0.03")
 
 
 
@@ -31,13 +30,5 @@ def main(args: argparse.Namespace):
     orbs = orbitals.Orbitals(args.rkf)
     orb = orbs.mos[args.orb]
 
-    orb.draw() 
-    # generate a cub file
-    #cub = orb.generate_orbital()
-    
-    # with Screen() as scr:
-    #     scr.draw_cub(orb, material=args.mat)
+    orb.draw(isovalue=args.isovalue) 
 
-
-    #gridsize en iso waarde als optional argument
-    # opacity
