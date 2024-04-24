@@ -1,7 +1,8 @@
 """ Module containing functions for quickly viewing orbitals via the command line """
 import argparse
 from pyfmo import orbitals
-from tcviewer import Screen, materials
+import tcviewer
+
 
 
 def create_subparser(parent_parser: argparse.ArgumentParser):
@@ -14,14 +15,23 @@ def create_subparser(parent_parser: argparse.ArgumentParser):
     subparser.add_argument("rkf",
                            type=str,
                            help="The path to the `adf.rkf` file to view in an png file.")
-    subparser.add_argument("orb",
+    subparser.add_argument("-s1","--sfo1",
                            type=str,
                            help="Set the orbital to view")
-    subparser.add_argument("mat",
-                           nargs="?",
+    subparser.add_argument("-s2","--sfo2",
                            type=str,
-                           help="Set the material to view the orbital",
-                           default="tcviewer.materials.orbital_matte")
+                           help="Set the orbital to view")
+    subparser.add_argument("-i", "--isovalue",
+                           type=float,
+                           help="Set the isovalue",
+                           default="0.03")
+    subparser.add_argument("-g", "--grid",
+                           type=str,
+                           help="Set the gridsize",
+                           default="medium")
+    subparser.add_argument("-f", "--flip",
+                           type=str,
+                           help="flips the colors")
 
 
 
@@ -29,6 +39,11 @@ def main(args: argparse.Namespace):
     
     # load orbital and choose an MO to draw
     orbs = orbitals.Orbitals(args.rkf)
-    orb = orbs.mos[args.orb]
+    sfo1 = orbs.sfos[args.sfo1]
+    sfo2 = orbs.sfos[args.sfo2]
 
-    orb.draw() 
+    if sfo1 != None:
+        sfo1[0].draw(isovalue=args.isovalue, gridsize=args.grid) 
+    if sfo2 != None:
+        sfo2[1].draw(isovalue=args.isovalue, gridsize=args.grid) 
+
