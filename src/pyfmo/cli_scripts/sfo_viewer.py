@@ -1,17 +1,12 @@
 """ Module containing functions for quickly viewing orbitals via the command line """
 import argparse
 from pyfmo import orbitals
-import tcviewer
-
+from tcutility import ensure_list
 
 
 def create_subparser(parent_parser: argparse.ArgumentParser):
     desc = "Read orbital information from an ADF calculation and draw the given orbital"
     subparser = parent_parser.add_parser('showsfo', help=desc, description=desc)
-    subparser.add_argument("-o", "--output", 
-                           type=str, 
-                           help="Set the output png file to write to.", 
-                           default="pyfmo.png")
     subparser.add_argument("rkf",
                            type=str,
                            help="The path to the `adf.rkf` file to view in an png file.")
@@ -30,13 +25,13 @@ def create_subparser(parent_parser: argparse.ArgumentParser):
                            help="Set the gridsize",
                            default="medium")
     subparser.add_argument("-f", "--flip",
-                           type=str,
+                           action="store_true",
                            help="Flips the colors")
     subparser.add_argument("-r", "--reverse",
-                           type=str,
+                           action="store_true",
                            help="Reverse the colors")
     subparser.add_argument("-o", "--overlap",
-                           type=str,
+                           action="store_true",
                            help="Plot the overlap between f1 and f2")
 
 
@@ -48,8 +43,33 @@ def main(args: argparse.Namespace):
     sfo1 = orbs.sfos[args.sfo1]
     sfo2 = orbs.sfos[args.sfo2]
 
-    if sfo1 != None:
+    # plot the given fragment orbitals
+    if sfo1 != None and args.overlap == False:
         sfo1[0].draw(isovalue=args.isovalue, gridsize=args.grid) 
-    if sfo2 != None:
-        sfo2[1].draw(isovalue=args.isovalue, gridsize=args.grid) 
+    if sfo2 != None and args.overlap == False:
+        sfo2[1].draw(isovalue=args.isovalue, gridsize=args.grid)
+
+    # plot the overlap
+    if args.overlap == True:
+
+        overlap = []
+
+        for sfo1[0] in ensure_list(sfo1):
+            overlap.append([])
+            for sfo2[1] in ensure_list(sfo2):
+                overlap[-1].append(abs(sfo1[0] @ sfo2[1]))
+
+        # o1 = sfo1[0]
+        # o2 = sfo2[1]
+
+        # overlap = abs(o1 @ o2)
+        overlap.draw(isovalue=0.009, gridsize=args.grid)
+
+
+
+
+
+
+
+
 
