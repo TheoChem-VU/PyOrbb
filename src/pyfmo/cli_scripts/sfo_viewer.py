@@ -64,8 +64,8 @@ def main(args: argparse.Namespace):
         # o1 = sfo1[0]
         # o2 = sfo2[1]
 
-        # overlap = abs(o1 @ o2)
-        overlap.draw(isovalue=0.009, gridsize=args.grid, material=args.material)
+        # # overlap = abs(o1 @ o2)
+        # overlap.draw(isovalue=0.009, gridsize=args.grid, material=args.material)
 
 
 
