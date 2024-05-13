@@ -33,8 +33,10 @@ def create_subparser(parent_parser: argparse.ArgumentParser):
     subparser.add_argument("-o", "--overlap",
                            action="store_true",
                            help="Plot the overlap between f1 and f2")
-
-
+    subparser.add_argument("-m", "material",
+                           type=str,
+                           help="Set the material",
+                           default="shiny")
 
 def main(args: argparse.Namespace):
     
@@ -45,25 +47,25 @@ def main(args: argparse.Namespace):
 
     # plot the given fragment orbitals
     if sfo1 != None and args.overlap == False:
-        sfo1[0].draw(isovalue=args.isovalue, gridsize=args.grid) 
+        sfo1[0].draw(isovalue=args.isovalue, gridsize=args.grid, material=args.material) 
     if sfo2 != None and args.overlap == False:
-        sfo2[1].draw(isovalue=args.isovalue, gridsize=args.grid)
+        sfo2[1].draw(isovalue=args.isovalue, gridsize=args.grid, material=args.material)
 
     # plot the overlap
-    if args.overlap == True:
+    # if args.overlap == True:
 
-        overlap = []
+    #     overlap = []
 
-        for sfo1[0] in ensure_list(sfo1):
-            overlap.append([])
-            for sfo2[1] in ensure_list(sfo2):
-                overlap[-1].append(abs(sfo1[0] @ sfo2[1]))
+    #     for sfo1[0] in ensure_list(sfo1):
+    #         overlap.append([])
+    #         for sfo2[1] in ensure_list(sfo2):
+    #             overlap[-1].append(abs(sfo1[0] @ sfo2[1]))
 
         # o1 = sfo1[0]
         # o2 = sfo2[1]
 
         # overlap = abs(o1 @ o2)
-        overlap.draw(isovalue=0.009, gridsize=args.grid)
+        overlap.draw(isovalue=0.009, gridsize=args.grid, material=args.material)
 
 
 

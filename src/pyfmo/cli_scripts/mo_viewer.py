@@ -29,7 +29,7 @@ def create_subparser(parent_parser: argparse.ArgumentParser):
     subparser.add_argument("-m", "material",
                            type=str,
                            help="Set the material",
-                           default=tcviewer.)
+                           default="shiny")
 
 
 def main(args: argparse.Namespace):
@@ -38,12 +38,12 @@ def main(args: argparse.Namespace):
     orbs = orbitals.Orbitals(args.rkf)
     orb = orbs.mos[args.orb]
 
-    orb.draw(isovalue=args.isovalue, gridsize=args.grid) 
+    orb.draw(isovalue=args.isovalue, gridsize=args.grid, material=args.material) 
 
-    flip = args.flip
+    # flip = args.flip
 
-    if flip == True:
-        -orb.draw(isovalue=args.isovalue, gridsize=args.grid) 
+    # if flip == True:
+    #     -orb.draw(isovalue=args.isovalue, gridsize=args.grid) 
 
 
 

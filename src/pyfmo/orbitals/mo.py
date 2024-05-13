@@ -282,7 +282,7 @@ class MO:
         # we only generate one, so we simply return the first element
         return grid.from_cub_file(job.output_cub_paths[0])
 
-    def draw(self, gridsize: str = 'medium', isovalue: float = 0.03, material = tcviewer.materials.orbital_shiny):
+    def draw(self, gridsize: str = 'medium', isovalue: float = 0.03, material: str = 'shiny'):
         '''
         Generate and draw a cube-file for this MO object.
 
@@ -299,7 +299,7 @@ class MO:
 
         # and draw it with a specified isovalue
         with tcviewer.Screen() as scr:
-            scr.draw_cub(cub, isovalue, material=material)
+            scr.draw_cub(cub, isovalue, material=tcviewer.materials.orbital_material(material))
 
 
 if __name__ == '__main__':

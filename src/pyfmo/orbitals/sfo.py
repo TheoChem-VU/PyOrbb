@@ -5,6 +5,7 @@ import os
 from tcutility import ensure_list, squeeze_list
 from pyfmo.orbitals import info, mo
 from typing import List
+import tcviewer
 
 j = os.path.join
 
@@ -381,7 +382,7 @@ class SFO:
         # we only generate one, so we simply return the first element
         return grid.from_cub_file(job.output_cub_paths[0])
 
-    def draw(self, gridsize: str = 'medium', isovalue: float = 0.03):
+    def draw(self, gridsize: str = 'medium', isovalue: float = 0.03, material: str = 'shiny'):
         '''
         Generate and draw a cube-file for this SFO object.
 
@@ -392,14 +393,14 @@ class SFO:
         .. seealso::
             :meth:`SFO.cube_file` to generate and return a cube-file for this SFO.
         '''
-        import tcviewer
-
+        
         # generate a cube-file or load an existing one
         cub = self.cube_file(gridsize=gridsize)
 
+
         # and draw it with a specified isovalue
         with tcviewer.Screen() as scr:
-            scr.draw_cub(cub, isovalue, material=tcviewer.materials.orbital_shiny)
+            scr.draw_cub(cub, isovalue, material=tcviewer.materials.orbital_material(material))
 
 
 
