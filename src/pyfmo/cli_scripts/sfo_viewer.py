@@ -1,7 +1,7 @@
 """ Module containing functions for quickly viewing orbitals via the command line """
 import argparse
 from pyfmo import orbitals
-from tcutility import ensure_list
+from tcutility import ensure_list #noqa
 
 
 def create_subparser(parent_parser: argparse.ArgumentParser):
@@ -46,9 +46,9 @@ def main(args: argparse.Namespace):
     sfo2 = orbs.sfos[args.sfo2]
 
     # plot the given fragment orbitals
-    if sfo1 != None and args.overlap == False:
+    if sfo1 is not None and args.overlap is False:
         sfo1[0].draw(isovalue=args.isovalue, gridsize=args.grid, material=args.material) 
-    if sfo2 != None and args.overlap == False:
+    if sfo2 is not None and args.overlap is False:
         sfo2[1].draw(isovalue=args.isovalue, gridsize=args.grid, material=args.material)
 
     # plot the overlap
