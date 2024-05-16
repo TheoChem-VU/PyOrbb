@@ -26,11 +26,11 @@ def create_subparser(parent_parser: argparse.ArgumentParser):
     subparser.add_argument("-r", "--reverse",
                            action="store_true",
                            help="Reverse the colors")
-    subparser.add_argument("-m", "material",
+    subparser.add_argument("-m", "--material",
+                           nargs="?",
                            type=str,
                            help="Set the material",
                            default="shiny")
-
 
 def main(args: argparse.Namespace):
     
@@ -38,12 +38,20 @@ def main(args: argparse.Namespace):
     orbs = orbitals.Orbitals(args.rkf)
     orb = orbs.mos[args.orb]
 
-    orb.draw(isovalue=args.isovalue, gridsize=args.grid, material=args.material) 
+    # setting HOMO/LUMO color
+    if orb.occupation > 0:
+        color1 = (234/255, 51/255, 35/255)
+        color2 = (5/255, 23/255, 206/255)
+    else:
+        color1 = (117/255, 251/255, 253/255)
+        color2 = (235/255, 114/255, 46/255)
 
-    # flip = args.flip
-
-    # if flip == True:
-    #     -orb.draw(isovalue=args.isovalue, gridsize=args.grid) 
-
-
+    # flip the colors of the mo
+    if args.flip is True:
+         orb.draw(color1=color2, color2=color1, isovalue=args.isovalue, gridsize=args.grid, material=args.material) 
+    elif args.reverse is True:
+        orb.draw(color1=color2, color2=color1, isovalue=args.isovalue, gridsize=args.grid, material=args.material) 
+    else:
+        orb.draw(color1=color1, color2=color2, isovalue=args.isovalue, gridsize=args.grid, material=args.material) 
+    
 

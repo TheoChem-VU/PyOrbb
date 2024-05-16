@@ -282,7 +282,7 @@ class MO:
         # we only generate one, so we simply return the first element
         return grid.from_cub_file(job.output_cub_paths[0])
 
-    def draw(self, gridsize: str = 'medium', isovalue: float = 0.03, material: str = 'shiny'):
+    def draw(self, color1, color2, gridsize: str = 'medium', isovalue: float = 0.03, material: str = 'shiny'):
         '''
         Generate and draw a cube-file for this MO object.
 
@@ -299,12 +299,12 @@ class MO:
 
         # and draw it with a specified isovalue
         with tcviewer.Screen() as scr:
-            scr.draw_cub(cub, isovalue, material=tcviewer.materials.orbital_material(material))
+            scr.draw_cub(cub, isovalue, material=tcviewer.materials.orbital_material(material), color1=color1, color2=color2)
 
 
-if __name__ == '__main__':
-    # p = '../test/orbitals/rkf/methyl.rkf'ß
-    p = '../test/orbitals/rkf/substrate_cat_complex_dftb.rkf'
-    mos = MOs(kfpath=p)
-    for mo in sorted(mos, key=lambda mo: mo.energy):
-        print(mo, mo.occupation, mo.relative_name)
+# if __name__ == '__main__':
+#     # p = '../test/orbitals/rkf/methyl.rkf'ß
+#     p = '../test/orbitals/rkf/substrate_cat_complex_dftb.rkf'
+#     mos = MOs(kfpath=p)
+#     for mo in sorted(mos, key=lambda mo: mo.energy):
+#         print(mo, mo.occupation, mo.relative_name)
