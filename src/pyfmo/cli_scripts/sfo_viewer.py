@@ -90,8 +90,8 @@ def main(args: argparse.Namespace):
             color1 = (117/255, 251/255, 253/255)
             color2 = (235/255, 114/255, 46/255)
             
-        sfo1 = orb.cube_file()
-        sfo2 = sfo2.cube_file()
+        sfo1 = orb.cube_file(args.grid)
+        sfo2 = sfo2.cube_file(args.grid)
         overlap_cub = sfo1.copy()
         overlap_cub.values *= sfo2.values
 
@@ -99,28 +99,18 @@ def main(args: argparse.Namespace):
 
             # visualizes overlap
             if args.overlap is True:
-                scr.draw_cub(overlap_cub, color1=color2, color2=color1, isovalue=args.isovalue, gridsize=args.grid, material=args.material) 
+                scr.draw_cub(overlap_cub, color1=color2, color2=color1, isovalue=args.isovalue, material=args.material)
 
             # flips all the colors of the sfos
             elif args.flip is True:
-                scr.draw_cub(sfo1, color1=color2, color2=color1, isovalue=args.isovalue, gridsize=args.grid, material=args.material)
-                scr.draw_cub(sfo2, color1=color2, color2=color1, isovalue=args.isovalue, gridsize=args.grid, material=args.material)  
+                scr.draw_cub(sfo1, color1=color2, color2=color1, isovalue=args.isovalue, material=args.material)
+                scr.draw_cub(sfo2, color1=color2, color2=color1, isovalue=args.isovalue, material=args.material)  
             
             # reverses the color of one sfo
             elif args.reverse is True:
-                scr.draw_cub(sfo1, color1=color2, color2=color1, isovalue=args.isovalue, gridsize=args.grid, material=args.material)
-                scr.draw_cub(sfo2, color1=color1, color2=color2, isovalue=args.isovalue, gridsize=args.grid, material=args.material)  
+                scr.draw_cub(sfo1, color1=color2, color2=color1, isovalue=args.isovalue, material=args.material)
+                scr.draw_cub(sfo2, color1=color1, color2=color2, isovalue=args.isovalue, material=args.material)  
             
             else:
-                scr.draw_cub(sfo1, color1=color1, color2=color2, isovalue=args.isovalue, gridsize=args.grid, material=args.material)
-                scr.draw_cub(sfo2, color1=color1, color2=color2, isovalue=args.isovalue, gridsize=args.grid, material=args.material) 
-
-
-
- 
-
-
-
-
-
-
+                scr.draw_cub(sfo1, color1=color1, color2=color2, isovalue=args.isovalue, material=args.material)
+                scr.draw_cub(sfo2, color1=color1, color2=color2, isovalue=args.isovalue, material=args.material) 
