@@ -36,6 +36,18 @@ def create_subparser(parent_parser: argparse.ArgumentParser):
                            help="Set the material",
                            default="shiny")
 
+def get_sfo_color(sfo):
+    # setting HOMO/LUMO color
+    if sfo.occupation > 0:
+        color1 = (234/255, 51/255, 35/255)
+        color2 = (5/255, 23/255, 206/255)
+    else:
+        color1 = (117/255, 251/255, 253/255)
+        color2 = (235/255, 114/255, 46/255)
+
+    return color1, color2
+
+
 def main(args: argparse.Namespace):
     
     # load orbital and choose an MO to draw
@@ -48,28 +60,18 @@ def main(args: argparse.Namespace):
         print(f"Namely, {orb}.")
         orb = orbs.sfos[input("Enter orbital to visualize: ")]
 
-    # setting HOMO/LUMO color
-    if orb.occupation > 0:
-        color1 = (234/255, 51/255, 35/255)
-        color2 = (5/255, 23/255, 206/255)
-    else:
-        color1 = (117/255, 251/255, 253/255)
-        color2 = (235/255, 114/255, 46/255)
+    color1, color2 = get_sfo_color(orb)
+    if args.flip:
+        color1, color2 = color2, color1
+
+    if args.reverse:
+        color1, color2 = color2, color1
+
 
     sfo2 = input("Do you want to visualize a second orbital or overlap?: yes/no  ")
     
     if sfo2 == 'no':
-    # Only Visualizing the first input sfo
-            
-            # flips all the colors of the sfos
-            if args.flip is True:
-                orb.draw( color1=color2, color2=color1, isovalue=args.isovalue, gridsize=args.grid, material=args.material) 
-            
-            # reverses the color of selected sfo
-            elif args.reverse is True:
-                orb.draw(color1=color2, color2=color1, isovalue=args.isovalue, gridsize=args.grid, material=args.material) 
-            else:
-                orb.draw(color1=color1, color2=color2, isovalue=args.isovalue, gridsize=args.grid, material=args.material) 
+        orb.draw(color1=color1, color2=color2, isovalue=args.isovalue, gridsize=args.grid, material=args.material) 
         
     
     if sfo2 == 'yes':
@@ -84,14 +86,11 @@ def main(args: argparse.Namespace):
         else:
             sfo2 = sfos
 
-        # setting HOMO/LUMO color
-        if orb.occupation > 0:
-            color1 = (234/255, 51/255, 35/255)
-            color2 = (5/255, 23/255, 206/255)
-        else:
-            color1 = (117/255, 251/255, 253/255)
-            color2 = (235/255, 114/255, 46/255)
-            
+        sfo2_color1, sfo2_color2 = get_sfo_color(sfo2)
+        if args.flip:
+            sfo2_color1, sfo2_color2 = sfo2_color2, sfo2_color1
+
+
         sfo1 = orb.cube_file(args.grid)
         sfo2 = sfo2.cube_file(args.grid)
         overlap_cub = sfo1.copy()
@@ -101,18 +100,7 @@ def main(args: argparse.Namespace):
 
             # visualizes overlap
             if args.overlap is True:
-                scr.draw_cub(overlap_cub, color1=color2, color2=color1, isovalue=args.isovalue, material=args.material)
-
-            # flips all the colors of the sfos
-            elif args.flip is True:
-                scr.draw_cub(sfo1, color1=color2, color2=color1, isovalue=args.isovalue, material=args.material)
-                scr.draw_cub(sfo2, color1=color2, color2=color1, isovalue=args.isovalue, material=args.material)  
-            
-            # reverses the color of one sfo
-            elif args.reverse is True:
-                scr.draw_cub(sfo1, color1=color2, color2=color1, isovalue=args.isovalue, material=args.material)
-                scr.draw_cub(sfo2, color1=color1, color2=color2, isovalue=args.isovalue, material=args.material)  
-            
+                scr.draw_cub(overlap_cub, color1=color2, color2=color1, isovalue=args.isovalue**2, material=args.material)
             else:
                 scr.draw_cub(sfo1, color1=color1, color2=color2, isovalue=args.isovalue, material=args.material)
-                scr.draw_cub(sfo2, color1=color1, color2=color2, isovalue=args.isovalue, material=args.material) 
+                scr.draw_cub(sfo2, color1=sfo2_color1, color2=sfo2_color2, isovalue=args.isovalue, material=args.material) 
