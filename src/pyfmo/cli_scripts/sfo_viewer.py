@@ -13,9 +13,6 @@ def create_subparser(parent_parser: argparse.ArgumentParser):
     subparser.add_argument("orb",
                            type=str,
                            help="Set the orbital to view")
-    # subparser.add_argument("-s2","--sfo2",
-    #                        type=str,
-    #                        help="Set the orbital to view")
     subparser.add_argument("-i", "--isovalue",
                            type=float,
                            help="Set the isovalue",
@@ -59,7 +56,7 @@ def main(args: argparse.Namespace):
         color1 = (117/255, 251/255, 253/255)
         color2 = (235/255, 114/255, 46/255)
 
-    sfo2 = input("Do you want to visualize a second orbital or overlap?: yes/no")
+    sfo2 = input("Do you want to visualize a second orbital or overlap?: yes/no  ")
     
     if sfo2 == 'no':
     # Only Visualizing the first input sfo
@@ -109,32 +106,16 @@ def main(args: argparse.Namespace):
                 scr.draw_cub(sfo1, color1=color2, color2=color1, isovalue=args.isovalue, gridsize=args.grid, material=args.material)
                 scr.draw_cub(sfo2, color1=color2, color2=color1, isovalue=args.isovalue, gridsize=args.grid, material=args.material)  
             
-            # reverses the color of selected sfo
+            # reverses the color of one sfo
             elif args.reverse is True:
                 scr.draw_cub(sfo1, color1=color2, color2=color1, isovalue=args.isovalue, gridsize=args.grid, material=args.material)
-                scr.draw_cub(sfo2, color1=color2, color2=color1, isovalue=args.isovalue, gridsize=args.grid, material=args.material)  
+                scr.draw_cub(sfo2, color1=color1, color2=color2, isovalue=args.isovalue, gridsize=args.grid, material=args.material)  
             
             else:
                 scr.draw_cub(sfo1, color1=color1, color2=color2, isovalue=args.isovalue, gridsize=args.grid, material=args.material)
                 scr.draw_cub(sfo2, color1=color1, color2=color2, isovalue=args.isovalue, gridsize=args.grid, material=args.material) 
 
 
-
-
-
-
-    # plot the overlap
-    # if args.overlap is True:
-
-    #     overlap = []
-
-    #     for sfo1[0] in ensure_list(sfo1):
-    #         overlap.append([])
-    #         for sfo2[1] in ensure_list(sfo2):
-    #             overlap[-1].append(abs(sfo1[0] @ sfo2[1]))
-
-        # o1 = sfo1[0]
-        # o2 = sfo2[1]
 
  
 
