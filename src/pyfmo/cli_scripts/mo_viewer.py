@@ -15,7 +15,7 @@ def create_subparser(parent_parser: argparse.ArgumentParser):
     subparser.add_argument("-i", "--isovalue",
                            type=float,
                            help="Set the isovalue",
-                           default="0.03")
+                           default=0.03)
     subparser.add_argument("-g", "--grid",
                            type=str,
                            help="Set the gridsize",
@@ -31,6 +31,18 @@ def create_subparser(parent_parser: argparse.ArgumentParser):
                            type=str,
                            help="Set the material",
                            default="shiny")
+def get_mo_color(mo):
+    
+    # setting HOMO/LUMO color
+    if mo.occupation > 0:
+        color1 = (234/255, 51/255, 35/255)
+        color2 = (5/255, 23/255, 206/255)
+    else:
+        color1 = (117/255, 251/255, 253/255)
+        color2 = (235/255, 114/255, 46/255)
+
+    return color1, color2
+
 
 def main(args: argparse.Namespace):
     
@@ -38,20 +50,12 @@ def main(args: argparse.Namespace):
     orbs = orbitals.Orbitals(args.rkf)
     orb = orbs.mos[args.orb]
 
-    # setting HOMO/LUMO color
-    if orb.occupation > 0:
-        color1 = (234/255, 51/255, 35/255)
-        color2 = (5/255, 23/255, 206/255)
-    else:
-        color1 = (117/255, 251/255, 253/255)
-        color2 = (235/255, 114/255, 46/255)
+    color1, color2 = get_mo_color(orb)
+    if args.flip:
+        color1, color2 = color2, color1
 
-    # flip the colors of the mo
-    if args.flip is True:
-         orb.draw(color1=color2, color2=color1, isovalue=args.isovalue, gridsize=args.grid, material=args.material) 
-    elif args.reverse is True:
-        orb.draw(color1=color2, color2=color1, isovalue=args.isovalue, gridsize=args.grid, material=args.material) 
-    else:
-        orb.draw(color1=color1, color2=color2, isovalue=args.isovalue, gridsize=args.grid, material=args.material) 
+    if args.reverse:
+        color1, color2 = color2, color1
+
+    orb.draw(color1=color1, color2=color2, isovalue=args.isovalue, gridsize=args.grid, material=args.material) 
     
-
