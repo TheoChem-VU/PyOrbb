@@ -158,6 +158,9 @@ class SFOs:
         self.is_unrestricted = calc_info['unrestricted_sfos']
         self.uses_molecular_fragments = calc_info['used_regions']
         self.uses_atomic_fragments = not calc_info['used_regions']
+        if self.uses_atomic_fragments:
+            self.coordinates = calc_info['coords']
+
         self.is_relativistic = calc_info['relativistic']
 
         self.spins = ['A', 'B'] if self.is_unrestricted else ['AB']
@@ -172,7 +175,6 @@ class SFOs:
                 isfo = data['isfo'][idx] - 1
                 subspecies = data['subspecies'][idx]
                 ifo = data['ifo'][idx]
-
                 sfo_data.append({
                     'index':                idx + 1,
                     'name':                 f'{ifo}{subspecies}',
@@ -194,6 +196,8 @@ class SFOs:
                     sfo_data[-1]['site_energy'] = None if data['site_energy'][spin] is None else data['site_energy'][spin][idx] * 27.21139664
                 if 'site_energy_SCF0' in data:
                    sfo_data[-1]['site_energy_SCF0'] = None if data['site_energy_SCF0'][spin] is None else data['site_energy_SCF0'][spin][idx] * 27.21139664
+                if self.uses_atomic_fragments:
+                   sfo_data[-1]['coords'] = self.coordinates[data['fragidx'][idx]-1]
                 
 
         self.sfos = [SFO(**sfo_datum) for sfo_datum in sfo_data]

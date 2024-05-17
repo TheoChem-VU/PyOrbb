@@ -1,4 +1,5 @@
 from pyfmo import orbitals
+import numpy as np
 
 
 def get_calc_info(reader):
@@ -33,6 +34,9 @@ def get_calc_info(reader):
         frag_order = frag_order[:len(frag_order)//2]
         ret['used_regions'] = max(frag_order) != len(frag_order)
 
+        if not ret['used_regions']:
+            ret['coords'] = np.array(reader.read('Geometry', 'xyz InputOrder')).reshape(-1, 3)
+
     elif engine == 'dftb':
         ret['relativistic'] = None
         ret['symlabels'] = None
@@ -41,7 +45,6 @@ def get_calc_info(reader):
         ret['used_regions'] = reader.read('FragmentOrbitals', 'AtomicFragmentOrbitals') == 0
 
     return ret
-
 
 
 def read_SFO_data(reader, **kwargs):
