@@ -99,8 +99,9 @@ def main(args: argparse.Namespace):
         with tcviewer.Screen() as scr:
 
             # visualizes overlap
-            if args.overlap is True:
-                scr.draw_cub(overlap_cub, color1=color2, color2=color1, isovalue=args.isovalue**2, material=args.material)
+            if args.overlap:
+                scr.draw_cub(overlap_cub, color1=(139/255, 251/255, 87/255), color2=(179/255, 47/255, 230/255), isovalue=args.isovalue**2, material=args.material)
             else:
                 scr.draw_cub(sfo1, color1=color1, color2=color2, isovalue=args.isovalue, material=args.material)
-                scr.draw_cub(sfo2, color1=sfo2_color1, color2=sfo2_color2, isovalue=args.isovalue, material=args.material) 
+                scr.draw_cub(sfo2, color1=sfo2_color1, color2=sfo2_color2, isovalue=args.isovalue, material=args.material)
+
