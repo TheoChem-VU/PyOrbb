@@ -16,7 +16,7 @@ def create_subparser(parent_parser: argparse.ArgumentParser):
     subparser.add_argument("-i", "--isovalue",
                            type=float,
                            help="Set the isovalue",
-                           default="0.03")
+                           default=0.03)
     subparser.add_argument("-g", "--grid",
                            type=str,
                            help="Set the gridsize",
@@ -43,7 +43,7 @@ def main(args: argparse.Namespace):
     orb = orbs.sfos[args.orb]
 
 
-    if len(orb) > 1:
+    if isinstance(orb, list):
         print(f"There are multiple orbitals associated with '{args.orb}'.")
         print(f"Namely, {orb}.")
         orb = orbs.sfos[input("Enter orbital to visualize: ")]
@@ -77,10 +77,12 @@ def main(args: argparse.Namespace):
         sfo2 = input("Enter second orbital to visualize: ")
         sfos = orbs.sfos[sfo2]
 
-        if len(sfos) > 1:
+        if isinstance(sfos, list):
             print(f"There are multiple orbitals associated with '{sfo2}'.")
             print(f"Namely, {sfos}.")
             sfo2 = orbs.sfos[input("Enter orbital to visualize: ")]
+        else:
+            sfo2 = sfos
 
         # setting HOMO/LUMO color
         if orb.occupation > 0:
