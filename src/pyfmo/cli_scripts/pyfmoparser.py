@@ -5,7 +5,8 @@ from pyfmo.cli_scripts import excel
 # 2. Import the script.
 # 3. Add it to the dictionary below {program_name: script-module}.
 sub_programs = {
-    "excel": excel,
+    "excel": excel
+    "analyze": analyze,
 }
 
 
