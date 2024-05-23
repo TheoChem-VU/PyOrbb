@@ -112,6 +112,14 @@ def test_Fock_matrix_diagonal():
 	assert orbs.sfos['nh3(3A1)'].energy != orbs.sfos['nh3(3A1)'].site_energy_SCF0
 	assert orbs.sfos['nh3(3A1)'].site_energy == orbs.sfos['nh3(3A1)'].site_energy_SCF0
 
+
+def test_fragments_list():
+	rkf = j(os.path.split(__file__)[0], 'fixtures','NH3BH3','adf.rkf')
+	sfos = SFOs(kfpath=rkf)
+	unsorted_fragments = [sfo.fragment_unique_name for sfo in sfos]
+	assert len(unsorted_fragments) != len(sfos.fragments)
+
+
 if __name__ == '__main__':
 	import pytest
 	print(j(os.path.split(__file__)[0], 'fixtures','RadicalAddition','adf.rkf'))
