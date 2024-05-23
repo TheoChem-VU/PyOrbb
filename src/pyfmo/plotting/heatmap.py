@@ -4,6 +4,17 @@ import pyfmo # noqa
 from pyfmo.orbitals import matrices # noqa
 
 def plot_property(orbs1, orbs2, prop=None, propargs={}, propkwargs={}, cmap='Greens', title=None, unit=None, use_relname=False, use_indexname=False, scale=None, **kwargs):
+    ''' 
+
+    Function to plot the heatmap for multiple properties, for instance orbint_mat, overlap_mat.
+    It plots the given orbitals, either sfo or mo, on a different axis. 
+    Where the color coded squares in the plot will rank the property between orbs1 and orbs2 for the given plotted prop.
+
+    For all tuning variables, defaults are set, and can be tuned by the user accorrdingly.
+
+    '''
+
+
     if cmap is None:
         cmap = 'Greens'
         if hasattr(prop, 'cmap'):
@@ -90,13 +101,4 @@ def plot_property(orbs1, orbs2, prop=None, propargs={}, propkwargs={}, cmap='Gre
     return
 
 
-
-# if __name__ == '__main__':
-#     p = '/Users/Tori/PyFMO/test/fixtures/NH3BH3/adf.rkf'
-#     orbs = pyfmo.orbitals.Orbitals(p)
-#     orbs1 = orbs.sfos[:'Donor(LUMO+4)']
-#     orbs2 = orbs.sfos[:'Acceptor(LUMO+4)']
-#     heatmap = pyfmo.orbitals.matrices.overlap_mat(orbs1, orbs2)
-#     plot_property(orbs1, orbs2, heatmap)
-#     plt.show()
 
