@@ -568,26 +568,29 @@ def occ_occ_mask(sfos1: List[SFO] or SFO, sfos2: List[SFO] or SFO) -> float or n
 #     return plot.ShowCaller()
 
 
-if __name__ == '__main__':
-    # p = '../test/orbitals/rkf/BH3NH3.rkf'
-    # sfos = SFOs(kfpath=p)
+# if __name__ == '__main__':
+#     # p = '../test/orbitals/rkf/BH3NH3.rkf'
+#     # sfos = SFOs(kfpath=p)
 
-    # sfos_donor = sfos[:'Donor(LUMO+2)']
-    # sfos_acceptor = sfos['Acceptor(1A)':'Acceptor(LUMO+2)']
-    # sfo_donor_best, sfo_acceptor_best, oi = sort_sfo_pairs(sfos_donor, sfos_acceptor, orbint)[-1]
-    # plot_sfos_prop(sfos_donor, sfos_acceptor, orbint, use_relname=True).hold()
+#     # sfos_donor = sfos[:'Donor(LUMO+2)']
+#     # sfos_acceptor = sfos['Acceptor(1A)':'Acceptor(LUMO+2)']
+#     # sfo_donor_best, sfo_acceptor_best, oi = sort_sfo_pairs(sfos_donor, sfos_acceptor, orbint)[-1]
+#     # plot_sfos_prop(sfos_donor, sfos_acceptor, orbint, use_relname=True).hold()
 
 
-    # reader = plams.KFReader('../test/orbitals/rkf/substrate_cat_complex_dftb.rkf')
-    # sfos = SFOs(reader=reader)
+#     # reader = plams.KFReader('../test/orbitals/rkf/substrate_cat_complex_dftb.rkf')
+#     # sfos = SFOs(reader=reader)
 
-    # p = '/Users/yumanhordijk/PhD/ychem/calculations2/c1d4ca95a3911eb1f79bf4ef91cc7a88b479d7dc8357860bfdb3e577747ebc3a/transitionstate/EDA/EDA/full/adf.rkf'
-    p = '/Users/Tori/PyFMO/test/fixtures/NH3BH3/adf.rkf'
-    sfos = SFOs(kfpath=p)
-    for sfo in sfos:
-        print(sfo, sfo.relative_name)
+#     # p = '/Users/yumanhordijk/PhD/ychem/calculations2/c1d4ca95a3911eb1f79bf4ef91cc7a88b479d7dc8357860bfdb3e577747ebc3a/transitionstate/EDA/EDA/full/adf.rkf'
+#     p = '../test/orbitals/rkf/substrate_cat_complex.rkf'
+#     sfos = SFOs(kfpath=p)
+#     unsorted_fragments = [sfo.fragment_unique_name for sfo in sfos]
+#     print(unsorted_fragments)
 
-    print(sfos.fragments)
+#     for sfo in sfos:
+#         print(sfo, sfo.relative_name)
+
+#     print(sfos.fragments)
     # sfos_c = sfos['substrate(HOMO-11)':'substrate(LUMO+3)']
     # sfos_h = sfos[:'cat(LUMO+3)']
     # # sfos_c_best, sfos_h_best, oi = sort_sfo_pairs(sfos_c, sfos_h, orbint)[-1]

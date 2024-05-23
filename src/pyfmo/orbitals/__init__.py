@@ -203,10 +203,10 @@ def sort_orb_pairs(orbs1, orbs2, prop=None):
 #     return plot.ShowCaller()
 
 
-if __name__ == '__main__':
-    p = '/Users/Tori/PyFMO/test/fixtures/NH3BH3/adf.rkf'
-    orbs = Orbitals(p)
-    orbs.write_excel()
+# if __name__ == '__main__':
+#     p = '../test/orbitals/rkf/substrate_cat_complex.rkf'
+#     orbs = Orbitals(p)
+#     orbs.write_excel()
     # print(orbs.fragments)
 
     # sfos1 = orbs.sfos[:'Donor(LUMO+4)']
