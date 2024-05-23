@@ -115,7 +115,7 @@ def test_Fock_matrix_diagonal():
 
 def test_fragments_list():
 	rkf = j(os.path.split(__file__)[0], 'fixtures','NH3BH3','adf.rkf')
-	sfos = SFOs(kfpath=rkf)
+	sfos = pyfmo.orbitals.sfo.SFOs(kfpath=rkf)
 	unsorted_fragments = [sfo.fragment_unique_name for sfo in sfos]
 	assert len(unsorted_fragments) != len(sfos.fragments)
 
