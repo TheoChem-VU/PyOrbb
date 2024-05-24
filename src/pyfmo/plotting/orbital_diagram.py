@@ -143,28 +143,28 @@ def diagram(mos, orbitals, sfos_f1, sfos_f2, color='b'):
 
     # Creating x-values
     # MO
-    x1 = degenerate_xvalues(energies_mo)
-    x2 = [(x + 1) for x in degenerate_xvalues(energies_sfos_f1)]
-    x3 = [(x - 1) for x in degenerate_xvalues(energies_sfos_f2)]
+    xvalues_degenerate_mo = degenerate_xvalues(energies_mo)
+    xvalues_degenerate_f1 = [(x + 1) for x in degenerate_xvalues(energies_sfos_f1)]
+    xvalues_degenerate_f2 = [(x - 1) for x in degenerate_xvalues(energies_sfos_f2)]
 
     # Pair SFO1 and SFO2
-    x4 = occupation_xvalues(pair_occupations_mo)
-    x5 = [(x + 1) for x in occupation_xvalues(pair_occupations_sfos_f1)]
-    x6 = [(x - 1) for x in occupation_xvalues(pair_occupations_sfos_f2)]
+    xvalues_pair_mo = occupation_xvalues(pair_occupations_mo)
+    xvalues_pair_f1 = [(x + 1) for x in occupation_xvalues(pair_occupations_sfos_f1)]
+    xvalues_pair_f2 = [(x - 1) for x in occupation_xvalues(pair_occupations_sfos_f2)]
 
     # Single SFO1 and SFO2
-    x7 = occupation_xvalues(single_occupations_mo)
-    x8 = [(x + 1) for x in occupation_xvalues(single_occupations_sfos_f1)]
-    x9 = [(x - 1) for x in occupation_xvalues(single_occupations_sfos_f2)]
+    xvalues_single_mo = occupation_xvalues(single_occupations_mo)
+    xvalues_single_f1 = [(x + 1) for x in occupation_xvalues(single_occupations_sfos_f1)]
+    xvalues_single_f2 = [(x - 1) for x in occupation_xvalues(single_occupations_sfos_f2)]
 
 
     # Plotting the scatters in the same plot
     ax1 = plt.gca()
 
     # Plot energies MOs and SFOs
-    ax1.scatter(x1, energies_mo, s=1444, marker="_", linewidth=3, c='k')
-    ax1.scatter(x2, energies_sfos_f1, s=1444, marker="_", linewidth=3, c='k')
-    ax1.scatter(x3, energies_sfos_f2,  s=1444, marker="_", linewidth=3, c='k')
+    ax1.scatter(xvalues_degenerate_mo, energies_mo, s=1444, marker="_", linewidth=3, c='k')
+    ax1.scatter(xvalues_degenerate_f1, energies_sfos_f1, s=1444, marker="_", linewidth=3, c='k')
+    ax1.scatter(xvalues_degenerate_f2, energies_sfos_f2,  s=1444, marker="_", linewidth=3, c='k')
 
     # Plotting double arrows for occupation 2
     for mo, sfo1, sfo2 in zip(pair_occupations_mo, pair_occupations_sfos_f1, pair_occupations_sfos_f2):
@@ -174,11 +174,11 @@ def diagram(mos, orbitals, sfos_f1, sfos_f2, color='b'):
         index3 = pair_occupations_sfos_f2.index(sfo2)
 
         if mo != 0:
-            ax1.scatter(x4[index], pair_occupations_mo[index], s=200, marker="$⇅$", linewidth=0.2, c='k')
+            ax1.scatter(xvalues_pair_mo[index], pair_occupations_mo[index], s=200, marker="$⇅$", linewidth=0.2, c='k')
         if sfo1 != 0:
-            ax1.scatter(x5[index2], pair_occupations_sfos_f1[index2], s=200, marker="$⇅$", linewidth=0.2, c='k')
+            ax1.scatter(xvalues_pair_f1[index2], pair_occupations_sfos_f1[index2], s=200, marker="$⇅$", linewidth=0.2, c='k')
         if sfo2 != 0:
-            ax1.scatter(x6[index3], pair_occupations_sfos_f2[index3], s=200, marker="$⇅$", linewidth=0.2, c='k')
+            ax1.scatter(xvalues_pair_f2[index3], pair_occupations_sfos_f2[index3], s=200, marker="$⇅$", linewidth=0.2, c='k')
     
     # Plotting single arrows for occupation 1
     for mo, sfo1, sfo2 in zip(single_occupations_mo, single_occupations_sfos_f1, single_occupations_sfos_f2):
@@ -188,16 +188,16 @@ def diagram(mos, orbitals, sfos_f1, sfos_f2, color='b'):
         index6 = single_occupations_sfos_f2.index(sfo2)
 
         if single_occupations_mo != [] and mo != 0:
-            x1.scatter(x7[index4], single_occupations_mo[index4], s=200, marker="$↑$", linewidth=0.2, c='k')
+            ax1.scatter(xvalues_single_mo[index4], single_occupations_mo[index4], s=200, marker="$↑$", linewidth=0.2, c='k')
         if single_occupations_sfos_f1 != [] and sfo1 != 0:
-            ax1.scatter(x8[index5], single_occupations_sfos_f1[index5], s=200, marker="$↑$", linewidth=0.2, c='k')
+            ax1.scatter(xvalues_single_f1[index5], single_occupations_sfos_f1[index5], s=200, marker="$↑$", linewidth=0.2, c='k')
         if single_occupations_sfos_f2 != [] and sfo2 != 0:
-            ax1.scatter(x9[index6], single_occupations_sfos_f2[index6], s=200, marker="$↑$", linewidth=0.5, c='k')
+            ax1.scatter(xvalues_single_f2[index6], single_occupations_sfos_f2[index6], s=200, marker="$↑$", linewidth=0.5, c='k')
 
     # Plotting the lines
-    contribution_xy = [list(x) for x in zip(energies_mo, x1)]
-    contribution_xy_f1 = [list(x) for x in zip(energies_sfos_f1, x2)]
-    contribution_xy_f2 = [list(x) for x in zip(energies_sfos_f2, x3)]
+    contribution_xy = [list(x) for x in zip(energies_mo, xvalues_degenerate_mo)]
+    contribution_xy_f1 = [list(x) for x in zip(energies_sfos_f1, xvalues_degenerate_f1)]
+    contribution_xy_f2 = [list(x) for x in zip(energies_sfos_f2, xvalues_degenerate_f2)]
 
     # generate the x and y-values
     energycontribution_y_f1 = energies_contribution(mos, sfos_f1, orbitals)
@@ -230,18 +230,18 @@ def diagram(mos, orbitals, sfos_f1, sfos_f2, color='b'):
 
     # Plotting the orbital label and energies for MO, SFO1 and SFO2
     # MO
-    for i, j, k in zip(x1, energies_mo, mos):
+    for i, j, k in zip(xvalues_degenerate_mo, energies_mo, mos):
         ax1.annotate(k, xy=(i, j), xytext=(0,-10), size=7, ha="center", va="top", textcoords="offset points")
         ax1.annotate(f"{round(j, 2)} eV", xy=(i, j), xytext=(40,4), size=7, ha="center", va="top", textcoords="offset points")
 
     # SFO1
-    for i, j, k, pop in zip(x2, energies_sfos_f1, sfos_f1, pop_f1):
+    for i, j, k, pop in zip(xvalues_degenerate_f1, energies_sfos_f1, sfos_f1, pop_f1):
         ax1.annotate(k, xy=(i, j), xytext=(0,-10), size=7, ha="center", va="top", textcoords="offset points")
         ax1.annotate(f"{round(j, 2)} eV", xy=(i, j), xytext=(40,8), size=7, ha="center", va="top", textcoords="offset points", backgroundcolor="w")
         ax1.annotate(f"{round(pop, 2)} e", xy=(i, j), xytext=(40,-2), size=7, ha="center", va="top", textcoords="offset points", backgroundcolor="w")
 
     # SFO2
-    for i, j, k, pop in zip(x3, energies_sfos_f2, sfos_f2, pop_f2):
+    for i, j, k, pop in zip(xvalues_degenerate_f2, energies_sfos_f2, sfos_f2, pop_f2):
         ax1.annotate(k, xy=(i, j), xytext=(0,-10), size=7, ha="center", va="top", textcoords="offset points")
         ax1.annotate(f"{round(j, 2)} eV", xy=(i, j), xytext=(-40,8), size=7, ha="center", va="top", textcoords="offset points", backgroundcolor="w")
         ax1.annotate(f"{round(pop, 2)} e", xy=(i, j), xytext=(-40,-2), size=7, ha="center", va="top", textcoords="offset points", backgroundcolor="w")
@@ -252,26 +252,4 @@ def diagram(mos, orbitals, sfos_f1, sfos_f2, color='b'):
     plt.xticks([-1, 0, 1], ['SFO1', "MO", 'SFO2'])
     plt.ylabel(r'$\epsilon$ / eV')
     plt.xlim(-1.7, 1.7)
-
-# if __name__ == '__main__':
-#    fig = plt.figure(figsize=(12,12))
-#    orbitals = pyfmo.orbitals.Orbitals('/Users/Tori/PyFMO/test/fixtures/NH3BH3/adf.rkf')
-#    MOs = orbitals.mos['HOMO-6':'LUMO']
-#    SFOsF1 = orbitals.sfos['Donor(HOMO-2)':'Donor(LUMO)']
-#    SFOsF2 = orbitals.sfos['Acceptor(HOMO-2)':'Acceptor(LUMO)']
-#    mixing2 = max(closed_interaction.get_2mixings(orbitals, orbitals.mos['HOMO-2']))
-#    print(mixing2)
-#    diagram(MOs, orbitals, SFOsF1, SFOsF2)
-#    diagram(mixing2.mos, orbitals, [sfo for sfo in mixing2.sfos if sfo.fragment == orbitals.fragments[0]], [sfo for sfo in mixing2.sfos if sfo.fragment == orbitals.fragments[1]], color='r')
-#    plt.show()
-
-
-# if __name__ == '__main__':
-#    fig = plt.figure(figsize=(12,12))
-#    orbitals = pyfmo.orbitals.Orbitals('/Users/Tori/PyFMO/test/fixtures/NH3BH3/adf.rkf')
-#    mos = orbitals.mos['HOMO-2', 'LUMO+4']
-#    sfos1 = [orbitals.sfos['Acceptor(LUMO)']]
-#    sfos2 = [orbitals.sfos['Donor(HOMO)']]
-#    diagram(mos, orbitals, sfos1, sfos2, color='r')
-#    plt.show()
 
