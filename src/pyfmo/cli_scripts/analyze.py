@@ -31,6 +31,4 @@ def main(args: argparse.Namespace):
         diagram = analysis.draw_mixing()
 
 
-
-
-
+        
