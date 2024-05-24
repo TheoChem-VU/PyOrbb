@@ -114,11 +114,13 @@ def test_Fock_matrix_diagonal():
 
 ## test to check if 'Donor' is always first object in list
 def test_fragments_list():
-	rkf = j(os.path.split(__file__)[0], 'fixtures','NH3BH3','adf.rkf')
-	sfos = pyfmo.orbitals.sfo.SFOs(kfpath=rkf)
-	element =  'Donor'
-	sorted_list = sfos.fragments
-	assert sorted_list.index(element) == 0
+
+	for i in range(10):
+		rkf = j(os.path.split(__file__)[0], 'fixtures','NH3BH3','adf.rkf')
+		sfos = pyfmo.orbitals.sfo.SFOs(kfpath=rkf)
+		element =  'Donor'
+		sorted_list = sfos.fragments
+		assert sorted_list.index(element) == 0
 
 
 if __name__ == '__main__':
