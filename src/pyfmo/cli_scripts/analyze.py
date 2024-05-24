@@ -13,6 +13,9 @@ def create_subparser(parent_parser: argparse.ArgumentParser):
     subparser.add_argument("rkf",
                            type=str,
                            help="The path to the `adf.rkf` file to summarize in an Excel file.")
+    subparser.add_argument("-e", "--expert",
+                           type="store_true",
+                           help="Turn on the expert mode")
 
 def main(args: argparse.Namespace):
     
@@ -22,6 +25,11 @@ def main(args: argparse.Namespace):
 
     # plot the MO
     diagram = analysis.draw_diagram()
+
+    # expert mode diagram
+    if args.expert:
+        diagram = analysis.draw_mixing()
+
 
 
 
