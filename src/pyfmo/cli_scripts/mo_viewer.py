@@ -32,10 +32,12 @@ def create_subparser(parent_parser: argparse.ArgumentParser):
                            help="Set the material",
                            default="shiny")
     subparser.add_argument("-c1", "--color1",
-                           action="store_true",
+                           nargs="+",
+                           type=int,
                            help="Set the color")
     subparser.add_argument("-c2", "--color2",
-                           action="store_true",
+                           nargs="+",
+                           type=int,
                            help="Set the color")
 
 def get_mo_color(mo):
@@ -44,10 +46,6 @@ def get_mo_color(mo):
     if mo.occupation > 0:
         color1 = (234/255, 51/255, 35/255)
         color2 = (5/255, 23/255, 206/255)
-    elif args.color1:
-        color1 = args.color1
-    elif args.color2:
-        color2 = args.color2
     else:
         color1 = (117/255, 251/255, 253/255)
         color2 = (235/255, 114/255, 46/255)
@@ -67,6 +65,13 @@ def main(args: argparse.Namespace):
 
     if args.reverse:
         color1, color2 = color2, color1
+
+    if args.color1 is not None:
+        color1 = (args.color1[0]/255, args.color1[1]/255, args.color1[2]/255)
+
+    if args.color2 is not None:
+        color2 = (args.color2[0]/255, args.color2[1]/255, args.color2[2]/255)
+
 
     orb.draw(color1=color1, color2=color2, isovalue=args.isovalue, gridsize=args.grid, material=args.material) 
     
