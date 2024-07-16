@@ -216,7 +216,7 @@ def to_excel(orbs, out_file: str = 'pyfmo.xlsx'):
     Both restricted and unrestricted sfos are supported.
     '''
 
-    def make_matrix_sheet(sheet_name, sheet_title, sfos1, sfos2, values, number_format='0.00', cmap='Greens', sheet_color='90EE90', use_two_scale=False, clip=None):
+    def make_matrix_sheet(sheet_name, sheet_title, sfos1, sfos2, values, number_format='0.00', cmap='Greens', sheet_color='D6D1CD', use_two_scale=False, clip=None):
         '''
         Create a new sheet and write data to it.
 
@@ -356,8 +356,9 @@ def to_excel(orbs, out_file: str = 'pyfmo.xlsx'):
         
         return len(rows) + len(asterisks) + start_row, start_column + 1
 
-    def make_table_sheet(sheet_name, sheet_title, rows, header):
+    def make_table_sheet(sheet_name, sheet_title, rows, header, sheet_color='D6D1CD'):
         sheet = wb.create_sheet(sheet_name)
+        sheet.sheet_properties.tabColor = sheet_color
 
         title_cell = sheet.cell(row=1, column=1, value=sheet_title)
         title_cell.font = xl.styles.Font(b=True, size=24)
@@ -499,7 +500,7 @@ def to_excel(orbs, out_file: str = 'pyfmo.xlsx'):
         # add the data we want
         name = f"Overlap {spin}" if spin != 'AB' else "Overlap"
         title = f"Overlaps (spin {spin})" if spin != 'AB' else "Overlaps"
-        make_matrix_sheet(name, title, sfos1_spin, sfos2_spin, overlap_mat(sfos1_spin, sfos2_spin), number_format='0.0%')
+        make_matrix_sheet(name, title, sfos1_spin, sfos2_spin, overlap_mat(sfos1_spin, sfos2_spin), sheet_color='', number_format='0.0%')
 
         name = f"Overlap² {spin}" if spin != 'AB' else "Overlap²"
         title = f"Overlaps² (spin {spin})" if spin != 'AB' else "Overlaps²"
