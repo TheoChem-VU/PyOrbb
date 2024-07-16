@@ -216,7 +216,7 @@ def to_excel(orbs, out_file: str = 'pyfmo.xlsx'):
     Both restricted and unrestricted sfos are supported.
     '''
 
-    def make_matrix_sheet(sheet_name, sheet_title, sfos1, sfos2, values, number_format='0.00', cmap='Greens', use_two_scale=False, clip=None):
+    def make_matrix_sheet(sheet_name, sheet_title, sfos1, sfos2, values, number_format='0.00', cmap='Greens', sheet_color='D6D1CD', use_two_scale=False, clip=None):
         '''
         Create a new sheet and write data to it.
 
@@ -232,6 +232,8 @@ def to_excel(orbs, out_file: str = 'pyfmo.xlsx'):
             cmap = colormaps[cmap]  # fetch the colormap from matplotlib
 
         sheet = wb.create_sheet(sheet_name)
+        sheet.sheet_properties.tabColor = sheet_color
+
 
         title_cell = sheet.cell(row=1, column=1, value=sheet_title)
         title_cell.font = xl.styles.Font(b=True, size=24)
@@ -354,8 +356,9 @@ def to_excel(orbs, out_file: str = 'pyfmo.xlsx'):
         
         return len(rows) + len(asterisks) + start_row, start_column + 1
 
-    def make_table_sheet(sheet_name, sheet_title, rows, header):
+    def make_table_sheet(sheet_name, sheet_title, rows, header, sheet_color='D6D1CD'):
         sheet = wb.create_sheet(sheet_name)
+        sheet.sheet_properties.tabColor = sheet_color
 
         title_cell = sheet.cell(row=1, column=1, value=sheet_title)
         title_cell.font = xl.styles.Font(b=True, size=24)
@@ -387,6 +390,7 @@ def to_excel(orbs, out_file: str = 'pyfmo.xlsx'):
 
     # we will write some basic info about the calcualtion in the first sheet
     sheet = wb.worksheets[0]
+    sheet.sheet_properties.tabColor = 'D6D1CD'
     sheet.title = 'Info'
     # write the title cell
     title_cell = sheet.cell(row=1, column=1, value='PyFMO Analysis')
@@ -497,21 +501,21 @@ def to_excel(orbs, out_file: str = 'pyfmo.xlsx'):
         # add the data we want
         name = f"Overlap {spin}" if spin != 'AB' else "Overlap"
         title = f"Overlaps (spin {spin})" if spin != 'AB' else "Overlaps"
-        make_matrix_sheet(name, title, sfos1_spin, sfos2_spin, overlap_mat(sfos1_spin, sfos2_spin), number_format='0.0%')
+        make_matrix_sheet(name, title, sfos1_spin, sfos2_spin, overlap_mat(sfos1_spin, sfos2_spin), number_format='0.0%', sheet_color='FF6666')
 
         name = f"Overlap² {spin}" if spin != 'AB' else "Overlap²"
         title = f"Overlaps² (spin {spin})" if spin != 'AB' else "Overlaps²"
-        make_matrix_sheet(name, title, sfos1_spin, sfos2_spin, overlap_mat(sfos1_spin, sfos2_spin)**2, number_format='0.0%')
+        make_matrix_sheet(name, title, sfos1_spin, sfos2_spin, overlap_mat(sfos1_spin, sfos2_spin)**2, number_format='0.0%', sheet_color='FF6666')
 
         name = f"Δε {spin}" if spin != 'AB' else "Δε"
         title = f"Δε (spin {spin}) (eV)" if spin != 'AB' else "Δε (eV)"
-        make_matrix_sheet(name, title, sfos1_spin, sfos2_spin, energy_gap_mat(sfos1_spin, sfos2_spin), number_format='0.00')
+        make_matrix_sheet(name, title, sfos1_spin, sfos2_spin, energy_gap_mat(sfos1_spin, sfos2_spin), number_format='0.00', sheet_color='4D8B31')
 
         name = f"Orbint {spin}" if spin != 'AB' else "Orbint"
         title = f"Orbital Interactions (spin {spin}) (1000/eV)" if spin != 'AB' else "Orbital Interactions (1000/eV)"
         oi = orbint_mat(sfos1_spin, sfos2_spin)
         oi[~np.isnan(oi)] *= 1000  # in the case of orbital interactions, there is a mask applied to the matrix and we want to multiply each value with 1000 for easier reading
-        make_matrix_sheet(name, title, sfos1_spin, sfos2_spin, oi, number_format='0.00')
+        make_matrix_sheet(name, title, sfos1_spin, sfos2_spin, oi, number_format='0.00', sheet_color='4D8B31')
 
         for fragment in orbs.fragments:
             cmap = colors.LinearSegmentedColormap.from_list('RdGn', ['#ad7a7fff', '#ffffffff', '#157e3bff'])
@@ -519,13 +523,13 @@ def to_excel(orbs, out_file: str = 'pyfmo.xlsx'):
             title = f"MO Coefficients from {fragment} (spin {spin})" if spin != 'AB' else f"MO Coefficients from {fragment}"
             sfos_ = [sfo for sfo in sfos_spin if sfo.fragment == fragment]
             coeff = coefficient_mat(sfos_, mos_spin)
-            make_matrix_sheet(name, title, mos_spin, sfos_, coeff.T, number_format='0.00', cmap=cmap, use_two_scale=True, clip=(-1, 1))
+            make_matrix_sheet(name, title, mos_spin, sfos_, coeff.T, number_format='0.00', cmap=cmap, use_two_scale=True, clip=(-1, 1), sheet_color='643A71')
 
             name = f"Contributions {fragment} {spin}" if spin != 'AB' else f"Contributions {fragment}"
             title = f"Mulliken Contributions from {fragment} (spin {spin})" if spin != 'AB' else f"Mulliken Contributions from {fragment}"
             sfos_ = [sfo for sfo in sfos_spin if sfo.fragment == fragment]
             contribs = contribution_mat(orbs, sfos_, mos_spin)
-            make_matrix_sheet(name, title, mos_spin, sfos_, contribs.T, number_format='0.00%', clip=(0, 1))
+            make_matrix_sheet(name, title, mos_spin, sfos_, contribs.T, number_format='0.00%', clip=(0, 1), sheet_color='058ED9')
 
     wb.save(out_file)
 
