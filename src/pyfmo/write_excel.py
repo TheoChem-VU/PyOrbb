@@ -390,6 +390,7 @@ def to_excel(orbs, out_file: str = 'pyfmo.xlsx'):
 
     # we will write some basic info about the calcualtion in the first sheet
     sheet = wb.worksheets[0]
+    sheet.sheet_properties.tabColor = 'D6D1CD'
     sheet.title = 'Info'
     # write the title cell
     title_cell = sheet.cell(row=1, column=1, value='PyFMO Analysis')
@@ -500,7 +501,7 @@ def to_excel(orbs, out_file: str = 'pyfmo.xlsx'):
         # add the data we want
         name = f"Overlap {spin}" if spin != 'AB' else "Overlap"
         title = f"Overlaps (spin {spin})" if spin != 'AB' else "Overlaps"
-        make_matrix_sheet(name, title, sfos1_spin, sfos2_spin, overlap_mat(sfos1_spin, sfos2_spin), sheet_color='', number_format='0.0%')
+        make_matrix_sheet(name, title, sfos1_spin, sfos2_spin, overlap_mat(sfos1_spin, sfos2_spin), number_format='0.0%')
 
         name = f"Overlap² {spin}" if spin != 'AB' else "Overlap²"
         title = f"Overlaps² (spin {spin})" if spin != 'AB' else "Overlaps²"
