@@ -145,7 +145,7 @@ def main(args: argparse.Namespace):
                 if args.overlapcolor2 is not None:
                     overlap_color2 = (args.overlapcolor2[0]/255, args.overlapcolor2[1]/255, args.overlapcolor2[2]/255)
                
-               scr.draw_cub(overlap_cub, color1=overlap_color1, color2 = overlap_color2, isovalue=args.isovalue**2, material=args.material)
+                scr.draw_cub(overlap_cub, color1=overlap_color1, color2 = overlap_color2, isovalue=args.isovalue**2, material=args.material)
             
             else:
                 scr.draw_cub(sfo1, color1=color1, color2=color2, isovalue=args.isovalue, material=args.material)
