@@ -1,0 +1,270 @@
+from scm import plams
+from pyfmo.orbitals import info
+import numpy as np
+from tcutility import ensure_list, results
+import matplotlib.pyplot as plt
+from math import sqrt
+
+
+MATRIX_DTYPE = np.float32  # should be more than precise enough for orbital data
+
+def _get_calc_info(reader):
+    '''
+    Function to read useful info about orbitals from kf reader
+    '''
+    ret = results.Result()
+
+    ret.engine = 'ADF'
+
+    # determine if calculation used relativistic corrections
+    # if it did, variable 'escale' will be present in 'SFOs'
+    # if it didnt, only variable 'energy' will be present
+    ret.relativistic = ('SFOs', 'escale') in reader
+
+    ret.symlabels = reader.read('Symmetry', 'symlab').strip().split()
+    ret.symmetry = reader.read('Symmetry', 'grouplabel')
+    
+    # determine if SFOs are unrestricted or not
+    ret.unrestricted_sfos = ('SFOs', 'energy_B') in reader
+
+    # determine if MOs are unrestricted or not
+    ret.unrestricted_mos = (ret.symlabels[0], 'eps_B') in reader
+
+    ret.sfo_spins = ['A', 'B'] if ret.unrestricted_sfos else ['AB']
+    ret.mo_spins = ['A', 'B'] if ret.unrestricted_mos else ['AB']
+
+    # determine if the calculation used regions or not
+    ret.used_regions = reader.read('Geometry', 'nr of fragments') != reader.read('Geometry', 'nr of atoms')
+    ret.fragments = reader.read('Geometry', 'fragmenttype').split()
+    if not ret.used_regions:
+        natom = reader.read('Geometry', 'nr of atoms')
+        frags = np.array(ret.fragments)
+        atom_order = np.array(reader.read('Geometry', 'atom order index'))
+        fragment_index = np.array(reader.read('Geometry', 'fragment and atomtype index')) - 1
+        frag_per_atom = frags[fragment_index[natom:]]
+        ret.fragments = [f'{frag}:{idx}' for frag, idx in zip(frag_per_atom, atom_order[natom:])]
+
+    return ret
+
+
+def _square_overlaps(S):
+    size = len(S)
+    n = int(sqrt(.25 + 2*size) - .5)
+    Srows = []
+    for i in range(n):
+        # start index will be the number of elements before this row
+        minidx1 = i * (i+1) // 2
+        # stop index will be the number of elements of the next row
+        maxidx1 = (i+1) * (i+2) // 2
+        Srows.append(S[minidx1:maxidx1])
+
+    # then we go through rows again and add the remaining terms
+    Srowsfixed = []
+    for i, row in enumerate(Srows):
+        Srowsfixed.append(row + [row2[i] for row2 in Srows[i+1:]])
+    return Srowsfixed
+
+
+def _read_data(reader):
+    ret = results.Result()
+
+    ret.calc_info = _get_calc_info(reader)
+
+    def _read_spin_indep(section, variable, spin):
+        if spin in ['A', 'AB']:
+            spin_suffix = '_A'
+        else:
+            spin_suffix = '_B'
+
+        if (section, variable + spin_suffix) in reader:
+            return reader.read(section, variable + spin_suffix)
+
+        if (section, variable) in reader:
+            return reader.read(section, variable)
+
+    def _compose_vector(data, spins):
+        return np.hstack([data[spin] for spin in spins])
+
+    def _compose_matrix(data, spins):
+        blocks = [np.array(data[symlabel][spin]) for symlabel in ret.calc_info.symlabels for spin in spins]
+        shapes = [block.shape for block in blocks]
+        total_shape = sum(shape[0] for shape in shapes)
+        out = np.zeros((total_shape, total_shape))
+
+        current_start_index = 0
+        for block in blocks:
+            out[current_start_index:current_start_index + block.shape[0], current_start_index:current_start_index + block.shape[0]] = block
+            current_start_index += block.shape[0]
+
+        return out
+
+
+    ret.SFOs.number = reader.read('SFOs', 'number')
+    ret.SFOs.fragtypes = np.atleast_1d(reader.read('SFOs', 'fragtype').split())
+    ret.SFOs.fragment_index = np.atleast_1d(reader.read('SFOs', 'fragment'))
+
+    ret.SFOs.fragorb = np.atleast_1d(reader.read('SFOs', 'fragorb'))
+    ret.SFOs.subspecies = np.atleast_1d(reader.read('SFOs', 'subspecies').split())
+    ret.SFOs.ifo = np.atleast_1d(reader.read('SFOs', 'ifo'))
+    ret.SFOs.symmetry_index = np.atleast_1d(reader.read('SFOs', 'isfo'))
+    ret.SFOs.spin = [spin for spin in ret.calc_info.sfo_spins for _ in range(ret.SFOs.number)]
+
+    ret.SFOs.fragment_unique = {spin: ret.SFOs.fragtypes for spin in ret.calc_info.sfo_spins}
+    if not ret.calc_info.used_regions:
+        ret.SFOs.fragment_unique = {spin: [f'{frag_name}:{frag_idx}' for frag_name, frag_idx in zip(ret.SFOs.fragtypes, ret.SFOs.fragment_index)] for spin in ret.calc_info.sfo_spins}
+
+    ret.SFOs.fragment_unique.total = _compose_vector(ret.SFOs.fragment_unique, ret.calc_info.sfo_spins)
+    for sfo_spin in ret.calc_info.sfo_spins:
+        ret.SFOs.energy[sfo_spin] = np.atleast_1d(_read_spin_indep('SFOs', 'escale', sfo_spin))
+        ret.SFOs.occupation[sfo_spin] = np.atleast_1d(_read_spin_indep('SFOs', 'occupation', sfo_spin))
+        ret.SFOs.order[sfo_spin] = np.argsort(ret.SFos.energy[sfo_spin])
+
+        for symlabel in ret.calc_info.symlabels:
+            energy_by_symlabel = ret.SFOs.energy[sfo_spin][ret.SFOs.subspecies == symlabel]
+            ret.SFOs.order_by_symlabel[symlabel][sfo_spin] = np.argsort(energy_by_symlabel)
+
+    ret.SFOs.energy.total = _compose_vector(ret.SFOs.energy, ret.calc_info.sfo_spins)
+    ret.SFOs.occupation.total = _compose_vector(ret.SFOs.occupation, ret.calc_info.sfo_spins)
+    ret.SFOs.order.total = np.argsort(ret.SFOs.energy.total)
+
+    for spin in ret.calc_info.sfo_spins:
+        if spin == 'AB':
+            ret.SFOs.adf_names[spin] = [f'{index}{symlabel}' for index, symlabel in zip(ret.SFOs.ifo, ret.SFOs.subspecies)]
+        else:
+            ret.SFOs.adf_names[spin] = [f'{index}{symlabel}_{spin}' for index, symlabel in zip(ret.SFOs.ifo, ret.SFOs.subspecies)]
+
+    ret.SFOs.adf_names.total = _compose_vector(ret.SFOs.adf_names, ret.calc_info.sfo_spins)
+    ret.SFOs.unique_names = {spin: [f'{frag}({name})' for frag, name in zip(ret.SFOs.fragment_unique[spin], ret.SFOs.adf_names[spin])] for spin in ret.calc_info.sfo_spins}
+    ret.SFOs.unique_names.total = _compose_vector(ret.SFOs.unique_names, ret.calc_info.sfo_spins)
+
+    for symlabel in ret.calc_info.symlabels:
+        for sfo_spin in ret.calc_info.sfo_spins:
+            S = _read_spin_indep(symlabel, 'S-CoreSFO', sfo_spin)
+            S = _square_overlaps(S)
+            ret.matrices.overlap[symlabel][sfo_spin] = S
+
+        for mo_spin in ret.calc_info.mo_spins:
+            nmo = _read_spin_indep(symlabel, 'nmo', mo_spin)
+            ret.MOs.number[symlabel][mo_spin] = nmo
+            ret.MOs.energy[symlabel][mo_spin] = np.atleast_1d(_read_spin_indep(symlabel, 'escale', mo_spin))
+
+            O = np.atleast_1d(_read_spin_indep(symlabel, 'froc', mo_spin))
+            ret.MOs.occupation[symlabel][mo_spin] = O
+
+            C = np.atleast_2d(_read_spin_indep(symlabel, 'Eig-CoreSFO', mo_spin))
+            C = C.reshape(nmo, nmo)
+            ret.matrices.coefficients[symlabel][mo_spin] = C
+
+            if ret.calc_info.sfo_spins == ret.calc_info.mo_spins:
+                S = ret.matrices.overlap[symlabel][mo_spin]
+            else:
+                S = ret.matrices.overlap[symlabel].AB
+
+            ret.matrices.mulliken_contribution[symlabel][mo_spin] = C * (C @ S)
+            ret.matrices.mulliken_population[symlabel][mo_spin] = np.atleast_2d(O).T * ret.matrices.mulliken_contribution[symlabel][mo_spin]
+    
+    ret.MOs.energy.total = np.hstack([_compose_vector(ret.MOs.energy[symlabel], ret.calc_info.mo_spins) for symlabel in ret.calc_info.symlabels])
+    ret.MOs.occupation.total = np.hstack([_compose_vector(ret.MOs.occupation[symlabel], ret.calc_info.mo_spins) for symlabel in ret.calc_info.symlabels])
+    ret.MOs.order.total = np.argsort(ret.MOs.energy.total)
+    ret.MOs.number.total = len(ret.MOs.energy.total)
+    ret.MOs.spin = [spin for spin in ret.calc_info.mo_spins for _ in range(ret.MOs.number.total)]
+
+    ret.matrices.overlap.total =                _compose_matrix(ret.matrices.overlap,                ret.calc_info.sfo_spins)
+    ret.matrices.coefficients.total =           _compose_matrix(ret.matrices.coefficients,           ret.calc_info.mo_spins)
+    ret.matrices.mulliken_contribution.total =  _compose_matrix(ret.matrices.mulliken_contribution,  ret.calc_info.mo_spins)
+    ret.matrices.mulliken_population.total =    _compose_matrix(ret.matrices.mulliken_population,    ret.calc_info.mo_spins)
+
+    ret.SFOs.symlabel = []
+    ret.MOs.symlabel = []
+    ret.MOs.symmetry_index = []
+
+    for mo_spin in ret.calc_info.mo_spins:
+        ret.SFOs.gross_population[mo_spin] = []
+
+    for symlabel in ret.calc_info.symlabels:
+        norb = ret.MOs.number[symlabel][ret.calc_info.mo_spins[0]]
+        ret.SFOs.symlabel.extend([symlabel] * norb)
+        ret.MOs.symlabel.extend([symlabel] * norb)
+        ret.MOs.symmetry_index.extend(range(norb))
+        for mo_spin in ret.calc_info.mo_spins:
+            gp = ret.matrices.mulliken_population[symlabel][mo_spin]
+            gp = np.sum(gp, axis=0)
+            ret.SFOs.gross_population[mo_spin].extend(gp.tolist())
+
+        ret.SFOs.gross_population.total = _compose_vector(ret.SFOs.gross_population, ret.calc_info.mo_spins)
+
+        if ret.calc_info.unrestricted_mos and not ret.calc_info.unrestricted_sfos:
+            ret.SFOs.gross_population.AB = ret.SFOs.gross_population.A + ret.SFOs.gross_population.B
+
+    return ret
+
+
+if __name__ == '__main__':
+    from tcutility import log
+    from pprint import pprint
+    import pyfmo
+    from time import perf_counter
+    import sys
+
+    speed_ups = []
+    orb1_times = []
+    orb2_times = []
+    norb = []
+    files = [
+        # '../../../calculations/PyOrb_testing_2022/CoordinationBondFeCO4CH4/FeCO4CH4.results/adf.rkf',
+        # '../../../calculations/PyOrb_testing_2022/CoordinationBondFeCO4CO/FeCO4CO.results/adf.rkf',
+        # '../../../calculations/PyOrb_testing_2022/DonorAcceptor/NH3BH3.results/adf.rkf',
+        # # '../../../calculations/PyOrb_testing_2022/HeterolyticBond/NaCl.results/adf.rkf',
+        # # '../../../calculations/PyOrb_testing_2022/HomolyticBond/Cl2.results/adf.rkf',
+        # '../../../calculations/PyOrb_testing_2022/HydrogenBond/GuanineCytosine.results/adf.rkf',
+        # '../../../calculations/PyOrb_testing_2022/TransitionState/DielsAlder.results/adf.rkf',
+        '../../../calculations/PyOrb_testing_2022/Alkyl/C1/EDA.results/adf.rkf',
+        # '../../../calculations/PyOrb_testing_2022/Alkyl/C2/EDA.results/adf.rkf',
+        # '../../../calculations/PyOrb_testing_2022/Alkyl/C3/EDA.results/adf.rkf',
+        # '../../../calculations/PyOrb_testing_2022/Alkyl/C4/EDA.results/adf.rkf',
+        # '../../../calculations/PyOrb_testing_2022/Alkyl/C5/EDA.results/adf.rkf',
+    ]
+    for i in range(1):
+        for file in files:
+        # speed_ups[file] = []
+        # norb[file] = []
+            start = perf_counter()
+            data = _read_data(plams.KFReader(file))
+            orb2_time = perf_counter() - start
+            orb2_times.append(orb2_time)
+            print('orbitals2 done!', orb2_time)
+            # plt.imshow(data.matrices.mulliken_contribution.total[:, data.sfos.order.total])
+
+            start = perf_counter()
+            orbs = pyfmo.orbitals.Orbitals(file)
+            nmo, nsfo = len(orbs.mos.mos), len(orbs.sfos.sfos)
+            norb.append(nmo)
+            C = np.zeros((nmo, nsfo))
+            energies = [sfo.energy for sfo in orbs.sfos]
+            sfos = np.array(orbs.sfos.sfos)[np.argsort(energies)]
+            for i, mo in enumerate(orbs.mos):
+                for j, sfo in enumerate(sfos):
+                    C[i, j] = orbs.mulliken_contribution(sfo, mo)
+                    # C[i, j] = sfo @ mo
+
+            orb_time = perf_counter() - start
+            orb1_times.append(orb_time)
+            print('orbitals done ...', orb_time)
+            print(f'Speedup of {orb_time / orb2_time: .1f}x!')
+            speed_ups.append(orb_time / orb2_time)
+
+            # plt.figure()
+            # plt.imshow(data.matrices.mulliken_contribution.total)
+            # plt.figure()
+            # plt.imshow(C)
+            # plt.show()
+
+    print(norb)
+    print(orb1_times)
+    print(orb2_times)
+    plt.scatter(norb, orb1_times, label='Old method')
+    plt.scatter(norb, orb2_times, label='New method')
+    # plt.show()
+        # print(norb[file], speed_ups[file])
+        # plt.scatter(norb[file], speed_ups[file])
+        # plt.show()

@@ -1,0 +1,381 @@
+import pyfmo
+from scm import plams
+import matplotlib.pyplot as plt
+import numpy as np
+from tcutility import ensure_list, timer, log
+
+log.print_date = False
+
+
+
+class OrbitalSelector:
+    def __init__(self, orbitals, parent):
+        self.orbitals = orbitals
+        self.parent = parent
+
+    def __getitem__(self, key):
+        if isinstance(key, int):
+            return [orb for orb in self.orbitals if orb.index == key]
+
+    def decode_key(self, key):
+        '''
+        Keys are given in the following format:
+
+            {fragname}[:{fragidx}]({orbname}[ {symmetry}])[_{spin}]
+
+        Where [:fragidx] is optional
+        '''
+        decoded = {
+            'index': None,
+            'fragname': None,
+            'fragidx': None,
+            'orbname': None,
+            'spin': None,
+            'symmetry': None,
+        }
+
+        if isinstance(key, int):
+            decoded['index'] = key
+            return decoded
+
+        # get spin from the key
+        decoded['orbname'] = key
+        for spin_part in ['_A', '_B', '_AB']:
+            if key.endswith(spin_part):
+                decoded['spin'] = spin_part[1:]
+                decoded['orbname'] = key.removesuffix(spin_part)
+
+        # split key into fragment name and orbname 
+        if '(' in decoded['orbname']:
+            decoded['fragname'], decoded['orbname'] = decoded['orbname'].split('(')
+            decoded['orbname'] = decoded['orbname'].strip(')')
+
+        if ' ' in decoded['orbname']:
+            decoded['orbname'], decoded['symmetry'] = decoded['orbname'].split()
+
+        # extract fragment index from fragment name if present
+        if decoded['fragname'] is not None and ':' in decoded['fragname']:
+            decoded['fragname'], decoded['fragidx'] = decoded['fragname'].split(':')
+            decoded['fragidx'] = int(decoded['fragidx'])
+
+        return decoded
+
+
+    def get(self, symmetry=None, spin=None, fragment=None):
+        orbs = self.orbitals
+        # print([orb.subspecies for orb in orbs])
+        if symmetry:
+            if self.parent.data.calc_info.used_regions:
+                orbs = [orb for orb in orbs if orb.symmetry == symmetry]
+            else:
+                orbs = [orb for orb in orbs if orb.subspecies == symmetry]
+        if spin:
+            orbs = [orb for orb in orbs if orb.spin == spin]
+        if fragment:
+            orbs = [orb for orb in orbs if orb.fragment_unique == fragment]
+        return orbs
+
+    def __len__(self):
+        return len(self.orbitals)
+
+    def __iter__(self):
+        return iter(sorted(self.orbitals, key=lambda orb: orb.energy))
+
+    @property
+    def spins(self):
+        return {orb.spin for orb in self.orbitals}
+
+    @property
+    def unrestricted(self):
+        return all(orb.spin in ['A', 'B'] for orb in self.orbitals)
+
+
+class SFOs(OrbitalSelector):
+    @property
+    def fragments(self):
+        frags = []
+        for sfo in self.orbitals:
+            if sfo.fragment_unique not in frags:
+                frags.append(sfo.fragment_unique)
+        return frags
+
+    def get_fragment_sfos(self, fragment):
+        return [sfo for sfo in self.orbitals if sfo.fragment_unique == fragment]
+
+
+class MOs(OrbitalSelector):
+    ...
+
+
+class Orbital:
+    def __init__(self, data, parent):
+        self.data = data
+        for key, value in data.items():
+            setattr(self, key, value)
+        self.parent = parent
+
+    def __repr__(self):
+        return str(self)
+
+    @property
+    def relative_name(self):
+        orbitals = [orb for orb in self.parent.orbitals if orb.spin == self.spin and orb.spin_total_occupation == self.spin_total_occupation]
+        if hasattr(self, 'fragment_unique'):
+            orbitals = [orb for orb in orbitals if orb.fragment_unique == self.fragment_unique]
+
+        energies = [orb.energy for orb in orbitals]
+        all_order = np.argsort(energies)
+        order = energies.index(self.energy)
+
+        # if self.parent.unrestricted:
+        if self.doubly_occupied:
+            order = len(orbitals) - order - 1
+            return f'HOMO-{order}' if order > 0 else 'HOMO'
+
+        if self.singly_occupied:
+            if self.occupation == 1:
+                order = len(orbitals) - order - 1
+                return f'SOMO-{order}' if order > 0 else 'SOMO'
+            else:
+                return f'SUMO+{order}' if order > 0 else 'SUMO'
+
+        if self.unoccupied:
+            return f'LUMO+{order}' if order > 0 else 'LUMO'
+
+    @property
+    def doubly_occupied(self):
+        return self.spin_total_occupation == 2
+
+    @property
+    def singly_occupied(self):
+        return self.spin_total_occupation == 1
+
+    @property
+    def unoccupied(self):
+        return self.spin_total_occupation == 0
+
+    @property
+    def spin_total_occupation(self):
+        matching_orbs = [orb for orb in self.parent.orbitals if orb.name == self.name]
+        if hasattr(self, 'fragment_unique'):
+            matching_orbs = [orb for orb in matching_orbs if orb.fragment_unique == self.fragment_unique]
+        return sum(orb.occupation for orb in matching_orbs)
+
+
+
+class MO(Orbital):
+    def __str__(self):
+        if self.spin == 'AB':
+            return f'{self.name}'
+        return f'{self.name}_{self.spin}'
+
+
+class SFO(Orbital):
+    def __str__(self): 
+        if self.spin == 'AB':
+            return f'{self.fragment_unique}({self.name})'
+        return f'{self.fragment_unique}({self.name})_{self.spin}'
+
+    def overlap(self, other):
+        assert isinstance(other, SFO)
+
+        if self.spin != other.spin:
+            return 0
+
+        if self.symmetry != other.symmetry:
+            return 0
+
+        S = self.parent.parent.data.matrices.overlap[self.symmetry][self.spin]
+        return S[self.symmetry_index][other.symmetry_index]
+
+
+    def mulliken_contribution(self, other):
+        assert isinstance(other, MO)
+
+        if self.spin != other.spin and other.spin != 'AB':
+            return 0
+
+        if self.symmetry != other.symmetry:
+            return 0
+
+        S = self.parent.parent.data.matrices.mulliken_contribution[self.symmetry][other.spin]
+        return S[self.symmetry_index][other.symmetry_index]
+
+
+    def __matmul__(self, other):
+        return self.overlap(other)
+
+
+    def make_name(self, spin=True, frag_name=False, relative_name=False, index_name=False):
+        name = ''
+
+        if frag_name:
+            name += self.fragment_unique + '('
+
+        if relative_name:
+            name += self.relative_name
+        elif index_name:
+            name += str(self.index) + self.symmetry
+        else:
+            name += self.name
+
+        if frag_name:
+            name += ')'
+
+        if self.spin != 'AB' and spin:
+            name += f'_{self.spin}'
+
+        return name
+
+
+def _combine_matrices(matrices):
+    matrix_sizes = [matrix.shape[0] for matrix in matrices]
+    matrix_start_idx = np.cumsum([0] + matrix_sizes[:-1])
+    combined = np.zeros((sum(matrix_sizes), sum(matrix_sizes)), dtype=MATRIX_DTYPE)
+    for matrix, start_idx, size in zip(matrices, matrix_start_idx, matrix_sizes):
+        combined[start_idx:start_idx+size, start_idx:start_idx+size] = matrix
+
+    return combined
+
+
+class Orbitals:
+    '''
+    Container class that stores information about both MO's and SFO's.
+    '''
+    def __init__(self, path: str, path_SCF0: str = None, moleculename: str = None):
+        r'''
+        Two kind of readers are constucted.
+        1. path provides the path to a fully converged Fragment analyses calculation with a full SCF. From this, all 
+            information regarding the fragment analysis is extracted. This includes the SFO energies of the fully isolated 
+            fragments and, if available, the site energies or Fock matrix. From this can return the site energies (diagonal 
+            of the Fock matrix).
+
+            The energies taken from this file are the SFO energies of the fully isolated fragments and the site energies 
+            (diagonal of the Fock matrix) of the fully relaxed complex.
+
+        2. The path_SCF0 is the pathway to the fragment analysis where SCF is set to zero (SCF=0). This is necessary for 
+            reading the site energies (diagonal of the Fock matrix) to obtain the corrected energies of the SFOs. No other 
+            information is read from this file.
+
+            The energies extracted from this file are the site energies (diagonal of the Fock matrix) of the two fragments 
+            in the field of the second respective fragment. This correction is often considered superior to the SFO energies 
+            for the fully isolated fragments.
+        '''
+        self.reader = plams.KFReader(path)
+
+        # self.mos = MOs(reader=self.reader, moleculename=moleculename)
+        # self.sfos = SFOs(reader=self.reader, path_SCF0=path_SCF0)
+        # self.rename_fragments = self.sfos.rename_fragments
+
+        self.get_data()
+        self.gather_sfos()
+        self.gather_mos()
+
+    def get_data(self):
+        self.data = pyfmo.orbitals2.adf._read_data(self.reader)
+
+    def gather_sfos(self):
+        sfos = []
+        self.sfos = SFOs([], self)
+        for sfoi in range(self.data.SFOs.number):
+            for spin_idx, sfo_spin in enumerate(self.data.calc_info.sfo_spins):
+                data = {
+                    'index': sfoi + 1,
+                    'name': f'{self.data.SFOs.ifo[sfoi]}{self.data.SFOs.subspecies[sfoi]}',
+                    'subspecies': self.data.SFOs.subspecies[sfoi],
+                    'symmetry': self.data.SFOs.symlabel[sfoi],
+                    'symmetry_index': self.data.SFOs.symmetry_index[sfoi] - 1,
+                    'fragment': self.data.calc_info.fragments[self.data.SFOs.fragment_index[sfoi] - 1].split(':')[0],
+                    'fragment_unique': self.data.SFOs.fragment_unique.total[sfoi],
+                    'spin': sfo_spin,
+                    'energy': self.data.SFOs.energy[sfo_spin][sfoi] * 27.2114079527,
+                    'occupation': int(self.data.SFOs.occupation[sfo_spin][sfoi]),
+                    'occupied': int(self.data.SFOs.occupation[sfo_spin][sfoi]) > 0,
+                    'gross_population': self.data.SFOs.gross_population[sfo_spin][sfoi],
+                }
+                sfo = SFO(data, self.sfos)
+                self.sfos.orbitals.append(sfo)
+
+    def gather_mos(self):
+        mos = []
+        self.mos = MOs([], self)
+        for moi in range(self.data.SFOs.number):
+            for spin_idx, mo_spin in enumerate(self.data.calc_info.mo_spins):
+                symm_idx = self.data.MOs.symmetry_index[moi]
+                symlabel = self.data.MOs.symlabel[moi]
+                data = {
+                    'index': moi + 1,
+                    'name': f'{symm_idx+1}{symlabel}',
+                    'symmetry': symlabel,
+                    'symmetry_index': self.data.MOs.symmetry_index[moi] - 1,
+                    'spin': mo_spin,
+                    'energy': self.data.MOs.energy[symlabel][mo_spin][symm_idx] * 27.2114079527,
+                    'occupation': int(self.data.MOs.occupation[symlabel][mo_spin][symm_idx]),
+                    'occupied': int(self.data.MOs.occupation[symlabel][mo_spin][symm_idx]) > 0,
+                    'gross_population': self.data.SFOs.gross_population[mo_spin][moi],
+                }
+                sfo = MO(data, self.mos)
+                self.mos.orbitals.append(sfo)
+
+    @property
+    def fragments(self):
+        return self.sfos.fragments
+
+    def write_excel(self, out_file: str = 'pyfmo.xlsx'):
+        from pyfmo import write_excel
+        
+        write_excel.to_excel(self, out_file)
+
+
+    def write_excel2(self, out_file: str = 'pyfmo2.xlsx'):
+        from pyfmo import write_excel2
+        
+        write_excel2.to_excel(self, out_file)
+
+
+if __name__ == '__main__':
+    import pyfmo
+    # orbs = Orbitals('/Users/yumanhordijk/PhD/TheoCheM_stack/PyFMO/test/fixtures/NH3BH3_symm/NH3BH3_symm.results/adf.rkf')
+    # orbs = Orbitals('../../..//test/fixtures/RadicalAddition/adf.rkf')
+
+
+    def contribution_mat(orbs, sfos, mos):
+        ret = []
+        for sfo in log.loadbar(ensure_list(sfos), 'Calculating Mulliken Contributions'):
+            ret.append([])
+            for mo in ensure_list(mos):
+                ret[-1].append(orbs.mulliken_contribution(sfo, mo))
+        return np.array(ret).squeeze()
+
+    for alkyl in ['C1']:
+
+        with timer.timer('new_orbitals.load_rkf'):
+            orbs = Orbitals(f'../../../calculations/PyOrb_testing_2022/Alkyl/{alkyl}/EDA.results/adf.rkf')
+        with timer.timer('new_orbitals.write_excel'):
+            orbs.write_excel2()
+
+        # with timer.timer('old_orbitals.load_rkf'):
+        #     orbs_old = pyfmo.orbitals.Orbitals(f'../../../calculations/PyOrb_testing_2022/Alkyl/{alkyl}/EDA.results/adf.rkf')
+        # with timer.timer('old_orbitals.mulliken_analysis'):
+        #     contribution_mat(orbs_old, orbs_old.sfos.sfos, orbs_old.mos.mos)
+        # with timer.timer('old_orbitals.write_excel'):
+        #     orbs_old.write_excel()
+
+
+    # [print(orb) for orb in orbs.mos.orbitals]
+    # print(len(orbs.mos))
+    # orbs.write_excel()
+    # sfos = orbs.sfos.get(fragment='left')
+    # print(sfos)
+    # print([sfo.gross_population for sfo in sfos])
+    # print(sum([sfo.gross_population for sfo in sfos]))
+    # print(sum([sfo.occupation for sfo in sfos]))
+    # print(sum([sfo.occupation for sfo in sfos]) - sum([sfo.gross_population for sfo in sfos]))
+    # # sfo1, sfo2, sfo3 = orbs.sfos[130][0], orbs.sfos[127][0], orbs.sfos[124][0]
+    # # print(sfo1, sfo2, sfo3)
+    # print(sfo1.gross_population, sfo2.gross_population, sfo3.gross_population)
+
+    # sfo1, sfo2, sfo3 = orbs.sfos[102][0], orbs.sfos[113][0], orbs.sfos[125][0]
+    # print(sfo1, sfo2, sfo3)
+    # print(sfo1.gross_population, sfo2.gross_population, sfo3.gross_population)
+    # print(sum([sfo1.gross_population, sfo2.gross_population, sfo3.gross_population]))
