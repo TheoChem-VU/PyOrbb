@@ -51,6 +51,14 @@ def create_subparser(parent_parser: argparse.ArgumentParser):
                            nargs="+",
                            type=int,
                            help="Set the color")
+    subparser.add_argument("-oc1", "--overlapcolor1",
+                           nargs="+",
+                           type=int,
+                           help="Set the color")
+    subparser.add_argument("-oc2", "--overlapcolor2",
+                           nargs="+",
+                           type=int,
+                           help="Set the color")
 
 def get_sfo_color(sfo):
     # setting HOMO/LUMO color
@@ -128,7 +136,17 @@ def main(args: argparse.Namespace):
 
             # visualizes overlap
             if args.overlap:
-                scr.draw_cub(overlap_cub, color1=(139/255, 251/255, 87/255), color2=(179/255, 47/255, 230/255), isovalue=args.isovalue**2, material=args.material)
+                overlap_color1 = (139/255, 251/255, 87/255)
+                overlap_color2 = (179/255, 47/255, 230/255)
+
+                if args.overlapcolor1 is not None:
+                    overlap_color1 = (args.overlapcolor1[0]/255, args.overlapcolor1[1]/255, args.overlapcolor1[2]/255)
+
+                if args.overlapcolor2 is not None:
+                    overlap_color2 = (args.overlapcolor2[0]/255, args.overlapcolor2[1]/255, args.overlapcolor2[2]/255)
+               
+               scr.draw_cub(overlap_cub, color1=overlap_color1, color2 = overlap_color2, isovalue=args.isovalue**2, material=args.material)
+            
             else:
                 scr.draw_cub(sfo1, color1=color1, color2=color2, isovalue=args.isovalue, material=args.material)
                 scr.draw_cub(sfo2, color1=sfo2_color1, color2=sfo2_color2, isovalue=args.isovalue, material=args.material)
