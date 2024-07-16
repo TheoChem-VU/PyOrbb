@@ -216,7 +216,7 @@ def to_excel(orbs, out_file: str = 'pyfmo.xlsx'):
     Both restricted and unrestricted sfos are supported.
     '''
 
-    def make_matrix_sheet(sheet_name, sheet_title, sfos1, sfos2, values, number_format='0.00', cmap='Greens', use_two_scale=False, clip=None):
+    def make_matrix_sheet(sheet_name, sheet_title, sfos1, sfos2, values, number_format='0.00', cmap='Greens', sheet_color='90EE90', use_two_scale=False, clip=None):
         '''
         Create a new sheet and write data to it.
 
@@ -232,6 +232,8 @@ def to_excel(orbs, out_file: str = 'pyfmo.xlsx'):
             cmap = colormaps[cmap]  # fetch the colormap from matplotlib
 
         sheet = wb.create_sheet(sheet_name)
+        sheet.sheet_properties.tabColor = sheet_color
+
 
         title_cell = sheet.cell(row=1, column=1, value=sheet_title)
         title_cell.font = xl.styles.Font(b=True, size=24)
