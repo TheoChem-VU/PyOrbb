@@ -50,8 +50,8 @@ def coefficient_mat(sfos, mos):
 
 
 def contribution_mat(orbs, sfos, mos):
-    sfo_idx = [sfo.index for sfo in sfos]
-    mo_idx = [mo.index for mo in mos]
+    sfo_idx = [sfo.index - 1 for sfo in sfos]
+    mo_idx = [mo.index - 1 for mo in mos]
     return orbs.data.matrices.mulliken_contribution.total[:, sfo_idx][mo_idx, :]
 
 
