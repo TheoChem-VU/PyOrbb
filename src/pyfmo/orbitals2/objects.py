@@ -1,8 +1,5 @@
 import pyfmo
 from scm import plams
-import numpy as np
-
-
 
 
 class OrbitalSelector:

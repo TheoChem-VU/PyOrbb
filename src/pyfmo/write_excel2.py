@@ -4,7 +4,7 @@ from tcutility.report import character
 from matplotlib import colors
 from scm import plams
 import numpy as np
-import pyfmo
+import pyfmo  # noqa
 import warnings
 
 warnings.filterwarnings('ignore', category=UserWarning, module='xlsxwriter')
@@ -85,8 +85,6 @@ def _detect_nan_rects(arr):
 
 
 def get_molecules(reader):
-    fragments_names = np.array(reader.read('Geometry', 'fragmenttype').split())
-
     used_regions = reader.read('Geometry', 'nr of fragments') != reader.read('Geometry', 'nr of atoms')
     fragment_indices = np.atleast_1d(reader.read('SFOs', 'fragment'))
     fragtypes = np.atleast_1d(reader.read('SFOs', 'fragtype').split())
@@ -141,7 +139,6 @@ def to_excel(orbs, out_file: str = 'pyfmo.xlsx'):
     bold_centered_fmt = workbook.add_format({'bold': True, 'font_size': 16, 'align': 'center_across'})
     bold_centered_rotated_fmt = workbook.add_format({'bold': True, 'font_size': 16, 'align': 'center', 'valign': 'vcenter', 'rotation': 90})
     white_bg_all_border_fmt = workbook.add_format({'bg_color': 'white', 'border': 1})
-    white_bg_bottom_right_border_fmt = workbook.add_format({'bg_color': 'white', 'bottom': 1, 'right': 1})
     white_bg_top_left_border_fmt = workbook.add_format({'bg_color': 'white', 'top': 1, 'left': 1})
     table_key_fmt = workbook.add_format({'bold': True, 'left': 1})
     table_val_fmt = workbook.add_format({'bold': False, 'right': 1})
@@ -432,12 +429,9 @@ def to_excel(orbs, out_file: str = 'pyfmo.xlsx'):
             if ':' in fragment:
                 fragment_name = f'{fragment.split(":")[0]}({fragment.split(":")[1]})'
 
-            cmap = colors.LinearSegmentedColormap.from_list('RdGn', ['#ad7a7fff', '#ffffffff', '#157e3bff'])
             name = f"Coefficients {fragment_name} {spin}" if spin != 'AB' else f"Coefficients {fragment_name}"
             title = f"MO Coefficients from {fragment_name} (spin {spin})" if spin != 'AB' else f"MO Coefficients from {fragment_name}"
             sfos_ = [sfo for sfo in sfos_spin if sfo.fragment_unique == fragment]
-            # coeff = coefficient_mat(sfos_, mos_spin)
-
             sfo_idx = [sfo.index - 1 for sfo in sfos_]
             mo_idx = [mo.index - 1 for mo in mos_spin]
             coeff = orbs.data.matrices.coefficients.total[:, sfo_idx][mo_idx, :]
@@ -474,24 +468,16 @@ def to_excel(orbs, out_file: str = 'pyfmo.xlsx'):
 
 
 if __name__ == '__main__':
-    import pyfmo
+    import pyfmo  # noqa
     from tcutility import timer, log
     from time import perf_counter
     import matplotlib.pyplot as plt
 
-
-    def contribution_mat(orbs, sfos, mos):
-        ret = []
-        for sfo in log.loadbar(ensure_list(sfos), 'Calculating Mulliken Contributions'):
-            ret.append([])
-            for mo in ensure_list(mos):
-                ret[-1].append(orbs.mulliken_contribution(sfo, mo))
-        return np.array(ret).squeeze()
-
     norbs = []
     load_time_new = []
     load_time_old = []
-    for alkyl in ['C1', 'C2', 'C3', 'C4', 'C5']:
+    # for alkyl in ['C1', 'C2', 'C3', 'C4', 'C5']:
+    for alkyl in ['C1']:
         load_time_new.append([])
         load_time_old.append([])
         for _ in range(1):
@@ -504,15 +490,15 @@ if __name__ == '__main__':
             # with timer.timer('new_orbitals.write_excel'):
             #     orbs.write_excel2()
 
-            with timer.timer('old_orbitals.load_rkf'):
-                start = perf_counter()
-                orbs_old = pyfmo.orbitals.Orbitals(f'../../calculations/PyOrb_testing_2022/Alkyl/{alkyl}/EDA.results/adf.rkf')
-                contribution_mat(orbs_old, orbs_old.sfos.sfos, orbs_old.mos.mos)
-                orbs_old.write_excel()
-                load_time_old[-1].append(perf_counter() - start)
-            # with timer.timer('old_orbitals.mulliken_analysis'):
+            # with timer.timer('old_orbitals.load_rkf'):
+            #     start = perf_counter()
+            #     orbs_old = pyfmo.orbitals.Orbitals(f'../../calculations/PyOrb_testing_2022/Alkyl/{alkyl}/EDA.results/adf.rkf')
             #     contribution_mat(orbs_old, orbs_old.sfos.sfos, orbs_old.mos.mos)
-            # with timer.timer('old_orbitals.write_excel'):
+            #     orbs_old.write_excel()
+            #     load_time_old[-1].append(perf_counter() - start)
+            # # with timer.timer('old_orbitals.mulliken_analysis'):
+            # #     contribution_mat(orbs_old, orbs_old.sfos.sfos, orbs_old.mos.mos)
+            # # with timer.timer('old_orbitals.write_excel'):
             #     orbs_old.write_excel()
 
     print(norbs, load_time_new)
