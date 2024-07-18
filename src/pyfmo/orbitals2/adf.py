@@ -6,8 +6,6 @@ import matplotlib.pyplot as plt
 from math import sqrt
 
 
-MATRIX_DTYPE = np.float32  # should be more than precise enough for orbital data
-
 def _get_calc_info(reader):
     '''
     Function to read useful info about orbitals from kf reader
