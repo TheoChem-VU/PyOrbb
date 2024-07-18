@@ -16,5 +16,5 @@ def create_subparser(parent_parser: argparse.ArgumentParser):
 
 
 def main(args: argparse.Namespace):
-    orbs = pyfmo.orbitals.Orbitals(args.rkf)
-    orbs.write_excel(args.output)
+    orbs = pyfmo.orbitals2.objects.Orbitals(args.rkf)
+    orbs.write_excel2(args.output)
