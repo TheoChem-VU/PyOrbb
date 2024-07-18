@@ -2,9 +2,8 @@ import pyfmo
 from scm import plams
 import matplotlib.pyplot as plt
 import numpy as np
-from tcutility import ensure_list, timer, log
+from tcutility import ensure_list, timer
 
-log.print_date = False
 
 
 
@@ -228,16 +227,6 @@ class SFO(Orbital):
         return name
 
 
-def _combine_matrices(matrices):
-    matrix_sizes = [matrix.shape[0] for matrix in matrices]
-    matrix_start_idx = np.cumsum([0] + matrix_sizes[:-1])
-    combined = np.zeros((sum(matrix_sizes), sum(matrix_sizes)), dtype=MATRIX_DTYPE)
-    for matrix, start_idx, size in zip(matrices, matrix_start_idx, matrix_sizes):
-        combined[start_idx:start_idx+size, start_idx:start_idx+size] = matrix
-
-    return combined
-
-
 class Orbitals:
     '''
     Container class that stores information about both MO's and SFO's.
@@ -331,51 +320,3 @@ class Orbitals:
         from pyfmo import write_excel2
         
         write_excel2.to_excel(self, out_file)
-
-
-if __name__ == '__main__':
-    import pyfmo
-    # orbs = Orbitals('/Users/yumanhordijk/PhD/TheoCheM_stack/PyFMO/test/fixtures/NH3BH3_symm/NH3BH3_symm.results/adf.rkf')
-    # orbs = Orbitals('../../..//test/fixtures/RadicalAddition/adf.rkf')
-
-
-    def contribution_mat(orbs, sfos, mos):
-        ret = []
-        for sfo in log.loadbar(ensure_list(sfos), 'Calculating Mulliken Contributions'):
-            ret.append([])
-            for mo in ensure_list(mos):
-                ret[-1].append(orbs.mulliken_contribution(sfo, mo))
-        return np.array(ret).squeeze()
-
-    for alkyl in ['C1']:
-
-        with timer.timer('new_orbitals.load_rkf'):
-            orbs = Orbitals(f'../../../calculations/PyOrb_testing_2022/Alkyl/{alkyl}/EDA.results/adf.rkf')
-        with timer.timer('new_orbitals.write_excel'):
-            orbs.write_excel2()
-
-        # with timer.timer('old_orbitals.load_rkf'):
-        #     orbs_old = pyfmo.orbitals.Orbitals(f'../../../calculations/PyOrb_testing_2022/Alkyl/{alkyl}/EDA.results/adf.rkf')
-        # with timer.timer('old_orbitals.mulliken_analysis'):
-        #     contribution_mat(orbs_old, orbs_old.sfos.sfos, orbs_old.mos.mos)
-        # with timer.timer('old_orbitals.write_excel'):
-        #     orbs_old.write_excel()
-
-
-    # [print(orb) for orb in orbs.mos.orbitals]
-    # print(len(orbs.mos))
-    # orbs.write_excel()
-    # sfos = orbs.sfos.get(fragment='left')
-    # print(sfos)
-    # print([sfo.gross_population for sfo in sfos])
-    # print(sum([sfo.gross_population for sfo in sfos]))
-    # print(sum([sfo.occupation for sfo in sfos]))
-    # print(sum([sfo.occupation for sfo in sfos]) - sum([sfo.gross_population for sfo in sfos]))
-    # # sfo1, sfo2, sfo3 = orbs.sfos[130][0], orbs.sfos[127][0], orbs.sfos[124][0]
-    # # print(sfo1, sfo2, sfo3)
-    # print(sfo1.gross_population, sfo2.gross_population, sfo3.gross_population)
-
-    # sfo1, sfo2, sfo3 = orbs.sfos[102][0], orbs.sfos[113][0], orbs.sfos[125][0]
-    # print(sfo1, sfo2, sfo3)
-    # print(sfo1.gross_population, sfo2.gross_population, sfo3.gross_population)
-    # print(sum([sfo1.gross_population, sfo2.gross_population, sfo3.gross_population]))
