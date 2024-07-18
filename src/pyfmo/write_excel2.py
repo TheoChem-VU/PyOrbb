@@ -1,7 +1,6 @@
 import xlsxwriter as xl
 from tcutility import ensure_list, formula
 from tcutility.report import character
-from matplotlib import colors
 from scm import plams
 import numpy as np
 import pyfmo  # noqa
@@ -469,7 +468,7 @@ def to_excel(orbs, out_file: str = 'pyfmo.xlsx'):
 
 if __name__ == '__main__':
     import pyfmo  # noqa
-    from tcutility import timer, log
+    from tcutility import timer
     from time import perf_counter
     import matplotlib.pyplot as plt
 
