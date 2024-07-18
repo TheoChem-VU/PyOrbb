@@ -1,7 +1,5 @@
-from scm import plams
 import numpy as np
 from tcutility import results
-import matplotlib.pyplot as plt
 from math import sqrt
 
 

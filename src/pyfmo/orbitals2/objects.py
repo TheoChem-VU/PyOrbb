@@ -1,8 +1,6 @@
 import pyfmo
 from scm import plams
-import matplotlib.pyplot as plt
 import numpy as np
-from tcutility import ensure_list, timer
 
 
 
@@ -123,7 +121,6 @@ class Orbital:
             orbitals = [orb for orb in orbitals if orb.fragment_unique == self.fragment_unique]
 
         energies = [orb.energy for orb in orbitals]
-        all_order = np.argsort(energies)
         order = energies.index(self.energy)
 
         # if self.parent.unrestricted:
@@ -260,7 +257,6 @@ class Orbitals:
         self.data = pyfmo.orbitals2.adf._read_data(self.reader)
 
     def gather_sfos(self):
-        sfos = []
         self.sfos = SFOs([], self)
         for sfoi in range(self.data.SFOs.number):
             for spin_idx, sfo_spin in enumerate(self.data.calc_info.sfo_spins):
@@ -282,7 +278,6 @@ class Orbitals:
                 self.sfos.orbitals.append(sfo)
 
     def gather_mos(self):
-        mos = []
         self.mos = MOs([], self)
         for moi in range(self.data.SFOs.number):
             for spin_idx, mo_spin in enumerate(self.data.calc_info.mo_spins):

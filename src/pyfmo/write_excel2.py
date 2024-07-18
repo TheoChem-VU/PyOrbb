@@ -1,7 +1,7 @@
 import xlsxwriter as xl
-from tcutility import ensure_list, cache, formula
+from tcutility import ensure_list, formula
 from tcutility.report import character
-from matplotlib import colormaps, colors
+from matplotlib import colors
 from scm import plams
 import numpy as np
 import pyfmo
