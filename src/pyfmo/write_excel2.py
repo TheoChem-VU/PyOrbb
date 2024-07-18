@@ -327,7 +327,6 @@ def to_excel(orbs, out_file: str = 'pyfmo.xlsx'):
             'No. SFOs': len(sfos),
             'No. occ. SFOs': len([sfo for sfo in sfos if sfo.occupied]),
             'No. virt. SFOs': len([sfo for sfo in sfos if not sfo.occupied]),
-            'Symmetry': orbs.sfos.reader.read('Symmetry', 'symlab'),
         }
         next_row, _ = make_key_value_table(rows, next_row + 1, 1)
 
