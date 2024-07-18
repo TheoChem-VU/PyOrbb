@@ -1,7 +1,6 @@
 from scm import plams
-from pyfmo.orbitals import info
 import numpy as np
-from tcutility import ensure_list, results
+from tcutility import results
 import matplotlib.pyplot as plt
 from math import sqrt
 
@@ -146,20 +145,20 @@ def _read_data(reader):
             ret.MOs.number[symlabel][mo_spin] = nmo
             ret.MOs.energy[symlabel][mo_spin] = np.atleast_1d(_read_spin_indep(symlabel, 'escale', mo_spin))
 
-            O = np.atleast_1d(_read_spin_indep(symlabel, 'froc', mo_spin))
-            ret.MOs.occupation[symlabel][mo_spin] = O
+            occupation = np.atleast_1d(_read_spin_indep(symlabel, 'froc', mo_spin))
+            ret.MOs.occupation[symlabel][mo_spin] = occupation
 
-            C = np.atleast_2d(_read_spin_indep(symlabel, 'Eig-CoreSFO', mo_spin))
-            C = C.reshape(nmo, nmo)
-            ret.matrices.coefficients[symlabel][mo_spin] = C
+            coefficients = np.atleast_2d(_read_spin_indep(symlabel, 'Eig-CoreSFO', mo_spin))
+            coefficients = coefficients.reshape(nmo, nmo)
+            ret.matrices.coefficients[symlabel][mo_spin] = coefficients
 
             if ret.calc_info.sfo_spins == ret.calc_info.mo_spins:
                 S = ret.matrices.overlap[symlabel][mo_spin]
             else:
                 S = ret.matrices.overlap[symlabel].AB
 
-            ret.matrices.mulliken_contribution[symlabel][mo_spin] = C * (C @ S)
-            ret.matrices.mulliken_population[symlabel][mo_spin] = np.atleast_2d(O).T * ret.matrices.mulliken_contribution[symlabel][mo_spin]
+            ret.matrices.mulliken_contribution[symlabel][mo_spin] = coefficients * (coefficients @ S)
+            ret.matrices.mulliken_population[symlabel][mo_spin] = np.atleast_2d(occupation).T * ret.matrices.mulliken_contribution[symlabel][mo_spin]
     
     ret.MOs.energy.total = np.hstack([_compose_vector(ret.MOs.energy[symlabel], ret.calc_info.mo_spins) for symlabel in ret.calc_info.symlabels])
     ret.MOs.occupation.total = np.hstack([_compose_vector(ret.MOs.occupation[symlabel], ret.calc_info.mo_spins) for symlabel in ret.calc_info.symlabels])
@@ -195,74 +194,3 @@ def _read_data(reader):
             ret.SFOs.gross_population.AB = ret.SFOs.gross_population.A + ret.SFOs.gross_population.B
 
     return ret
-
-
-if __name__ == '__main__':
-    from tcutility import log
-    from pprint import pprint
-    import pyfmo
-    from time import perf_counter
-    import sys
-
-    speed_ups = []
-    orb1_times = []
-    orb2_times = []
-    norb = []
-    files = [
-        # '../../../calculations/PyOrb_testing_2022/CoordinationBondFeCO4CH4/FeCO4CH4.results/adf.rkf',
-        # '../../../calculations/PyOrb_testing_2022/CoordinationBondFeCO4CO/FeCO4CO.results/adf.rkf',
-        # '../../../calculations/PyOrb_testing_2022/DonorAcceptor/NH3BH3.results/adf.rkf',
-        # # '../../../calculations/PyOrb_testing_2022/HeterolyticBond/NaCl.results/adf.rkf',
-        # # '../../../calculations/PyOrb_testing_2022/HomolyticBond/Cl2.results/adf.rkf',
-        # '../../../calculations/PyOrb_testing_2022/HydrogenBond/GuanineCytosine.results/adf.rkf',
-        # '../../../calculations/PyOrb_testing_2022/TransitionState/DielsAlder.results/adf.rkf',
-        '../../../calculations/PyOrb_testing_2022/Alkyl/C1/EDA.results/adf.rkf',
-        # '../../../calculations/PyOrb_testing_2022/Alkyl/C2/EDA.results/adf.rkf',
-        # '../../../calculations/PyOrb_testing_2022/Alkyl/C3/EDA.results/adf.rkf',
-        # '../../../calculations/PyOrb_testing_2022/Alkyl/C4/EDA.results/adf.rkf',
-        # '../../../calculations/PyOrb_testing_2022/Alkyl/C5/EDA.results/adf.rkf',
-    ]
-    for i in range(1):
-        for file in files:
-        # speed_ups[file] = []
-        # norb[file] = []
-            start = perf_counter()
-            data = _read_data(plams.KFReader(file))
-            orb2_time = perf_counter() - start
-            orb2_times.append(orb2_time)
-            print('orbitals2 done!', orb2_time)
-            # plt.imshow(data.matrices.mulliken_contribution.total[:, data.sfos.order.total])
-
-            start = perf_counter()
-            orbs = pyfmo.orbitals.Orbitals(file)
-            nmo, nsfo = len(orbs.mos.mos), len(orbs.sfos.sfos)
-            norb.append(nmo)
-            C = np.zeros((nmo, nsfo))
-            energies = [sfo.energy for sfo in orbs.sfos]
-            sfos = np.array(orbs.sfos.sfos)[np.argsort(energies)]
-            for i, mo in enumerate(orbs.mos):
-                for j, sfo in enumerate(sfos):
-                    C[i, j] = orbs.mulliken_contribution(sfo, mo)
-                    # C[i, j] = sfo @ mo
-
-            orb_time = perf_counter() - start
-            orb1_times.append(orb_time)
-            print('orbitals done ...', orb_time)
-            print(f'Speedup of {orb_time / orb2_time: .1f}x!')
-            speed_ups.append(orb_time / orb2_time)
-
-            # plt.figure()
-            # plt.imshow(data.matrices.mulliken_contribution.total)
-            # plt.figure()
-            # plt.imshow(C)
-            # plt.show()
-
-    print(norb)
-    print(orb1_times)
-    print(orb2_times)
-    plt.scatter(norb, orb1_times, label='Old method')
-    plt.scatter(norb, orb2_times, label='New method')
-    # plt.show()
-        # print(norb[file], speed_ups[file])
-        # plt.scatter(norb[file], speed_ups[file])
-        # plt.show()

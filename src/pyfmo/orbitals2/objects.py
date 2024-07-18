@@ -252,10 +252,6 @@ class Orbitals:
         '''
         self.reader = plams.KFReader(path)
 
-        # self.mos = MOs(reader=self.reader, moleculename=moleculename)
-        # self.sfos = SFOs(reader=self.reader, path_SCF0=path_SCF0)
-        # self.rename_fragments = self.sfos.rename_fragments
-
         self.get_data()
         self.gather_sfos()
         self.gather_mos()
