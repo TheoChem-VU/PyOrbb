@@ -297,7 +297,7 @@ class Orbitals:
             for the fully isolated fragments.
         '''
         self.reader = plams.KFReader(path)
-        self.kfpath = path
+        self.kfpath = os.path.abspath(path)
         with timer.timer('Orbitals.get_data'):
             self.get_data()
         with timer.timer('Orbitals.gather_sfos'):
