@@ -1,5 +1,6 @@
 import pyfmo
 from scm import plams
+from tcutility import timer
 
 
 class OrbitalSelector:
@@ -245,10 +246,13 @@ class Orbitals:
             for the fully isolated fragments.
         '''
         self.reader = plams.KFReader(path)
-
-        self.get_data()
-        self.gather_sfos()
-        self.gather_mos()
+        self.kfpath = path
+        with timer.timer('Orbitals.get_data'):
+            self.get_data()
+        with timer.timer('Orbitals.gather_sfos'):
+            self.gather_sfos()
+        with timer.timer('Orbitals.gather_mos'):
+            self.gather_mos()
 
     def get_data(self):
         self.data = pyfmo.orbitals2.adf._read_data(self.reader)
