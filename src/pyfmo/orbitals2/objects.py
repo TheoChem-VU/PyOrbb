@@ -175,7 +175,7 @@ class Orbital:
 
         # start a Densf job to calculate the cube-file. 
         # We want to return the cube-file, so we should wait for it to finish.
-        with DensfJob(wait_for_finish=True, overwrite=overwrite) as job:
+        with DensfJob(wait_for_finish=True, overwrite=overwrite, use_slurm=False) as job:
             # job.orbital(self)
             job._sfos.append(self)
             job.settings.ADFFile = self.parent.parent.kfpath
