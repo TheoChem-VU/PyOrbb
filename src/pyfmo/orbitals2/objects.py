@@ -163,7 +163,7 @@ class Orbital:
             matching_orbs = [orb for orb in matching_orbs if orb.fragment_unique == self.fragment_unique]
         return sum(orb.occupation for orb in matching_orbs)
 
-    def cube_file(self, gridsize: str = 'medium'):
+    def cube_file(self, gridsize: str = 'medium', overwrite: bool = False):
         '''
         Generate a cube-file for this SFO with a certain grid-size.
 
@@ -175,7 +175,7 @@ class Orbital:
 
         # start a Densf job to calculate the cube-file. 
         # We want to return the cube-file, so we should wait for it to finish.
-        with DensfJob(wait_for_finish=True) as job:
+        with DensfJob(wait_for_finish=True, overwrite=overwrite) as job:
             job.orbital(self)
             job.gridsize(gridsize)
 
@@ -183,7 +183,7 @@ class Orbital:
         # we only generate one, so we simply return the first element
         return grid.from_cub_file(job.output_cub_paths[0])
 
-    def draw(self, gridsize: str = 'medium', isovalue: float = 0.03):
+    def draw(self, gridsize: str = 'medium', isovalue: float = 0.03, overwrite: bool = False):
         '''
         Generate and draw a cube-file for this SFO object.
 
@@ -197,7 +197,7 @@ class Orbital:
         import tcviewer
 
         # generate a cube-file or load an existing one
-        cub = self.cube_file(gridsize=gridsize)
+        cub = self.cube_file(gridsize=gridsize, overwrite=overwrite)
 
         # and draw it with a specified isovalue
         with tcviewer.Screen() as scr:
