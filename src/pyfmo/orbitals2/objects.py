@@ -11,6 +11,8 @@ class OrbitalSelector:
     def __getitem__(self, key):
         if isinstance(key, int):
             return [orb for orb in self.orbitals if orb.index == key]
+        if isinstance(key, str):
+            return self.get(**self.decode_key(key))
 
     def decode_key(self, key):
         '''
@@ -22,7 +24,7 @@ class OrbitalSelector:
         '''
         decoded = {
             'index': None,
-            'fragname': None,
+            'fragment': None,
             'fragidx': None,
             'orbname': None,
             'spin': None,
@@ -42,21 +44,20 @@ class OrbitalSelector:
 
         # split key into fragment name and orbname 
         if '(' in decoded['orbname']:
-            decoded['fragname'], decoded['orbname'] = decoded['orbname'].split('(')
+            decoded['fragment'], decoded['orbname'] = decoded['orbname'].split('(')
             decoded['orbname'] = decoded['orbname'].strip(')')
 
         if ' ' in decoded['orbname']:
             decoded['orbname'], decoded['symmetry'] = decoded['orbname'].split()
 
         # extract fragment index from fragment name if present
-        if decoded['fragname'] is not None and ':' in decoded['fragname']:
-            decoded['fragname'], decoded['fragidx'] = decoded['fragname'].split(':')
+        if decoded['fragment'] is not None and ':' in decoded['fragment']:
+            decoded['fragment'], decoded['fragidx'] = decoded['fragment'].split(':')
             decoded['fragidx'] = int(decoded['fragidx'])
-
         return decoded
 
 
-    def get(self, symmetry=None, spin=None, fragment=None):
+    def get(self, symmetry=None, spin=None, fragment=None, orbname=None, **kargs):
         orbs = self.orbitals
         # print([orb.subspecies for orb in orbs])
         if symmetry:
@@ -67,7 +68,14 @@ class OrbitalSelector:
         if spin:
             orbs = [orb for orb in orbs if orb.spin == spin]
         if fragment:
-            orbs = [orb for orb in orbs if orb.fragment_unique == fragment]
+            orbs = [orb for orb in orbs if orb.fragment_unique == fragment or orb.fragment == fragment]
+        if orbname:
+            orbs = [orb for orb in orbs if orb.name == orbname]
+
+        if len(orbs) == 0:
+            return None
+        if len(orbs) == 1:
+            return orbs[0]
         return orbs
 
     def __len__(self):
