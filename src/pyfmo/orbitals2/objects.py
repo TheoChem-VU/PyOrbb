@@ -71,7 +71,7 @@ class OrbitalSelector:
         if fragment:
             orbs = [orb for orb in orbs if orb.fragment_unique == fragment or orb.fragment == fragment]
         if orbname:
-            orbs = [orb for orb in orbs if orb.name == orbname]
+            orbs = [orb for orb in orbs if orb.name == orbname or orb.relative_name == orbname]
 
         if len(orbs) == 0:
             return None
@@ -176,7 +176,7 @@ class Orbital:
 
         # start a Densf job to calculate the cube-file. 
         # We want to return the cube-file, so we should wait for it to finish.
-        with DensfJob(wait_for_finish=True, overwrite=overwrite, use_slurm=False) as job:
+        with DensfJob(wait_for_finish=True, overwrite=overwrite) as job:
             # job.orbital(self)
             job._sfos.append(self)
             job.settings.ADFFile = self.parent.parent.kfpath
