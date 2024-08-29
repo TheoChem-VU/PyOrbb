@@ -42,7 +42,7 @@ class OrbitalSelector:
         for spin_part in ['_A', '_B', '_AB']:
             if key.endswith(spin_part):
                 decoded['spin'] = spin_part[1:]
-                decoded['orbname'] = key.removesuffix(spin_part)
+                decoded['orbname'] = key[:len(spin_part)]
 
         # split key into fragment name and orbname 
         if '(' in decoded['orbname']:
