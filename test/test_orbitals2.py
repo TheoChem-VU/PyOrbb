@@ -56,8 +56,8 @@ def test_n_degeneracy2():
 	assert orbs.mos['1AA2'].degeneracy == 1
 
 def test_degenerate_orbs():
-	orbs = pyfmo.orbitals2.objects.Orbitals(j(os.path.split(__file__)[0], 'fixtures','NH3BH3_symm','NH3BH3_symm.results', 'adf.rkf'))
-	assert orbs.sfos['Donor(2E1:1)'].degenerate_orbitals == [orbs.sfos['Donor(2E1:1)'], orbs.sfos['Donor(2E1:2)']]
+	orbs = pyfmo.orbitals2.objects.Orbitals(j(os.path.split(__file__)[0], 'fixtures','pentafluorophsophate','FragAnal.adf.rkf'))
+	assert orbs.mos['5EE1:1'].degenerate_orbitals == [orbs.mos['5EE1:1'], orbs.mos['5EE1:2']]
 
 #test for energies with symmetry labels and relative names in the HOMO-LUMO nomenclature
 def test_symm_energy1():
