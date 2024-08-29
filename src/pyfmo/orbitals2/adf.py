@@ -81,19 +81,6 @@ def _read_data(reader):
     def _compose_vector(data, spins):
         return np.hstack([data[spin] for spin in spins])
 
-    def _compose_matrix(data, spins):
-        blocks = [np.array(data[symlabel][spin]) for symlabel in ret.calc_info.symlabels for spin in spins]
-        shapes = [block.shape for block in blocks]
-        total_shape = sum(shape[0] for shape in shapes)
-        out = np.zeros((total_shape, total_shape))
-
-        current_start_index = 0
-        for block in blocks:
-            out[current_start_index:current_start_index + block.shape[0], current_start_index:current_start_index + block.shape[0]] = block
-            current_start_index += block.shape[0]
-
-        return out
-
     with timer.timer('Orbitals.get_data.read_sfo_data'):
         ret.SFOs.number = reader.read('SFOs', 'number')
         ret.SFOs.fragtypes = np.atleast_1d(reader.read('SFOs', 'fragtype').split())
@@ -171,12 +158,6 @@ def _read_data(reader):
         ret.MOs.order.total = np.argsort(ret.MOs.energy.total)
         ret.MOs.number.total = len(ret.MOs.energy.total)
         ret.MOs.spin = [spin for spin in ret.calc_info.mo_spins for _ in range(ret.MOs.number.total)]
-
-    with timer.timer('Orbitals.get_data.compose_matrices'):
-        ret.matrices.overlap.total =                _compose_matrix(ret.matrices.overlap,                ret.calc_info.sfo_spins)
-        ret.matrices.coefficients.total =           _compose_matrix(ret.matrices.coefficients,           ret.calc_info.mo_spins)
-        ret.matrices.mulliken_contribution.total =  _compose_matrix(ret.matrices.mulliken_contribution,  ret.calc_info.mo_spins)
-        ret.matrices.mulliken_population.total =    _compose_matrix(ret.matrices.mulliken_population,    ret.calc_info.mo_spins)
 
     with timer.timer('Orbitals.get_data.gross_population'):
         ret.SFOs.symlabel = []
