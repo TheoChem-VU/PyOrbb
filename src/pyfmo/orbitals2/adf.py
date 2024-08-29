@@ -146,9 +146,7 @@ def _read_data(reader):
                 nmo = _read_spin_indep(symlabel, 'nmo', mo_spin)
                 ret.MOs.number[symlabel][mo_spin] = nmo
                 ret.MOs.energy[symlabel][mo_spin] = np.atleast_1d(_read_spin_indep(symlabel, 'escale', mo_spin))
-
-                occupation = sorted(np.atleast_1d(_read_spin_indep(symlabel, 'frocf', mo_spin)), reverse=True)
-                ret.MOs.nfrozencores[symlabel] = reader.read(symlabel, 'ncbas')
+                occupation = _read_spin_indep(symlabel, 'froc', mo_spin)
                 ret.MOs.occupation[symlabel][mo_spin] = occupation
 
                 with timer.timer('Orbitals.get_data.read_matrices.coefficients'):
