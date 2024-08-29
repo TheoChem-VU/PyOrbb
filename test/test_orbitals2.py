@@ -124,8 +124,8 @@ def test_froclarge_grosspop():
 
 def test_lumo_naming():
 	orbs = pyfmo.orbitals2.objects.Orbitals(j(os.path.split(__file__)[0], 'fixtures','frozen_cores','nh3bh3_large.rkf'))
-	assert orbs.sfos['Donor(1E1:1)'] == orbs.sfos['Donor(LUMO+1)']
-	assert orbs.sfos['Donor(1E1:2)'] == orbs.sfos['Donor(LUMO+2)']
+	assert orbs.sfos['Donor(2E1:1)'] == orbs.sfos['Donor(LUMO+1)']
+	assert orbs.sfos['Donor(2E1:2)'] == orbs.sfos['Donor(LUMO+2)']
 
 
 
