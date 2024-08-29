@@ -354,7 +354,7 @@ class Orbitals:
                     'index': moi + 1,
                     'name': f'{symm_idx+1}{symlabel}',
                     'symmetry': symlabel,
-                    'symmetry_index': self.data.MOs.symmetry_index[moi] - 1,
+                    'symmetry_index': self.data.MOs.symmetry_index[moi],
                     'spin': mo_spin,
                     'energy': self.data.MOs.energy[symlabel][mo_spin][symm_idx] * 27.2114079527,
                     'occupation': int(self.data.MOs.occupation[symlabel][mo_spin][symm_idx]),
