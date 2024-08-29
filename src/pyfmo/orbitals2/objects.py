@@ -1,6 +1,6 @@
 import pyfmo
 from scm import plams
-from tcutility import timer
+from tcutility import timer, cache
 import os
 
 
@@ -122,6 +122,8 @@ class Orbital:
         return str(self)
 
     @property
+    @cache.cache
+    @timer.timer
     def relative_name(self):
         orbitals = [orb for orb in self.parent.orbitals if orb.spin == self.spin and orb.spin_total_occupation == self.spin_total_occupation]
         if hasattr(self, 'fragment_unique'):
@@ -158,6 +160,8 @@ class Orbital:
         return self.spin_total_occupation == 0
 
     @property
+    @cache.cache
+    @timer.timer
     def spin_total_occupation(self):
         matching_orbs = [orb for orb in self.parent.orbitals if orb.name == self.name]
         if hasattr(self, 'fragment_unique'):
@@ -207,6 +211,8 @@ class Orbital:
             scr.draw_cub(cub, isovalue, material=tcviewer.materials.orbital_shiny)
 
 
+    @cache.cache
+    @timer.timer
 
 
 class MO(Orbital):
