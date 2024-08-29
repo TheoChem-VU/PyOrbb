@@ -1,5 +1,5 @@
 import numpy as np
-from tcutility import results, timer
+from tcutility import results, timer, ensure_list
 from math import sqrt
 
 
@@ -134,6 +134,7 @@ def _read_data(reader):
         ret.SFOs.unique_names.total = _compose_vector(ret.SFOs.unique_names, ret.calc_info.sfo_spins)
 
     with timer.timer('Orbitals.get_data.read_matrices'):
+        ret.MOs.nfrozencores = {symlabel: ncbs for symlabel, ncbs in zip(ret.calc_info.symlabels, ensure_list(reader.read('Symmetry', 'ncbs')))}
         for symlabel in ret.calc_info.symlabels:
             with timer.timer('Orbitals.get_data.read_matrices.overlap'):
                 for sfo_spin in ret.calc_info.sfo_spins:
