@@ -2,6 +2,7 @@ import pyfmo
 from scm import plams
 from tcutility import timer, cache
 import os
+import numpy as np
 
 
 class OrbitalSelector:
@@ -332,6 +333,8 @@ class Orbitals:
         '''
         self.reader = plams.KFReader(path)
         self.kfpath = os.path.abspath(path)
+        self.SCF0_kfpath = path_SCF0
+        self.SCF0_reader = plams.KFReader(path_SCF0) if path_SCF0 else None
         with timer.timer('Orbitals.get_data'):
             self.get_data()
         with timer.timer('Orbitals.gather_sfos'):
@@ -340,7 +343,7 @@ class Orbitals:
             self.gather_mos()
 
     def get_data(self):
-        self.data = pyfmo.orbitals2.adf._read_data(self.reader)
+        self.data = pyfmo.orbitals2.adf._read_data(self.reader, SCF0_reader=self.SCF0_reader)
 
     def gather_sfos(self):
         self.sfos = SFOs([], self)
@@ -370,6 +373,15 @@ class Orbitals:
                     'occupied': int(self.data.SFOs.occupation[sfo_spin][sfoi]) > 0,
                     'gross_population': gp,
                 }
+
+                data['site_energy'] = np.nan
+                if isinstance(self.data.SFOs.site_energy[sfo_spin], np.ndarray):
+                    data['site_energy'] = self.data.SFOs.site_energy[sfo_spin][sfoi] * 27.2114079527
+
+                data['site_energy_SCF0'] = np.nan
+                if isinstance(self.data.SFOs.site_energy_SCF0[sfo_spin], np.ndarray):
+                    data['site_energy_SCF0'] = self.data.SFOs.site_energy_SCF0[sfo_spin][sfoi] * 27.2114079527
+
                 sfo = SFO(data, self.sfos)
                 self.sfos.orbitals.append(sfo)
 
