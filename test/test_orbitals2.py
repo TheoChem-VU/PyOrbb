@@ -110,6 +110,28 @@ def test_Fock_matrix_diagonal():
 	assert orbs.sfos['nh3(3A1)'].energy != orbs.sfos['nh3(3A1)'].site_energy_SCF0
 	assert orbs.sfos['nh3(3A1)'].site_energy == orbs.sfos['nh3(3A1)'].site_energy_SCF0
 
+def test_froclarge_mulliken_contr():
+	orbs = pyfmo.orbitals2.objects.Orbitals(j(os.path.split(__file__)[0], 'fixtures','frozen_cores','nh3bh3_large.rkf'))
+	assert orbs.sfos['Acceptor(5A1)'].mulliken_contribution(orbs.mos['9A1'])
+
+def test_froclarge_grosspop():
+	orbs = pyfmo.orbitals2.objects.Orbitals(j(os.path.split(__file__)[0], 'fixtures','frozen_cores','nh3bh3_large.rkf'))
+	assert round(orbs.sfos['Acceptor(5A1)'].gross_population, 3) == -0.007
+
+def test_lumo_naming():
+	orbs = pyfmo.orbitals2.objects.Orbitals(j(os.path.split(__file__)[0], 'fixtures','NH3BH3_symm','NH3BH3_symm.results', 'adf.rkf'))
+	assert orbs.sfos['Donor(2E1:1)'] == orbs.sfos['Donor(LUMO+1)']
+	assert orbs.sfos['Donor(2E1:2)'] == orbs.sfos['Donor(LUMO+2)']
+
+def test_degeneracy():
+	orbs = pyfmo.orbitals2.objects.Orbitals(j(os.path.split(__file__)[0], 'fixtures','NH3BH3_symm','NH3BH3_symm.results', 'adf.rkf'))
+	assert orbs.sfos['Donor(2E1:1)'].degeneracy == 2
+
+def test_degenerate_orbs():
+	orbs = pyfmo.orbitals2.objects.Orbitals(j(os.path.split(__file__)[0], 'fixtures','NH3BH3_symm','NH3BH3_symm.results', 'adf.rkf'))
+	assert orbs.sfos['Donor(2E1:1)'].degenerate_orbitals == [orbs.sfos['Donor(2E1:1)'], orbs.sfos['Donor(2E1:2)']]
+
+
 if __name__ == '__main__':
 	import pytest
 	pytest.main()
