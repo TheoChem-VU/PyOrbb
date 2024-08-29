@@ -88,8 +88,21 @@ def _read_data(reader):
 
         ret.SFOs.fragorb = np.atleast_1d(reader.read('SFOs', 'fragorb'))
         ret.SFOs.subspecies = np.atleast_1d(reader.read('SFOs', 'subspecies').split())
-        ret.SFOs.ifo = np.atleast_1d(reader.read('SFOs', 'ifo'))
-        ret.SFOs.symmetry_index = np.atleast_1d(reader.read('SFOs', 'isfo'))
+        ret.SFOs.subspecies_fixed = []
+        ret.SFOs.symmetry_index = np.atleast_1d(reader.read('SFOs', 'isfo')) - 1
+
+        subspecies_visited_symm_index = {}
+        for subsp, isfo in zip(ret.SFOs.subspecies, ret.SFOs.symmetry_index):
+            subspecies_visited_symm_index.setdefault(subsp, [])
+            if isfo in subspecies_visited_symm_index[subsp]:
+                n = int(subsp.split(':')[1])
+                subsp = subsp.split(':')[0] + ':' + str(n + 1)
+                subspecies_visited_symm_index.setdefault(subsp, [])
+
+            subspecies_visited_symm_index[subsp].append(isfo)
+            ret.SFOs.subspecies_fixed.append(subsp)
+
+        ret.SFOs.ifo = np.atleast_1d(reader.read('SFOs', 'ifo')) - 1
         ret.SFOs.spin = [spin for spin in ret.calc_info.sfo_spins for _ in range(ret.SFOs.number)]
 
         ret.SFOs.fragment_unique = {spin: ret.SFOs.fragtypes for spin in ret.calc_info.sfo_spins}
@@ -103,7 +116,7 @@ def _read_data(reader):
             ret.SFOs.order[sfo_spin] = np.argsort(ret.SFos.energy[sfo_spin])
 
             for symlabel in ret.calc_info.symlabels:
-                energy_by_symlabel = ret.SFOs.energy[sfo_spin][ret.SFOs.subspecies == symlabel]
+                energy_by_symlabel = ret.SFOs.energy[sfo_spin][ret.SFOs.subspecies_fixed == symlabel]
                 ret.SFOs.order_by_symlabel[symlabel][sfo_spin] = np.argsort(energy_by_symlabel)
 
         ret.SFOs.energy.total = _compose_vector(ret.SFOs.energy, ret.calc_info.sfo_spins)
@@ -112,9 +125,9 @@ def _read_data(reader):
 
         for spin in ret.calc_info.sfo_spins:
             if spin == 'AB':
-                ret.SFOs.adf_names[spin] = [f'{index}{symlabel}' for index, symlabel in zip(ret.SFOs.ifo, ret.SFOs.subspecies)]
+                ret.SFOs.adf_names[spin] = [f'{index + 1}{symlabel}' for index, symlabel in zip(ret.SFOs.ifo, ret.SFOs.subspecies_fixed)]
             else:
-                ret.SFOs.adf_names[spin] = [f'{index}{symlabel}_{spin}' for index, symlabel in zip(ret.SFOs.ifo, ret.SFOs.subspecies)]
+                ret.SFOs.adf_names[spin] = [f'{index + 1}{symlabel}_{spin}' for index, symlabel in zip(ret.SFOs.ifo, ret.SFOs.subspecies_fixed)]
 
         ret.SFOs.adf_names.total = _compose_vector(ret.SFOs.adf_names, ret.calc_info.sfo_spins)
         ret.SFOs.unique_names = {spin: [f'{frag}({name})' for frag, name in zip(ret.SFOs.fragment_unique[spin], ret.SFOs.adf_names[spin])] for spin in ret.calc_info.sfo_spins}
