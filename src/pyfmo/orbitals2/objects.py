@@ -328,10 +328,11 @@ class Orbitals:
             for spin_idx, sfo_spin in enumerate(self.data.calc_info.sfo_spins):
                 data = {
                     'index': sfoi + 1,
-                    'name': f'{self.data.SFOs.ifo[sfoi]}{self.data.SFOs.subspecies[sfoi]}',
+                    # 'name': f'{self.data.SFOs.ifo[sfoi]}{self.data.SFOs.subspecies[sfoi]}',
+                    'name': self.data.SFOs.adf_names[sfo_spin][sfoi],
                     'subspecies': self.data.SFOs.subspecies[sfoi],
                     'symmetry': self.data.SFOs.symlabel[sfoi],
-                    'symmetry_index': self.data.SFOs.symmetry_index[sfoi] - 1,
+                    'symmetry_index': self.data.SFOs.symmetry_index[sfoi],
                     'fragment': self.data.calc_info.fragments[self.data.SFOs.fragment_index[sfoi] - 1].split(':')[0],
                     'fragment_unique': self.data.SFOs.fragment_unique.total[sfoi],
                     'spin': sfo_spin,
