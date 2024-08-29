@@ -232,7 +232,7 @@ class SFO(Orbital):
             return 0
 
         S = self.parent.parent.data.matrices.overlap[self.symmetry][self.spin]
-        return S[self.symmetry_index][other.symmetry_index]
+        return S[other.symmetry_index][self.symmetry_index]
 
 
     def mulliken_contribution(self, other):
@@ -245,7 +245,20 @@ class SFO(Orbital):
             return 0
 
         S = self.parent.parent.data.matrices.mulliken_contribution[self.symmetry][other.spin]
-        return S[self.symmetry_index][other.symmetry_index]
+        return S[other.symmetry_index][self.symmetry_index]
+
+
+    def coefficient(self, other):
+        assert isinstance(other, MO)
+
+        if self.spin != other.spin and other.spin != 'AB':
+            return 0
+
+        if self.symmetry != other.symmetry:
+            return 0
+
+        S = self.parent.parent.data.matrices.coefficients[self.symmetry][other.spin]
+        return S[other.symmetry_index][self.symmetry_index]
 
 
     def __matmul__(self, other):
