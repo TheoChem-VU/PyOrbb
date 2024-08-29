@@ -210,9 +210,23 @@ class Orbital:
         with tcviewer.Screen() as scr:
             scr.draw_cub(cub, isovalue, material=tcviewer.materials.orbital_shiny)
 
+    @property
+    def degeneracy_index(self):
+        return self.degenerate_orbitals.index(self)
 
+    @property
+    def degenerate(self):
+        return self.degeneracy > 1
+
+    @property
+    def degeneracy(self):
+        return len(self.degenerate_orbitals)
+
+    @property
     @cache.cache
     @timer.timer
+    def degenerate_orbitals(self):
+        return [orb for orb in self.parent.orbitals if orb.energy == self.energy]
 
 
 class MO(Orbital):
