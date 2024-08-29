@@ -146,12 +146,13 @@ def _read_data(reader):
                 ret.MOs.number[symlabel][mo_spin] = nmo
                 ret.MOs.energy[symlabel][mo_spin] = np.atleast_1d(_read_spin_indep(symlabel, 'escale', mo_spin))
 
-                occupation = np.atleast_1d(_read_spin_indep(symlabel, 'froc', mo_spin))
+                occupation = sorted(np.atleast_1d(_read_spin_indep(symlabel, 'frocf', mo_spin)), reverse=True)
+                ret.MOs.nfrozencores[symlabel] = reader.read(symlabel, 'ncbas')
                 ret.MOs.occupation[symlabel][mo_spin] = occupation
 
                 with timer.timer('Orbitals.get_data.read_matrices.coefficients'):
                     coefficients = np.atleast_2d(_read_spin_indep(symlabel, 'Eig-CoreSFO', mo_spin))
-                    coefficients = coefficients.reshape(nmo, nmo)
+                    coefficients = coefficients.reshape(nmo, -1)
                     ret.matrices.coefficients[symlabel][mo_spin] = coefficients
 
                 with timer.timer('Orbitals.get_data.read_matrices.mulliken_analysis'):
@@ -164,7 +165,7 @@ def _read_data(reader):
                         ret.matrices.mulliken_contribution[symlabel][mo_spin] = coefficients * (coefficients @ S)
                     with timer.timer('Orbitals.get_data.read_matrices.mulliken_analysis.population'):
                         ret.matrices.mulliken_population[symlabel][mo_spin] = np.atleast_2d(occupation).T * ret.matrices.mulliken_contribution[symlabel][mo_spin]
-    
+
     with timer.timer('Orbitals.get_data.read_mo_data'):
         ret.MOs.energy.total = np.hstack([_compose_vector(ret.MOs.energy[symlabel], ret.calc_info.mo_spins) for symlabel in ret.calc_info.symlabels])
         ret.MOs.occupation.total = np.hstack([_compose_vector(ret.MOs.occupation[symlabel], ret.calc_info.mo_spins) for symlabel in ret.calc_info.symlabels])
@@ -187,12 +188,7 @@ def _read_data(reader):
             ret.MOs.symmetry_index.extend(range(norb))
             for mo_spin in ret.calc_info.mo_spins:
                 gp = ret.matrices.mulliken_population[symlabel][mo_spin]
-                gp = np.sum(gp, axis=0)
+                gp = np.sum(gp, axis=0)[ret.MOs.nfrozencores[symlabel]:]
                 ret.SFOs.gross_population[mo_spin].extend(gp.tolist())
-
-            ret.SFOs.gross_population.total = _compose_vector(ret.SFOs.gross_population, ret.calc_info.mo_spins)
-
-            if ret.calc_info.unrestricted_mos and not ret.calc_info.unrestricted_sfos:
-                ret.SFOs.gross_population.AB = ret.SFOs.gross_population.A + ret.SFOs.gross_population.B
 
     return ret
