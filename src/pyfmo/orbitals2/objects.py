@@ -165,6 +165,7 @@ class Orbital:
         matching_orbs = [orb for orb in self.parent.orbitals if orb.name == self.name]
         if hasattr(self, 'fragment_unique'):
             matching_orbs = [orb for orb in matching_orbs if orb.fragment_unique == self.fragment_unique]
+
         return sum(orb.occupation for orb in matching_orbs)
 
     def cube_file(self, gridsize: str = 'medium', overwrite: bool = False):
@@ -343,8 +344,17 @@ class Orbitals:
 
     def gather_sfos(self):
         self.sfos = SFOs([], self)
+        sfo_mo_spin_match = self.data.calc_info.unrestricted_mos == self.data.calc_info.unrestricted_sfos
         for sfoi in range(self.data.SFOs.number):
             for spin_idx, sfo_spin in enumerate(self.data.calc_info.sfo_spins):
+                if not sfo_mo_spin_match:
+                    if self.data.calc_info.unrestricted_mos:
+                        gp = self.data.SFOs.gross_population.A[sfoi] + self.data.SFOs.gross_population.B[sfoi]
+                    else:
+                        gp = self.data.SFOs.gross_population.AB[sfoi]
+                else:
+                    gp = self.data.SFOs.gross_population[sfo_spin][sfoi]
+
                 data = {
                     'index': sfoi + 1,
                     # 'name': f'{self.data.SFOs.ifo[sfoi]}{self.data.SFOs.subspecies[sfoi]}',
@@ -358,7 +368,7 @@ class Orbitals:
                     'energy': self.data.SFOs.energy[sfo_spin][sfoi] * 27.2114079527,
                     'occupation': int(self.data.SFOs.occupation[sfo_spin][sfoi]),
                     'occupied': int(self.data.SFOs.occupation[sfo_spin][sfoi]) > 0,
-                    'gross_population': self.data.SFOs.gross_population[sfo_spin][sfoi],
+                    'gross_population': gp,
                 }
                 sfo = SFO(data, self.sfos)
                 self.sfos.orbitals.append(sfo)
@@ -378,7 +388,7 @@ class Orbitals:
                     'energy': self.data.MOs.energy[symlabel][mo_spin][symm_idx] * 27.2114079527,
                     'occupation': int(self.data.MOs.occupation[symlabel][mo_spin][symm_idx]),
                     'occupied': int(self.data.MOs.occupation[symlabel][mo_spin][symm_idx]) > 0,
-                    'gross_population': self.data.SFOs.gross_population[mo_spin][moi],
+                    # 'gross_population': self.data.SFOs.gross_population[mo_spin][moi],
                 }
                 sfo = MO(data, self.mos)
                 self.mos.orbitals.append(sfo)
