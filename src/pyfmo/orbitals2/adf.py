@@ -60,26 +60,64 @@ def _square_overlaps(S):
     return Srowsfixed
 
 
-def _read_data(reader):
+def _read_data(reader, SCF0_reader=None):
     ret = results.Result()
 
     with timer.timer('Orbitals.get_data.read_calc_info'):
         ret.calc_info = _get_calc_info(reader)
 
-    def _read_spin_indep(section, variable, spin):
+    def _read_spin_indep(section, variable, spin, R=reader):
         if spin in ['A', 'AB']:
             spin_suffix = '_A'
         else:
             spin_suffix = '_B'
 
-        if (section, variable + spin_suffix) in reader:
-            return reader.read(section, variable + spin_suffix)
+        if not R:
+            return
 
-        if (section, variable) in reader:
-            return reader.read(section, variable)
+        if (section, variable + spin_suffix) in R:
+            return R.read(section, variable + spin_suffix)
+
+        if (section, variable) in R:
+            return R.read(section, variable)
 
     def _compose_vector(data, spins):
         return np.hstack([data[spin] for spin in spins])
+
+    def _read_site_energy(spin, scf0=False):
+        R = SCF0_reader if scf0 else reader
+
+        site_energy = _read_spin_indep('SFOs', 'site_energy', sfo_spin, R)
+        if site_energy:
+            return np.atleast_1d(site_energy)
+
+        site_energy = []
+        for symlabel in ret.calc_info.symlabels:
+            # This is to correct for symlable being split up into :1, :2 and :3, thus 1E:1 becomes 1E
+            if ':' in symlabel and symlabel.split(':')[1].isdigit():
+                Fock_symlabel = symlabel.split(':')[0]
+            else:
+                Fock_symlabel = symlabel
+
+            if ret.calc_info.unrestricted_sfos:
+                fock_A =  _read_spin_indep('SFO_Fock_A', Fock_symlabel, sfo_spin, R)
+                fock_B =  _read_spin_indep('SFO_Fock_B', Fock_symlabel, sfo_spin, R)
+                fmats = [fock_A, fock_B]
+            else:
+                fock = _read_spin_indep('SFO_Fock', Fock_symlabel, sfo_spin, R)
+                fmats = [fock]
+
+            for fmat in fmats:
+                if fmat is None:
+                    return
+                idx = 0
+                loop = 2
+                while idx <= len(fmat):
+                    site_energy.append(fmat[idx])
+                    idx += loop
+                    loop += 1
+                    
+        return np.atleast_1d(site_energy)
 
     with timer.timer('Orbitals.get_data.read_sfo_data'):
         ret.SFOs.number = reader.read('SFOs', 'number')
@@ -114,6 +152,10 @@ def _read_data(reader):
             ret.SFOs.energy[sfo_spin] = np.atleast_1d(_read_spin_indep('SFOs', 'escale', sfo_spin))
             ret.SFOs.occupation[sfo_spin] = np.atleast_1d(_read_spin_indep('SFOs', 'occupation', sfo_spin))
             ret.SFOs.order[sfo_spin] = np.argsort(ret.SFos.energy[sfo_spin])
+
+            ret.SFOs.site_energy[sfo_spin] = _read_site_energy(sfo_spin, False)
+            if SCF0_reader:
+                ret.SFOs.site_energy_SCF0[sfo_spin] = _read_site_energy(sfo_spin, True)
 
             for symlabel in ret.calc_info.symlabels:
                 energy_by_symlabel = ret.SFOs.energy[sfo_spin][ret.SFOs.subspecies_fixed == symlabel]
