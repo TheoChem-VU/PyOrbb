@@ -303,6 +303,7 @@ def to_excel(orbs, out_file: str = 'pyfmo.xlsx'):
         'No. MOs': len(orbs.mos),
         'No. occ. MOs': len([mo for mo in orbs.mos if mo.occupied]),
         'No. virt. MOs': len([mo for mo in orbs.mos if not mo.occupied]),
+        'No. frozen cores': orbs.data.MOs.nfrozencores.total,
         'ΔE_int': orbs.reader.read('Energy', 'Bond Energy') * 627.503,
         'ΔE_Pauli': orbs.reader.read('Energy', 'Pauli Total') * 627.503,
         'ΔE_oi': orbs.reader.read('Energy', 'Orb.Int. Total') * 627.503,
