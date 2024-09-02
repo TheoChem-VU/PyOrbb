@@ -116,8 +116,21 @@ def _read_data(reader, SCF0_reader=None):
                     site_energy.append(fmat[idx])
                     idx += loop
                     loop += 1
-                    
+
         return np.atleast_1d(site_energy)
+
+    def _compose_matrix(data, spins):
+        blocks = [np.array(data[symlabel][spin]) for symlabel in ret.calc_info.symlabels for spin in spins]
+        shapes = [block.shape for block in blocks]
+        total_shape = sum(shape[0] for shape in shapes), sum(shape[1] for shape in shapes)
+        out = np.zeros(total_shape)
+
+        current_start_index = 0
+        for block in blocks:
+            out[current_start_index:current_start_index + block.shape[0], current_start_index:current_start_index + block.shape[1]] = block
+            current_start_index += block.shape[0]
+
+        return out
 
     with timer.timer('Orbitals.get_data.read_sfo_data'):
         ret.SFOs.number = reader.read('SFOs', 'number')
@@ -177,6 +190,7 @@ def _read_data(reader, SCF0_reader=None):
 
     with timer.timer('Orbitals.get_data.read_matrices'):
         ret.MOs.nfrozencores = {symlabel: ncbs for symlabel, ncbs in zip(ret.calc_info.symlabels, ensure_list(reader.read('Symmetry', 'ncbs')))}
+        ret.MOs.nfrozencores.total = sum(ret.MOs.nfrozencores.values())
         for symlabel in ret.calc_info.symlabels:
             with timer.timer('Orbitals.get_data.read_matrices.overlap'):
                 for sfo_spin in ret.calc_info.sfo_spins:
@@ -213,6 +227,12 @@ def _read_data(reader, SCF0_reader=None):
         ret.MOs.order.total = np.argsort(ret.MOs.energy.total)
         ret.MOs.number.total = len(ret.MOs.energy.total)
         ret.MOs.spin = [spin for spin in ret.calc_info.mo_spins for _ in range(ret.MOs.number.total)]
+
+    with timer.timer('Orbitals.get_data.compose_matrices'):
+        ret.matrices.overlap.total =                _compose_matrix(ret.matrices.overlap,                ret.calc_info.sfo_spins)
+        ret.matrices.coefficients.total =           _compose_matrix(ret.matrices.coefficients,           ret.calc_info.mo_spins)
+        ret.matrices.mulliken_contribution.total =  _compose_matrix(ret.matrices.mulliken_contribution,  ret.calc_info.mo_spins)
+        ret.matrices.mulliken_population.total =    _compose_matrix(ret.matrices.mulliken_population,    ret.calc_info.mo_spins)
 
     with timer.timer('Orbitals.get_data.gross_population'):
         ret.SFOs.symlabel = []
