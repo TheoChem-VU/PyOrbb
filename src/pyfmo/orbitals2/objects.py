@@ -183,7 +183,10 @@ class Orbital:
         # We want to return the cube-file, so we should wait for it to finish.
         with DensfJob(wait_for_finish=True, overwrite=overwrite) as job:
             # job.orbital(self)
-            job._sfos.append(self)
+            if isinstance(self, SFO):
+                job._sfos.append(self)
+            else:
+                job._mos.append(self)
             job.settings.ADFFile = self.parent.parent.kfpath
             job.gridsize(gridsize)
 
@@ -365,6 +368,7 @@ class Orbitals:
                     'subspecies': self.data.SFOs.subspecies[sfoi],
                     'symmetry': self.data.SFOs.symlabel[sfoi],
                     'symmetry_index': self.data.SFOs.symmetry_index[sfoi],
+                    'index_in_symlabel': self.data.SFOs.symmetry_index[sfoi], # rmove this later
                     'fragment': self.data.calc_info.fragments[self.data.SFOs.fragment_index[sfoi] - 1].split(':')[0],
                     'fragment_unique': self.data.SFOs.fragment_unique.total[sfoi],
                     'spin': sfo_spin,
@@ -396,6 +400,7 @@ class Orbitals:
                     'name': f'{symm_idx+1}{symlabel}',
                     'symmetry': symlabel,
                     'symmetry_index': self.data.MOs.symmetry_index[moi],
+                    'index_in_symlabel': self.data.MOs.symmetry_index[moi], # rmove this later
                     'spin': mo_spin,
                     'energy': self.data.MOs.energy[symlabel][mo_spin][symm_idx] * 27.2114079527,
                     'occupation': int(self.data.MOs.occupation[symlabel][mo_spin][symm_idx]),
