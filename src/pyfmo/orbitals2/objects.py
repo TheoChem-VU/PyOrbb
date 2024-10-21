@@ -268,8 +268,8 @@ class SFO(Orbital):
         if self.symmetry != other.symmetry:
             return 0
 
-        S = self.parent.parent.data.matrices.mulliken_contribution[self.symmetry][other.spin]
-        return S[other.symmetry_index][self.symmetry_index]
+        c = self.parent.parent.data.matrices.mulliken_contribution[self.symmetry][other.spin]
+        return c[other.symmetry_index][self.symmetry_index]
 
 
     def coefficient(self, other):
@@ -281,8 +281,8 @@ class SFO(Orbital):
         if self.symmetry != other.symmetry:
             return 0
 
-        S = self.parent.parent.data.matrices.coefficients[self.symmetry][other.spin]
-        return S[other.symmetry_index][self.symmetry_index]
+        c = self.parent.parent.data.matrices.coefficients[self.symmetry][other.spin]
+        return c[other.symmetry_index][self.symmetry_index]
 
 
     def __matmul__(self, other):
