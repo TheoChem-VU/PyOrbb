@@ -380,6 +380,7 @@ class Orbitals:
                     'occupied': int(self.data.SFOs.occupation[sfo_spin][sfoi]) > 0,
                     'gross_population': gross_pop,
                     'gross_spin': gross_spin,
+                    'molecule': self.data.SFOS.fragment_molecules[self.data.SFOs.fragment_unique.total[sfoi]],
                 }
 
                 data['site_energy'] = np.nan
@@ -422,7 +423,6 @@ class Orbitals:
         from pyfmo import write_excel
         
         write_excel.to_excel(self, out_file)
-
 
     def write_excel2(self, out_file: str = 'pyfmo2.xlsx'):
         from pyfmo import write_excel2
