@@ -152,7 +152,7 @@ def to_excel(orbs, out_file: str = 'pyfmo.xlsx'):
         '''
         Create a new sheet and write data to it.
         '''
-        worksheet = workbook.add_worksheet(sheet_name)
+        worksheet = workbook.add_worksheet(sheet_name.replace(':', ''))
         if tab_color is not None:
             worksheet.set_tab_color(tab_color)
 
@@ -262,7 +262,7 @@ def to_excel(orbs, out_file: str = 'pyfmo.xlsx'):
 
 
     def make_table_sheet(sheet_name, sheet_title, rows, header, tab_color=None):
-        sheet = workbook.add_worksheet(sheet_name)
+        sheet = workbook.add_worksheet(sheet_name.replace(':', ''))
         if tab_color is not None:
             sheet.set_tab_color(tab_color)
 
