@@ -355,11 +355,14 @@ class Orbitals:
             for spin_idx, sfo_spin in enumerate(self.data.calc_info.sfo_spins):
                 if not sfo_mo_spin_match:
                     if self.data.calc_info.unrestricted_mos:
-                        gp = self.data.SFOs.gross_population.A[sfoi] + self.data.SFOs.gross_population.B[sfoi]
+                        gross_pop = self.data.SFOs.gross_population.A[sfoi] + self.data.SFOs.gross_population.B[sfoi]
+                        gross_spin = self.data.SFOs.gross_population.A[sfoi] - self.data.SFOs.gross_population.B[sfoi]
                     else:
-                        gp = self.data.SFOs.gross_population.AB[sfoi]
+                        gross_pop = self.data.SFOs.gross_population.AB[sfoi]
+                        gross_spin = 0
                 else:
-                    gp = self.data.SFOs.gross_population[sfo_spin][sfoi]
+                    gross_pop = self.data.SFOs.gross_population[sfo_spin][sfoi]
+                    gross_spin = 0
 
                 data = {
                     'index': sfoi + 1,
@@ -375,7 +378,8 @@ class Orbitals:
                     'energy': self.data.SFOs.energy[sfo_spin][sfoi] * 27.2114079527,
                     'occupation': int(self.data.SFOs.occupation[sfo_spin][sfoi]),
                     'occupied': int(self.data.SFOs.occupation[sfo_spin][sfoi]) > 0,
-                    'gross_population': gp,
+                    'gross_population': gross_pop,
+                    'gross_spin': gross_spin,
                 }
 
                 data['site_energy'] = np.nan
