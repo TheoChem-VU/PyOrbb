@@ -1,6 +1,42 @@
 import numpy as np
 from tcutility import results, timer, ensure_list
 from math import sqrt
+from scm import plams
+
+
+def _get_molecules(reader):
+    used_regions = reader.read('Geometry', 'nr of fragments') != reader.read('Geometry', 'nr of atoms')
+    fragment_indices = np.atleast_1d(reader.read('SFOs', 'fragment'))
+    fragment_types = np.atleast_1d(reader.read('SFOs', 'fragtype').split())
+    
+    if not used_regions:
+        fragment_uniques = [f'{frag}:{idx}' for frag, idx in zip(fragment_types, fragment_indices)]
+        fragment_uniques = np.array(sorted(set(fragment_uniques), key=lambda fu: int(fu.split(':')[1])))
+    else:
+        fragment_uniques = np.array(list(set(fragment_types)))
+
+
+    coords = np.array(reader.read('Geometry', 'xyz')).reshape(-1, 3) * 0.529177249
+    atoms = np.array(reader.read('Geometry', 'atomtype').split())
+
+    order_index = np.array(ensure_list(reader.read('Geometry', 'atom order index'))[:coords.shape[0]]) - 1
+    fragment_index = np.array(ensure_list(reader.read('Geometry', 'fragment and atomtype index'))[:coords.shape[0]]) - 1
+    symbol_index = np.array(ensure_list(reader.read('Geometry', 'fragment and atomtype index'))[coords.shape[0]:]) - 1
+
+    coords = coords[order_index]
+    atoms = atoms[symbol_index][order_index]
+    fragment = fragment_uniques[fragment_index][order_index]
+
+    ret = {'complex': plams.Molecule()}
+    [ret['complex'].add_atom(plams.Atom(symbol=atom, coords=coord)) for atom, coord in zip(atoms, coords)]
+    for name in fragment_uniques:
+        ret[name] = plams.Molecule()
+
+        for atom, frag in zip(ret['complex'], fragment):
+            if frag != name:
+                continue
+            ret[name].add_atom(atom)
+    return ret
 
 
 def _get_calc_info(reader):
@@ -132,9 +168,12 @@ def _read_data(reader, SCF0_reader=None):
 
         return out
 
+    with timer.timer('Orbitals.get_data.read_molecules'):
+        ret.SFOs.fragment_molecules = _get_molecules(reader)
+
     with timer.timer('Orbitals.get_data.read_sfo_data'):
         ret.SFOs.number = reader.read('SFOs', 'number')
-        ret.SFOs.fragtypes = np.atleast_1d(reader.read('SFOs', 'fragtype').split())
+        ret.SFOs.fragment_types = np.atleast_1d(reader.read('SFOs', 'fragtype').split())
         ret.SFOs.fragment_index = np.atleast_1d(reader.read('SFOs', 'fragment'))
 
         ret.SFOs.fragorb = np.atleast_1d(reader.read('SFOs', 'fragorb'))
@@ -156,9 +195,9 @@ def _read_data(reader, SCF0_reader=None):
         ret.SFOs.ifo = np.atleast_1d(reader.read('SFOs', 'ifo')) - 1
         ret.SFOs.spin = [spin for spin in ret.calc_info.sfo_spins for _ in range(ret.SFOs.number)]
 
-        ret.SFOs.fragment_unique = {spin: ret.SFOs.fragtypes for spin in ret.calc_info.sfo_spins}
+        ret.SFOs.fragment_unique = {spin: ret.SFOs.fragment_types for spin in ret.calc_info.sfo_spins}
         if not ret.calc_info.used_regions:
-            ret.SFOs.fragment_unique = {spin: [f'{frag_name}:{frag_idx}' for frag_name, frag_idx in zip(ret.SFOs.fragtypes, ret.SFOs.fragment_index)] for spin in ret.calc_info.sfo_spins}
+            ret.SFOs.fragment_unique = {spin: [f'{frag_name}:{frag_idx}' for frag_name, frag_idx in zip(ret.SFOs.fragment_types, ret.SFOs.fragment_index)] for spin in ret.calc_info.sfo_spins}
 
         ret.SFOs.fragment_unique.total = _compose_vector(ret.SFOs.fragment_unique, ret.calc_info.sfo_spins)
         for sfo_spin in ret.calc_info.sfo_spins:
