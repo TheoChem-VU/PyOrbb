@@ -115,6 +115,9 @@ def _read_data(reader, SCF0_reader=None):
         if (section, variable + spin_suffix) in R:
             return R.read(section, variable + spin_suffix)
 
+        if (section + spin_suffix, variable) in R:
+            return R.read(section + spin_suffix, variable)
+
         if (section, variable) in R:
             return R.read(section, variable)
 
