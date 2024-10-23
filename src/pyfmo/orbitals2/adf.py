@@ -159,6 +159,48 @@ def _read_data(reader, SCF0_reader=None):
 
         return np.atleast_1d(site_energy)
 
+    def _read_kinetic_energy():
+        if not output:
+            return
+
+        with open(output) as outp:
+            lines = outp.readlines()
+
+        read = False
+        store = []
+        for line in lines:
+            if '----------------------------------' in line:
+                continue
+
+            if read and 'Total :' in line:
+                break
+
+            if read:
+                store.extend(line.strip().split())
+
+            if 'Orbital Kinetic Energies (hartree)' in line:
+                read = True
+                continue
+
+        Ekin = {}
+        curr_irrep = None
+        for part in store:
+            try:
+                float(part)
+                is_float = True
+            except ValueError:
+                is_float = False
+
+            if not is_float and not part in ['(equivalent', 'subspecies)', '----']:
+                Ekin[part] = []
+                curr_irrep = part
+            elif not part in ['(equivalent', 'subspecies)', '----']:
+                Ekin[curr_irrep].append(float(part))
+            if part == 'subspecies)':
+                Ekin[curr_irrep] = Ekin[curr_irrep.split(':')[0] + ':1']
+
+        return Ekin
+
     def _compose_matrix(data, spins):
         blocks = [np.array(data[symlabel][spin]) for symlabel in ret.calc_info.symlabels for spin in spins]
         shapes = [block.shape for block in blocks]
