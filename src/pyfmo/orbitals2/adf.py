@@ -78,7 +78,8 @@ def _get_calc_info(reader):
     return ret
 
 
-def _square_overlaps(S):
+def _square_matrix(S):
+    S = np.atleast_1d(S).tolist()
     size = len(S)
     n = int(sqrt(.25 + 2*size) - .5)
     Srows = []
