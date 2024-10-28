@@ -19,6 +19,15 @@ def overlap_mat(sfos1, sfos2):
     return np.array(ret).squeeze()
 
 
+def fock_mat(sfos1, sfos2):
+    ret = []
+    for sfo1 in ensure_list(sfos1):
+        ret.append([])
+        for sfo2 in ensure_list(sfos2):
+            ret[-1].append(sfo1.fock(sfo2))
+    return np.array(ret).squeeze()
+
+
 def energy_gap_mat(sfos1, sfos2):
     ret = []
     for sfo1 in ensure_list(sfos1):
@@ -85,15 +94,14 @@ def _detect_nan_rects(arr):
 
 def get_molecules(reader):
     used_regions = reader.read('Geometry', 'nr of fragments') != reader.read('Geometry', 'nr of atoms')
-    fragment_indices = np.atleast_1d(reader.read('SFOs', 'fragment'))
-    fragtypes = np.atleast_1d(reader.read('SFOs', 'fragtype').split())
-    
+    fragment_indices = np.atleast_1d(reader.read('Geometry', 'fragment and atomtype index'))
+    fragment_indices = fragment_indices[len(fragment_indices)//2:]
+    fragment_types = np.atleast_1d(reader.read('Geometry', 'fragmenttype').split())
     if not used_regions:
-        fragment_uniques = [f'{frag}:{idx}' for frag, idx in zip(fragtypes, fragment_indices)]
+        fragment_uniques = [f'{fragment_types[frag_idx-1]}:{idx+1}' for idx, frag_idx in enumerate(fragment_indices)]
         fragment_uniques = np.array(sorted(set(fragment_uniques), key=lambda fu: int(fu.split(':')[1])))
     else:
-        fragment_uniques = np.array(list(set(fragtypes)))
-
+        fragment_uniques = np.array(fragment_types)
 
     coords = np.array(reader.read('Geometry', 'xyz')).reshape(-1, 3) * 0.529177249
     atoms = np.array(reader.read('Geometry', 'atomtype').split())
@@ -111,10 +119,11 @@ def get_molecules(reader):
     for name in fragment_uniques:
         ret[name] = plams.Molecule()
 
-        for atom, coord, frag in zip(atoms, coords, fragment):
+        for atom, frag in zip(ret['complex'], fragment):
             if frag != name:
                 continue
-            ret[name].add_atom(plams.Atom(symbol=atom, coords=coord))
+            ret[name].add_atom(plams.Atom(symbol=atom.symbol, coords=atom.coords))
+
     return ret
 
 
@@ -327,6 +336,7 @@ def to_excel(orbs, out_file: str = 'pyfmo.xlsx'):
         }
         next_row, _ = make_key_value_table(rows, next_row + 1, 1)
 
+    has_kinetic = False
     # write a table with MO and SFO energies
     rows = []
     for mo in orbs.mos:
@@ -339,6 +349,9 @@ def to_excel(orbs, out_file: str = 'pyfmo.xlsx'):
             mo.symmetry,
             mo.energy,
         ])
+        if mo.kinetic_energy:
+            has_kinetic = True
+            rows[-1].append(mo.kinetic_energy)
 
     headers = [
         'Index', 
@@ -349,6 +362,10 @@ def to_excel(orbs, out_file: str = 'pyfmo.xlsx'):
         'Symmetry', 
         'Energy (eV)',
     ]
+
+    if has_kinetic:
+        headers.append('Kinetic Energy (eV)')
+
     make_table_sheet('MOs', 'Molecular Orbitals', rows, headers, tab_color='D6D1CD')
 
     for fragment in orbs.fragments:
@@ -364,6 +381,7 @@ def to_excel(orbs, out_file: str = 'pyfmo.xlsx'):
                 int(sfo.occupation),
                 sfo.gross_population,
                 sfo.spin,
+                sfo.gross_spin,
                 sfo.symmetry,
                 sfo.energy,
             ])
@@ -375,6 +393,7 @@ def to_excel(orbs, out_file: str = 'pyfmo.xlsx'):
             'Occupation',
             'Gross Pop.',
             'Spin', 
+            'Excess Spin',
             'Symmetry', 
             'Energy (eV)',
         ]
@@ -385,7 +404,7 @@ def to_excel(orbs, out_file: str = 'pyfmo.xlsx'):
     for spin in orbs.sfos.spins:
         # we sort the sfos into similar spin species and invert their order (virtual left and up, occupied right and down)
         sfos_spin = [sfo for sfo in orbs.sfos if sfo.spin == spin]
-
+        # sfos_spin = [f'{sfo.fragment_unique}({sfo})' for sfo in sfos_spin]
         sfos1_spin = [sfo for sfo in sfos_spin if sfo.fragment_unique == list(orbs.sfos.fragments)[0]]
         sfos2_spin = [sfo for sfo in sfos_spin if sfo.fragment_unique == list(orbs.sfos.fragments)[1]]
         mos_spin = [mo for mo in orbs.mos if mo.spin == spin or mo.spin == 'AB' or spin == 'AB']
@@ -422,7 +441,6 @@ def to_excel(orbs, out_file: str = 'pyfmo.xlsx'):
             oi = orbint_mat(sfos1_spin, sfos2_spin)
             oi[~np.isnan(oi)] *= 1000  # in the case of orbital interactions, there is a mask applied to the matrix and we want to multiply each value with 1000 for easier reading
             make_matrix_sheet(name, title, sfos1_spin, sfos2_spin, oi, number_format=float_fmt, tab_color='4D8B31')
-
 
         for fragment in orbs.fragments:
             fragment_name = fragment
@@ -462,6 +480,17 @@ def to_excel(orbs, out_file: str = 'pyfmo.xlsx'):
                 'max_type': 'num',
             }
             make_matrix_sheet(name, title, sfos_, mos_spin, contribs.T, number_format=pctg_fmt, conditional_format=cnd_fmt, tab_color='058ED9')
+
+    for spin in orbs.sfos.spins:
+        if not has_kinetic:
+            break
+
+        name = f"Fock {spin}" if spin != 'AB' else "Fock"
+        title = f"Fock (spin {spin})" if spin != 'AB' else "Fock"
+        if not orbs.data.calc_info.used_regions:
+            make_matrix_sheet(name, title, sfos_spin, sfos_spin, fock_mat(sfos_spin, sfos_spin), number_format=float_fmt, tab_color='FF6666')
+        else:
+            make_matrix_sheet(name, title, sfos1_spin, sfos2_spin, fock_mat(sfos1_spin, sfos2_spin), number_format=float_fmt, tab_color='FF6666')
 
     workbook.close()
 
