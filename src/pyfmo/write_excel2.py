@@ -161,7 +161,7 @@ def to_excel(orbs, out_file: str = 'pyfmo.xlsx'):
         '''
         Create a new sheet and write data to it.
         '''
-        worksheet = workbook.add_worksheet(sheet_name.replace(':', ''))
+        worksheet = workbook.add_worksheet(sheet_name.replace(':', '')[:32])
         if tab_color is not None:
             worksheet.set_tab_color(tab_color)
 
@@ -271,7 +271,7 @@ def to_excel(orbs, out_file: str = 'pyfmo.xlsx'):
 
 
     def make_table_sheet(sheet_name, sheet_title, rows, header, tab_color=None):
-        sheet = workbook.add_worksheet(sheet_name.replace(':', ''))
+        sheet = workbook.add_worksheet(sheet_name.replace(':', '')[:32])
         if tab_color is not None:
             sheet.set_tab_color(tab_color)
 
@@ -297,7 +297,7 @@ def to_excel(orbs, out_file: str = 'pyfmo.xlsx'):
 
 
     # we will write some basic info about the calcualtion in the first sheet
-    sheet = workbook.add_worksheet('🛈 Info')
+    sheet = workbook.add_worksheet('🛈 Info'[:32])
     sheet.set_tab_color('D6D1CD')
     # write the title cell
     sheet.write(0, 0, 'PyFMO Analysis', title_fmt)
