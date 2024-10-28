@@ -259,6 +259,19 @@ class SFO(Orbital):
         return S[other.symmetry_index][self.symmetry_index]
 
 
+    def fock(self, other):
+        assert isinstance(other, SFO)
+
+        if self.spin != other.spin:
+            return 0
+
+        if self.symmetry != other.symmetry:
+            return 0
+
+        F = self.parent.parent.data.matrices.fock[self.symmetry][self.spin]
+        return F[other.symmetry_index][self.symmetry_index]
+
+
     def mulliken_contribution(self, other):
         assert isinstance(other, MO)
 
@@ -315,7 +328,7 @@ class Orbitals:
     '''
     Container class that stores information about both MO's and SFO's.
     '''
-    def __init__(self, path: str, path_SCF0: str = None, moleculename: str = None):
+    def __init__(self, path: str, path_SCF0: str = None, moleculename: str = None, path_output: str = None):
         r'''
         Two kind of readers are constucted.
         1. path provides the path to a fully converged Fragment analyses calculation with a full SCF. From this, all 
@@ -338,6 +351,7 @@ class Orbitals:
         self.kfpath = os.path.abspath(path)
         self.SCF0_kfpath = path_SCF0
         self.SCF0_reader = plams.KFReader(path_SCF0) if path_SCF0 else None
+        self.output = os.path.abspath(path_output) if path_output else None
         with timer.timer('Orbitals.get_data'):
             self.get_data()
         with timer.timer('Orbitals.gather_sfos'):
@@ -346,7 +360,7 @@ class Orbitals:
             self.gather_mos()
 
     def get_data(self):
-        self.data = pyfmo.orbitals2.adf._read_data(self.reader, SCF0_reader=self.SCF0_reader)
+        self.data = pyfmo.orbitals2.adf._read_data(self.reader, SCF0_reader=self.SCF0_reader, output=self.output)
 
     def gather_sfos(self):
         self.sfos = SFOs([], self)
@@ -400,6 +414,12 @@ class Orbitals:
             for spin_idx, mo_spin in enumerate(self.data.calc_info.mo_spins):
                 symm_idx = self.data.MOs.symmetry_index[moi]
                 symlabel = self.data.MOs.symlabel[moi]
+                occ = int(self.data.MOs.occupation[symlabel][mo_spin][symm_idx])
+                if self.data.MOs.kinetic_energy:
+                    kin = self.data.MOs.kinetic_energy[symlabel][symm_idx] * 27.2114079527 if occ else 0
+                else:
+                    kin = None
+
                 data = {
                     'index': moi + 1,
                     'name': f'{symm_idx+1}{symlabel}',
@@ -408,9 +428,9 @@ class Orbitals:
                     'index_in_symlabel': self.data.MOs.symmetry_index[moi], # rmove this later
                     'spin': mo_spin,
                     'energy': self.data.MOs.energy[symlabel][mo_spin][symm_idx] * 27.2114079527,
-                    'occupation': int(self.data.MOs.occupation[symlabel][mo_spin][symm_idx]),
+                    'occupation': occ,
                     'occupied': int(self.data.MOs.occupation[symlabel][mo_spin][symm_idx]) > 0,
-                    # 'gross_population': self.data.SFOs.gross_population[mo_spin][moi],
+                    'kinetic_energy': kin
                 }
                 sfo = MO(data, self.mos)
                 self.mos.orbitals.append(sfo)
@@ -424,7 +444,21 @@ class Orbitals:
         
         write_excel.to_excel(self, out_file)
 
-    def write_excel2(self, out_file: str = 'pyfmo2.xlsx'):
+    def write_excel2(self, out_file: str = None):
         from pyfmo import write_excel2
-        
+            
+        if out_file is None:
+            out_file = os.path.join(os.path.dirname(self.kfpath), 'pyfmo2.xlsx')
         write_excel2.to_excel(self, out_file)
+
+
+if __name__ == '__main__':
+    orbs = Orbitals('/Users/yumanhordijk/PhD/Programs/TheoCheM/PyFMO/calculations/PyOrb_testing_2022/AlCl3/SP.results/adf.rkf', path_output='/Users/yumanhordijk/PhD/Programs/TheoCheM/PyFMO/calculations/PyOrb_testing_2022/AlCl3/SP.out')
+    for sfo in orbs.sfos:
+        print(sfo.fragment_unique)
+
+    print(orbs.data.mos.kinetic_energy)
+
+    for mo in orbs.mos:
+        print(mo, mo.kinetic_energy)
+    orbs.write_excel2()
