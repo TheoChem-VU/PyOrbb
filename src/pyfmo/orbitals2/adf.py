@@ -6,15 +6,14 @@ from scm import plams
 
 def _get_molecules(reader):
     used_regions = reader.read('Geometry', 'nr of fragments') != reader.read('Geometry', 'nr of atoms')
-    fragment_indices = np.atleast_1d(reader.read('SFOs', 'fragment'))
-    fragment_types = np.atleast_1d(reader.read('SFOs', 'fragtype').split())
-    
+    fragment_indices = np.atleast_1d(reader.read('Geometry', 'fragment and atomtype index'))
+    fragment_indices = fragment_indices[len(fragment_indices)//2:]
+    fragment_types = np.atleast_1d(reader.read('Geometry', 'fragmenttype').split())
     if not used_regions:
-        fragment_uniques = [f'{frag}:{idx}' for frag, idx in zip(fragment_types, fragment_indices)]
+        fragment_uniques = [f'{fragment_types[frag_idx-1]}:{idx+1}' for idx, frag_idx in enumerate(fragment_indices)]
         fragment_uniques = np.array(sorted(set(fragment_uniques), key=lambda fu: int(fu.split(':')[1])))
     else:
-        fragment_uniques = np.array(list(set(fragment_types)))
-
+        fragment_uniques = np.array(fragment_types)
 
     coords = np.array(reader.read('Geometry', 'xyz')).reshape(-1, 3) * 0.529177249
     atoms = np.array(reader.read('Geometry', 'atomtype').split())
@@ -97,7 +96,7 @@ def _square_matrix(S):
     return Srowsfixed
 
 
-def _read_data(reader, SCF0_reader=None):
+def _read_data(reader, SCF0_reader=None, output=None):
     ret = results.Result()
 
     with timer.timer('Orbitals.get_data.read_calc_info'):
@@ -219,8 +218,10 @@ def _read_data(reader, SCF0_reader=None):
 
     with timer.timer('Orbitals.get_data.read_sfo_data'):
         ret.SFOs.number = reader.read('SFOs', 'number')
+        ret.SFOs.fragtype_to_fragidx = np.atleast_1d(reader.read('Geometry', 'fragmenttype').split())
         ret.SFOs.fragment_types = np.atleast_1d(reader.read('SFOs', 'fragtype').split())
         ret.SFOs.fragment_index = np.atleast_1d(reader.read('SFOs', 'fragment'))
+
 
         ret.SFOs.fragorb = np.atleast_1d(reader.read('SFOs', 'fragorb'))
         ret.SFOs.subspecies = np.atleast_1d(reader.read('SFOs', 'subspecies').split())
@@ -231,9 +232,13 @@ def _read_data(reader, SCF0_reader=None):
         for subsp, isfo in zip(ret.SFOs.subspecies, ret.SFOs.symmetry_index):
             subspecies_visited_symm_index.setdefault(subsp, [])
             if isfo in subspecies_visited_symm_index[subsp]:
-                n = int(subsp.split(':')[1])
-                subsp = subsp.split(':')[0] + ':' + str(n + 1)
-                subspecies_visited_symm_index.setdefault(subsp, [])
+                if ret.calc_info.used_regions:
+                    n = int(subsp.split(':')[1])
+                    subsp = subsp.split(':')[0] + ':' + str(n + 1)
+                    subspecies_visited_symm_index.setdefault(subsp, [])
+                else:
+                    subsp = str(subspecies_visited_symm_index[subsp].count(isfo)) + subsp.split(':')[0]
+                    subspecies_visited_symm_index.setdefault(subsp, [])
 
             subspecies_visited_symm_index[subsp].append(isfo)
             ret.SFOs.subspecies_fixed.append(subsp)
@@ -259,9 +264,15 @@ def _read_data(reader, SCF0_reader=None):
                 energy_by_symlabel = ret.SFOs.energy[sfo_spin][ret.SFOs.subspecies_fixed == symlabel]
                 ret.SFOs.order_by_symlabel[symlabel][sfo_spin] = np.argsort(energy_by_symlabel)
 
+
         ret.SFOs.energy.total = _compose_vector(ret.SFOs.energy, ret.calc_info.sfo_spins)
         ret.SFOs.occupation.total = _compose_vector(ret.SFOs.occupation, ret.calc_info.sfo_spins)
         ret.SFOs.order.total = np.argsort(ret.SFOs.energy.total)
+
+        ###
+        # for frag_idx, energy in zip(ret.SFOs.fragment_index, ret.SFOs.energy.total):
+        #     print(frag_idx, energy) 
+        ###
 
         for spin in ret.calc_info.sfo_spins:
             if spin == 'AB':
@@ -280,14 +291,21 @@ def _read_data(reader, SCF0_reader=None):
             with timer.timer('Orbitals.get_data.read_matrices.overlap'):
                 for sfo_spin in ret.calc_info.sfo_spins:
                     S = _read_spin_indep(symlabel, 'S-CoreSFO', sfo_spin)
-                    S = _square_overlaps(S)
+                    S = _square_matrix(S)
                     ret.matrices.overlap[symlabel][sfo_spin] = S
+
+            with timer.timer('Orbitals.get_data.read_matrices.fock'):
+                for sfo_spin in ret.calc_info.sfo_spins:
+                    F = _read_spin_indep('SFO_Fock', symlabel.split(':')[0], sfo_spin)
+                    if F:
+                        F = _square_matrix(F)
+                        ret.matrices.fock[symlabel][sfo_spin] = F
 
             for mo_spin in ret.calc_info.mo_spins:
                 nmo = _read_spin_indep(symlabel, 'nmo', mo_spin)
                 ret.MOs.number[symlabel][mo_spin] = nmo
                 ret.MOs.energy[symlabel][mo_spin] = np.atleast_1d(_read_spin_indep(symlabel, 'escale', mo_spin))
-                occupation = _read_spin_indep(symlabel, 'froc', mo_spin)
+                occupation = np.atleast_1d(_read_spin_indep(symlabel, 'froc', mo_spin))
                 ret.MOs.occupation[symlabel][mo_spin] = occupation
 
                 with timer.timer('Orbitals.get_data.read_matrices.coefficients'):
@@ -312,6 +330,7 @@ def _read_data(reader, SCF0_reader=None):
         ret.MOs.order.total = np.argsort(ret.MOs.energy.total)
         ret.MOs.number.total = len(ret.MOs.energy.total)
         ret.MOs.spin = [spin for spin in ret.calc_info.mo_spins for _ in range(ret.MOs.number.total)]
+        ret.MOs.kinetic_energy = _read_kinetic_energy()
 
     with timer.timer('Orbitals.get_data.compose_matrices'):
         ret.matrices.overlap.total =                _compose_matrix(ret.matrices.overlap,                ret.calc_info.sfo_spins)
