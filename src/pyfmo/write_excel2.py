@@ -412,16 +412,16 @@ def to_excel(orbs, out_file: str = 'pyfmo.xlsx'):
         name = f"Overlap {spin}" if spin != 'AB' else "Overlap"
         title = f"Overlaps (spin {spin})" if spin != 'AB' else "Overlaps"
         if not orbs.data.calc_info.used_regions:
-            make_matrix_sheet(name, title, sfos_spin, sfos_spin, overlap_mat(sfos_spin, sfos_spin), number_format=pctg_fmt, tab_color='FF6666')
+            make_matrix_sheet(name, title, sfos_spin, sfos_spin, overlap_mat(sfos_spin, sfos_spin), number_format=float_fmt, tab_color='FF6666')
         else:
-            make_matrix_sheet(name, title, sfos1_spin, sfos2_spin, overlap_mat(sfos1_spin, sfos2_spin), number_format=pctg_fmt, tab_color='FF6666')
+            make_matrix_sheet(name, title, sfos1_spin, sfos2_spin, overlap_mat(sfos1_spin, sfos2_spin), number_format=float_fmt, tab_color='FF6666')
 
         name = f"Overlap² {spin}" if spin != 'AB' else "Overlap²"
         title = f"Overlaps² (spin {spin})" if spin != 'AB' else "Overlaps²"
         if not orbs.data.calc_info.used_regions:
-            make_matrix_sheet(name, title, sfos_spin, sfos_spin, overlap_mat(sfos_spin, sfos_spin)**2, number_format=pctg_fmt, tab_color='FF6666')
+            make_matrix_sheet(name, title, sfos_spin, sfos_spin, overlap_mat(sfos_spin, sfos_spin)**2, number_format=float_fmt, tab_color='FF6666')
         else:
-            make_matrix_sheet(name, title, sfos1_spin, sfos2_spin, overlap_mat(sfos1_spin, sfos2_spin)**2, number_format=pctg_fmt, tab_color='FF6666')
+            make_matrix_sheet(name, title, sfos1_spin, sfos2_spin, overlap_mat(sfos1_spin, sfos2_spin)**2, number_format=float_fmt, tab_color='FF6666')
 
         name = f"Δε {spin}" if spin != 'AB' else "Δε"
         title = f"Δε (spin {spin}) (eV)" if spin != 'AB' else "Δε (eV)"
