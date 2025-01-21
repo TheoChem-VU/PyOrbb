@@ -288,7 +288,7 @@ class SFO(Orbital):
     def coefficient(self, other):
         assert isinstance(other, MO)
 
-        if self.spin != other.spin and other.spin != 'AB':
+        if self.spin != other.spin and other.spin != 'AB' and self.spin != 'AB':
             return 0
 
         if self.symmetry != other.symmetry:
@@ -452,13 +452,26 @@ class Orbitals:
         write_excel2.to_excel(self, out_file)
 
 
-if __name__ == '__main__':
-    orbs = Orbitals('/Users/yumanhordijk/PhD/Programs/TheoCheM/PyFMO/calculations/PyOrb_testing_2022/AlCl3/SP.results/adf.rkf', path_output='/Users/yumanhordijk/PhD/Programs/TheoCheM/PyFMO/calculations/PyOrb_testing_2022/AlCl3/SP.out')
-    for sfo in orbs.sfos:
-        print(sfo.fragment_unique)
+    def _get_mask(self, objs):
+        if isinstance(objs[0], MO):
+            return np.array([ref in objs for ref in self.mos.orbitals])
+        return np.array([ref in objs for ref in self.sfos.orbitals])
 
-    print(orbs.data.mos.kinetic_energy)
+    def overlap_matrix(self, sfos1, sfos2):
+        mask1 = self._get_mask(sfos1)
+        mask2 = self._get_mask(sfos2)
+        Stotal = self.data.matrices.overlap.total
+        return Stotal[:, mask1][mask2, :]
 
-    for mo in orbs.mos:
-        print(mo, mo.kinetic_energy)
-    orbs.write_excel2()
+
+
+# if __name__ == '__main__':
+#     orbs = Orbitals('/Users/yumanhordijk/PhD/Programs/TheoCheM/PyFMO/calculations/PyOrb_testing_2022/AlCl3/SP.results/adf.rkf', path_output='/Users/yumanhordijk/PhD/Programs/TheoCheM/PyFMO/calculations/PyOrb_testing_2022/AlCl3/SP.out')
+#     for sfo in orbs.sfos:
+#         print(sfo.fragment_unique)
+
+#     print(orbs.data.mos.kinetic_energy)
+
+#     for mo in orbs.mos:
+#         print(mo, mo.kinetic_energy)
+#     orbs.write_excel2()
