@@ -13,6 +13,7 @@ This README file serves as a central hub providing project-related information. 
 - [Motivation](#motivation)
 - [Installation](#installation)
 - [Workflow](#workflow)
+- [Usage](#usage)
 - [Examples](#examples)
 - [Get involved](#involved)
 - [Who are we?](#members)
@@ -38,6 +39,7 @@ Previously, our group has published the [PyFrag 2019](https://onlinelibrary.wile
 
 ## Installation <a name=installation></a>
 *Currently, the installation can be done by cloning this repository and having all necessary dependencies.*
+*Your Python version should be >=Python3.8 and <=Python3.10*
 
 The following is for people who would like to install the repository themselves. For example, to edit and/or contribute code to the project.
 
@@ -59,6 +61,12 @@ To get new updates, simply run:
 ```
 git pull
 ```
+
+## Usage <a name=usage></a>
+PyFMO is a Python API for reading and working with orbital data from ADF calculations.
+The main output at the moment is an Excel document with useful data relating to the orbitals and interactions between orbitals.
+To create this Excel document use the `pyfmo excel` command. Please see `pyfmo excel -h` for more information.
+
 ## Workflow <a name=workflow></a> 
 [AMS rkf file]
 [should be included once this is known]
