@@ -34,7 +34,7 @@ def _get_molecules(reader):
         for atom, frag in zip(ret['complex'], fragment):
             if frag != name:
                 continue
-            ret[name].add_atom(atom)
+            ret[name].add_atom(atom.copy())
     return ret
 
 
