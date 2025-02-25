@@ -365,45 +365,45 @@ class Orbitals:
     def gather_sfos(self):
         self.sfos = SFOs([], self)
         sfo_mo_spin_match = self.data.calc_info.unrestricted_mos == self.data.calc_info.unrestricted_sfos
-        for sfoi in range(self.data.SFOs.number):
+        for sfo_idx in range(self.data.SFOs.number):
             for spin_idx, sfo_spin in enumerate(self.data.calc_info.sfo_spins):
                 if not sfo_mo_spin_match:
                     if self.data.calc_info.unrestricted_mos:
-                        gross_pop = self.data.SFOs.gross_population.A[sfoi] + self.data.SFOs.gross_population.B[sfoi]
-                        gross_spin = self.data.SFOs.gross_population.A[sfoi] - self.data.SFOs.gross_population.B[sfoi]
+                        gross_pop = self.data.SFOs.gross_population.A[sfo_idx] + self.data.SFOs.gross_population.B[sfo_idx]
+                        gross_spin = self.data.SFOs.gross_population.A[sfo_idx] - self.data.SFOs.gross_population.B[sfo_idx]
                     else:
-                        gross_pop = self.data.SFOs.gross_population.AB[sfoi]
+                        gross_pop = self.data.SFOs.gross_population.AB[sfo_idx]
                         gross_spin = 0
                 else:
-                    gross_pop = self.data.SFOs.gross_population[sfo_spin][sfoi]
+                    gross_pop = self.data.SFOs.gross_population[sfo_spin][sfo_idx]
                     gross_spin = 0
 
                 data = {
-                    'index': sfoi + 1,
-                    # 'name': f'{self.data.SFOs.ifo[sfoi]}{self.data.SFOs.subspecies[sfoi]}',
-                    'name': self.data.SFOs.adf_names[sfo_spin][sfoi],
-                    'subspecies': self.data.SFOs.subspecies[sfoi],
-                    'symmetry': self.data.SFOs.symlabel[sfoi],
-                    'symmetry_index': self.data.SFOs.symmetry_index[sfoi],
-                    'index_in_symlabel': self.data.SFOs.symmetry_index[sfoi], # rmove this later
-                    'fragment': self.data.calc_info.fragments[self.data.SFOs.fragment_index[sfoi] - 1].split(':')[0],
-                    'fragment_unique': self.data.SFOs.fragment_unique.total[sfoi],
+                    'index': sfo_idx + 1,
+                    # 'name': f'{self.data.SFOs.ifo[sfo_idx]}{self.data.SFOs.subspecies[sfo_idx]}',
+                    'name': self.data.SFOs.adf_names[sfo_spin][sfo_idx],
+                    'subspecies': self.data.SFOs.subspecies[sfo_idx],
+                    'symmetry': self.data.SFOs.symlabel[sfo_idx],
+                    'symmetry_index': self.data.SFOs.symmetry_index[sfo_idx],
+                    'index_in_symlabel': self.data.SFOs.symmetry_index[sfo_idx], # rmove this later
+                    'fragment': self.data.calc_info.fragments[self.data.SFOs.fragment_index[sfo_idx] - 1].split(':')[0],
+                    'fragment_unique': self.data.SFOs.fragment_unique.total[sfo_idx],
                     'spin': sfo_spin,
-                    'energy': self.data.SFOs.energy[sfo_spin][sfoi] * 27.2114079527,
-                    'occupation': int(self.data.SFOs.occupation[sfo_spin][sfoi]),
-                    'occupied': int(self.data.SFOs.occupation[sfo_spin][sfoi]) > 0,
+                    'energy': self.data.SFOs.energy[sfo_spin][sfo_idx] * 27.2114079527,
+                    'occupation': float(self.data.SFOs.occupation[sfo_spin][sfo_idx]),
+                    'occupied': int(self.data.SFOs.occupation[sfo_spin][sfo_idx]) > 0,
                     'gross_population': gross_pop,
                     'gross_spin': gross_spin,
-                    'molecule': self.data.SFOS.fragment_molecules[self.data.SFOs.fragment_unique.total[sfoi]],
+                    'molecule': self.data.SFOS.fragment_molecules[self.data.SFOs.fragment_unique.total[sfo_idx]],
                 }
 
                 data['site_energy'] = np.nan
                 if isinstance(self.data.SFOs.site_energy[sfo_spin], np.ndarray):
-                    data['site_energy'] = self.data.SFOs.site_energy[sfo_spin][sfoi] * 27.2114079527
+                    data['site_energy'] = self.data.SFOs.site_energy[sfo_spin][sfo_idx] * 27.2114079527
 
                 data['site_energy_SCF0'] = np.nan
                 if isinstance(self.data.SFOs.site_energy_SCF0[sfo_spin], np.ndarray):
-                    data['site_energy_SCF0'] = self.data.SFOs.site_energy_SCF0[sfo_spin][sfoi] * 27.2114079527
+                    data['site_energy_SCF0'] = self.data.SFOs.site_energy_SCF0[sfo_spin][sfo_idx] * 27.2114079527
 
                 sfo = SFO(data, self.sfos)
                 self.sfos.orbitals.append(sfo)
