@@ -78,18 +78,23 @@ def _get_calc_info(reader):
 
 
 def _square_matrix(S):
+    '''
+    Convert a flattened lower-echelon type matrix into its square matrix.
+    This is useful for reading data from AMS calculations as they often
+    store symmetric square matrices in this form, e.g. overlap and Fock matrices.
+    '''
     S = np.atleast_1d(S).tolist()
     size = len(S)
-    n = int(sqrt(.25 + 2*size) - .5)
-    Srows = []
+    n = int(sqrt(.25 + 2*size) - .5)  # number of rows and columns
+    Srows = []  # this will hold the first m elements of the row
     for i in range(n):
         # start index will be the number of elements before this row
-        minidx1 = i * (i+1) // 2
+        min_idx = i * (i+1) // 2
         # stop index will be the number of elements of the next row
-        maxidx1 = (i+1) * (i+2) // 2
-        Srows.append(S[minidx1:maxidx1])
+        max_idx = (i+1) * (i+2) // 2
+        Srows.append(S[min_idx:max_idx])
 
-    # then we go through rows again and add the remaining terms
+    # then we go through rows again and add the remaining (n-m) terms
     Srowsfixed = []
     for i, row in enumerate(Srows):
         Srowsfixed.append(row + [row2[i] for row2 in Srows[i+1:]])
