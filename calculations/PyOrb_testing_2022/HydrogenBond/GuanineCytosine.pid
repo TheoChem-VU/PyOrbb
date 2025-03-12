@@ -1,0 +1,36 @@
+# status: ready
+# pid: 19533
+# hostname: localhost
+# username: 
+# jobscript: 
+# prolog: 
+# epilog: 
+# jobdir: $HOME/jobs
+# fakejob: 0
+# comparewithtarget: ok
+# error: 0
+# warning: 1
+# runcmd: sh "$job" "NSCM=$options ; export NSCM"
+# plamscmd: local:*,1
+# batch: yes
+# options: 
+# killcmd: killall $pid
+# jobstatuscmd: ps -e | grep -w $pid | grep -v grep
+# sysstatuscmd: uptime
+# pidfile: no
+# label: Sequential
+# logfile: logfile
+# backup: 
+# whenready: 
+# scmjobid: 1674824030910-73905
+# paused: 0
+# remoteprefix: 
+# jobtype: .adf
+# mtime: 1674824036
+# cloudinit: 
+# cloudid: 
+# copyback: 
+# privatesshkeypath: 
+# comments: 
+# dependency: start /Users/yumanhordijk/PhD/TheoCheM_stack/calculations/PyOrb_testing/HydrogenBond/GuanineCytosine.Guanine.job
+# dependency: start /Users/yumanhordijk/PhD/TheoCheM_stack/calculations/PyOrb_testing/HydrogenBond/GuanineCytosine.Cytosine.job

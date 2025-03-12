@@ -1,0 +1,37 @@
+#!/bin/sh
+
+"$AMSBIN/ams" << eor
+
+Task SinglePoint
+System
+    Atoms
+        B 0.0 0.0 0.861897 region=BH3
+        H -0.585967 1.014925 1.168784 region=BH3
+        H -0.585967 -1.014925 1.168784 region=BH3
+        H 1.171934 0.0 1.168784 region=BH3
+    End
+    Symmetrize Yes
+    BondOrders
+         1 2 1.0
+         1 3 1.0
+         1 4 1.0
+    End
+End
+Symmetry
+    SymmetrizeTolerance 1.0e-7
+End
+
+Engine ADF
+    Basis
+        Type TZ2P
+        Core None
+    End
+    ALLOW  FRACTIONAL
+    XC
+        GGA BLYP
+    End
+    Title BH3 fragment
+    NumericalQuality VeryGood
+EndEngine
+eor
+
