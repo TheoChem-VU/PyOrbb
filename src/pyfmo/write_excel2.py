@@ -92,88 +92,6 @@ def _detect_nan_rects(arr):
     return rects
 
 
-def argNmax(arr, N):
-    '''
-    Get the Nth maximum element of an array.
-    '''
-    return np.argsort(arr, axis=None)[-N-1]
-
-
-def _get_orbint_pairs(orbs, n_pairs=20):
-    sfos = {}
-    sfo_occ = {}
-    sfo_ene = {}
-    for i, frag in enumerate(orbs.sfos.fragments):
-        sfos[frag] = [sfo for sfo in orbs.sfos if sfo.fragment_unique == frag]
-        sfo_occ[frag] = np.array([sfo.occupation for sfo in sfos[frag]]).reshape(-1, 1)
-        sfo_ene[frag] = np.array([sfo.energy for sfo in sfos[frag]]).reshape(-1, 1)
-
-    ret = []
-    oi_approx_total = 0
-    for i, frag in enumerate(orbs.sfos.fragments):
-        for frag2 in orbs.sfos.fragments[i+1:]:
-            occ_virt_mask = np.logical_xor(sfo_occ[frag], sfo_occ[frag2].T)
-            S = overlap_mat(sfos[frag], sfos[frag2])
-            dE = abs(sfo_ene[frag] - sfo_ene[frag2].T)
-            nogap_mask = dE != 0
-            total_mask = occ_virt_mask * nogap_mask
-            dE += (1 - nogap_mask)
-            oi = -S**2 / dE * total_mask
-            oi_approx_total += oi.sum()
-            for i in range(n_pairs):
-                best = np.unravel_index(argNmax(-oi, i), oi.shape)
-                sfo1, sfo2  = sfos[frag][best[0]], sfos[frag2][best[1]]
-                ret.append((oi[best], sfo1, sfo2))
-
-    Eoi = orbs.reader.read('Energy', 'Orb.Int. Total') * 627.503
-
-    ret = sorted(ret, key=lambda row: row[0])
-    ret = ret[:n_pairs]
-    ret = [(
-        str(row[1]),
-        str(row[2]),
-        row[0] * Eoi / oi_approx_total, 
-        row[0] / oi_approx_total, 
-        abs(row[1] @ row[2]),
-        abs(row[1].energy - row[2].energy),
-        ) for row in ret]
-    return ret
-
-
-def _get_pauli_pairs(orbs, n_pairs=20):
-    sfos = {}
-    sfo_occ = {}
-    sfo_ene = {}
-    for i, frag in enumerate(orbs.sfos.fragments):
-        sfos[frag] = [sfo for sfo in orbs.sfos if sfo.fragment_unique == frag]
-        sfo_occ[frag] = np.array([sfo.occupation for sfo in sfos[frag]]).reshape(-1, 1)
-
-    ret = []
-    pauli_approx_total = 0
-    for i, frag in enumerate(orbs.sfos.fragments):
-        for frag2 in orbs.sfos.fragments[i+1:]:
-            occ_occ_mask = np.logical_and(sfo_occ[frag], sfo_occ[frag2].T)
-            S = overlap_mat(sfos[frag], sfos[frag2])
-            pauli = S**2 * occ_occ_mask
-            pauli_approx_total += pauli.sum()
-            for i in range(n_pairs):
-                best = np.unravel_index(argNmax(pauli, i), pauli.shape)
-                sfo1, sfo2  = sfos[frag][best[0]], sfos[frag2][best[1]]
-                ret.append((pauli[best], sfo1, sfo2))
-
-    E_pauli = orbs.reader.read('Energy', 'Pauli Total') * 627.503
-
-    ret = sorted(ret, key=lambda row: -row[0])
-    ret = ret[:n_pairs]
-    ret = [(
-        str(row[1]),
-        str(row[2]),
-        row[0] * E_pauli / pauli_approx_total, 
-        row[0] / pauli_approx_total, 
-        abs(row[1] @ row[2]),
-        ) for row in ret]
-    return ret
-
 def get_molecules(reader):
     used_regions = reader.read('Geometry', 'nr of fragments') != reader.read('Geometry', 'nr of atoms')
     fragment_indices = np.atleast_1d(reader.read('Geometry', 'fragment and atomtype index'))
@@ -210,13 +128,12 @@ def get_molecules(reader):
 
 
 
-def to_excel(orbs, out_file: str = 'pyfmo.xlsx'):
+def to_excel(orbs, out_file: str = 'pyfmo.xlsx', sfo_energy_type: str = 'energy'):
     '''
     Write data about sfos1 and sfos2 to a nicely formatted excel file.
     Currently writes overlap matrices, square of overlap matrices, energy gap matrices and orbital interaction matrices.
     Both restricted and unrestricted sfos are supported.
     '''
-
     workbook = xl.Workbook(out_file)
 
     default_fmt = workbook.add_format({'num_format': '0.00'})
@@ -343,12 +260,14 @@ def to_excel(orbs, out_file: str = 'pyfmo.xlsx'):
             else:
                 sheet.write(start_row + i, start_column + 1, value, table_val_fmt)
 
-
         sheet.set_column_pixels(start_column, start_column, 93)
         sheet.set_column_pixels(start_column + 1, start_column + 1, 93)
 
         for j, asterisk in enumerate(asterisks):
-            sheet.merge_range(start_row + i + j + 1, start_column, start_row + i + j + 1, start_column + 1, f'{"*"*(j+1)} {asterisk}', table_ast_fmt)
+            fmt = None
+            if j == 0:
+                fmt = table_ast_fmt
+            sheet.merge_range(start_row + i + j + 1, start_column, start_row + i + j + 1, start_column + 1, f'{"*"*(j+1)} {asterisk}', fmt)
 
         if len(asterisks) == 0:
             sheet.merge_range(start_row + i + 1, start_column, start_row + i + 1, start_column + 1, ' ', table_ast_fmt)
@@ -382,7 +301,10 @@ def to_excel(orbs, out_file: str = 'pyfmo.xlsx'):
                 sheet.set_column_pixels(start_column + j, start_column + j, 93)
 
         for j, asterisk in enumerate(asterisks):
-            sheet.merge_range(start_row + i + j + 3, start_column, start_row + i + j + 3, start_column + len(rows[0]) - 1, asterisk, table_ast_fmt)
+            fmt = None
+            if j == 0:
+                fmt = table_ast_fmt
+            sheet.merge_range(start_row + i + j + 3, start_column, start_row + i + j + 3, start_column + len(rows[0]) - 1, asterisk, fmt)
 
         return len(rows) + len(asterisks) + start_row + 1, start_column + len(rows[0]) - 1
 
@@ -415,7 +337,7 @@ def to_excel(orbs, out_file: str = 'pyfmo.xlsx'):
 
     # we will write some basic info about the calcualtion in the first sheet
     sheet = workbook.add_worksheet('🛈 Info')
-    sheet.set_tab_color('D6D1CD')
+    sheet.set_tab_color('058ED9')
     # write the title cell
     sheet.write(0, 0, 'PyFMO Analysis', title_fmt)
 
@@ -453,24 +375,60 @@ def to_excel(orbs, out_file: str = 'pyfmo.xlsx'):
         next_row, next_col = make_key_value_table(rows, next_row + 2, 1)
 
 
+    mixer = pyfmo.analysis.mixing.Mixer(orbs, energy_type=sfo_energy_type)
+    mixes = mixer.orbital_interactions(N=100)
     # write information about the mixing
-    rows = _get_orbint_pairs(orbs, n_pairs=28)
+    rows = [(str(mix.sfos[0]),
+             str(mix.sfos[1]),
+             str(mix.mos[0]),
+             str(mix.mos[1]),
+             mix.strength, 
+             mix.fraction, 
+             abs(mix.sfos[0] @ mix.sfos[1]), 
+             abs(getattr(mix.sfos[0], mix.energy_type) - getattr(mix.sfos[1], mix.energy_type)),
+             abs(mix.sfos[0].mulliken_contribution(mix.mos[0])),
+             abs(mix.sfos[1].mulliken_contribution(mix.mos[0])),
+             abs(mix.sfos[0].mulliken_contribution(mix.mos[1])),
+             abs(mix.sfos[1].mulliken_contribution(mix.mos[1])),
+             all(
+                 [abs(mix.sfos[0].mulliken_contribution(mix.mos[0])) >= 0.02,
+                 abs(mix.sfos[1].mulliken_contribution(mix.mos[0])) >= 0.02,
+                 abs(mix.sfos[0].mulliken_contribution(mix.mos[1])) >= 0.02,
+                 abs(mix.sfos[1].mulliken_contribution(mix.mos[1])) >= 0.02])) for mix in mixes]
     _, next_col = make_array_table(rows, 
             'Orbital Interactions',
             3,
             next_col + 3,
-            col_fmts={3: table_val_pctg_fmt},
-            header=['SFO1', 'SFO2', 'ΔE⁽²⁾ (kcal mol⁻¹)', 'Frac.*', 'S', 'Δε (eV)'],
-            asterisks=['* Frac. represents the relative amount of orbital interaction explained by this interaction'])
+            col_fmts={5: table_val_pctg_fmt},
+            header=['SFO1', 'SFO2', 'MO1', 'MO2', 'ΔE⁽²⁾ (kcal mol⁻¹)', 'Frac.*', 'S', 'Δε (eV)**', 'SFO1->MO1', 'SFO2->MO1', 'SFO1->MO2', 'SFO2->MO2', 'Check'],
+            asterisks=[
+                '* Frac. represents the relative amount of orbital interaction explained by this interaction',
+                f'** SFO energy type: {sfo_energy_type}'])
 
     # write information about the mixing
-    rows = _get_pauli_pairs(orbs, n_pairs=28)
+    mixes = mixer.pauli_repulsions(N=100)
+    rows = [(str(mix.sfos[0]),
+             str(mix.sfos[1]),
+             str(mix.mos[0]),
+             str(mix.mos[1]),
+             mix.strength, 
+             mix.fraction,
+             abs(mix.sfos[0] @ mix.sfos[1]),
+             abs(mix.sfos[0].mulliken_contribution(mix.mos[0])),
+             abs(mix.sfos[1].mulliken_contribution(mix.mos[0])),
+             abs(mix.sfos[0].mulliken_contribution(mix.mos[1])),
+             abs(mix.sfos[1].mulliken_contribution(mix.mos[1])),
+             all(
+                 [abs(mix.sfos[0].mulliken_contribution(mix.mos[0])) >= 0.02,
+                 abs(mix.sfos[1].mulliken_contribution(mix.mos[0])) >= 0.02,
+                 abs(mix.sfos[0].mulliken_contribution(mix.mos[1])) >= 0.02,
+                 abs(mix.sfos[1].mulliken_contribution(mix.mos[1])) >= 0.02])) for mix in mixes]
     _, next_col = make_array_table(rows, 
             'Pauli Repulsive Interactions',
             3,
             next_col + 3,
-            col_fmts={3: table_val_pctg_fmt},
-            header=['SFO1', 'SFO2', 'ΔE⁽⁴⁾ (kcal mol⁻¹)', 'Frac.*', 'S'],
+            col_fmts={5: table_val_pctg_fmt},
+            header=['SFO1', 'SFO2', 'MO1', 'MO2', 'ΔE⁽⁴⁾ (kcal mol⁻¹)', 'Frac.*', 'S', 'SFO1->MO1', 'SFO2->MO1', 'SFO1->MO2', 'SFO2->MO2', 'Check'],
             asterisks=['* Frac. represents the relative amount of Pauli repulsion explained by this interaction'])
 
     has_kinetic = False
