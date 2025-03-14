@@ -84,7 +84,8 @@ class OrbitalSelector:
         return len(self.orbitals)
 
     def __iter__(self):
-        return iter(sorted(self.orbitals, key=lambda orb: orb.energy))
+        # return iter(sorted(self.orbitals, key=lambda orb: orb.energy))
+        return iter(self.orbitals)
 
     @property
     def spins(self):
@@ -106,6 +107,7 @@ class SFOs(OrbitalSelector):
 
     def get_fragment_sfos(self, fragment):
         return [sfo for sfo in self.orbitals if sfo.fragment_unique == fragment]
+        # return list(sorted([sfo for sfo in self.orbitals if sfo.fragment_unique == fragment], key=lambda sfo: sfo.energy))
 
 
 class MOs(OrbitalSelector):
@@ -446,11 +448,10 @@ class Orbitals:
 
     def write_excel2(self, out_file: str = None):
         from pyfmo import write_excel2
-            
+
         if out_file is None:
             out_file = os.path.join(os.path.dirname(self.kfpath), 'pyfmo2.xlsx')
         write_excel2.to_excel(self, out_file)
-
 
     def _get_mask(self, objs):
         if isinstance(objs[0], MO):
