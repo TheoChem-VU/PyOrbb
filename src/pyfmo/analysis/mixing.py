@@ -200,7 +200,7 @@ class Mixing:
             title = rf'$\Delta E^{{({self.nelectrons()})}}_{{ij}} \approx {self.strength:5.1f}$ kcal/mol (${self.fraction:5.1%}$% of total)'
         else:
             title = None
-        pyfmo.plotting.orbital_diagram.draw_interaction(self.sfos, self.mos, self.connections, self.orbs, title, self.energy_type, connection_colors=self.connection_colors, ax=ax)
+        pyfmo.plotting.orbital_diagram.draw_interaction(self.sfos, self.mos, self.connections, title, self.energy_type, connection_colors=self.connection_colors, ax=ax)
 
     def draw_sfos(self, overlap=False, screen=None):
         import tcviewer
@@ -343,6 +343,13 @@ class Mixing:
     def lowest_contribution(self):
         return min([abs(sfo.mulliken_contribution(mo)) for sfo in self.sfos for mo in self.mos])
 
+    @property
+    def irrep(self):
+        return self.mos[0].symmetry
+
+    @property
+    def spin(self):
+        return self.mos[0].spin
 
 
 def overlap_mat(sfos1, sfos2):
@@ -368,7 +375,7 @@ def track_mixing(orbss, mixing):
     for i, orbs in enumerate(orbss):
         sfos = [orbs.sfos[str(mix_sfo)] for mix_sfo in mixing.sfos]
         mos = [orbs.mos[str(mix_mo)] for mix_mo in mixing.mos]
-        pyfmo.plotting.orbital_diagram.draw_interaction(sfos, mos, it.product(sfos, mos), orbs)
+        pyfmo.plotting.orbital_diagram.draw_interaction(sfos, mos, it.product(sfos, mos))
 
         plt.savefig(os.path.join(out_dir, f'{i}.jpg'))
         plt.close()
