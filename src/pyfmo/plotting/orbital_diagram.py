@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
-def draw_interaction(sfos, mos, connections, orbs, title=None, energy_type='energy', connection_colors={}, ax=None):
+def draw_interaction(sfos, mos, connections, title=None, energy_type='energy', connection_colors={}, ax=None):
     arrow_length        = .3 / 4.8280888207
     arrow_thickness     = .35
     arrow_width         = .005
@@ -24,37 +24,78 @@ def draw_interaction(sfos, mos, connections, orbs, title=None, energy_type='ener
 
     ax.set_ylim(min(energies) - .1 * energy_span, max(energies) + .1 * energy_span, auto=False)
     energy_span *= 1.2
-    poss = {}
-    degenerates = []
-    for mo in mos:
-        if any(mo in degenerates_ for degenerates_ in degenerates):
-            continue
 
-        degenerates.append([mo])
-        for other_mo in mos:
-            if mo == other_mo:
+    frags = sorted(set(sfo.fragment_unique for sfo in sfos))
+    sep_orbs = {frag: [sfo for sfo in sfos if sfo.fragment_unique == frag] for frag in frags}
+    sep_orbs['mo'] = mos
+    poss = {}
+
+    for typ, sep_orbs_ in sep_orbs.items():
+        if typ == 'mo':
+            base_pos = 0
+        else:
+            idx = frags.index(typ)
+            base_pos = idx
+            if idx == 0:
+                base_pos -= 1
+
+        degenerates = []
+        for orb in sep_orbs_:
+            if any(orb in degenerates_ for degenerates_ in degenerates):
                 continue
 
-            if abs(mo.energy - other_mo.energy) < (degenerate_threshold * energy_span):
-                degenerates[-1].append(other_mo)
+            degenerates.append([orb])
+            for other_orb in sep_orbs_:
+                if orb == other_orb:
+                    continue
 
-    for mo in mos:
-        mo_degenerate = [deg for deg in degenerates if mo in deg][0]
-        deg_idx = mo_degenerate.index(mo) + 1
-        deg_degree = len(mo_degenerate) + 1
+                if abs(orb.energy - other_orb.energy) < (degenerate_threshold * energy_span):
+                    degenerates[-1].append(other_orb)
+    
+        for orb in sep_orbs_:
+            orb_degenerate = [deg for deg in degenerates if orb in deg][0]
+            deg_idx = orb_degenerate.index(orb) + 1
+            deg_degree = len(orb_degenerate) + 1
+            poss[orb] = base_pos + 1 / deg_degree * deg_idx
 
-        poss[mo] = 1 / deg_degree * deg_idx
+    # for mo in mos:
+    #     mo_degenerate = [deg for deg in degenerates if mo in deg][0]
+    #     deg_idx = mo_degenerate.index(mo) + 1
+    #     deg_degree = len(mo_degenerate) + 1
 
-    # poss = {mo: .5 for mo in mos}
-    frags = sorted(set(sfo.fragment_unique for sfo in sfos))
-    for sfo in sfos:
-        idx = frags.index(sfo.fragment_unique)
-        if idx == 0:
-            poss[sfo] = idx - .5
-        else:
-            poss[sfo] = idx + .5
+    #     poss[mo] = 1 / deg_degree * deg_idx
 
-    # poss.update({sfo: orbs.fragments.index(sfo.fragment_unique) * 2 - .5 for sfo in sfos})
+    # # poss = {mo: .5 for mo in mos}
+    # frags = sorted(set(sfo.fragment_unique for sfo in sfos))
+    # for sfo in sfos:
+    #     idx = frags.index(sfo.fragment_unique)
+    #     if idx == 0:
+    #         poss[sfo] = idx - .5
+    #     else:
+    #         poss[sfo] = idx + .5
+
+    # sfos_by_frag = {frag: [sfo for sfo in sfos if sfo.fragment_unique == frag] for frag in frags}
+    # degenerates = []
+    # for frag, frag_sfos in sfos_by_frag.items():
+    #     for sfo in frag_sfos:
+    #         if any(sfo in degenerates_ for degenerates_ in degenerates):
+    #             continue
+
+    #         degenerates.append([sfo])
+    #         for other_sfo in sfos:
+    #             if sfo == other_sfo:
+    #                 continue
+
+    #             if abs(sfo.energy - other_sfo.energy) < (degenerate_threshold * energy_span):
+    #                 degenerates[-1].append(other_sfo)
+
+    # for frag, frag_sfos in sfos_by_frag.items():
+    #     for sfo in frag_sfos:
+    #         sfo_degenerate = [deg for deg in degenerates if sfo in deg][0]
+    #         deg_idx = sfo_degenerate.index(sfo) + 1
+    #         deg_degree = len(sfo_degenerate) + 1
+
+    #         poss[sfo] += 1 / deg_degree * deg_idx - .5
 
     xtick_pos, xtick_label = [.5], ['MOs']
     for orb in poss:

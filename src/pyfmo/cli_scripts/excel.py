@@ -20,24 +20,35 @@ def create_subparser(parent_parser: argparse.ArgumentParser):
                            help="The path to the `adf.rkf` file to summarize in an Excel file.")
 
 
+
 def main(args: argparse.Namespace):
     orbs = pyfmo.orbitals2.objects.Orbitals(args.rkf)
     orbs.write_excel2(args.output)
 
     mixer = pyfmo.analysis.mixing.Mixer(orbs, energy_type='energy')
+    oi_mixes = mixer.orbital_interactions(N=10)
+    pauli_mixes = mixer.pauli_repulsions(N=10)
 
     def draw_diagram(arg):
         plt.cla()
-        plt.title('Old way')
+        selected_spins = [lab[1:] for lab in spin_b.get_checked_labels()]
+        selected_irreps = [lab[1:] for lab in irrep_b.get_checked_labels()]
         mix = pyfmo.analysis.mixing.Mixing(orbs)
         if oi_b.get_status()[0]:
-            for mix_ in mixer.orbital_interactions(N=10):
-                # print(mix_, mix_.nelectrons())
+            for mix_ in oi_mixes:
+                if any(mo.symmetry not in selected_irreps for mo in mix_.mos):
+                    continue
+                if any(mo.spin not in selected_spins for mo in mix_.mos):
+                    continue
                 if mix_.xiaobo_check(oi_s.val):
                     mix += mix_
 
         if pauli_b.get_status()[0]:
-            for mix_ in mixer.pauli_repulsions(N=10):
+            for mix_ in pauli_mixes:
+                if any(mo.symmetry not in selected_irreps for mo in mix_.mos):
+                    continue
+                if any(mo.spin not in selected_spins for mo in mix_.mos):
+                    continue
                 if mix_.xiaobo_check(pauli_s.val):
                     mix += mix_
         mix.draw_diagram(ax=main_ax)
@@ -46,14 +57,14 @@ def main(args: argparse.Namespace):
         main_ax.txt = main_ax.text(1.03, 0.98, (' '*30 + '\n')*11, transform=main_ax.transAxes, fontsize=8, fontname='monospace', verticalalignment='top', bbox=props)
         plt.gcf().canvas.draw_idle()
 
-    
+
     # plt.subplots()
     # mix = mixer.orbital_interactions(N=1)[0]
     # mix += mixer.pauli_repulsions(N=1)[0]
     # mixes.extend()
     # plt.figure()
     plt.figure(figsize=[9, 6.5])
-    gs = GridSpec(nrows=4, ncols=2, height_ratios=[1, .05, .05, .05], width_ratios=[.1, .7])
+    gs = GridSpec(nrows=4, ncols=4, height_ratios=[1, .05, .05, .05], width_ratios=[.1, .6, .1, .1])
     oi_bax = plt.gcf().add_subplot(gs[2, 0])
     pauli_bax = plt.gcf().add_subplot(gs[3, 0])
 
@@ -63,17 +74,35 @@ def main(args: argparse.Namespace):
     oi_sax = plt.gcf().add_subplot(gs[2, 1])
     pauli_sax = plt.gcf().add_subplot(gs[3, 1])
 
-    oi_b = CheckButtons(oi_bax, labels=['Show'], actives=[True])
-    pauli_b = CheckButtons(pauli_bax, labels=['Show'], actives=[True])
+    oi_b = CheckButtons(oi_bax, labels=[' Show'], actives=[True])
+    pauli_b = CheckButtons(pauli_bax, labels=[' Show'], actives=[True])
     
-    oi_s = Slider(oi_sax, 'OI', 0.001, mixer.orbital_interactions(N=1)[0].lowest_contribution, valinit=.025, facecolor='g')
-    pauli_s = Slider(pauli_sax, 'Pauli', 0.001, mixer.pauli_repulsions(N=1)[0].lowest_contribution, valinit=0.2, facecolor='r')
+    oi_s_max = max(mix.lowest_contribution for mix in oi_mixes)
+    oi_s = Slider(oi_sax, 'OI', 0.001, oi_s_max, valinit=oi_s_max/1.5, facecolor='g')
+    pauli_s_max = max(mix.lowest_contribution for mix in pauli_mixes)
+    pauli_s = Slider(pauli_sax, 'Pauli', 0.001, pauli_s_max, valinit=pauli_s_max/1.5, facecolor='r')
     
     oi_b.on_clicked(draw_diagram)
     pauli_b.on_clicked(draw_diagram)
 
     oi_s.on_changed(draw_diagram)
     pauli_s.on_changed(draw_diagram)
+
+
+    irrep_ax = plt.gcf().add_subplot(gs[2:4, 2])
+    irrep_ax.axis('off')
+    irrep_ax.set_title('Irreps')
+    irreps = sorted(set([' ' + mo.symmetry for mo in orbs.mos]))
+    irrep_b = CheckButtons(irrep_ax, labels=irreps, actives=[True for _ in irreps])
+    irrep_b.on_clicked(draw_diagram)
+
+    spin_ax = plt.gcf().add_subplot(gs[2:4, 3])
+    spin_ax.axis('off')
+    spin_ax.set_title('Spins')
+    spins = sorted(set([' ' + mo.spin for mo in orbs.mos]))
+    spin_b = CheckButtons(spin_ax, labels=spins, actives=[True for _ in spins])
+    spin_b.on_clicked(draw_diagram)
+
 
     main_ax = plt.gcf().add_subplot(gs[0, :])
     draw_diagram(mixer)
