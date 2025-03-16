@@ -5,16 +5,16 @@
 Task SinglePoint
 System
     Atoms
-        N 0.0 0.0 -0.815297 region=NH3
-        H 0.477057 -0.826287 -1.184317 region=NH3
-        H -0.954115 0.0 -1.184317 region=NH3
-        H 0.477057 0.826287 -1.184317 region=NH3
+        N 0.0 0.0 -0.81397925 region=NH3
+        H 0.4760389 0.82452355 -1.14378691 region=NH3
+        H 0.4760389 -0.82452355 -1.14378691 region=NH3
+        H -0.95207779 0.0 -1.14378691 region=NH3
     End
     Symmetrize Yes
     BondOrders
-         1 2 1.0
-         1 3 1.0
-         1 4 1.0
+         1 2 0.9374578595161438
+         1 3 0.9375154376029968
+         1 4 0.9375330805778503
     End
 End
 Symmetry
@@ -26,12 +26,11 @@ Engine ADF
         Type TZ2P
         Core None
     End
-    ALLOW  FRACTIONAL
     XC
-        GGA BLYP
+        GGA OLYP
     End
     Title NH3 fragment
-    NumericalQuality VeryGood
+    NumericalQuality Good
 EndEngine
 eor
 

@@ -1,5 +1,5 @@
 # status: ready
-# pid: 14596
+# pid: 25329
 # hostname: localhost
 # username: 
 # jobscript: 
@@ -11,7 +11,6 @@
 # error: 0
 # warning: 0
 # runcmd: sh "$job" "NSCM=$options ; export NSCM"
-# plamscmd: local:*,1
 # batch: yes
 # options: 
 # killcmd: killall $pid
@@ -22,15 +21,16 @@
 # logfile: logfile
 # backup: 
 # whenready: 
-# scmjobid: 1674816743760-98538
+# scmjobid: 1742158680354-28991
 # paused: 0
 # remoteprefix: 
 # jobtype: .adf
-# mtime: 1674816860
+# mtime: 1742158763
 # cloudinit: 
 # cloudid: 
 # copyback: 
 # privatesshkeypath: 
 # comments: 
-# dependency: start /Users/yumanhordijk/PhD/TheoCheM_stack/calculations/PyOrb_testing/DonorAcceptor/NH3BH3.BH3.job
-# dependency: start /Users/yumanhordijk/PhD/TheoCheM_stack/calculations/PyOrb_testing/DonorAcceptor/NH3BH3.NH3.job
+# updatecomments: no
+# dependency: start /Users/yumanhordijk/PhD/Programs/TheoCheM/PyFMO/calculations/PyOrb_testing_2022/DonorAcceptor/NH3BH3.BH3.job
+# dependency: start /Users/yumanhordijk/PhD/Programs/TheoCheM/PyFMO/calculations/PyOrb_testing_2022/DonorAcceptor/NH3BH3.NH3.job

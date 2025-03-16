@@ -1,5 +1,5 @@
 # status: ready
-# pid: 14609
+# pid: 25341
 # hostname: localhost
 # username: 
 # jobscript: 
@@ -11,7 +11,6 @@
 # error: 0
 # warning: 0
 # runcmd: sh "$job" "NSCM=$options ; export NSCM"
-# plamscmd: local:*,1
 # batch: yes
 # options: 
 # killcmd: killall $pid
@@ -22,13 +21,14 @@
 # logfile: logfile
 # backup: 
 # whenready: 
-# scmjobid: 1674816744888-98812
+# scmjobid: 1742158744370-17114
 # paused: 0
 # remoteprefix: 
 # jobtype: .adf
-# mtime: 1674816744
+# mtime: 1742158744
 # cloudinit: 
 # cloudid: 
 # copyback: 
 # privatesshkeypath: 
 # comments: 
+# updatecomments: no
