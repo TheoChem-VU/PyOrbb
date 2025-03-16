@@ -103,7 +103,8 @@ class Mixer:
                         break
                     stab = frac * self.oi_ref
 
-                    mix = Mixing(self.orbs, [occ_mo, virt_mo], [sfo1, sfo2], stab, frac)
+                    col = {conn: 'g' for conn in list(it.product([sfo1, sfo2], [occ_mo, virt_mo]))}
+                    mix = Mixing(self.orbs, [occ_mo, virt_mo], [sfo1, sfo2], stab, frac, connection_colors=col)
                     ret.append(mix)
                     j += 1
 
@@ -155,7 +156,8 @@ class Mixer:
                         break
                     stab = frac * self.pauli_ref
 
-                    mix = Mixing(self.orbs, [occ_mo1, occ_mo2], [sfo1, sfo2], stab, frac)
+                    col = {conn: 'r' for conn in list(it.product([sfo1, sfo2], [occ_mo1, occ_mo2]))}
+                    mix = Mixing(self.orbs, [occ_mo1, occ_mo2], [sfo1, sfo2], stab, frac, connection_colors=col)
                     ret.append(mix)
                     j += 1
 
@@ -167,7 +169,7 @@ class Mixer:
 
 
 class Mixing:
-    def __init__(self, orbs, mos=None, sfos=None, strength=None, fraction=None, connections=None, energy_type='energy'):
+    def __init__(self, orbs, mos=None, sfos=None, strength=None, fraction=None, connections=None, connection_colors=None, energy_type='energy'):
         self.orbs = orbs
         self.mos = mos or []
         self.sfos = sfos or []
@@ -175,8 +177,11 @@ class Mixing:
         self.fraction = fraction or 0
         self.energy_type = energy_type
         self.connections = connections
+        self.connection_colors = connection_colors
         if connections is None:
             self.connections = list(it.product(self.sfos, self.mos))
+        if connection_colors is None:
+            self.connection_colors = {conn: 'k' for conn in self.connections}
 
     def __str__(self):
         s = f'{self.__class__.__name__}('
@@ -190,12 +195,12 @@ class Mixing:
         s += f', nelectrons={self.nelectrons()})'
         return s
 
-    def draw_diagram(self):
+    def draw_diagram(self, ax=None):
         if self.strength is not None:
             title = rf'$\Delta E^{{({self.nelectrons()})}}_{{ij}} \approx {self.strength:5.1f}$ kcal/mol (${self.fraction:5.1%}$% of total)'
         else:
             title = None
-        pyfmo.plotting.orbital_diagram.draw_interaction(self.sfos, self.mos, self.connections, self.orbs, title, self.energy_type)
+        pyfmo.plotting.orbital_diagram.draw_interaction(self.sfos, self.mos, self.connections, self.orbs, title, self.energy_type, connection_colors=self.connection_colors, ax=ax)
 
     def draw_sfos(self, overlap=False, screen=None):
         import tcviewer
@@ -297,6 +302,16 @@ class Mixing:
         self.sfos.extend([osfo for osfo in other.sfos if osfo not in self.sfos])
         self.mos.extend([omo for omo in other.mos if omo not in self.mos])
         self.connections.extend([oconn for oconn in other.connections if oconn not in self.connections])
+        for conn, col in other.connection_colors.items():
+            if conn in self.connection_colors:
+                if col == self.connection_colors[conn]:
+                    continue
+                else:
+                    self.connection_colors[conn] = 'k'
+            else:
+                self.connection_colors[conn] = col
+
+        # self.connection_colors.update(other.connection_colors)
         self.strength = None
         self.fraction = None
         return self
@@ -612,24 +627,26 @@ if __name__ == '__main__':
     #     print(sfos, mos)
     #     pyfmo.plotting.orbital_diagram.draw_interaction(sfos, mos, it.product(sfos, mos), orbs, energy_type='energy')
     #     plt.show()
-    from matplotlib.widgets import Slider
+    from matplotlib.widgets import Slider, CheckButtons
     from matplotlib.gridspec import GridSpec
 
 
-    mixer = Mixer(orbs, energy_type='site_energy')
+    mixer = Mixer(orbs, energy_type='energy')
 
     def draw_diagram(arg):
         plt.cla()
         plt.title('Old way')
         mix = Mixing(orbs)
-        for mix_ in mixer.orbital_interactions(N=10):
-            # print(mix_, mix_.nelectrons())
-            if mix_.xiaobo_check(oi_s.val):
-                mix += mix_
+        if oi_b.get_status()[0]:
+            for mix_ in mixer.orbital_interactions(N=10):
+                # print(mix_, mix_.nelectrons())
+                if mix_.xiaobo_check(oi_s.val):
+                    mix += mix_
 
-        for mix_ in mixer.pauli_repulsions(N=1):
-            if mix_.xiaobo_check(pauli_s.val):
-                mix += mix_
+        if pauli_b.get_status()[0]:
+            for mix_ in mixer.pauli_repulsions(N=1):
+                if mix_.xiaobo_check(pauli_s.val):
+                    mix += mix_
         mix.draw_diagram()
         plt.gcf().canvas.draw_idle()
 
@@ -639,17 +656,30 @@ if __name__ == '__main__':
     # mixes.extend()
     # plt.figure()
 
-    gs = GridSpec(nrows=4, ncols=1, height_ratios=[1, .05, .05, .05])
-    oi_ax = plt.gcf().add_subplot(gs[2, 0])
-    pauli_ax = plt.gcf().add_subplot(gs[3, 0])
+    gs = GridSpec(nrows=4, ncols=2, height_ratios=[1, .05, .05, .05], width_ratios=[.1, .7])
 
-    oi_s = Slider(oi_ax, 'OI', 0.001, mixer.orbital_interactions(N=1)[0].lowest_contribution, valinit=.025)
-    pauli_s = Slider(pauli_ax, 'Pauli', 0.001, mixer.pauli_repulsions(N=1)[0].lowest_contribution, valinit=0.2)
+    oi_bax = plt.gcf().add_subplot(gs[2, 0])
+    pauli_bax = plt.gcf().add_subplot(gs[3, 0])
+
+    oi_bax.axis('off')
+    pauli_bax.axis('off')
+
+    oi_sax = plt.gcf().add_subplot(gs[2, 1])
+    pauli_sax = plt.gcf().add_subplot(gs[3, 1])
+
+    oi_b = CheckButtons(oi_bax, labels=['Show'], actives=[True])
+    pauli_b = CheckButtons(pauli_bax, labels=['Show'], actives=[True])
     
+    oi_s = Slider(oi_sax, 'OI', 0.001, mixer.orbital_interactions(N=1)[0].lowest_contribution, valinit=.025, facecolor='g')
+    pauli_s = Slider(pauli_sax, 'Pauli', 0.001, mixer.pauli_repulsions(N=1)[0].lowest_contribution, valinit=0.2, facecolor='r')
+    
+    oi_b.on_clicked(draw_diagram)
+    pauli_b.on_clicked(draw_diagram)
+
     oi_s.on_changed(draw_diagram)
     pauli_s.on_changed(draw_diagram)
 
-    plt.gcf().add_subplot(gs[0, 0])
+    plt.gcf().add_subplot(gs[0, :])
     draw_diagram(mixer)
 
     # plt.tight_layout()
