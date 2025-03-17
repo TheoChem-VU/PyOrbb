@@ -81,7 +81,7 @@ def draw_interaction(sfos, mos, connections, title=None, energy_type='energy', c
     ax.set_title(title)
     ax.set_ylabel('Orbital Energy / eV')
     ax.set_xticks(xtick_pos, xtick_label)
-    ax.spines[['right', 'top', 'bottom']].set_visible(False)
+    ax.spines[['top', 'bottom']].set_visible(False)
     ax.tick_params('x', labelsize=12, labelcolor='grey')
     ax.tick_params(bottom = False)
     for orb in poss:
@@ -102,7 +102,7 @@ def draw_interaction(sfos, mos, connections, title=None, energy_type='energy', c
                  ha='center',
                  va='top',
                  size=6,
-                 gid=f'TEXT_{orb}')
+                 gid=f'{"TEXTMO" if is_MO else "TEXTSFO"}_{orb}')
 
         if not orb.occupied:
             continue
@@ -131,7 +131,7 @@ def draw_interaction(sfos, mos, connections, title=None, energy_type='energy', c
                       overhang=arrow_overhang, 
                       length_includes_head=True,
                       linewidth=arrow_thickness,
-                      gid=f'ARROW_{orb}')
+                      gid=f'{"ARROWMO" if is_MO else "ARROWSFO"}_{orb}')
 
     for sfo, mo in connections:
         psfo, pmo = poss[sfo], poss[mo]
@@ -145,5 +145,5 @@ def draw_interaction(sfos, mos, connections, title=None, energy_type='energy', c
         c = connection_colors.get((sfo, mo), 'k')
         ax.plot([psfo, pmo], [getattr(sfo, energy_type), mo.energy], c=c, linewidth=1, alpha=np.clip(sfo.mulliken_contribution(mo), 0.1, 1), gid=f'MIX_{sfo} -> {mo}', zorder=-10)
 
-    ax.fill_betweenx(ax.get_ylim(), 0, 1, alpha=.05, facecolor='k')
+    # ax.fill_betweenx(ax.get_ylim(), 0, 1, alpha=.05, facecolor='k')
           

@@ -47,6 +47,7 @@ def main(args: argparse.Namespace):
             fig = plt.gcf()
 
         ax.clear()
+        ax.yaxis.set_major_formatter('{x: 3.0f}')
 
         global main_mix
         main_mix = pyfmo.analysis.mixing.Mixing(orbs)
@@ -72,8 +73,8 @@ def main(args: argparse.Namespace):
         main_mix.draw_diagram(ax=main_ax, ylim=ylim)
         sub_mixes = main_mix.split()
 
-        props = dict(boxstyle='round', facecolor='white', alpha=1)  # bbox features
-        main_ax.txt = main_ax.text(1.03, 0.98, (' '*30 + '\n')*11, transform=main_ax.transAxes, fontsize=8, fontname='monospace', verticalalignment='top', bbox=props)
+        props = dict(edgecolor='white', facecolor='white', alpha=1)  # bbox features
+        main_ax.txt = main_ax.text(1.03, 0.98, ' '*37, transform=main_ax.transAxes, fontsize=8, fontname='monospace', verticalalignment='top', bbox=props)
         fig.canvas.draw_idle()
 
 
@@ -85,13 +86,17 @@ def main(args: argparse.Namespace):
     plt.figure(figsize=[9, 6.5])
     gs = GridSpec(nrows=4, ncols=4, height_ratios=[1, .05, .05, .05], width_ratios=[.1, .6, .1, .1])
     oi_bax = plt.gcf().add_subplot(gs[2, 0])
+    oi_bax._mouseover_set = set()
     pauli_bax = plt.gcf().add_subplot(gs[3, 0])
+    pauli_bax._mouseover_set = set()
 
     oi_bax.axis('off')
     pauli_bax.axis('off')
 
     oi_sax = plt.gcf().add_subplot(gs[2, 1])
     pauli_sax = plt.gcf().add_subplot(gs[3, 1])
+    oi_sax._mouseover_set = set()
+    pauli_sax._mouseover_set = set()
 
     oi_b = CheckButtons(oi_bax, labels=[' Show'], actives=[True])
     pauli_b = CheckButtons(pauli_bax, labels=[' Show'], actives=[False])
@@ -108,6 +113,7 @@ def main(args: argparse.Namespace):
     pauli_s.on_changed(update)
 
     irrep_ax = plt.gcf().add_subplot(gs[2:4, 2])
+    irrep_ax._mouseover_set = set()
     irrep_ax.axis('off')
     irrep_ax.set_title('Irreps')
     irreps = sorted(set([' ' + mo.symmetry for mo in orbs.mos]))
@@ -115,6 +121,7 @@ def main(args: argparse.Namespace):
     irrep_b.on_clicked(update)
 
     spin_ax = plt.gcf().add_subplot(gs[2:4, 3])
+    spin_ax._mouseover_set = set()
     spin_ax.axis('off')
     spin_ax.set_title('Spins')
     spins = sorted(set([' ' + mo.spin for mo in orbs.mos]))
@@ -125,7 +132,128 @@ def main(args: argparse.Namespace):
     main_ax = plt.gcf().add_subplot(gs[0, :])
     update()
 
+    global already_unfaded
+    already_unfaded = True
+
+    def _unfade():
+        artists = plt.gca().get_children()
+        artists = sorted(artists, key=lambda artist: artist.zorder)
+
+        for artist in artists:
+            gid = artist.get_gid()
+            if gid is None:
+                continue            
+
+            if not hasattr(artist, 'orig_color'):
+                try:
+                    artist.orig_color = artist.get_color()
+                except:
+                    artist.orig_color = artist.get_fc()
+            if not hasattr(artist, 'orig_alpha'):
+                artist.orig_alpha = artist.get_alpha() or 1
+
+
+            artist.set_color('white')
+            artist.set_alpha(1)
+            plt.gca().draw_artist(artist)
+            plt.gcf().canvas.blit()
+
+            artist.set_color(artist.orig_color)
+            artist.set_alpha(artist.orig_alpha)
+            plt.gca().draw_artist(artist)
+
+            plt.gcf().canvas.blit()
+
+    def _fade_unrelated_ints(orb):
+        artists = plt.gca().get_children()
+        artists = sorted(artists, key=lambda artist: artist.zorder)
+        submixes = main_mix.split()
+        submix = [submix for submix in submixes if orb in submix.sfos or orb in submix.mos][0]
+        faded_artists = []
+        for artist in artists:
+            gid = artist.get_gid()
+            if gid is None:
+                continue
+
+            if not hasattr(artist, 'orig_color'):
+                try:
+                    artist.orig_color = artist.get_color()
+                except:
+                    artist.orig_color = artist.get_fc()
+            if not hasattr(artist, 'orig_alpha'):
+                artist.orig_alpha = artist.get_alpha() or 1
+
+            if gid.startswith('MO_'):
+                mo = orbs.mos[gid[3:]]
+                if mo in submix.mos:
+                    continue
+
+            if gid.startswith('SFO_'):
+                sfo = orbs.sfos[gid[4:]]
+                if sfo in submix.sfos:
+                    continue
+
+            if gid.startswith('ARROWMO_'):
+                mo = orbs.mos[gid[8:]]
+                if mo in submix.mos:
+                    continue
+
+            if gid.startswith('ARROWSFO_'):
+                sfo = orbs.sfos[gid[9:]]
+                if sfo in submix.sfos:
+                    continue
+
+            if gid.startswith('TEXTMO_'):
+                mo = orbs.mos[gid[7:]]
+                if mo in submix.mos:
+                    continue
+
+            if gid.startswith('TEXTSFO_'):
+                sfo = orbs.sfos[gid[8:]]
+                if sfo in submix.sfos:
+                    continue
+
+            if gid.startswith('MIX_'):
+                sfo = orbs.sfos[gid[4:].split('->')[0].strip()]
+                mo = orbs.mos[gid[4:].split('->')[1].strip()]
+                if mo in submix.mos:
+                    continue
+                if sfo in submix.sfos:
+                    continue
+
+            faded_artists.append(artist)
+
+        for artist in faded_artists:
+            artist.set_color('white')
+            artist.set_alpha(1)
+            plt.gca().draw_artist(artist)
+            plt.gcf().canvas.blit()
+
+            artist.set_color(artist.orig_color)
+            artist.set_alpha(artist.orig_alpha * .025)
+            plt.gca().draw_artist(artist)
+            plt.gcf().canvas.blit()
+
+        for artist in artists:
+            gid = artist.get_gid()
+            if gid is None:
+                continue
+            if artist in faded_artists:
+                continue
+
+            artist.set_color('white')
+            artist.set_alpha(1)
+            plt.gca().draw_artist(artist)
+            plt.gcf().canvas.blit()
+
+            artist.set_color(artist.orig_color)
+            artist.set_alpha(artist.orig_alpha)
+            plt.gca().draw_artist(artist)
+
+        plt.gcf().canvas.blit()
+
     def on_plot_hover(event):
+        global already_unfaded
         # Iterating over each data member plotted
         lines = plt.gca().get_children()
         lines = sorted(lines, key=lambda line: line.zorder)
@@ -141,45 +269,75 @@ def main(args: argparse.Namespace):
             s = ''
             if gid.startswith('MO_'):
                 mo = orbs.mos[gid[3:]]
-                s += f'MO'.ljust(31)
-                s += f'\n   {mo}'.ljust(31)
-                s += f'\n   {mo.relative_name}\n'.ljust(31)
-                s += f'\nEnergy     {mo.energy:.2f} eV'.ljust(31)
-                s += f'\nOccupation {mo.occupation}'.ljust(31)
-                s += f'\nSpin       {mo.spin}'.ljust(31)
-                s += f'\nIrrep      {mo.symmetry}'.ljust(31)
-                s += '\n\n\n\n'
+                s += f'MO'.ljust(35)
+                s += f'\n   {mo}'
+                s += f'\n   {mo.relative_name}\n'
+                s += f'\nEnergy     {mo.energy:.2f} eV'
+                s += f'\nOccupation {mo.occupation}'
+                s += f'\nSpin       {mo.spin}'
+                s += f'\nIrrep      {mo.symmetry}'
+                s += '\n' * (50 - len(s.splitlines()))
+                _fade_unrelated_ints(mo)
+                already_unfaded = False
 
             if gid.startswith('SFO_'):
                 sfo = orbs.sfos[gid[4:]]
-                s += f'SFO'.ljust(31)
-                s += f'\n   {sfo}'.ljust(31)
-                s += f'\n   {sfo.relative_name}\n'.ljust(31)
-                s += f'\nFragment   {sfo.fragment_unique}'.ljust(31)
-                s += f'\nEnergy    {sfo.energy: .2f} eV'.ljust(31)
-                s += f'\nPop.      {sfo.gross_population: .3f}'.ljust(31)
-                s += f'\nSpin-pop. {sfo.gross_spin: .3f}'.ljust(31)
-                s += f'\nSpin       {sfo.spin}'.ljust(31)
-                s += f'\nIrrep      {sfo.symmetry}'.ljust(31)
-                s += '\n\n'
+                submixes = main_mix.split()
+                submix = [submix for submix in submixes if sfo in submix.sfos][0]
+                s += f'SFO'.ljust(35)
+                s += f'\n   {sfo}'
+                s += f'\n   {sfo.relative_name}\n'
+                s += f'\nFragment   {sfo.fragment_unique}'
+                s += f'\nEnergy    {sfo.energy: .2f} eV'
+                s += f'\nPop.      {sfo.gross_population: .3f}'
+                s += f'\nSpin-pop. {sfo.gross_spin: .3f}'
+                s += f'\nSpin       {sfo.spin}'
+                s += f'\nIrrep      {sfo.symmetry}'
+
+                s += '\n\nSFO2              S       Δε (eV)'
+                s += '\n──────────────── ─────── ──────────'
+                for sfo2 in sorted(submix.sfos, key=lambda sfo_: -abs(sfo @ sfo_)):
+                    if sfo2 == sfo:
+                        continue
+                    if sfo2.fragment_unique == sfo.fragment_unique:
+                        continue
+                    s += f'\n{str(sfo2):15}  {sfo @ sfo2: 5.3f}  {abs(sfo.energy - sfo2.energy): 6.2f}'
+
+                s += '\n\nMO          Contr.    Coeff.'
+                s += '\n────────── ───────── ──────────────'
+                for mo in sorted(submix.mos, key=lambda mo: -abs(sfo.mulliken_contribution(mo))):
+                    s += f'\n{str(mo):10}  {sfo.mulliken_contribution(mo): 7.2%}  {sfo.coefficient(mo): 8.6f}'
+
+                s += '\n' * (50 - len(s.splitlines()))
+                _fade_unrelated_ints(sfo)
+                already_unfaded = False
 
             if gid.startswith('MIX_'):
                 sfo = orbs.sfos[gid[4:].split('->')[0].strip()]
                 mo = orbs.mos[gid[4:].split('->')[1].strip()]
-                s += f'SFO'.ljust(31)
-                s += f'\n   {sfo}'.ljust(31)
-                s += f'\n   {sfo.relative_name}\n'.ljust(31)
-                s += f'\nMO'.ljust(31)
-                s += f'\n   {mo}'.ljust(31)
-                s += f'\n   {mo.relative_name}\n'.ljust(31)
-                s += f'\nContr.    {sfo.mulliken_contribution(mo): .2%}'.ljust(30)
-                s += f'\nCoeff.    {sfo.coefficient(mo): .6f}'.ljust(30)
-                s += f'\nSpin       {sfo.spin}'.ljust(30)
-                s += f'\nIrrep      {sfo.symmetry}'.ljust(30)
+                s += f'SFO'.ljust(35)
+                s += f'\n   {sfo}'
+                s += f'\n   {sfo.relative_name}\n'
+                s += f'\nMO'
+                s += f'\n   {mo}'
+                s += f'\n   {mo.relative_name}\n'
+                s += f'\nContr.    {sfo.mulliken_contribution(mo): .2%}'
+                s += f'\nCoeff.    {sfo.coefficient(mo): .6f}'
+                s += f'\nSpin       {sfo.spin}'
+                s += f'\nIrrep      {sfo.symmetry}'
+                s += '\n' * (50 - len(s.splitlines()))
+                _fade_unrelated_ints(mo)
+                already_unfaded = False
 
             main_ax.txt.set_text(s)
             plt.gca().draw_artist(main_ax.txt)
             plt.gcf().canvas.blit()
+
+            break
+        else:
+            if not already_unfaded:
+                already_unfaded = True
+                _unfade()
 
 # plt.tight_layout()
 
