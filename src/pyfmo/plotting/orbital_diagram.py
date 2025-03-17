@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
-def draw_interaction(sfos, mos, connections, title=None, energy_type='energy', connection_colors={}, ax=None):
+def draw_interaction(sfos, mos, connections, title=None, energy_type='energy', connection_colors={}, ax=None, ylim=None):
     arrow_length        = .3 / 4.8280888207
     arrow_thickness     = .35
     arrow_width         = .005
@@ -16,13 +16,21 @@ def draw_interaction(sfos, mos, connections, title=None, energy_type='energy', c
     level_thickness = 3
     degenerate_threshold = .08
 
-    energies = [getattr(orb, energy_type) for orb in list(sfos)] + [orb.energy for orb in list(mos)]
-    energy_span = max(energies) - min(energies)
+    if ylim is None:
+        try:
+            energies = [getattr(orb, energy_type) for orb in list(sfos)] + [orb.energy for orb in list(mos)]
+            energy_span = max(energies) - min(energies)
+            ax.set_ylim(min(energies) - .1 * energy_span, max(energies) + .1 * energy_span, auto=False)
+        except:
+            energy_span = 1
+            ax.set_ylim(0, 1, auto=False)
+    else:
+        energy_span = ylim[1] - ylim[0]
+        ax.set_ylim(*ylim, auto=False)
 
     if ax is None:
         ax = plt.gca()
 
-    ax.set_ylim(min(energies) - .1 * energy_span, max(energies) + .1 * energy_span, auto=False)
     energy_span *= 1.2
 
     frags = sorted(set(sfo.fragment_unique for sfo in sfos))
@@ -51,51 +59,12 @@ def draw_interaction(sfos, mos, connections, title=None, energy_type='energy', c
 
                 if abs(orb.energy - other_orb.energy) < (degenerate_threshold * energy_span):
                     degenerates[-1].append(other_orb)
-    
+
         for orb in sep_orbs_:
             orb_degenerate = [deg for deg in degenerates if orb in deg][0]
             deg_idx = orb_degenerate.index(orb) + 1
             deg_degree = len(orb_degenerate) + 1
             poss[orb] = base_pos + 1 / deg_degree * deg_idx
-
-    # for mo in mos:
-    #     mo_degenerate = [deg for deg in degenerates if mo in deg][0]
-    #     deg_idx = mo_degenerate.index(mo) + 1
-    #     deg_degree = len(mo_degenerate) + 1
-
-    #     poss[mo] = 1 / deg_degree * deg_idx
-
-    # # poss = {mo: .5 for mo in mos}
-    # frags = sorted(set(sfo.fragment_unique for sfo in sfos))
-    # for sfo in sfos:
-    #     idx = frags.index(sfo.fragment_unique)
-    #     if idx == 0:
-    #         poss[sfo] = idx - .5
-    #     else:
-    #         poss[sfo] = idx + .5
-
-    # sfos_by_frag = {frag: [sfo for sfo in sfos if sfo.fragment_unique == frag] for frag in frags}
-    # degenerates = []
-    # for frag, frag_sfos in sfos_by_frag.items():
-    #     for sfo in frag_sfos:
-    #         if any(sfo in degenerates_ for degenerates_ in degenerates):
-    #             continue
-
-    #         degenerates.append([sfo])
-    #         for other_sfo in sfos:
-    #             if sfo == other_sfo:
-    #                 continue
-
-    #             if abs(sfo.energy - other_sfo.energy) < (degenerate_threshold * energy_span):
-    #                 degenerates[-1].append(other_sfo)
-
-    # for frag, frag_sfos in sfos_by_frag.items():
-    #     for sfo in frag_sfos:
-    #         sfo_degenerate = [deg for deg in degenerates if sfo in deg][0]
-    #         deg_idx = sfo_degenerate.index(sfo) + 1
-    #         deg_degree = len(sfo_degenerate) + 1
-
-    #         poss[sfo] += 1 / deg_degree * deg_idx - .5
 
     xtick_pos, xtick_label = [.5], ['MOs']
     for orb in poss:
@@ -125,14 +94,15 @@ def draw_interaction(sfos, mos, connections, title=None, energy_type='energy', c
             'B': r' $\beta$'
         }.get(orb.spin, '')
         is_MO = orb in mos
-        ax.plot([poss[orb]-level_width/2, poss[orb]+level_width/2], [E, E], c='k', linewidth=level_thickness, gid=f'{"MO_" if is_MO else "SFO_"}{orb}')
+        ax.plot([poss[orb]-level_width/2, poss[orb]+level_width/2], [E, E], c='k', linewidth=level_thickness, gid=f'{"MO" if is_MO else "SFO"}_{orb}')
         ax.text(poss[orb],
                  E - arrow_length / 1.8 * energy_span,
                  # f'({orb.relative_name.replace("OMO", "").replace("UMO", "")})',
                  f'{orb.name}' + spin_part,
                  ha='center',
                  va='top',
-                 size=6)
+                 size=6,
+                 gid=f'TEXT_{orb}')
 
         if not orb.occupied:
             continue
@@ -160,7 +130,8 @@ def draw_interaction(sfos, mos, connections, title=None, energy_type='energy', c
                       color='k', 
                       overhang=arrow_overhang, 
                       length_includes_head=True,
-                      linewidth=arrow_thickness)
+                      linewidth=arrow_thickness,
+                      gid=f'ARROW_{orb}')
 
     for sfo, mo in connections:
         psfo, pmo = poss[sfo], poss[mo]
@@ -174,6 +145,5 @@ def draw_interaction(sfos, mos, connections, title=None, energy_type='energy', c
         c = connection_colors.get((sfo, mo), 'k')
         ax.plot([psfo, pmo], [getattr(sfo, energy_type), mo.energy], c=c, linewidth=1, alpha=np.clip(sfo.mulliken_contribution(mo), 0.1, 1), gid=f'MIX_{sfo} -> {mo}', zorder=-10)
 
-    ax.fill_betweenx((min(energies) - .1 * energy_span, max(energies) + .1 * energy_span), 0, 1, alpha=.05, facecolor='k')
+    ax.fill_betweenx(ax.get_ylim(), 0, 1, alpha=.05, facecolor='k')
           
-    # plt.show()
