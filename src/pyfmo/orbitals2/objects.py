@@ -214,7 +214,15 @@ class Orbital:
 
         # and draw it with a specified isovalue
         with tcviewer.Screen() as scr:
-            scr.draw_cub(cub, isovalue, material=tcviewer.materials.orbital_shiny)
+            with scr.add_molscene() as scene:
+            # scr.draw_cub(cub, isovalue, material=tcviewer.materials.orbital_shiny)            
+                c1, c2 = ([1, 0, 0], [0, 0, 1]) if self.occupied else ([1, .5, 0], [0, 1, 1])
+                scene.draw_molecule(self.molecule)
+                scene.draw_isosurface(cub, -0.03, c1)
+                scene.draw_isosurface(cub,  0.03, c2)
+
+            return scr
+            
 
     @property
     def degeneracy_index(self):
@@ -436,6 +444,14 @@ class Orbitals:
                 }
                 sfo = MO(data, self.mos)
                 self.mos.orbitals.append(sfo)
+
+    @property
+    def molecule(self):
+        mol = plams.Molecule()
+        for frag in self.fragments:
+            sfo = [sfo for sfo in self.sfos if sfo.fragment_unique == frag][0]
+            mol += sfo.molecule
+        return mol
 
     @property
     def fragments(self):

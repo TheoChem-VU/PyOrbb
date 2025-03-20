@@ -2,10 +2,21 @@
 import argparse
 import pyfmo
 import matplotlib.pyplot as plt
+import matplotlib as mpl
 from matplotlib.widgets import Slider, CheckButtons
 from matplotlib.gridspec import GridSpec
+from matplotlib.backend_tools import Cursors
 from matplotlib import animation
 import numpy as np
+import os
+import tcviewer
+
+font_path = os.path.split(__file__)[0] + '/ibm_plex_mono/IBMPlexMono-Regular.ttf'  # Your font path goes here
+mpl.font_manager.fontManager.addfont(font_path)
+prop = mpl.font_manager.FontProperties(fname=font_path)
+
+# plt.rcParams['font.family'] = 'monospace'
+plt.rcParams['font.monospace'] = prop.get_name()
 
 
 def create_subparser(parent_parser: argparse.ArgumentParser):
@@ -18,7 +29,6 @@ def create_subparser(parent_parser: argparse.ArgumentParser):
     subparser.add_argument("rkf",
                            type=str,
                            help="The path to the `adf.rkf` file to summarize in an Excel file.")
-
 
 
 def main(args: argparse.Namespace):
@@ -35,8 +45,7 @@ def main(args: argparse.Namespace):
             allowed_spins=[s[1:] for s in spin_b.get_checked_labels()],
             allowed_irreps=[i[1:] for i in irrep_b.get_checked_labels()],
             oi_thresh=10**oi_s.val,
-            pauli_thresh=pauli_s.val,
-            # ylim=(-15, 15)
+            pauli_thresh=pauli_s.val
             )
 
     def draw_diagram(ax=None, fig=None, allowed_spins=None, allowed_irreps=None, oi_thresh=None, pauli_thresh=None, ylim=None):
@@ -152,7 +161,6 @@ def main(args: argparse.Namespace):
             if not hasattr(artist, 'orig_alpha'):
                 artist.orig_alpha = artist.get_alpha() or 1
 
-
             artist.set_color('white')
             artist.set_alpha(1)
             plt.gca().draw_artist(artist)
@@ -180,6 +188,7 @@ def main(args: argparse.Namespace):
                     artist.orig_color = artist.get_color()
                 except:
                     artist.orig_color = artist.get_fc()
+
             if not hasattr(artist, 'orig_alpha'):
                 artist.orig_alpha = artist.get_alpha() or 1
 
@@ -230,7 +239,7 @@ def main(args: argparse.Namespace):
             plt.gcf().canvas.blit()
 
             artist.set_color(artist.orig_color)
-            artist.set_alpha(artist.orig_alpha * .025)
+            artist.set_alpha(artist.orig_alpha * .1)
             plt.gca().draw_artist(artist)
             plt.gcf().canvas.blit()
 
@@ -256,7 +265,7 @@ def main(args: argparse.Namespace):
         global already_unfaded
         # Iterating over each data member plotted
         lines = plt.gca().get_children()
-        lines = sorted(lines, key=lambda line: line.zorder)
+        lines = sorted(lines, key=lambda line: -line.zorder)
         for curve in lines:
             gid = curve.get_gid()
             if gid is None:
@@ -266,9 +275,14 @@ def main(args: argparse.Namespace):
             if not curve.contains(event)[0]:
                 continue
 
+            if gid.startswith('MO_') or gid.startswith('SFO_'):
+                plt.gcf().canvas.set_cursor(Cursors.HAND)
+
             s = ''
             if gid.startswith('MO_'):
                 mo = orbs.mos[gid[3:]]
+                submixes = main_mix.split()
+                submix = [submix for submix in submixes if mo in submix.mos][0]
                 s += f'MO'.ljust(35)
                 s += f'\n   {mo}'
                 s += f'\n   {mo.relative_name}\n'
@@ -276,10 +290,21 @@ def main(args: argparse.Namespace):
                 s += f'\nOccupation {mo.occupation}'
                 s += f'\nSpin       {mo.spin}'
                 s += f'\nIrrep      {mo.symmetry}'
+
+                s += '\n\nSFO                    Contr   Coeff'
+                s += '\n─────────────────── ──────── ───────'
+                for sfo in sorted(submix.sfos, key=lambda sfo: -abs(sfo.mulliken_contribution(mo))):
+                    s += f'\n{str(sfo):19.19} {sfo.mulliken_contribution(mo): 8.2%} {sfo.coefficient(mo): 7.4f}'
+
                 s += '\n' * (50 - len(s.splitlines()))
                 _fade_unrelated_ints(mo)
                 already_unfaded = False
 
+                main_ax.txt.set_text(s)
+                plt.gca().draw_artist(main_ax.txt)
+                plt.gcf().canvas.blit()
+
+                break
             if gid.startswith('SFO_'):
                 sfo = orbs.sfos[gid[4:]]
                 submixes = main_mix.split()
@@ -294,24 +319,29 @@ def main(args: argparse.Namespace):
                 s += f'\nSpin       {sfo.spin}'
                 s += f'\nIrrep      {sfo.symmetry}'
 
-                s += '\n\nSFO2              S       Δε (eV)'
-                s += '\n──────────────── ─────── ──────────'
+                s += '\n\nSFO                      S   dE (eV)'
+                s += '\n─────────────────── ────── ─────────'
                 for sfo2 in sorted(submix.sfos, key=lambda sfo_: -abs(sfo @ sfo_)):
                     if sfo2 == sfo:
                         continue
                     if sfo2.fragment_unique == sfo.fragment_unique:
                         continue
-                    s += f'\n{str(sfo2):15}  {sfo @ sfo2: 5.3f}  {abs(sfo.energy - sfo2.energy): 6.2f}'
-
-                s += '\n\nMO          Contr.    Coeff.'
-                s += '\n────────── ───────── ──────────────'
+                    s += f'\n{str(sfo2):19.19} {sfo @ sfo2: 5.3f} {abs(sfo.energy - sfo2.energy): 8.2f}'
+                
+                s += '\n\nMO                     Contr   Coeff'
+                s += '\n─────────────────── ──────── ───────'
                 for mo in sorted(submix.mos, key=lambda mo: -abs(sfo.mulliken_contribution(mo))):
-                    s += f'\n{str(mo):10}  {sfo.mulliken_contribution(mo): 7.2%}  {sfo.coefficient(mo): 8.6f}'
+                    s += f'\n{str(mo):19.19} {sfo.mulliken_contribution(mo): 8.2%} {sfo.coefficient(mo): 7.4f}'
 
                 s += '\n' * (50 - len(s.splitlines()))
                 _fade_unrelated_ints(sfo)
                 already_unfaded = False
 
+                main_ax.txt.set_text(s)
+                plt.gca().draw_artist(main_ax.txt)
+                plt.gcf().canvas.blit()
+
+                break
             if gid.startswith('MIX_'):
                 sfo = orbs.sfos[gid[4:].split('->')[0].strip()]
                 mo = orbs.mos[gid[4:].split('->')[1].strip()]
@@ -329,22 +359,65 @@ def main(args: argparse.Namespace):
                 _fade_unrelated_ints(mo)
                 already_unfaded = False
 
-            main_ax.txt.set_text(s)
-            plt.gca().draw_artist(main_ax.txt)
-            plt.gcf().canvas.blit()
+                main_ax.txt.set_text(s)
+                plt.gca().draw_artist(main_ax.txt)
+                plt.gcf().canvas.blit()
 
-            break
+                break
+
+
         else:
             if not already_unfaded:
                 already_unfaded = True
                 _unfade()
 
-# plt.tight_layout()
+                main_ax.txt.set_text((' '*35 + '\n')*50)
+                plt.gca().draw_artist(main_ax.txt)
+                plt.gcf().canvas.set_cursor(Cursors.POINTER)
+                plt.gcf().canvas.blit()
 
-    # txt = plt.text(0, 0, 'test_text')
-    # plt.subplots_adjust(left=0.25)
-    # anim = animation.ArtistAnimation(plt.gcf(), [(txt,)], interval=1)
-    plt.gcf().canvas.mpl_connect('motion_notify_event', on_plot_hover) 
+    global screen
+    screen = None
+    def on_click(event):
+        global screen
+        artists = plt.gca().get_children()
+        artists = sorted(artists, key=lambda artist: artist.zorder)
+        for artist in artists:
+            gid = artist.get_gid()
+            if gid is None:
+                continue
+
+            # Searching which data member corresponds to current mouse position
+            if not artist.contains(event)[0]:
+                continue
+
+            if gid.startswith('MO_'):
+                orb = orbs.mos[gid[3:]]
+
+            elif gid.startswith('SFO_'):
+                orb = orbs.sfos[gid[4:]]
+            else:
+                continue
+
+            # orb.draw()
+            if screen is None:
+                screen = tcviewer.Screen()
+                screen.__enter__()
+                screen.window.show()
+
+            with screen.add_molscene() as scene:
+            # scr.draw_cub(cub, isovalue, material=tcviewer.materials.orbital_shiny)            
+                c1, c2 = ([1, 0, 0], [0, 0, 1]) if orb.occupied else ([1, .5, 0], [0, 1, 1])
+                scene.draw_molecule(orbs.molecule)
+                scene.draw_dual_isosurface(orb.cube_file(), colorm=c1, colorp=c2, opacity=.3)
+                # scene.draw_isosurface(orb.cube_file(), -0.03, c1, opacity=.3)
+                # scene.draw_isosurface(orb.cube_file(),  0.03, c2, opacity=.3)
+                scene.draw_text(str(orb))
+
+            screen.exec()
+
+    plt.gcf().canvas.mpl_connect('motion_notify_event', on_plot_hover)
+    plt.gcf().canvas.mpl_connect('button_press_event', on_click)
 
     plt.tight_layout()
     plt.show()

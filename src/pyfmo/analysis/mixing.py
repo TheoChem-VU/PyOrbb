@@ -23,10 +23,13 @@ class Mixer:
         # plt.show()
         self.sfos = {}
         self.sfos_occ = {}
+        self.sfos_vir = {}
         self.sfos_energy = {}
+        max_occ = max(sfo.occupation for sfo in self.orbs.sfos)
         for i, frag in enumerate(self.orbs.sfos.fragments):
             self.sfos[frag] = [sfo for sfo in self.orbs.sfos if sfo.fragment_unique == frag]
-            self.sfos_occ[frag] = np.array([sfo.occupation for sfo in self.sfos[frag]]).reshape(-1, 1)
+            self.sfos_occ[frag] = np.array([sfo.occupation > 0 for sfo in self.sfos[frag]]).reshape(-1, 1)
+            self.sfos_vir[frag] = np.array([sfo.occupation < 2 for sfo in self.sfos[frag]]).reshape(-1, 1)
             self.sfos_energy[frag] = np.array([getattr(sfo, self.energy_type) for sfo in self.sfos[frag]]).reshape(-1, 1)
 
         self.mos = list(self.orbs.mos)
@@ -44,7 +47,8 @@ class Mixer:
         for i, frag in enumerate(self.orbs.sfos.fragments):
             for frag2 in self.orbs.sfos.fragments[i+1:]:
                 # get data for oi
-                occ_virt_mask = np.logical_xor(self.sfos_occ[frag], self.sfos_occ[frag2].T)
+                occ_virt_mask = np.logical_or(np.logical_and(self.sfos_occ[frag], self.sfos_vir[frag2].T), np.logical_and(self.sfos_vir[frag], self.sfos_occ[frag2].T))
+
                 self.S_oi[(frag, frag2)] = overlap_mat(self.sfos[frag], self.sfos[frag2])
                 self.dE_oi[(frag, frag2)] = abs(self.sfos_energy[frag] - self.sfos_energy[frag2].T)
                 # print(self.dE_oi[(frag, frag2)])
@@ -339,10 +343,7 @@ class Mixing:
         val = 1
         for sfo in self.sfos:
             gp = sfo.gross_population
-            if sfo.occupied:
-                gp = np.clip(gp, 0, sfo.occupation)
-            else:
-                gp = max(0, gp)
+            gp = np.clip(gp, 0, 2)
             excess = abs(sfo.occupation - gp)
             val *= excess
         return val
@@ -360,10 +361,7 @@ class Mixing:
         val = 1
         for sfo in self.sfos:
             gp = sfo.gross_population
-            if sfo.occupied:
-                gp = np.clip(gp, 0, sfo.occupation)
-            else:
-                gp = max(0, gp)
+            gp = np.clip(gp, 0, 2)
             excess = abs(sfo.occupation - gp)
             val *= excess
 
@@ -448,15 +446,16 @@ class Mixing:
         max_contr_mo = None
         max_contr_sfo1 = None
         max_contr_sfo2 = None
-        virt_sfos = [sfo for sfo in self.sfos if not sfo.occupied]
+        # virt_sfos = [sfo for sfo in self.sfos if not sfo.occupied]
+        # virt_sfos = [sfo for sfo in self.sfos if not sfo.occupied]
         for mo in self.orbs.mos:
             if mo.occupied:
                 continue
             if mo in self.mos:
                 continue
-            contr = np.array([sfo.mulliken_contribution(mo) for sfo in virt_sfos])
-            sfo1 = virt_sfos[argNmax(contr, 0)]
-            sfo2 = virt_sfos[argNmax(contr, 1)]
+            contr = np.array([sfo.mulliken_contribution(mo) for sfo in self.sfos])
+            sfo1 = self.sfos[argNmax(contr, 0)]
+            sfo2 = self.sfos[argNmax(contr, 1)]
             contr1 = np.clip(sfo1.mulliken_contribution(mo), 0, 1)
             contr2 = np.clip(sfo2.mulliken_contribution(mo), 0, 1)
 
@@ -542,10 +541,16 @@ class Mixing:
             excess_virt = nsfos_virt - nmos_virt
             if excess_virt > 0:
                 for i in range(excess_virt):
-                    self._add_extra_virtual_mo()
+                    try:
+                        self._add_extra_virtual_mo()
+                    except:
+                        pass
             elif excess_virt < 0:
                 for i in range(-excess_virt):
-                    self._add_extra_virtual_sfo()
+                    try:
+                        self._add_extra_virtual_sfo()
+                    except:
+                        pass
 
             nsfos_occ = len([sfo for sfo in mix.sfos if sfo.occupied])
             nmos_occ = len([mo for mo in mix.mos if mo.occupied])
@@ -555,7 +560,10 @@ class Mixing:
             #         self._add_extra_occupied_mo()
             if excess_occ < 0:
                 for i in range(-excess_occ):
-                    self._add_extra_occupied_sfo()
+                    try:
+                        self._add_extra_occupied_sfo()
+                    except:
+                        pass
 
 
 def overlap_mat(sfos1, sfos2):
@@ -612,7 +620,6 @@ def _find_orbs(sfos1, sfos2, mos):
 
 
 def _is_bonding(sfo1, sfo2, mo):
-    # print(sfo1.coefficient(mo) * sfo2.coefficient(mo) * (sfo1 @ sfo2))
     return round(sfo1.coefficient(mo) * sfo2.coefficient(mo) * (sfo1 @ sfo2), 4) >= 0
 
 @tcutility.cache.cache
@@ -704,9 +711,6 @@ def oi2(orbs, index=0, irrep=None):
         mos.append(mo)
 
     best_mo = mos[np.argmax(res)]
-    # print(best_mo)
-    # plt.plot(res)
-    # plt.show()
     if direction == 0:
         frag1_contr = [abs(sfo.mulliken_contribution(best_mo)) for sfo in frag1_sfos_occ]
         frag2_contr = [abs(sfo.mulliken_contribution(best_mo)) for sfo in frag2_sfos_vir]
@@ -717,8 +721,6 @@ def oi2(orbs, index=0, irrep=None):
         frag2_contr = [abs(sfo.mulliken_contribution(best_mo)) for sfo in frag2_sfos_occ]
         best_sfo1 = frag1_sfos_vir[np.argmax(frag1_contr)]
         best_sfo2 = frag2_sfos_occ[np.argmax(frag2_contr)]
-
-    # # print(best_sfo1, best_sfo2)
 
     other_mos = [mo for mo in orbs.mos if not mo.occupied]
     other_mixes = []

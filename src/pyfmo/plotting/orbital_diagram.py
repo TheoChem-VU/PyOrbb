@@ -34,6 +34,7 @@ def draw_interaction(sfos, mos, connections, title=None, energy_type='energy', c
     energy_span *= 1.2
 
     frags = sorted(set(sfo.fragment_unique for sfo in sfos))
+    ax.set_xlim(-1, len(frags), auto=False)
     sep_orbs = {frag: [sfo for sfo in sfos if sfo.fragment_unique == frag] for frag in frags}
     sep_orbs['mo'] = mos
     poss = {}
@@ -101,14 +102,22 @@ def draw_interaction(sfos, mos, connections, title=None, energy_type='energy', c
                  f'{orb.name}' + spin_part,
                  ha='center',
                  va='top',
-                 size=6,
-                 gid=f'{"TEXTMO" if is_MO else "TEXTSFO"}_{orb}')
+                 size=8,
+                 gid=f'{"TEXTMO" if is_MO else "TEXTSFO"}_{orb}',
+                 fontname='monospace')
 
         if not orb.occupied:
             continue
 
         for spin_part in orb.spin:
-            if spin_part == 'A':
+            break_on_one = False
+            if orb.spin == 'AB' and orb.occupation == 1:
+                offset_x = 0
+                offset_y = -arrow_length / 2 * energy_span
+                displacement = arrow_length * energy_span
+                break_on_one = True
+
+            elif spin_part == 'A':
                 offset_x = -arrow_spacing
                 offset_y = -arrow_length / 2 * energy_span
                 displacement = arrow_length * energy_span
@@ -132,6 +141,8 @@ def draw_interaction(sfos, mos, connections, title=None, energy_type='energy', c
                       length_includes_head=True,
                       linewidth=arrow_thickness,
                       gid=f'{"ARROWMO" if is_MO else "ARROWSFO"}_{orb}')
+            if break_on_one:
+                break
 
     for sfo, mo in connections:
         psfo, pmo = poss[sfo], poss[mo]
