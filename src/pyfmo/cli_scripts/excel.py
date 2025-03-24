@@ -11,11 +11,11 @@ import numpy as np
 import os
 import tcviewer
 
+
 font_path = os.path.split(__file__)[0] + '/ibm_plex_mono/IBMPlexMono-Regular.ttf'  # Your font path goes here
 mpl.font_manager.fontManager.addfont(font_path)
 prop = mpl.font_manager.FontProperties(fname=font_path)
 
-# plt.rcParams['font.family'] = 'monospace'
 plt.rcParams['font.monospace'] = prop.get_name()
 
 
