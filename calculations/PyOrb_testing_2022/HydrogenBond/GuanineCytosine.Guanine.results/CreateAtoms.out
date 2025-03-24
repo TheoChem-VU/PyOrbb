@@ -3,10 +3,10 @@
 JSONified input:
 ++++++++++++++++
 {
-  "Create": "N m=14.0030740000000 /Applications/AMS2022.103.app/Contents/Resources/amshome/atomicdata/ADF/ZORA/TZ2P/N",
+  "Create": "N m=14.003074000000000 /Applications/AMS2024.102.app/Contents/Resources/amshome/atomicdata/ADF/ZORA/TZ2P/N",
   "CorePotentials": {
     "_1": [],
-    "_h": "/tmp/amstmp_ams_kid0.1966266311/t12.rel"
+    "_h": "/tmp/amstmp_ams_kid0.1683703729/t12.rel"
   },
   "xc": {
     "gga": "BLYP"
@@ -23,13 +23,12 @@ JSONified input traversal:
 7 0 _h, path = CorePotentials%_h
 2 1 xc, path = xc
 7 0 gga, path = xc%gga
- dirac file name: 
- /Applications/AMS2022.103.app/Contents/Resources/amshome/atomicdata/Dirac/N
+ dirac file name: /Applications/AMS2024.102.app/Contents/Resources/amshome/atomicdata/Dirac/N
 
 
 
                      **************************************************************************
-                     *  DIRAC 2022.103  RunTime: Jan27-2023 14:05:56  ShM Nodes: 1  Procs: 1  *
+                     *  DIRAC 2024.102  RunTime: Mar24-2025 12:07:01  ShM Nodes: 1  Procs: 1  *
                      **************************************************************************
   
 1
@@ -83,10 +82,10 @@ JSONified input traversal:
  A T T A C H E D   F I L E S
  ===========================
   
- CREATE - Data File:    /Applications/AMS2022.103.app/Contents/Resources/amshome/atomicdata/ADF/ZORA/TZ2P/N
+ CREATE - Data File:    /Applications/AMS2024.102.app/Contents/Resources/amshome/atomicdata/ADF/ZORA/TZ2P/N
                         Nitrogen (TZ2P)
  Core Potentials:
-         file : /tmp/amstmp_ams_kid0.1966266311/t12.rel
+         file : /tmp/amstmp_ams_kid0.1683703729/t12.rel
 
 
 
@@ -493,7 +492,7 @@ JSONified input traversal:
  CYCLE    9
   SDIIS (wt  1.000): -0.0000 -0.0000  0.0000 -0.0000  0.0000 -0.0035 -0.0320  1.0355
   DIIS coefficients: -0.0000 -0.0000  0.0000 -0.0000  0.0000 -0.0035 -0.0320  1.0355
- SCF Error: norm([F,P])=      0.000006917899, max([F,P])=      0.000004912293
+ SCF Error: norm([F,P])=      0.000006917902, max([F,P])=      0.000004912297
  orbitals (Q,E):
  ---------------
  S :1...3            ( 2.00   -14.1602)  ( 2.00    -0.6780)  ( 0.00     0.5172)
@@ -504,7 +503,7 @@ JSONified input traversal:
  CYCLE   10
   SDIIS (wt  1.000): -0.0000 -0.0000  0.0000 -0.0001 -0.0008 -0.0022  1.0031
   DIIS coefficients: -0.0000 -0.0000  0.0000 -0.0001 -0.0008 -0.0022  1.0031
- SCF Error: norm([F,P])=      0.000000781920, max([F,P])=      0.000000448907
+ SCF Error: norm([F,P])=      0.000000781918, max([F,P])=      0.000000448905
  orbitals (Q,E):
  ---------------
  S :1...3            ( 2.00   -14.1602)  ( 2.00    -0.6780)  ( 0.00     0.5172)
@@ -515,7 +514,7 @@ JSONified input traversal:
  CYCLE   11
   SDIIS (wt  1.000):  0.0000  0.0000  0.0001 -0.0130  1.0129
   DIIS coefficients:  0.0000  0.0000  0.0001 -0.0130  1.0129
- SCF Error: norm([F,P])=      0.000000007059, max([F,P])=      0.000000004490
+ SCF Error: norm([F,P])=      0.000000007068, max([F,P])=      0.000000004496
  orbitals (Q,E):
  ---------------
  S :1...3            ( 2.00   -14.1602)  ( 2.00    -0.6780)  ( 0.00     0.5172)
@@ -538,18 +537,18 @@ JSONified input traversal:
  *** Using FIT density in Focky
   SDIIS (wt  1.000): -0.0000  0.0003  0.0082  0.9915
   DIIS coefficients: -0.0000  0.0003  0.0082  0.9915
- SCF Error: norm([F,P])=      0.000000000172, max([F,P])=      0.000000000096
+ SCF Error: norm([F,P])=      0.000000000172, max([F,P])=      0.000000000097
 
  Scaled ZORA Orbital Energies, per Irrep and Spin:
  =================================================
                         Occup              E (au)              E (eV)       Diff (eV) with prev. cycle
                         -----      --------------------        ------       --------------------------
  S
-               1        2.000     -0.14160221375671E+02      -385.319               3.21E-09
-               2        2.000     -0.67803041254976E+00       -18.450               2.32E-09
-               3        0.000      0.51716445280733E+00        14.073
-               4        0.000      0.68717679530040E+01       186.990
-               5        0.000      0.63432330882306E+02      1726.082
+               1        2.000     -0.14160221375671E+02      -385.319               3.22E-09
+               2        2.000     -0.67803041254977E+00       -18.450               2.32E-09
+               3        0.000      0.51716445280730E+00        14.073
+               4        0.000      0.68717679530042E+01       186.990
+               5        0.000      0.63432330882316E+02      1726.082
  P
                1        3.000     -0.25951117702289E+00        -7.062               2.18E-09
                2        0.000      0.28111197380959E+00         7.649
@@ -563,7 +562,7 @@ JSONified input traversal:
  Partially Occupied:
                1 P                -0.25951117702289E+00
   
- HOMO :        2 S                -0.67803041254976E+00
+ HOMO :        2 S                -0.67803041254977E+00
  LUMO :        2 P                 0.28111197380959E+00
   
 
@@ -574,15 +573,15 @@ JSONified input traversal:
  Irrep        no.  (spin)   Occup              E (au)                E (eV)
  ---------------------------------------------------------------------------
  S             1             2.00       -0.14160221375671E+02      -385.3192
- S             2             2.00       -0.67803041254976E+00       -18.4501
+ S             2             2.00       -0.67803041254977E+00       -18.4501
  P             1             3.00       -0.25951117702289E+00        -7.0617
  P             2             0.00        0.28111197380959E+00         7.6494
- S             3             0.00        0.51716445280733E+00        14.0728
+ S             3             0.00        0.51716445280730E+00        14.0728
  D             1             0.00        0.12496649006786E+01        34.0051
  P             3             0.00        0.32745572206096E+01        89.1052
  F             1             0.00        0.40126624976259E+01       109.1901
- S             4             0.00        0.68717679530040E+01       186.9903
- S             5             0.00        0.63432330882306E+02      1726.0815
+ S             4             0.00        0.68717679530042E+01       186.9903
+ S             5             0.00        0.63432330882316E+02      1726.0815
 
 
  All Electron Calculation, thus no Orbital Energies of the Core Orbitals are calculated
@@ -600,7 +599,7 @@ JSONified input traversal:
 
  Atom              Charge    Spin density          S         P         D         F
  ----              ------    ------------       ------    ------    ------    ------
- 1 N               0.0000                       4.0000    3.0000    0.0000    0.0000
+ 1 N              -0.0000                       4.0000    3.0000    0.0000    0.0000
 
  Populations of individual BAS functions
  ----------------------------------------
@@ -610,8 +609,8 @@ JSONified input traversal:
 
  Gross Charges per Atom (Z minus electrons)
  ==========================================
-             0.0000
- Net Total:  0.00000000
+            -0.0000
+ Net Total: -0.00000000
 
 
 
@@ -627,10 +626,10 @@ JSONified input traversal:
 JSONified input:
 ++++++++++++++++
 {
-  "Create": "C m=12.0000000000000 /Applications/AMS2022.103.app/Contents/Resources/amshome/atomicdata/ADF/ZORA/TZ2P/C",
+  "Create": "C m=12.000000000000000 /Applications/AMS2024.102.app/Contents/Resources/amshome/atomicdata/ADF/ZORA/TZ2P/C",
   "CorePotentials": {
     "_1": [],
-    "_h": "/tmp/amstmp_ams_kid0.1966266311/t12.rel"
+    "_h": "/tmp/amstmp_ams_kid0.1683703729/t12.rel"
   },
   "xc": {
     "gga": "BLYP"
@@ -647,13 +646,12 @@ JSONified input traversal:
 7 0 _h, path = CorePotentials%_h
 2 1 xc, path = xc
 7 0 gga, path = xc%gga
- dirac file name: 
- /Applications/AMS2022.103.app/Contents/Resources/amshome/atomicdata/Dirac/C
+ dirac file name: /Applications/AMS2024.102.app/Contents/Resources/amshome/atomicdata/Dirac/C
 
 
 
                      **************************************************************************
-                     *  DIRAC 2022.103  RunTime: Jan27-2023 14:05:59  ShM Nodes: 1  Procs: 1  *
+                     *  DIRAC 2024.102  RunTime: Mar24-2025 12:07:02  ShM Nodes: 1  Procs: 1  *
                      **************************************************************************
   
 1
@@ -707,10 +705,10 @@ JSONified input traversal:
  A T T A C H E D   F I L E S
  ===========================
   
- CREATE - Data File:    /Applications/AMS2022.103.app/Contents/Resources/amshome/atomicdata/ADF/ZORA/TZ2P/C
+ CREATE - Data File:    /Applications/AMS2024.102.app/Contents/Resources/amshome/atomicdata/ADF/ZORA/TZ2P/C
                         Carbon (TZ2P)
  Core Potentials:
-         file : /tmp/amstmp_ams_kid0.1966266311/t12.rel
+         file : /tmp/amstmp_ams_kid0.1683703729/t12.rel
 
 
 
@@ -1031,7 +1029,7 @@ JSONified input traversal:
  F :1...1            ( 0.00     0.4946)
 
  CYCLE    2
-  SDIIS (wt  0.000):  1.0000 -0.0000
+  SDIIS (wt  0.000):  1.0000  0.0000
  A-DIIS (wt  1.000):  0.0000  1.0000
   DIIS coefficients:  0.0000  1.0000
  SCF Error: norm([F,P])=      4.484506062555, max([F,P])=      3.330744482678
@@ -1070,7 +1068,7 @@ JSONified input traversal:
   SDIIS (wt  0.000): -0.0214 -0.0561  0.3851  0.6924
  A-DIIS (wt  1.000):  0.0000  0.0000  0.2654  0.7346
   DIIS coefficients:  0.0000  0.0000  0.2654  0.7346
- SCF Error: norm([F,P])=      0.413415161943, max([F,P])=      0.329212229266
+ SCF Error: norm([F,P])=      0.413415161943, max([F,P])=      0.329212229267
  orbitals (Q,E):
  ---------------
  S :1...3            ( 2.00   -10.2000)  ( 2.00    -0.5646)  ( 0.00     0.3331)
@@ -1117,7 +1115,7 @@ JSONified input traversal:
  CYCLE    9
   SDIIS (wt  1.000): -0.0000 -0.0000 -0.0000 -0.0000  0.0023 -0.0005 -0.0163  1.0146
   DIIS coefficients: -0.0000 -0.0000 -0.0000 -0.0000  0.0023 -0.0005 -0.0163  1.0146
- SCF Error: norm([F,P])=      0.000221809688, max([F,P])=      0.000168250794
+ SCF Error: norm([F,P])=      0.000221809689, max([F,P])=      0.000168250795
  orbitals (Q,E):
  ---------------
  S :1...3            ( 2.00   -10.0664)  ( 2.00    -0.5005)  ( 0.00     0.3733)
@@ -1128,7 +1126,7 @@ JSONified input traversal:
  CYCLE   10
   SDIIS (wt  1.000):  0.0000 -0.0000 -0.0000  0.0001  0.0000 -0.0011  0.0160  0.9850
   DIIS coefficients:  0.0000 -0.0000 -0.0000  0.0001  0.0000 -0.0011  0.0160  0.9850
- SCF Error: norm([F,P])=      0.000001991277, max([F,P])=      0.000001353751
+ SCF Error: norm([F,P])=      0.000001991275, max([F,P])=      0.000001353748
  orbitals (Q,E):
  ---------------
  S :1...3            ( 2.00   -10.0664)  ( 2.00    -0.5005)  ( 0.00     0.3733)
@@ -1139,7 +1137,7 @@ JSONified input traversal:
  CYCLE   11
   SDIIS (wt  1.000):  0.0000 -0.0000 -0.0001 -0.0074  1.0075
   DIIS coefficients:  0.0000 -0.0000 -0.0001 -0.0074  1.0075
- SCF Error: norm([F,P])=      0.000000017335, max([F,P])=      0.000000014449
+ SCF Error: norm([F,P])=      0.000000017315, max([F,P])=      0.000000014433
  orbitals (Q,E):
  ---------------
  S :1...3            ( 2.00   -10.0664)  ( 2.00    -0.5005)  ( 0.00     0.3733)
@@ -1171,8 +1169,8 @@ JSONified input traversal:
                                                 *******************
   
  *** Using FIT density in Focky
-  SDIIS (wt  1.000): -0.0000  0.0001  0.0310  0.9689
-  DIIS coefficients: -0.0000  0.0001  0.0310  0.9689
+  SDIIS (wt  1.000): -0.0000  0.0001  0.0311  0.9688
+  DIIS coefficients: -0.0000  0.0001  0.0311  0.9688
  SCF Error: norm([F,P])=      0.000000000054, max([F,P])=      0.000000000036
 
  Scaled ZORA Orbital Energies, per Irrep and Spin:
@@ -1181,14 +1179,14 @@ JSONified input traversal:
                         -----      --------------------        ------       --------------------------
  S
                1        2.000     -0.10066402416052E+02      -273.921              -1.31E-09
-               2        2.000     -0.50053750372669E+00       -13.620              -8.10E-10
-               3        0.000      0.37329545924107E+00        10.158
-               4        0.000      0.54048185521546E+01       147.073
-               5        0.000      0.49847588142277E+02      1356.422
+               2        2.000     -0.50053750372671E+00       -13.620              -8.10E-10
+               3        0.000      0.37329545924106E+00        10.158
+               4        0.000      0.54048185521539E+01       147.073
+               5        0.000      0.49847588142275E+02      1356.422
  P
                1        2.000     -0.19252988992860E+00        -5.239              -7.55E-10
                2        0.000      0.16864110971307E+00         4.589
-               3        0.000      0.20134725492761E+01        54.789
+               3        0.000      0.20134725492760E+01        54.789
  D
                1        0.000      0.12430132205457E+01        33.824
  F
@@ -1198,7 +1196,7 @@ JSONified input traversal:
  Partially Occupied:
                1 P                -0.19252988992860E+00
   
- HOMO :        2 S                -0.50053750372669E+00
+ HOMO :        2 S                -0.50053750372671E+00
  LUMO :        2 P                 0.16864110971307E+00
   
 
@@ -1209,15 +1207,15 @@ JSONified input traversal:
  Irrep        no.  (spin)   Occup              E (au)                E (eV)
  ---------------------------------------------------------------------------
  S             1             2.00       -0.10066402416052E+02      -273.9207
- S             2             2.00       -0.50053750372669E+00       -13.6203
+ S             2             2.00       -0.50053750372671E+00       -13.6203
  P             1             2.00       -0.19252988992860E+00        -5.2390
  P             2             0.00        0.16864110971307E+00         4.5890
- S             3             0.00        0.37329545924107E+00        10.1579
+ S             3             0.00        0.37329545924106E+00        10.1579
  D             1             0.00        0.12430132205457E+01        33.8241
- P             3             0.00        0.20134725492761E+01        54.7894
+ P             3             0.00        0.20134725492760E+01        54.7894
  F             1             0.00        0.40156376691921E+01       109.2711
- S             4             0.00        0.54048185521546E+01       147.0726
- S             5             0.00        0.49847588142277E+02      1356.4219
+ S             4             0.00        0.54048185521539E+01       147.0726
+ S             5             0.00        0.49847588142275E+02      1356.4219
 
 
  All Electron Calculation, thus no Orbital Energies of the Core Orbitals are calculated
@@ -1262,10 +1260,10 @@ JSONified input traversal:
 JSONified input:
 ++++++++++++++++
 {
-  "Create": "H m=1.00782500000000 /Applications/AMS2022.103.app/Contents/Resources/amshome/atomicdata/ADF/ZORA/TZ2P/H",
+  "Create": "H m=1.0078250000000000 /Applications/AMS2024.102.app/Contents/Resources/amshome/atomicdata/ADF/ZORA/TZ2P/H",
   "CorePotentials": {
     "_1": [],
-    "_h": "/tmp/amstmp_ams_kid0.1966266311/t12.rel"
+    "_h": "/tmp/amstmp_ams_kid0.1683703729/t12.rel"
   },
   "xc": {
     "gga": "BLYP"
@@ -1282,13 +1280,12 @@ JSONified input traversal:
 7 0 _h, path = CorePotentials%_h
 2 1 xc, path = xc
 7 0 gga, path = xc%gga
- dirac file name: 
- /Applications/AMS2022.103.app/Contents/Resources/amshome/atomicdata/Dirac/H
+ dirac file name: /Applications/AMS2024.102.app/Contents/Resources/amshome/atomicdata/Dirac/H
 
 
 
                      **************************************************************************
-                     *  DIRAC 2022.103  RunTime: Jan27-2023 14:06:03  ShM Nodes: 1  Procs: 1  *
+                     *  DIRAC 2024.102  RunTime: Mar24-2025 12:07:02  ShM Nodes: 1  Procs: 1  *
                      **************************************************************************
   
 1
@@ -1316,7 +1313,7 @@ JSONified input traversal:
  EXCHANGE COEFFICIENT=  0.7000000           TAIL CORRECTION=  0.           NUCLEAR RADIUS=  0.000E+00
 0                       ORBITAL    N    L    J     ELECTRONS     EIGENVALUE                DELTA OF EIGENV.
 
-                          1S1/2  1.0  0.0  0.5     1.000       -0.2039397E+00                 0.2720093E-06
+                          1S1/2  1.0  0.0  0.5     1.000       -0.2039397E+00                 0.2720092E-06
 
 
                                         NUCLEAR CHARGE=    1.000000
@@ -1336,10 +1333,10 @@ JSONified input traversal:
  A T T A C H E D   F I L E S
  ===========================
   
- CREATE - Data File:    /Applications/AMS2022.103.app/Contents/Resources/amshome/atomicdata/ADF/ZORA/TZ2P/H
+ CREATE - Data File:    /Applications/AMS2024.102.app/Contents/Resources/amshome/atomicdata/ADF/ZORA/TZ2P/H
                         Hydrogen (TZ2P)
  Core Potentials:
-         file : /tmp/amstmp_ams_kid0.1966266311/t12.rel
+         file : /tmp/amstmp_ams_kid0.1683703729/t12.rel
 
 
 
@@ -1699,10 +1696,10 @@ JSONified input traversal:
                         -----      --------------------        ------       --------------------------
  S
                1        1.000     -0.24003797861903E+00        -6.532              -1.36E-09
-               2        0.000      0.87971216271497E-01         2.394
+               2        0.000      0.87971216271519E-01         2.394
                3        0.000      0.15019094928239E+01        40.869
  P
-               1        0.000      0.40613188089668E+00        11.051
+               1        0.000      0.40613188089667E+00        11.051
  D
                1        0.000      0.25694185634358E+01        69.917
 
@@ -1710,7 +1707,7 @@ JSONified input traversal:
  Partially Occupied:
                1 S                -0.24003797861903E+00
   
- LUMO :        2 S                 0.87971216271497E-01
+ LUMO :        2 S                 0.87971216271519E-01
   
 
 
@@ -1720,8 +1717,8 @@ JSONified input traversal:
  Irrep        no.  (spin)   Occup              E (au)                E (eV)
  ---------------------------------------------------------------------------
  S             1             1.00       -0.24003797861903E+00        -6.5318
- S             2             0.00        0.87971216271497E-01         2.3938
- P             1             0.00        0.40613188089668E+00        11.0514
+ S             2             0.00        0.87971216271519E-01         2.3938
+ P             1             0.00        0.40613188089667E+00        11.0514
  S             3             0.00        0.15019094928239E+01        40.8690
  D             1             0.00        0.25694185634358E+01        69.9174
 
@@ -1741,7 +1738,7 @@ JSONified input traversal:
 
  Atom              Charge    Spin density          S         P         D         F
  ----              ------    ------------       ------    ------    ------    ------
- 1 H              -0.0000                       1.0000    0.0000    0.0000    0.0000
+ 1 H               0.0000                       1.0000    0.0000    0.0000    0.0000
 
  Populations of individual BAS functions
  ----------------------------------------
@@ -1750,8 +1747,8 @@ JSONified input traversal:
 
  Gross Charges per Atom (Z minus electrons)
  ==========================================
-            -0.0000
- Net Total: -0.00000000
+             0.0000
+ Net Total:  0.00000000
 
 
 
@@ -1767,10 +1764,10 @@ JSONified input traversal:
 JSONified input:
 ++++++++++++++++
 {
-  "Create": "O m=15.9949140000000 /Applications/AMS2022.103.app/Contents/Resources/amshome/atomicdata/ADF/ZORA/TZ2P/O",
+  "Create": "O m=15.994914000000000 /Applications/AMS2024.102.app/Contents/Resources/amshome/atomicdata/ADF/ZORA/TZ2P/O",
   "CorePotentials": {
     "_1": [],
-    "_h": "/tmp/amstmp_ams_kid0.1966266311/t12.rel"
+    "_h": "/tmp/amstmp_ams_kid0.1683703729/t12.rel"
   },
   "xc": {
     "gga": "BLYP"
@@ -1787,13 +1784,12 @@ JSONified input traversal:
 7 0 _h, path = CorePotentials%_h
 2 1 xc, path = xc
 7 0 gga, path = xc%gga
- dirac file name: 
- /Applications/AMS2022.103.app/Contents/Resources/amshome/atomicdata/Dirac/O
+ dirac file name: /Applications/AMS2024.102.app/Contents/Resources/amshome/atomicdata/Dirac/O
 
 
 
                      **************************************************************************
-                     *  DIRAC 2022.103  RunTime: Jan27-2023 14:06:06  ShM Nodes: 1  Procs: 1  *
+                     *  DIRAC 2024.102  RunTime: Mar24-2025 12:07:03  ShM Nodes: 1  Procs: 1  *
                      **************************************************************************
   
 1
@@ -1813,7 +1809,7 @@ JSONified input traversal:
   2.0  1.0  1.5      -1.000       2.000     0.00000
  R(1)=  0.1000000E-08 D=  0.1005080E+01 RNUC=  0.0000000E+00
  converged at cycle   28  DENSITY AVERAGING    0.2400
-  MAXIMUM ERROR IN R.V(R) IS   0.81125672E-05
+  MAXIMUM ERROR IN R.V(R) IS   0.81125669E-05
  Q,EY,EV,EZ,ESUM,ETOT,RHO  0.800000E+01 -0.101247E+02 -0.114961E+03 -0.177573E+03 -0.405053E+02 -0.743427E+02  0.414766E-14
 
 
@@ -1824,7 +1820,7 @@ JSONified input traversal:
  EXCHANGE COEFFICIENT=  0.7000000           TAIL CORRECTION=  0.           NUCLEAR RADIUS=  0.000E+00
 0                       ORBITAL    N    L    J     ELECTRONS     EIGENVALUE                DELTA OF EIGENV.
 
-                          1S1/2  1.0  0.0  0.5     2.000       -0.1880014E+02                 0.7264364E-06
+                          1S1/2  1.0  0.0  0.5     2.000       -0.1880014E+02                 0.7264356E-06
                           2S1/2  2.0  0.0  0.5     2.000       -0.8412236E+00                 0.5932752E-05
                           2P1/2  2.0  1.0  0.5     2.000       -0.3063203E+00                 0.5998471E-05
                           2P3/2  2.0  1.0  1.5     2.000       -0.3049609E+00                 0.5986971E-05
@@ -1847,10 +1843,10 @@ JSONified input traversal:
  A T T A C H E D   F I L E S
  ===========================
   
- CREATE - Data File:    /Applications/AMS2022.103.app/Contents/Resources/amshome/atomicdata/ADF/ZORA/TZ2P/O
+ CREATE - Data File:    /Applications/AMS2024.102.app/Contents/Resources/amshome/atomicdata/ADF/ZORA/TZ2P/O
                         Oxygen (TZ2P)
  Core Potentials:
-         file : /tmp/amstmp_ams_kid0.1966266311/t12.rel
+         file : /tmp/amstmp_ams_kid0.1683703729/t12.rel
 
 
 
@@ -2171,10 +2167,10 @@ JSONified input traversal:
  F :1...1            ( 0.00    -1.5001)
 
  CYCLE    2
-  SDIIS (wt  0.000):  1.0000  0.0000
+  SDIIS (wt  0.000):  1.0000 -0.0000
  A-DIIS (wt  1.000):  0.0000  1.0000
   DIIS coefficients:  0.0000  1.0000
- SCF Error: norm([F,P])=      8.773791672833, max([F,P])=      5.524561940054
+ SCF Error: norm([F,P])=      8.773791672832, max([F,P])=      5.524561940053
  orbitals (Q,E):
  ---------------
  S :1...3            ( 2.00   -14.5707)  ( 2.00    -0.0128)  ( 0.00     1.8158)
@@ -2198,7 +2194,7 @@ JSONified input traversal:
   SDIIS (wt  0.000): -0.0455  0.1705  0.8749
  A-DIIS (wt  1.000):  0.0000  0.0000  1.0000
   DIIS coefficients:  0.0000  0.0000  1.0000
- SCF Error: norm([F,P])=      1.148131679621, max([F,P])=      0.583044539917
+ SCF Error: norm([F,P])=      1.148131679620, max([F,P])=      0.583044539917
  orbitals (Q,E):
  ---------------
  S :1...3            ( 2.00   -18.0664)  ( 2.00    -0.5476)  ( 0.00     1.0323)
@@ -2246,7 +2242,7 @@ JSONified input traversal:
   SDIIS (wt  0.909): -0.0000  0.0002  0.0044 -0.0011 -0.0193 -0.1456  1.1614
  A-DIIS (wt  0.091):  0.0000  0.0000  0.0000  0.0000  0.0000  0.0000  1.0000
   DIIS coefficients: -0.0000  0.0002  0.0040 -0.0010 -0.0176 -0.1323  1.1467
- SCF Error: norm([F,P])=      0.017118464220, max([F,P])=      0.010044256121
+ SCF Error: norm([F,P])=      0.017118464219, max([F,P])=      0.010044256121
  orbitals (Q,E):
  ---------------
  S :1...3            ( 2.00   -18.9396)  ( 2.00    -0.8756)  ( 0.00     0.7913)
@@ -2258,7 +2254,7 @@ JSONified input traversal:
   SDIIS (wt  1.000): -0.0000  0.0000  0.0000 -0.0001  0.0003  0.0068  0.0145  0.9785
  A-DIIS (wt  0.000):  0.0000  0.0000  0.0000  0.0000  0.0000  0.0000  0.0000  1.0000
   DIIS coefficients: -0.0000  0.0000  0.0000 -0.0001  0.0003  0.0068  0.0145  0.9785
- SCF Error: norm([F,P])=      0.001789532609, max([F,P])=      0.001007772848
+ SCF Error: norm([F,P])=      0.001789532610, max([F,P])=      0.001007772848
  orbitals (Q,E):
  ---------------
  S :1...3            ( 2.00   -18.9407)  ( 2.00    -0.8760)  ( 0.00     0.7910)
@@ -2269,7 +2265,7 @@ JSONified input traversal:
  CYCLE   10
   SDIIS (wt  1.000): -0.0000 -0.0000 -0.0000 -0.0000  0.0000  0.0001 -0.0011 -0.0030  1.0040
   DIIS coefficients: -0.0000 -0.0000 -0.0000 -0.0000  0.0000  0.0001 -0.0011 -0.0030  1.0040
- SCF Error: norm([F,P])=      0.000001290480, max([F,P])=      0.000000684699
+ SCF Error: norm([F,P])=      0.000001290508, max([F,P])=      0.000000684704
  orbitals (Q,E):
  ---------------
  S :1...3            ( 2.00   -18.9407)  ( 2.00    -0.8760)  ( 0.00     0.7910)
@@ -2280,7 +2276,7 @@ JSONified input traversal:
  CYCLE   11
   SDIIS (wt  1.000):  0.0000 -0.0000 -0.0000 -0.0001 -0.0049  1.0051
   DIIS coefficients:  0.0000 -0.0000 -0.0000 -0.0001 -0.0049  1.0051
- SCF Error: norm([F,P])=      0.000000049601, max([F,P])=      0.000000023396
+ SCF Error: norm([F,P])=      0.000000049598, max([F,P])=      0.000000023394
  orbitals (Q,E):
  ---------------
  S :1...3            ( 2.00   -18.9407)  ( 2.00    -0.8760)  ( 0.00     0.7910)
@@ -2291,7 +2287,7 @@ JSONified input traversal:
  CYCLE   12
   SDIIS (wt  1.000):  0.0000  0.0003  0.0052  0.9944
   DIIS coefficients:  0.0000  0.0003  0.0052  0.9944
- SCF Error: norm([F,P])=      0.000000002420, max([F,P])=      0.000000001182
+ SCF Error: norm([F,P])=      0.000000002419, max([F,P])=      0.000000001181
  orbitals (Q,E):
  ---------------
  S :1...3            ( 2.00   -18.9407)  ( 2.00    -0.8760)  ( 0.00     0.7910)
@@ -2314,33 +2310,33 @@ JSONified input traversal:
  *** Using FIT density in Focky
   SDIIS (wt  1.000): -0.0000  0.0004 -0.0100  1.0096
   DIIS coefficients: -0.0000  0.0004 -0.0100  1.0096
- SCF Error: norm([F,P])=      0.000000000041, max([F,P])=      0.000000000021
+ SCF Error: norm([F,P])=      0.000000000042, max([F,P])=      0.000000000021
 
  Scaled ZORA Orbital Energies, per Irrep and Spin:
  =================================================
                         Occup              E (au)              E (eV)       Diff (eV) with prev. cycle
                         -----      --------------------        ------       --------------------------
  S
-               1        2.000     -0.18940695393816E+02      -515.403               6.00E-10
-               2        2.000     -0.87601383551481E+00       -23.838               4.08E-10
-               3        0.000      0.79099470551348E+00        21.524
-               4        0.000      0.13421796338570E+02       365.226
-               5        0.000      0.12156080374107E+03      3307.838
+               1        2.000     -0.18940695393816E+02      -515.403               6.02E-10
+               2        2.000     -0.87601383551480E+00       -23.838               4.08E-10
+               3        0.000      0.79099470551401E+00        21.524
+               4        0.000      0.13421796338605E+02       365.226
+               5        0.000      0.12156080374112E+03      3307.838
  P
-               1        4.000     -0.33149222020602E+00        -9.020               3.87E-10
-               2        0.000      0.34681773675362E+00         9.437
-               3        0.000      0.38196744102168E+01       103.939
+               1        4.000     -0.33149222020599E+00        -9.020               3.88E-10
+               2        0.000      0.34681773675364E+00         9.437
+               3        0.000      0.38196744102169E+01       103.939
  D
-               1        0.000      0.10706648787179E+01        29.134
+               1        0.000      0.10706648787180E+01        29.134
  F
-               1        0.000      0.33592549891169E+01        91.410
+               1        0.000      0.33592549891170E+01        91.410
 
 
  Partially Occupied:
-               1 P                -0.33149222020602E+00
+               1 P                -0.33149222020599E+00
   
- HOMO :        2 S                -0.87601383551481E+00
- LUMO :        2 P                 0.34681773675362E+00
+ HOMO :        2 S                -0.87601383551480E+00
+ LUMO :        2 P                 0.34681773675364E+00
   
 
 
@@ -2350,15 +2346,15 @@ JSONified input traversal:
  Irrep        no.  (spin)   Occup              E (au)                E (eV)
  ---------------------------------------------------------------------------
  S             1             2.00       -0.18940695393816E+02      -515.4025
- S             2             2.00       -0.87601383551481E+00       -23.8375
- P             1             4.00       -0.33149222020602E+00        -9.0204
- P             2             0.00        0.34681773675362E+00         9.4374
- S             3             0.00        0.79099470551348E+00        21.5241
- D             1             0.00        0.10706648787179E+01        29.1343
- F             1             0.00        0.33592549891169E+01        91.4100
- P             3             0.00        0.38196744102168E+01       103.9386
- S             4             0.00        0.13421796338570E+02       365.2257
- S             5             0.00        0.12156080374107E+03      3307.8378
+ S             2             2.00       -0.87601383551480E+00       -23.8375
+ P             1             4.00       -0.33149222020599E+00        -9.0204
+ P             2             0.00        0.34681773675364E+00         9.4374
+ S             3             0.00        0.79099470551401E+00        21.5241
+ D             1             0.00        0.10706648787180E+01        29.1343
+ F             1             0.00        0.33592549891170E+01        91.4100
+ P             3             0.00        0.38196744102169E+01       103.9386
+ S             4             0.00        0.13421796338605E+02       365.2257
+ S             5             0.00        0.12156080374112E+03      3307.8378
 
 
  All Electron Calculation, thus no Orbital Energies of the Core Orbitals are calculated
@@ -2376,7 +2372,7 @@ JSONified input traversal:
 
  Atom              Charge    Spin density          S         P         D         F
  ----              ------    ------------       ------    ------    ------    ------
- 1 O              -0.0000                       4.0000    4.0000    0.0000    0.0000
+ 1 O               0.0000                       4.0000    4.0000    0.0000    0.0000
 
  Populations of individual BAS functions
  ----------------------------------------
@@ -2386,8 +2382,8 @@ JSONified input traversal:
 
  Gross Charges per Atom (Z minus electrons)
  ==========================================
-            -0.0000
- Net Total: -0.00000000
+             0.0000
+ Net Total:  0.00000000
 
 
 

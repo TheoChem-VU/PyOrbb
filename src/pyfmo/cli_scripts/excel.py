@@ -3,7 +3,7 @@ import argparse
 import pyfmo
 import matplotlib.pyplot as plt
 import matplotlib as mpl
-from matplotlib.widgets import Slider, CheckButtons
+from matplotlib.widgets import Slider, CheckButtons, RadioButtons
 from matplotlib.gridspec import GridSpec
 from matplotlib.backend_tools import Cursors
 from matplotlib import animation
@@ -35,9 +35,10 @@ def main(args: argparse.Namespace):
     orbs = pyfmo.orbitals2.objects.Orbitals(args.rkf)
     orbs.write_excel2(args.output)
 
-    mixer = pyfmo.analysis.mixing.Mixer(orbs, energy_type='energy')
-    oi_mixes = mixer.orbital_interactions(N=20)
-    pauli_mixes = mixer.pauli_repulsions(N=20)
+    mixers = {etype: pyfmo.analysis.mixing.Mixer(orbs, energy_type=etype) for etype in orbs.sfo_energy_types}
+
+    oi_mixes = {etype: mixer.orbital_interactions(N=100) for etype, mixer in mixers.items()}
+    pauli_mixes = {etype: mixer.pauli_repulsions(N=100) for etype, mixer in mixers.items()}
 
     def update(arg=None):
         draw_diagram(
@@ -45,10 +46,11 @@ def main(args: argparse.Namespace):
             allowed_spins=[s[1:] for s in spin_b.get_checked_labels()],
             allowed_irreps=[i[1:] for i in irrep_b.get_checked_labels()],
             oi_thresh=10**oi_s.val,
-            pauli_thresh=pauli_s.val
+            pauli_thresh=pauli_s.val,
+            energy_type=orbs.sfo_energy_types[etype_b.index_selected],
             )
 
-    def draw_diagram(ax=None, fig=None, allowed_spins=None, allowed_irreps=None, oi_thresh=None, pauli_thresh=None, ylim=None):
+    def draw_diagram(ax=None, fig=None, allowed_spins=None, allowed_irreps=None, oi_thresh=None, pauli_thresh=None, ylim=None, energy_type=None):
         if ax is None:
             ax = plt.gca()
 
@@ -59,9 +61,10 @@ def main(args: argparse.Namespace):
         ax.yaxis.set_major_formatter('{x: 3.0f}')
 
         global main_mix
-        main_mix = pyfmo.analysis.mixing.Mixing(orbs)
+        main_mix = pyfmo.analysis.mixing.Mixing(orbs, energy_type=energy_type)
+        # print(energy_type)
         if oi_b.get_status()[0]:
-            for mix_ in oi_mixes:
+            for mix_ in oi_mixes[energy_type]:
                 if any(mo.symmetry not in allowed_irreps for mo in mix_.mos):
                     continue
                 if any(mo.spin not in allowed_spins for mo in mix_.mos):
@@ -70,7 +73,7 @@ def main(args: argparse.Namespace):
                     main_mix += mix_
 
         if pauli_b.get_status()[0]:
-            for mix_ in pauli_mixes:
+            for mix_ in pauli_mixes[energy_type]:
                 if any(mo.symmetry not in allowed_irreps for mo in mix_.mos):
                     continue
                 if any(mo.spin not in allowed_spins for mo in mix_.mos):
@@ -93,7 +96,7 @@ def main(args: argparse.Namespace):
     # mixes.extend()
     # plt.figure()
     plt.figure(figsize=[9, 6.5])
-    gs = GridSpec(nrows=4, ncols=4, height_ratios=[1, .05, .05, .05], width_ratios=[.1, .6, .1, .1])
+    gs = GridSpec(nrows=4, ncols=5, height_ratios=[1, .05, .05, .05], width_ratios=[.1, .5, .1, .1, .1])
     oi_bax = plt.gcf().add_subplot(gs[2, 0])
     oi_bax._mouseover_set = set()
     pauli_bax = plt.gcf().add_subplot(gs[3, 0])
@@ -109,10 +112,10 @@ def main(args: argparse.Namespace):
 
     oi_b = CheckButtons(oi_bax, labels=[' Show'], actives=[True])
     pauli_b = CheckButtons(pauli_bax, labels=[' Show'], actives=[False])
-    
-    oi_s_max = max(mix.xiaobo_value() for mix in oi_mixes)
+    oi_s_max = max(max(mix.xiaobo_value() for mix in mixes) for mixes in oi_mixes.values())
     oi_s = Slider(oi_sax, 'OI', np.log10(0.0001), np.log10(oi_s_max), valinit=np.log10(oi_s_max/1.5), facecolor='g', closedmax=False)
-    pauli_s_max = max(mix.xiaobo_value() for mix in pauli_mixes)
+    pauli_s_max = max(max(mix.xiaobo_value() for mix in mixes) for mixes in pauli_mixes.values())
+    # pauli_s_max = max(mix.xiaobo_value() for mix in pauli_mixes)
     pauli_s = Slider(pauli_sax, 'Pauli', 0.001, pauli_s_max, valinit=pauli_s_max/1.5, facecolor='r')
     
     oi_b.on_clicked(update)
@@ -137,6 +140,19 @@ def main(args: argparse.Namespace):
     spin_b = CheckButtons(spin_ax, labels=spins, actives=[True for _ in spins])
     spin_b.on_clicked(update)
 
+
+    etype_ax = plt.gcf().add_subplot(gs[2:4, 4])
+    etype_ax._mouseover_set = set()
+    etype_ax.axis('off')
+    etype_ax.set_title('SFO Energy')
+    proper_names = {
+        'energy': ' Orbital',
+        'site_energy': ' Site',
+        'site_energy_SCF0': ' Site (SCF0)',
+    }
+    etypes = [proper_names[etype]for etype in orbs.sfo_energy_types]
+    etype_b = RadioButtons(etype_ax, labels=etypes, active=0)
+    etype_b.on_clicked(update)
 
     main_ax = plt.gcf().add_subplot(gs[0, :])
     update()
@@ -296,7 +312,7 @@ def main(args: argparse.Namespace):
                 for sfo in sorted(submix.sfos, key=lambda sfo: -abs(sfo.mulliken_contribution(mo))):
                     s += f'\n{str(sfo):19.19} {sfo.mulliken_contribution(mo): 8.2%} {sfo.coefficient(mo): 7.4f}'
 
-                s += '\n' * (50 - len(s.splitlines()))
+                s += '\n' * (40 - len(s.splitlines()))
                 _fade_unrelated_ints(mo)
                 already_unfaded = False
 
@@ -305,6 +321,7 @@ def main(args: argparse.Namespace):
                 plt.gcf().canvas.blit()
 
                 break
+
             if gid.startswith('SFO_'):
                 sfo = orbs.sfos[gid[4:]]
                 submixes = main_mix.split()
@@ -313,7 +330,7 @@ def main(args: argparse.Namespace):
                 s += f'\n   {sfo}'
                 s += f'\n   {sfo.relative_name}\n'
                 s += f'\nFragment   {sfo.fragment_unique}'
-                s += f'\nEnergy    {sfo.energy: .2f} eV'
+                s += f'\nEnergy    {getattr(sfo, orbs.sfo_energy_types[etype_b.index_selected]): .2f} eV'
                 s += f'\nPop.      {sfo.gross_population: .3f}'
                 s += f'\nSpin-pop. {sfo.gross_spin: .3f}'
                 s += f'\nSpin       {sfo.spin}'
@@ -333,7 +350,7 @@ def main(args: argparse.Namespace):
                 for mo in sorted(submix.mos, key=lambda mo: -abs(sfo.mulliken_contribution(mo))):
                     s += f'\n{str(mo):19.19} {sfo.mulliken_contribution(mo): 8.2%} {sfo.coefficient(mo): 7.4f}'
 
-                s += '\n' * (50 - len(s.splitlines()))
+                s += '\n' * (40 - len(s.splitlines()))
                 _fade_unrelated_ints(sfo)
                 already_unfaded = False
 
@@ -342,9 +359,11 @@ def main(args: argparse.Namespace):
                 plt.gcf().canvas.blit()
 
                 break
+
             if gid.startswith('MIX_'):
                 sfo = orbs.sfos[gid[4:].split('->')[0].strip()]
                 mo = orbs.mos[gid[4:].split('->')[1].strip()]
+                connected_sfos = [conn[0] for conn in main_mix.connections if conn[1] == mo and conn[0].fragment_unique != sfo.fragment_unique]
                 s += f'SFO'.ljust(35)
                 s += f'\n   {sfo}'
                 s += f'\n   {sfo.relative_name}\n'
@@ -355,7 +374,13 @@ def main(args: argparse.Namespace):
                 s += f'\nCoeff.    {sfo.coefficient(mo): .6f}'
                 s += f'\nSpin       {sfo.spin}'
                 s += f'\nIrrep      {sfo.symmetry}'
-                s += '\n' * (50 - len(s.splitlines()))
+                s += '\n\nSecond SFO          Bonding?'
+                s += '\n─────────────────── ────────'
+                for sfo2 in connected_sfos:
+                    is_bonding = ((sfo @ sfo2) * sfo.coefficient(mo) * sfo2.coefficient(mo)) >= 0
+                    s += f'\n{str(sfo2):19.19} {"   Yes  " if is_bonding else "    No    "}'
+
+                s += '\n' * (40 - len(s.splitlines()))
                 _fade_unrelated_ints(mo)
                 already_unfaded = False
 
@@ -365,13 +390,12 @@ def main(args: argparse.Namespace):
 
                 break
 
-
         else:
             if not already_unfaded:
                 already_unfaded = True
                 _unfade()
 
-                main_ax.txt.set_text((' '*35 + '\n')*50)
+                main_ax.txt.set_text((' '*35 + '\n')*40)
                 plt.gca().draw_artist(main_ax.txt)
                 plt.gcf().canvas.set_cursor(Cursors.POINTER)
                 plt.gcf().canvas.blit()

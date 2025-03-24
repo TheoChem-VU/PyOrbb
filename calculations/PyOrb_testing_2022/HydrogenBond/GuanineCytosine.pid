@@ -1,5 +1,5 @@
 # status: ready
-# pid: 19533
+# pid: 15123
 # hostname: localhost
 # username: 
 # jobscript: 
@@ -9,9 +9,8 @@
 # fakejob: 0
 # comparewithtarget: ok
 # error: 0
-# warning: 1
+# warning: 0
 # runcmd: sh "$job" "NSCM=$options ; export NSCM"
-# plamscmd: local:*,1
 # batch: yes
 # options: 
 # killcmd: killall $pid
@@ -26,11 +25,13 @@
 # paused: 0
 # remoteprefix: 
 # jobtype: .adf
-# mtime: 1674824036
+# mtime: 1742814710
 # cloudinit: 
 # cloudid: 
 # copyback: 
 # privatesshkeypath: 
 # comments: 
-# dependency: start /Users/yumanhordijk/PhD/TheoCheM_stack/calculations/PyOrb_testing/HydrogenBond/GuanineCytosine.Guanine.job
-# dependency: start /Users/yumanhordijk/PhD/TheoCheM_stack/calculations/PyOrb_testing/HydrogenBond/GuanineCytosine.Cytosine.job
+# plamscmd: local:*,1
+# dependency: start /Users/yumanhordijk/PhD/Programs/TheoCheM/PyFMO/calculations/PyOrb_testing_2022/HydrogenBond/GuanineCytosine.Cytosine.job
+# dependency: start /Users/yumanhordijk/PhD/Programs/TheoCheM/PyFMO/calculations/PyOrb_testing_2022/HydrogenBond/GuanineCytosine.Guanine.job
+# updatecomments: no

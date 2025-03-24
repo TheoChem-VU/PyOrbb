@@ -205,7 +205,8 @@ class Mixing:
             title = rf'$\Delta E^{{({self.nelectrons()})}}_{{ij}} \approx {self.strength:5.1f}$ kcal/mol (${self.fraction:5.1%}$% of total)'
         else:
             title = None
-        pyfmo.plotting.orbital_diagram.draw_interaction(self.sfos, self.mos, self.connections, None, self.energy_type, connection_colors=self.connection_colors, ax=ax, ylim=ylim)
+        print('draw!', self.energy_type)
+        pyfmo.plotting.orbital_diagram.draw_interaction(self.sfos, self.mos, self.connections, None, energy_type=self.energy_type, connection_colors=self.connection_colors, ax=ax, ylim=ylim)
 
     def draw_sfos(self, overlap=False, screen=None):
         import tcviewer
@@ -743,59 +744,114 @@ def oi2(orbs, index=0, irrep=None):
 
 
 
-if __name__ == '__main__':
-    orbs = pyfmo.orbitals2.objects.Orbitals('../../../calculations/PyOrb_testing_2022/HydrogenBond/GuanineCytosine.results/adf.rkf')
+# if __name__ == '__main__':
+#     orbs = pyfmo.orbitals2.objects.Orbitals('../../../calculations/PyOrb_testing_2022/HydrogenBond/GuanineCytosine.results/adf.rkf')
     
-    C = orbs.data.matrices.mulliken_contribution.total
-    vals, vecs = np.linalg.eig(C.T)
-    print(vecs)
-    plt.imshow(vecs.real)
-    plt.show()
-    sfo1 = orbs.sfos['Cytosine(24AA)']
-    sfo2 = orbs.sfos['Guanine(33AA)']
+#     C = orbs.data.matrices.mulliken_contribution.total
+#     vals, vecs = np.linalg.eig(C.T)
+#     print(vecs)
+#     plt.imshow(vecs.real)
+#     plt.show()
+#     sfo1 = orbs.sfos['Cytosine(24AA)']
+#     sfo2 = orbs.sfos['Guanine(33AA)']
 
-    losses = []
-    for mo in orbs.mos:
-        loss = sfo1.mulliken_contribution(mo)
-        losses.append(loss)
+#     losses = []
+#     for mo in orbs.mos:
+#         loss = sfo1.mulliken_contribution(mo)
+#         losses.append(loss)
 
-    gains = []
-    for i, mo in enumerate(orbs.mos):
-        gain = sfo2.mulliken_contribution(mo) * losses[i]
-        if gain > 1e-5:
-            print(mo, round(gain, 5))
-        gains.append(gain)
+#     gains = []
+#     for i, mo in enumerate(orbs.mos):
+#         gain = sfo2.mulliken_contribution(mo) * losses[i]
+#         if gain > 1e-5:
+#             print(mo, round(gain, 5))
+#         gains.append(gain)
 
-    losses = np.array(losses)
-    gains = np.array(gains)
-    print(losses @ gains)
+#     losses = np.array(losses)
+#     gains = np.array(gains)
+#     print(losses @ gains)
 
-    print(sum(losses))
-    print(sum(gains))
-    # plt.plot(losses)
-    # plt.plot(gains)
-    plt.plot(gains)
-    plt.show()
+#     print(sum(losses))
+#     print(sum(gains))
+#     # plt.plot(losses)
+#     # plt.plot(gains)
+#     plt.plot(gains)
+#     plt.show()
+
 
 
 
 
 # # exit()
-# if __name__ == '__main__':
-#     import networkx as nx
-#     import tcviewer
-#     p = '../../../calculations/PyOrb_testing_2022/DonorAcceptor/NH3BH3.results/'
-#     # p = '../../../calculations/PyOrb_testing_2022/TransitionState/DielsAlder.results/'
-#     # p = '../../../calculations/PyOrb_testing_2022/CoordinationBondFeCO4CO/FeCO4CO.results/'
-#     # p = '../../../calculations/PyOrb_testing_2022/CoordinationBondFeCO4CH4/FeCO4CH4.results/'
-#     # p = '../../../calculations/PyOrb_testing_2022/HydrogenBond/GuanineCytosine.results/'
-#     # p = '../../../calculations/PyOrb_testing_2022/HeterolyticBond/complex/'
-#     # p = '../../../calculations/PyOrb_testing_2022/HomolyticBond/complex/'
-#     # p = '../../../calculations/PyOrb_testing_2022/ChemicalBond/frag.results/'
-#     orbs = pyfmo.orbitals2.objects.Orbitals(p + 'adf.rkf')
-#     res = tcutility.results.read(p)
+if __name__ == '__main__':
+    import networkx as nx
+    import tcviewer
+    import matplotlib.pyplot as plt
+    p = '../../../calculations/PyOrb_testing_2022/DonorAcceptor/NH3BH3.results/'
+    # p = '../../../calculations/PyOrb_testing_2022/TransitionState/DielsAlder.results/'
+    # p = '../../../calculations/PyOrb_testing_2022/CoordinationBondFeCO4CO/FeCO4CO.results/'
+    # p = '../../../calculations/PyOrb_testing_2022/CoordinationBondFeCO4CH4/FeCO4CH4.results/'
+    # p = '../../../calculations/PyOrb_testing_2022/HydrogenBond/GuanineCytosine.results/'
+    # p = '../../../calculations/PyOrb_testing_2022/HeterolyticBond/complex/'
+    # p = '../../../calculations/PyOrb_testing_2022/HomolyticBond/complex/'
+    # p = '../../../calculations/PyOrb_testing_2022/ChemicalBond/frag.results/'
+    orbs = pyfmo.orbitals2.objects.Orbitals(p + 'adf.rkf')
+    # res = tcutility.results.read(p)
+
+    frag1_sfos = orbs.sfos.get_fragment_sfos('NH3')
+    frag2_sfos = orbs.sfos.get_fragment_sfos('BH3')
+
+    print(frag1_sfos)
+    occ1 = np.array([sfo.occupied for sfo in frag1_sfos]).reshape(-1, 1)
+    occ2 = np.array([sfo.occupied for sfo in frag2_sfos]).reshape(-1, 1)
+    E1 = np.array([sfo.energy for sfo in frag1_sfos]).reshape(-1, 1)
+    E2 = np.array([sfo.energy for sfo in frag2_sfos]).reshape(-1, 1).T
+    occ_virt_mask = np.logical_xor(occ1.T, occ2)
+    plt.imshow(occ_virt_mask)
+    plt.show()
+    S = np.array([[abs(sfo1 @ sfo2) for sfo1 in frag1_sfos] for sfo2 in frag2_sfos])
+    dE = np.array([[abs(sfo1.energy - sfo2.energy) for sfo1 in frag1_sfos] for sfo2 in frag2_sfos])
+    
+    plt.imshow(S**2/dE * occ_virt_mask)
+    plt.show()
+
+    stab = []
+    K = 1.75
+    for sfo1 in frag1_sfos:
+        stab.append([])
+        for sfo2 in frag2_sfos:
+            S = abs(sfo1 @ sfo2)
+            e1, e2 = list(sorted([sfo1.energy, sfo2.energy]))
+            print(e1, e2)
+            H = K * S * (e1 + e2) / 2
+            stab[-1].append((H - e1*S)**2 / (e1 - e2))
+            # stab[-1].append(-S**2 * ((K/2 - 1) * e1 + K/2*e2)**2/(e1-e2))
+
+    stab = np.array(stab)
+    # stab = S**2 * ((K/2 - 1) * E1 + K/2*E2)**2/(E1-E2)
+    plt.imshow(stab * occ_virt_mask)
+    plt.show()
 
 
+    # frag1_orbs = pyfmo.orbitals2.objects.Orbitals('/Users/yumanhordijk/PhD/Programs/TheoCheM/PyFMO/calculations/PyOrb_testing_2022/DonorAcceptor/NH3BH3.NH3.results/adf.rkf')
+    # frag2_orbs = pyfmo.orbitals2.objects.Orbitals('/Users/yumanhordijk/PhD/Programs/TheoCheM/PyFMO/calculations/PyOrb_testing_2022/DonorAcceptor/NH3BH3.BH3.results/adf.rkf')
+    # mo = orbs.mos['8A1']
+    # print(mo)
+    # contr = np.array([sfo.mulliken_contribution(mo) for sfo in orbs.sfos])
+    # energ = np.array([sfo.energy for sfo in orbs.sfos])
+
+    # print(mo.energy)
+    # print(sum(contr * energ))
+    # print(mo.energy - sum(contr * energ))
+
+    # mo = orbs.mos['5A1']
+    # print(mo)
+    # contr = np.array([sfo.mulliken_contribution(mo) for sfo in orbs.sfos])
+    # energ = np.array([sfo.energy for sfo in orbs.sfos])
+
+    # print(mo.energy)
+    # print(sum(contr * energ))
+    # print(mo.energy - sum(contr * energ))
 #     # mix = oi2(orbs)
 #     # # mix = pauli2(orbs, sfo1=orbs.sfos['Guanine(24AA)'], sfo2=orbs.sfos['Cytosine(23AA)'])
 #     # mix += pauli2(orbs)

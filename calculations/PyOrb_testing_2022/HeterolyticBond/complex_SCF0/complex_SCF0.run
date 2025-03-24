@@ -1,8 +1,0 @@
-#!/bin/sh
-
-module load ams/2023.101
-
-unset AMS_SWITCH_LOGFILE_AND_STDOUT
-unset SCM_LOGFILE
-AMS_JOBNAME="complex_SCF0" AMS_RESULTSDIR=. $AMSBIN/ams --input="complex_SCF0.in" < /dev/null
-

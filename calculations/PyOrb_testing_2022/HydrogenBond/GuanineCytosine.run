@@ -1,8 +1,5 @@
 #!/bin/sh
 
-# dependency: /Users/yumanhordijk/PhD/TheoCheM_stack/calculations/PyOrb_testing/HydrogenBond/GuanineCytosine.Guanine GuanineCytosine.Guanine.results/adf.rkf Guanine.rkf
-# dependency: /Users/yumanhordijk/PhD/TheoCheM_stack/calculations/PyOrb_testing/HydrogenBond/GuanineCytosine.Cytosine GuanineCytosine.Cytosine.results/adf.rkf Cytosine.rkf
-
 "$AMSBIN/ams" << eor
 
 Task SinglePoint
@@ -78,10 +75,10 @@ Engine ADF
         Core None
     End
     Fragments
-        Guanine Guanine.rkf 
-        Cytosine Cytosine.rkf 
+        Guanine ${SCM_ROOT}/Users/yumanhordijk/PhD/Programs/TheoCheM/PyFMO/calculations/PyOrb_testing_2022/HydrogenBond/GuanineCytosine.Guanine.results/adf.rkf
+        Cytosine ${SCM_ROOT}/Users/yumanhordijk/PhD/Programs/TheoCheM/PyFMO/calculations/PyOrb_testing_2022/HydrogenBond/GuanineCytosine.Cytosine.results/adf.rkf
     End
-    
+    Print SFOSITEENERGIES
     XC
         GGA BLYP
     End
@@ -89,3 +86,5 @@ Engine ADF
 EndEngine
 eor
 
+# dependency: /Users/yumanhordijk/PhD/Programs/TheoCheM/PyFMO/calculations/PyOrb_testing_2022/HydrogenBond/GuanineCytosine.Cytosine -
+# dependency: /Users/yumanhordijk/PhD/Programs/TheoCheM/PyFMO/calculations/PyOrb_testing_2022/HydrogenBond/GuanineCytosine.Guanine -

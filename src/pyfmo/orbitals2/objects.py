@@ -58,7 +58,6 @@ class OrbitalSelector:
             decoded['fragidx'] = int(decoded['fragidx'])
         return decoded
 
-
     def get(self, symmetry=None, spin=None, fragment=None, orbname=None, **kargs):
         orbs = self.orbitals
         # print([orb.subspecies for orb in orbs])
@@ -108,6 +107,21 @@ class SFOs(OrbitalSelector):
     def get_fragment_sfos(self, fragment):
         return [sfo for sfo in self.orbitals if sfo.fragment_unique == fragment]
         # return list(sorted([sfo for sfo in self.orbitals if sfo.fragment_unique == fragment], key=lambda sfo: sfo.energy))
+
+    @property
+    def energy_types(self):
+        ret = []
+        if len(self.orbitals) > 0:
+            orb = self.orbitals[0]
+            if orb.energy is not np.nan:
+                ret.append('energy')
+            if orb.site_energy is not np.nan:
+                ret.append('site_energy')
+            if orb.site_energy_SCF0 is not np.nan:
+                print(orb.site_energy_SCF0)
+                ret.append('site_energy_SCF0')
+
+        return ret
 
 
 class MOs(OrbitalSelector):
@@ -222,7 +236,6 @@ class Orbital:
                 scene.draw_isosurface(cub,  0.03, c2)
 
             return scr
-            
 
     @property
     def degeneracy_index(self):
@@ -338,7 +351,7 @@ class Orbitals:
     '''
     Container class that stores information about both MO's and SFO's.
     '''
-    def __init__(self, path: str, path_SCF0: str = None, moleculename: str = None, path_output: str = None):
+    def __init__(self, path: str, path_SCF0: str = None, path_fragments: dict[str] = None, moleculename: str = None, path_output: str = None):
         r'''
         Two kind of readers are constucted.
         1. path provides the path to a fully converged Fragment analyses calculation with a full SCF. From this, all 
@@ -361,6 +374,13 @@ class Orbitals:
         self.kfpath = os.path.abspath(path)
         self.SCF0_kfpath = path_SCF0
         self.SCF0_reader = plams.KFReader(path_SCF0) if path_SCF0 else None
+
+        self.fragment_kfpaths = path_fragments
+        if self.fragment_kfpaths:
+            self.fragment_orbs = {frag: Orbitals(fpath) for frag, fpath in path_fragments.items()}
+        else:
+            self.fragment_orbs = {}
+
         self.output = os.path.abspath(path_output) if path_output else None
         with timer.timer('Orbitals.get_data'):
             self.get_data()
@@ -480,10 +500,14 @@ class Orbitals:
         Stotal = self.data.matrices.overlap.total
         return Stotal[:, mask1][mask2, :]
 
+    @property
+    def sfo_energy_types(self):
+        return self.sfos.energy_types
 
 
 # if __name__ == '__main__':
-#     orbs = Orbitals('/Users/yumanhordijk/PhD/Programs/TheoCheM/PyFMO/calculations/PyOrb_testing_2022/AlCl3/SP.results/adf.rkf', path_output='/Users/yumanhordijk/PhD/Programs/TheoCheM/PyFMO/calculations/PyOrb_testing_2022/AlCl3/SP.out')
+#     orbs = Orbitals('/Users/yumanhordijk/PhD/Programs/TheoCheM/PyFMO/calculations/PyOrb_testing_2022/DonorAcceptor/NH3BH3.results/adf.rkf')
+    
 #     for sfo in orbs.sfos:
 #         print(sfo.fragment_unique)
 

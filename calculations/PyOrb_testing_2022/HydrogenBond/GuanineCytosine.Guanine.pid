@@ -1,5 +1,5 @@
 # status: ready
-# pid: 19557
+# pid: 15260
 # hostname: localhost
 # username: 
 # jobscript: 
@@ -11,7 +11,6 @@
 # error: 0
 # warning: 0
 # runcmd: sh "$job" "NSCM=$options ; export NSCM"
-# plamscmd: local:*,1
 # batch: yes
 # options: 
 # killcmd: killall $pid
@@ -32,3 +31,5 @@
 # copyback: 
 # privatesshkeypath: 
 # comments: 
+# plamscmd: local:*,1
+# updatecomments: no
