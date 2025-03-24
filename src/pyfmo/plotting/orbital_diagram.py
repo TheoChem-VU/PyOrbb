@@ -58,7 +58,11 @@ def draw_interaction(sfos, mos, connections, title=None, energy_type='energy', c
                 if orb == other_orb:
                     continue
 
-                if abs(orb.energy - other_orb.energy) < (degenerate_threshold * energy_span):
+                E1, E2 = orb.energy, other_orb.energy
+                if orb in sfos:
+                    E1, E2 = getattr(orb, energy_type), getattr(other_orb, energy_type)
+
+                if abs(E1 - E2) < (degenerate_threshold * energy_span):
                     degenerates[-1].append(other_orb)
 
         for orb in sep_orbs_:
@@ -88,6 +92,7 @@ def draw_interaction(sfos, mos, connections, title=None, energy_type='energy', c
     for orb in poss:
         E = orb.energy
         if orb in sfos:
+            # print(orb, E, energy_type)
             E = getattr(orb, energy_type)
 
         spin_part = {
