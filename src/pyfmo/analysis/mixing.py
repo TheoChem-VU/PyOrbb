@@ -187,6 +187,7 @@ class Mixing:
             self.connections = list(it.product(self.sfos, self.mos))
         if connection_colors is None:
             self.connection_colors = {conn: 'k' for conn in self.connections}
+        self.two_mixings = [[self]]
 
     def __str__(self):
         s = f'{self.__class__.__name__}('
@@ -219,37 +220,17 @@ class Mixing:
 
         for sfo in self.sfos:
             with scr.add_molscene() as scene:
-                cub1 = sfo.cube_file()
-                # cub2 = self.sfos[1].cube_file()
-
-                # scene.draw_text(f"{sfo} + {self.sfos[1]} ({self.strength:.1f} kcal/mol, {self.fraction:.1%})", fontsize=12)
+                cub = sfo.cube_file()
                 scene.draw_text(str(sfo))
-                if overlap:
-                    S = cub1.copy()
-                    S.values *= cub2.values
 
-                    scene.draw_isosurface(S, -(.03**2), opacity=.25, color=[255/255, 105/255, 180/255])
-                    scene.draw_isosurface(S,  (.03**2), opacity=.25, color=[137/255, 243/255, 54/255])
-                    scene.draw_molecule(self.sfos[0].molecule)
-                    scene.draw_molecule(self.sfos[1].molecule)
-
+                if sfo.occupied:
+                    colors = ([1, 0, 0], [0, 0, 1])
                 else:
-                    if sfo.occupied:
-                        colors2 = ([1, 0, 0], [0, 0, 1])
-                    else:
-                        colors2 = ([0, 1, 1], [1, .5, 0])
+                    colors = ([0, 1, 1], [1, .5, 0])
 
-                    # if self.sfos[1].occupied:
-                    #     colors2 = ([1, 0, 0], [0, 0, 1])
-                    # else:
-                    #     colors2 = ([0, 1, 1], [1, .5, 0])
-
-                    # scene.draw_isosurface(cub1, -.03, opacity=.25, color=colors1[0])
-                    # scene.draw_isosurface(cub1,  .03, opacity=.25, color=colors1[1])
-                    # scene.draw_molecule(self.sfos[0].molecule)
-                    scene.draw_isosurface(cub1, -.03, opacity=.25, color=colors2[0])
-                    scene.draw_isosurface(cub1,  .03, opacity=.25, color=colors2[1])
-                    scene.draw_molecule(sfo.molecule)
+                scene.draw_isosurface(cub, -.03, opacity=.25, color=colors[0])
+                scene.draw_isosurface(cub,  .03, opacity=.25, color=colors[1])
+                scene.draw_molecule(sfo.molecule)
 
         if screen is None:
             scr.__exit__()
@@ -319,6 +300,7 @@ class Mixing:
         # self.connection_colors.update(other.connection_colors)
         self.strength = None
         self.fraction = None
+        self.two_mixings.extend(other.two_mixings)
         return self
 
     def fits(self, other: 'Mixing'):
@@ -385,11 +367,8 @@ class Mixing:
         return self.mos[0].spin
 
     def split(self):
-        # plt.figure()
         G = nx.Graph()
         G.add_edges_from(self.connections)
-        # nx.draw(G)
-        # plt.show()
         subGs = [G.subgraph(c) for c in nx.connected_components(G)]
         mixes = []
         for subG in subGs:
@@ -399,7 +378,7 @@ class Mixing:
             connections = subG.edges()
             connections = [conn[::-1] if isinstance(conn[0], pyfmo.orbitals2.objects.MO) else conn for conn in connections]
             mixes.append(Mixing(
-                self.orbs, 
+                self.orbs,
                 mos=mos, 
                 sfos=sfos, 
                 connections=connections,
@@ -407,48 +386,22 @@ class Mixing:
                 energy_type=self.energy_type))
         return mixes
 
-    # def _add_extra_virtual_mo(self):
-    #     max_contr = 0
-    #     max_contr_mo = None
-    #     max_contr_sfo1 = None
-    #     max_contr_sfo2 = None
-    #     frag_sfos = {frag: [sfo for sfo in self.sfos if sfo.fragment_unique == frag and not sfo.occupied] for frag in self.fragments}
-    #     for mo in self.orbs.mos:
-    #         if mo.occupied:
-    #             continue
-    #         if mo in self.mos:
-    #             continue
-
-    #         for frag1, frag1_sfos in frag_sfos.items():
-    #             for frag2, frag2_sfos in frag_sfos.items():
-    #                 if frag1 == frag2:
-    #                     continue
-
-    #                 sfo1 = max(frag1_sfos, key=lambda sfo: abs(sfo.mulliken_contribution(mo)))
-    #                 sfo2 = max(frag2_sfos, key=lambda sfo: abs(sfo.mulliken_contribution(mo)))
-    #                 contr1 = sfo1.mulliken_contribution(mo)
-    #                 contr2 = sfo2.mulliken_contribution(mo)
-
-    #                 if contr1 * contr2 > max_contr:
-    #                     max_contr = contr1 * contr2
-    #                     max_contr_mo = mo
-    #                     max_contr_sfo1 = sfo1
-    #                     max_contr_sfo2 = sfo2
-
-    #     self.mos.append(max_contr_mo)
-    #     self.connections.append([max_contr_sfo1, max_contr_mo])
-    #     self.connections.append([max_contr_sfo2, max_contr_mo])
-    #     self.connection_colors[max_contr_sfo1, max_contr_mo] = 'purple'
-    #     self.connection_colors[max_contr_sfo2, max_contr_mo] = 'purple'
-
+    def find_closed_interactions(self, orb):
+        G = nx.Graph()
+        G.add_edges_from(self.connections)
+        cycles = [cycle for cycle in nx.algorithms.cycles.simple_cycles(G, length_bound=4) if orb in cycle]
+        return cycles
+        ret = []
+        for two_mixing in self.two_mixings:
+            if orb in two_mixing.sfos or orb in two_mixing.mos:
+                ret.append([*two_mixing.sfos, *two_mixing.mos])
+        return ret
 
     def _add_extra_virtual_mo(self):
         max_contr = 0
         max_contr_mo = None
         max_contr_sfo1 = None
         max_contr_sfo2 = None
-        # virt_sfos = [sfo for sfo in self.sfos if not sfo.occupied]
-        # virt_sfos = [sfo for sfo in self.sfos if not sfo.occupied]
         for mo in self.orbs.mos:
             if mo.occupied:
                 continue
@@ -556,9 +509,6 @@ class Mixing:
             nsfos_occ = len([sfo for sfo in mix.sfos if sfo.occupied])
             nmos_occ = len([mo for mo in mix.mos if mo.occupied])
             excess_occ = nsfos_occ - nmos_occ
-            # if excess_occ > 0:
-            #     for i in range(excess_occ):
-            #         self._add_extra_occupied_mo()
             if excess_occ < 0:
                 for i in range(-excess_occ):
                     try:
@@ -594,7 +544,6 @@ def track_mixing(orbss, mixing):
 
         plt.savefig(os.path.join(out_dir, f'{i}.jpg'))
         plt.close()
-
 
 
 def _find_orbs(sfos1, sfos2, mos):
