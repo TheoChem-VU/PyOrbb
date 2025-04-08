@@ -164,6 +164,31 @@ class Orbital:
             return f'LUMO+{order}' if order > 0 else 'LUMO'
 
     @property
+    @cache.cache
+    @timer.timer
+    def irrep_relative_name(self):
+        orbitals = [orb for orb in self.parent.orbitals if orb.spin == self.spin and orb.spin_total_occupation == self.spin_total_occupation and orb.symmetry == self.symmetry]
+        if hasattr(self, 'fragment_unique'):
+            orbitals = [orb for orb in orbitals if orb.fragment_unique == self.fragment_unique]
+
+        energies = sorted([orb.energy for orb in orbitals])
+        order = energies.index(self.energy) + self.degeneracy_index
+
+        if self.doubly_occupied:
+            order = len(orbitals) - order - 1
+            return f'HOMO-{order}' if order > 0 else 'HOMO'
+
+        if self.singly_occupied:
+            if self.occupation == 1:
+                order = len(orbitals) - order - 1
+                return f'SOMO-{order}' if order > 0 else 'SOMO'
+            else:
+                return f'SUMO+{order}' if order > 0 else 'SUMO'
+
+        if self.unoccupied:
+            return f'LUMO+{order}' if order > 0 else 'LUMO'
+
+    @property
     def doubly_occupied(self):
         return self.spin_total_occupation == 2
 
@@ -507,7 +532,7 @@ class Orbitals:
 
 # if __name__ == '__main__':
 #     orbs = Orbitals('/Users/yumanhordijk/PhD/Programs/TheoCheM/PyFMO/calculations/PyOrb_testing_2022/DonorAcceptor/NH3BH3.results/adf.rkf')
-    
+
 #     for sfo in orbs.sfos:
 #         print(sfo.fragment_unique)
 
