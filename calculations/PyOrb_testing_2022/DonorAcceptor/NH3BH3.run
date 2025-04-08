@@ -1,0 +1,46 @@
+#!/bin/sh
+
+"$AMSBIN/ams" << eor
+
+Task SinglePoint
+System
+    Atoms
+        N 0.0 0.0 -0.81397925 region=NH3 adf.f=NH3
+        B 0.0 0.0 0.83470855 region=BH3 adf.f=BH3
+        H 0.4760389 -0.82452355 -1.14378691 region=NH3 adf.f=NH3
+        H -0.95207779 0.0 -1.14378691 region=NH3 adf.f=NH3
+        H 0.4760389 0.82452355 -1.14378691 region=NH3 adf.f=NH3
+        H -0.5814459199999999 1.00709387 1.13687714 region=BH3 adf.f=BH3
+        H -0.5814459199999999 -1.00709387 1.13687714 region=BH3 adf.f=BH3
+        H 1.16289184 0.0 1.13687714 region=BH3 adf.f=BH3
+    End
+    BondOrders
+         1 2 0.6291256546974182
+         1 3 0.9375154376029968
+         1 4 0.9375330805778503
+         1 5 0.9374578595161438
+         2 6 0.9650237560272217
+         2 7 0.9650708436965942
+         2 8 0.9651554226875305
+    End
+End
+
+Engine ADF
+    Basis
+        Type TZ2P
+        Core None
+    End
+    Fragments
+        NH3 ${SCM_ROOT}/Users/yumanhordijk/PhD/Programs/TheoCheM/PyFMO/calculations/PyOrb_testing_2022/DonorAcceptor/NH3BH3.NH3.results/adf.rkf
+        BH3 ${SCM_ROOT}/Users/yumanhordijk/PhD/Programs/TheoCheM/PyFMO/calculations/PyOrb_testing_2022/DonorAcceptor/NH3BH3.BH3.results/adf.rkf
+    End
+    
+    XC
+        GGA OLYP
+    End
+    NumericalQuality Good
+EndEngine
+eor
+
+# dependency: /Users/yumanhordijk/PhD/Programs/TheoCheM/PyFMO/calculations/PyOrb_testing_2022/DonorAcceptor/NH3BH3.BH3 -
+# dependency: /Users/yumanhordijk/PhD/Programs/TheoCheM/PyFMO/calculations/PyOrb_testing_2022/DonorAcceptor/NH3BH3.NH3 -

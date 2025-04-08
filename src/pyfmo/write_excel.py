@@ -412,6 +412,7 @@ def to_excel(orbs, out_file: str = 'pyfmo.xlsx'):
         'ΔE_oi': orbs.reader.read('Energy', 'Orb.Int. Total') * 627.503,
         'ΔV_elstat': orbs.reader.read('Energy', 'elstat') * 627.503,
         'ΔE_disp': orbs.reader.read('Energy', 'Dispersion Energy') * 627.503,
+        'Symmetry': orbs.reader.read('Symmetry', 'symlab'),
     }
     next_row, _ = make_key_value_table(rows, 4, 2, asterisks=['EDA terms given in (kcal mol⁻¹)'])
 
@@ -425,6 +426,7 @@ def to_excel(orbs, out_file: str = 'pyfmo.xlsx'):
             'No. SFOs': len(sfos),
             'No. occ. SFOs': len([sfo for sfo in sfos if sfo.occupied]),
             'No. virt. SFOs': len([sfo for sfo in sfos if not sfo.occupied]),
+            'Symmetry': orbs.sfos.reader.read('Symmetry', 'symlab'),
         }
         next_row, _ = make_key_value_table(rows, next_row + 1, 2)
 

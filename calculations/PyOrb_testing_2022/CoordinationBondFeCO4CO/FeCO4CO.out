@@ -1,0 +1,2430 @@
+
+
+ Parallel Execution: Process Information
+ ==============================================================================
+ Rank   Node Name                              NodeID   MyNodeRank  NodeMaster
+    0   Yumans-MacBook-Pro.local                  0          0          0
+    1   Yumans-MacBook-Pro.local                  0          1         -1
+    2   Yumans-MacBook-Pro.local                  0          2         -1
+    3   Yumans-MacBook-Pro.local                  0          3         -1
+    4   Yumans-MacBook-Pro.local                  0          4         -1
+    5   Yumans-MacBook-Pro.local                  0          5         -1
+    6   Yumans-MacBook-Pro.local                  0          6         -1
+    7   Yumans-MacBook-Pro.local                  0          7         -1
+    8   Yumans-MacBook-Pro.local                  0          8         -1
+    9   Yumans-MacBook-Pro.local                  0          9         -1
+ ==============================================================================
+
+
+May use up to 15625MB of RAM as shared memory on node 0
+
+ *******************************************************************************
+ *                                                                             *
+ *  --------------------------------                                           *
+ *   Amsterdam Modeling Suite (AMS)              2022.103                      *
+ *  --------------------------------                                           *
+ *                                               r104886 2022-06-17            *
+ *                                                                             *
+ *                                                                             *
+ *                              =================                              *
+ *                              |               |                              *
+ *                              |     A M S     |                              *
+ *                              |               |                              *
+ *                              =================                              *
+ *                                                                             *
+ *                                                                             *
+ *   Online information and documentation:  https://www.scm.com/support/       *
+ *   E-mail:  support@scm.com   info@scm.com                                   *
+ *                                                                             *
+ *   Scientific publications using AMS results must be properly referenced     *
+ *   See the User Manuals (or the web site) for recommended citations          *
+ *   The terms and conditions of the End User License Agreement apply to       *
+ *   the use of AMS, https://www.scm.com/license-terms/                        *
+ *                                                                             *
+ **********************  x86_64_darwin_intel / openmpi  ************************
+ 
+ Licensed to: Prof Visscher, Prof Bickelhaupt, Prof Fonseca Guerra / Vrije Universiteit, Theoretische Chemie / Amsterdam / NETHERLANDS 2022-12-13 09:59:29
+ SCM User ID: u21794
+  
+ AMS 2022.103  RunTime: Jan27-2023 13:57:22  ShM Nodes: 1  Procs: 10
+
+ AMS jobname: ams
+ AMS jobid  : 1742643052
+
+ Start   directory: /Users/yumanhordijk/PhD/TheoCheM_stack/calculations/PyOrb_testing/CoordinationBondFeCO4CO/tmp.yumanhordijk.18775.0.noindex/
+ Results directory: /Users/yumanhordijk/PhD/TheoCheM_stack/calculations/PyOrb_testing/CoordinationBondFeCO4CO/FeCO4CO.results/
+ Scratch directory: /tmp/amstmp_ams_kid0.1742643052/
+
+
+ Communication costs MPI_COMM_WORLD:      5.015 usec per message,   0.0805 usec per 8-byte item
+ Communication costs for intra-node:      3.888 usec per message,   0.0809 usec per 8-byte item
+
+ RNG seed: 99223666 -519340316 69597813 -1635598365 -855383480 -265506664 -1924511034 284872305
+
+
+
+                     *************************************************************************
+                     *  ADF 2022.103  RunTime: Jan27-2023 13:57:25  ShM Nodes: 1  Procs: 10  *
+                     *************************************************************************
+  
+       ****************************
+       * SINGLE POINT CALCULATION *
+       ****************************
+ 
+--------
+Geometry
+--------
+Formula: C5FeO5
+Atoms
+  Index Symbol   x (angstrom)   y (angstrom)   z (angstrom)
+      1      O    -0.03093300     0.17309800    -2.90677600       region=CO adf.f=CO
+      2      C    -0.02273800     0.12546000    -1.75480100       region=CO adf.f=CO
+      3     Fe    -0.01015800     0.05219500     0.01272400       region=FeCO4 adf.f=FeCO4
+      4      O    -2.93225300     0.05032100     0.03397400       region=FeCO4 adf.f=FeCO4
+      5      C    -1.78197800     0.05114900     0.02552100       region=FeCO4 adf.f=FeCO4
+      6      O    -0.00024600     2.51991500     1.57745300       region=FeCO4 adf.f=FeCO4
+      7      O     2.91195100     0.05250100    -0.00731300       region=FeCO4 adf.f=FeCO4
+      8      O     0.00018200    -2.53650500     1.36807900       region=FeCO4 adf.f=FeCO4
+      9      C    -0.00386100    -1.51496500     0.83345800       region=FeCO4 adf.f=FeCO4
+     10      C     1.76167200     0.05247300     0.00041500       region=FeCO4 adf.f=FeCO4
+     11      C    -0.00412500     1.54637700     0.95973600       region=FeCO4 adf.f=FeCO4
+ 
+Total System Charge             0.00000
+Bonding info available!
+ 
+ 
+----------------
+ADF Engine Input
+----------------
+ 
+ Basis
+ Type TZ2P
+ Core None
+ End
+ Fragments
+ CO CO.rkf
+ FeCO4 FeCO4.rkf
+ End
+ XC
+ GGA BLYP
+ End
+ NumericalQuality VeryGood
+ 
+
+ Title: *** (NO TITLE) ***
+
+ *** adf ***
+
+
+
+ ===========================
+ A T T A C H E D   F I L E S
+ ===========================
+  
+
+
+
+ ===============================
+ M O D E L   P A R A M E T E R S
+ ===============================
+  
+ DENSITY FUNCTIONAL POTENTIAL (scf)
+    LDA:                               Exchange only                           == Not Default ==
+    Gradient Corrections:              Becke88 LYP                             == Not Default ==
+
+ SPIN  (restricted / unrestr.)
+    Molecule:                          Restricted                               
+    Fragments:                         Restricted                               
+
+ OTHER ASPECTS
+    Relativistic Corrections:          scalar (ZORA,MAPA)                       
+
+    Nuclear Charge Density Model:      Point Charge Nuclei                      
+    Core Treatment:                    Frozen Orbital(s)                        
+
+    Hyperfine or Zeeman Interaction:   ---                                      
+
+
+ Fragment File(s)
+ ----------------
+ CO:
+         file : CO.rkf
+         jobid: 1487023335
+         title: *** adf ***
+ FeCO4:
+         file : FeCO4.rkf
+         jobid: 1902661827
+         title: *** adf ***
+
+
+
+ ===============
+ G E O M E T R Y  ***  3D  Molecule  ***
+ ===============
+  
+
+ ATOMS
+ =====                            X Y Z                    CHARGE
+                                (Angstrom)             Nucl     +Core       At.Mass
+                       --------------------------    ----------------       -------
+    1  O              -0.0309    0.1731   -2.9068      8.00      8.00       15.9949
+    2  C              -0.0227    0.1255   -1.7548      6.00      6.00       12.0000
+    3  Fe             -0.0102    0.0522    0.0127     26.00     26.00       55.9349
+    4  O              -2.9323    0.0503    0.0340      8.00      8.00       15.9949
+    5  C              -1.7820    0.0511    0.0255      6.00      6.00       12.0000
+    6  O              -0.0002    2.5199    1.5775      8.00      8.00       15.9949
+    7  O               2.9120    0.0525   -0.0073      8.00      8.00       15.9949
+    8  O               0.0002   -2.5365    1.3681      8.00      8.00       15.9949
+    9  C              -0.0039   -1.5150    0.8335      6.00      6.00       12.0000
+   10  C               1.7617    0.0525    0.0004      6.00      6.00       12.0000
+   11  C              -0.0041    1.5464    0.9597      6.00      6.00       12.0000
+
+
+ FRAGMENTS
+ =========                                     Atoms in this Fragment     Cart. coord.s (Angstrom)
+                                               -------------------------------------------------------
+    1  CO                                                1  O           -0.0309    0.1731   -2.9068
+                                                         2  C           -0.0227    0.1255   -1.7548
+    2  FeCO4                                            10  C            1.7617    0.0525    0.0004
+                                                        11  C           -0.0041    1.5464    0.9597
+                                                         5  C           -1.7820    0.0511    0.0255
+                                                         9  C           -0.0039   -1.5150    0.8335
+                                                         3  Fe          -0.0102    0.0522    0.0127
+                                                         4  O           -2.9323    0.0503    0.0340
+                                                         6  O           -0.0002    2.5199    1.5775
+                                                         7  O            2.9120    0.0525   -0.0073
+                                                         8  O            0.0002   -2.5365    1.3681
+
+
+ Interatomic Distance Matrix (Angstrom)
+ --------------------------------------
+
+   1)     0.000
+   2)     1.153   0.000
+   3)     2.922   1.769   0.000
+   4)     4.133   3.416   2.922   0.000
+   5)     3.418   2.504   1.772   1.150   0.000
+   6)     5.061   4.103   2.922   4.133   3.417   0.000
+   7)     4.133   3.416   2.922   5.844   4.694   4.133   0.000
+   8)     5.061   4.104   2.922   4.132   3.417   5.061   4.132   0.000
+   9)     4.104   3.064   1.769   3.415   2.503   4.103   3.416   1.153   0.000
+  10)     3.418   2.504   1.772   4.694   3.544   3.418   1.150   3.417   2.504   0.000
+  11)     4.103   3.064   1.769   3.416   2.504   1.153   3.416   4.103   3.064   2.504
+          0.000
+
+ Min. Distance =    1.1503
+ Max. Distance =    5.8444
+
+
+
+ =====================================
+ S Y M M E T R Y ,   E L E C T R O N S
+ =====================================
+  
+ Symmetry: NOSYM
+
+ Irreducible Representations, including subspecies
+ -------------------------------------------------
+ A
+
+
+ Configuration of Valence Electrons
+ ==================================
+ ( determined in the SCF procedure )
+
+ Total:   96
+
+ Net Charge: 0 (Nuclei minus Electrons)
+
+ Aufbau principle for MO occupations will be applied through SCF cycle no.     150
+ Thereafter, the program will assign electrons to MOs that are spatially
+ similar to the occupied MOs in a "reference" cycle ("KeepOrbitals").
+ The reference cycle is always the PREVIOUS cycle: it will evolve with
+ the SCF procedure.
+1
+ ***************************************************************************************************
+
+
+
+                                      ****************************************
+                                      *  B U I L D : (Fragments, Functions)  *
+                                      ****************************************
+  
+
+ The individual fragments are copies of the corresponding 'Master' fragments defined on the fragment files.
+ However, they may have been rotated (and translated) with respect to the Master. The local coordinate axes
+ of each fragment (which define for instance the spatial orientation in the current molecule of a fragment
+ P:x orbital) are not necessarily those of the molecule.
+ The local frame (if different from the molecular one) is printed to enable an interpretation of the expan-
+ sion of an MO in Fragment Orbitals.
+
+
+
+                                              ************************
+                                              *  Fragment Type : CO  *
+                                              ************************
+  
+
+ Fragment no.    1   (in the list of all fragments)
+ -----------------
+ Local Coordinate Axes:
+   x=    0.999975    0.000147   -0.007108
+   y=    0.000147    0.999146    0.041317
+   z=    0.007108   -0.041317    0.999121
+ The actual fragment is obtained from the Master by a rotation over    2.40 degrees
+ around the axis :  0.986  0.170  0.000
+
+ Check Atomic Coordinates:
+
+                  Master (on file)          After Computed Tranformation               As specified on Input
+           ----------------------------     ----------------------------     ---------------------------------
+     1)     0.00000   0.00000  -2.91159     -0.03093   0.17310  -2.90678       1  -0.03093   0.17310  -2.90678
+     2)     0.00000   0.00000  -1.75860     -0.02274   0.12546  -1.75480       2  -0.02274   0.12546  -1.75480
+
+
+
+                                            ***************************
+                                            *  Fragment Type : FeCO4  *
+                                            ***************************
+  
+
+ Fragment no.    2   (in the list of all fragments)
+ -----------------
+ The local coordinate frame is identical to the molecular frame.
+
+ Check Atomic Coordinates:
+
+                  Master (on file)          After Computed Tranformation               As specified on Input
+           ----------------------------     ----------------------------     ---------------------------------
+     1)     1.76167   0.05247   0.00042      1.76167   0.05247   0.00042      10   1.76167   0.05247   0.00042
+     2)    -0.00413   1.54638   0.95974     -0.00413   1.54638   0.95974      11  -0.00413   1.54638   0.95974
+     3)    -1.78198   0.05115   0.02552     -1.78198   0.05115   0.02552       5  -1.78198   0.05115   0.02552
+     4)    -0.00386  -1.51496   0.83346     -0.00386  -1.51496   0.83346       9  -0.00386  -1.51496   0.83346
+     5)    -0.01016   0.05219   0.01272     -0.01016   0.05219   0.01272       3  -0.01016   0.05219   0.01272
+     6)    -2.93225   0.05032   0.03397     -2.93225   0.05032   0.03397       4  -2.93225   0.05032   0.03397
+     7)    -0.00025   2.51992   1.57745     -0.00025   2.51992   1.57745       6  -0.00025   2.51992   1.57745
+     8)     2.91195   0.05250  -0.00731      2.91195   0.05250  -0.00731       7   2.91195   0.05250  -0.00731
+     9)     0.00018  -2.53651   1.36808      0.00018  -2.53651   1.36808       8   0.00018  -2.53651   1.36808
+
+
+
+ =======
+ S F O s  ***  (Symmetrized Fragment Orbitals)  ***
+ =======
+  
+ SFOs are linear combinations of (valence) Fragment Orbitals (FOs), such that the SFOs transform as the
+ irreducible representations of the (molecular) symmetry group. Each SFO is therefore characterized by
+ an irrep of the molecule and by a few (or only one) generating FOs.
+ The SFOs constitute a symmetry-adapted basis for the Fock matrix. The MO eigenvector coefficients in
+ this basis provide a direct interpretation of the MOs in terms of Frontier Orbital Theory.
+
+ The SFOs are combined with auxiliary Core Functions (CFs) to ensure orthogonalization on the (frozen)
+ Core Orbitals (COs). The Core-orthogonalized SFOs (CSFOs) constitute the true Fock basis.
+
+ The FOs, and hence also the (C)SFOs are combinations of the elementary basis functions (BAS). The basis
+ functions that participate in the description of the SFOs depend on the irrep. The indices of the
+ involved functions are printed below for each irrep.
+ (The complete list of primitive basis functions is printed in another section)
+
+ Total nr. of (C)SFOs (summation over all irreps) :   309
+
+ NOTE: a (C)SFO that is defined as a combination of more than one FO is usually NOT normalized.
+
+
+
+                                       === A ===
+ Nr. of SFOs :  309
+ Cartesian basis functions that participate in this irrep (total number =   355) :
+      1     2     3     4     5     6     9    12     7    10
+     13     8    11    14    15    16    17    18    19    20
+     21    22    23    24    25    26    27    28    29    30
+     31    32    33    34    35    36    39    42    37    40
+     43    38    41    44    45    46    47    48    49    50
+     51    52    53    54    55    56    57    58    59    60
+     61    62    63    64    65    66    69    72    67    70
+     73    68    71    74    75    76    77    78    79    80
+     81    82    83    84    85    86    87    88    89    90
+     91    92    93    94    95    96    99   102    97   100
+    103    98   101   104   105   106   107   108   109   110
+    111   112   113   114   115   116   117   118   119   120
+    121   122   123   124   125   126   129   132   127   130
+    133   128   131   134   135   136   137   138   139   140
+    141   142   143   144   145   146   147   148   149   150
+    151   152   153   154   155   156   159   162   157   160
+    163   158   161   164   165   166   167   168   169   170
+    171   172   173   174   175   176   177   178   179   180
+    181   182   183   184   191   192   220   221   222   185
+    188   193   196   199   223   186   189   194   197   200
+    224   187   190   195   198   201   225   202   208   214
+    203   209   215   204   210   216   205   211   217   206
+    212   218   207   213   219   226   227   228   229   230
+    231   232   233   234   235   236   237   238   239   240
+    241   244   247   242   245   248   243   246   249   250
+    251   252   253   254   255   256   257   258   259   260
+    261   262   263   264   265   266   267   268   269   270
+    271   274   277   272   275   278   273   276   279   280
+    281   282   283   284   285   286   287   288   289   290
+    291   292   293   294   295   296   297   298   299   300
+    301   304   307   302   305   308   303   306   309   310
+    311   312   313   314   315   316   317   318   319   320
+    321   322   323   324   325   326   327   328   329   330
+    331   334   337   332   335   338   333   336   339   340
+    341   342   343   344   345   346   347   348   349   350
+    351   352   353   354   355
+
+    SFO  (index         Fragment          Generating    Expansion in Fragment Orbitals
+  indx  incl.CFs)   Occup   Orb.Energy   FragmentType  Coeff.   Orbital     on Fragment
+ --------------------------------------------------------------------------------------
+     1       1      2.000     -18.895 au  CO            1.00      1 SIGMA           1
+                        (    -514.156 eV)
+     2       2      2.000     -10.035 au  CO            1.00      2 SIGMA           1
+                        (    -273.058 eV)
+     3       3      2.000      -1.058 au  CO            1.00      3 SIGMA           1
+                        (     -28.781 eV)
+     4       4      2.000      -0.513 au  CO            1.00      4 SIGMA           1
+                        (     -13.960 eV)
+     5       5      2.000      -0.330 au  CO            1.00      5 SIGMA           1
+                        (      -8.988 eV)
+     6       6       --         0.103 au  CO            1.00      6 SIGMA           1
+                        (       2.797 eV)
+     7       7       --         0.288 au  CO            1.00      7 SIGMA           1
+                        (       7.831 eV)
+     8       8       --         0.385 au  CO            1.00      8 SIGMA           1
+                        (      10.468 eV)
+     9       9       --         0.554 au  CO            1.00      9 SIGMA           1
+                        (      15.087 eV)
+    10      10       --         1.291 au  CO            1.00     10 SIGMA           1
+                        (      35.125 eV)
+    11      11       --         1.843 au  CO            1.00     11 SIGMA           1
+                        (      50.139 eV)
+    12      12       --         2.140 au  CO            1.00     12 SIGMA           1
+                        (      58.225 eV)
+    13      13       --         2.688 au  CO            1.00     13 SIGMA           1
+                        (      73.141 eV)
+    14      14       --         3.867 au  CO            1.00     14 SIGMA           1
+                        (     105.232 eV)
+    15      15       --         5.083 au  CO            1.00     15 SIGMA           1
+                        (     138.309 eV)
+    16      16       --         5.948 au  CO            1.00     16 SIGMA           1
+                        (     161.847 eV)
+    17      17       --         9.067 au  CO            1.00     17 SIGMA           1
+                        (     246.714 eV)
+    18      18       --        15.290 au  CO            1.00     18 SIGMA           1
+                        (     416.052 eV)
+    19      19       --        52.975 au  CO            1.00     19 SIGMA           1
+                        (    1441.515 eV)
+    20      20       --       126.911 au  CO            1.00     20 SIGMA           1
+                        (    3453.433 eV)
+    21      21      2.000      -0.421 au  CO            1.00      1 PI:x            1
+                        (     -11.455 eV)
+    22      22       --        -0.077 au  CO            1.00      2 PI:x            1
+                        (      -2.103 eV)
+    23      23       --         0.158 au  CO            1.00      3 PI:x            1
+                        (       4.292 eV)
+    24      24       --         0.464 au  CO            1.00      4 PI:x            1
+                        (      12.615 eV)
+    25      25       --         1.125 au  CO            1.00      5 PI:x            1
+                        (      30.601 eV)
+    26      26       --         1.891 au  CO            1.00      6 PI:x            1
+                        (      51.446 eV)
+    27      27       --         2.443 au  CO            1.00      7 PI:x            1
+                        (      66.470 eV)
+    28      28       --         3.882 au  CO            1.00      8 PI:x            1
+                        (     105.645 eV)
+    29      29       --         3.997 au  CO            1.00      9 PI:x            1
+                        (     108.765 eV)
+    30      30       --         6.898 au  CO            1.00     10 PI:x            1
+                        (     187.708 eV)
+    31      31      2.000      -0.421 au  CO            1.00      1 PI:y            1
+                        (     -11.455 eV)
+    32      32       --        -0.077 au  CO            1.00      2 PI:y            1
+                        (      -2.103 eV)
+    33      33       --         0.158 au  CO            1.00      3 PI:y            1
+                        (       4.292 eV)
+    34      34       --         0.464 au  CO            1.00      4 PI:y            1
+                        (      12.615 eV)
+    35      35       --         1.125 au  CO            1.00      5 PI:y            1
+                        (      30.601 eV)
+    36      36       --         1.891 au  CO            1.00      6 PI:y            1
+                        (      51.446 eV)
+    37      37       --         2.443 au  CO            1.00      7 PI:y            1
+                        (      66.470 eV)
+    38      38       --         3.882 au  CO            1.00      8 PI:y            1
+                        (     105.645 eV)
+    39      39       --         3.997 au  CO            1.00      9 PI:y            1
+                        (     108.765 eV)
+    40      40       --         6.898 au  CO            1.00     10 PI:y            1
+                        (     187.708 eV)
+    41      41       --         0.908 au  CO            1.00      1 DELTA:x2-y      1
+                        (      24.698 eV)
+    42      42       --         1.501 au  CO            1.00      2 DELTA:x2-y      1
+                        (      40.853 eV)
+    43      43       --         3.280 au  CO            1.00      3 DELTA:x2-y      1
+                        (      89.244 eV)
+    44      44       --         5.179 au  CO            1.00      4 DELTA:x2-y      1
+                        (     140.924 eV)
+    45      45       --         0.908 au  CO            1.00      1 DELTA:xy        1
+                        (      24.698 eV)
+    46      46       --         1.501 au  CO            1.00      2 DELTA:xy        1
+                        (      40.853 eV)
+    47      47       --         3.280 au  CO            1.00      3 DELTA:xy        1
+                        (      89.244 eV)
+    48      48       --         5.179 au  CO            1.00      4 DELTA:xy        1
+                        (     140.924 eV)
+    49      49       --         3.244 au  CO            1.00      1 PHI:x3-3xy      1
+                        (      88.268 eV)
+    50      50       --         4.191 au  CO            1.00      2 PHI:x3-3xy      1
+                        (     114.038 eV)
+    51      51       --         3.244 au  CO            1.00      1 PHI:3x2y-y      1
+                        (      88.268 eV)
+    52      52       --         4.191 au  CO            1.00      2 PHI:3x2y-y      1
+                        (     114.038 eV)
+    53      53      2.000    -256.978 au  FeCO4         1.00      1 A               2
+                        (   -6992.725 eV)
+    54      54      2.000     -30.036 au  FeCO4         1.00      2 A               2
+                        (    -817.312 eV)
+    55      55      2.000     -25.609 au  FeCO4         1.00      3 A               2
+                        (    -696.854 eV)
+    56      56      2.000     -25.593 au  FeCO4         1.00      4 A               2
+                        (    -696.427 eV)
+    57      57      2.000     -25.585 au  FeCO4         1.00      5 A               2
+                        (    -696.216 eV)
+    58      58      2.000     -18.885 au  FeCO4         1.00      6 A               2
+                        (    -513.883 eV)
+    59      59      2.000     -18.885 au  FeCO4         1.00      7 A               2
+                        (    -513.883 eV)
+    60      60      2.000     -18.868 au  FeCO4         1.00      8 A               2
+                        (    -513.432 eV)
+    61      61      2.000     -18.868 au  FeCO4         1.00      9 A               2
+                        (    -513.432 eV)
+    62      62      2.000     -10.043 au  FeCO4         1.00     10 A               2
+                        (    -273.283 eV)
+    63      63      2.000     -10.043 au  FeCO4         1.00     11 A               2
+                        (    -273.283 eV)
+    64      64      2.000     -10.033 au  FeCO4         1.00     12 A               2
+                        (    -273.025 eV)
+    65      65      2.000     -10.033 au  FeCO4         1.00     13 A               2
+                        (    -273.024 eV)
+    66      66      2.000      -3.373 au  FeCO4         1.00     14 A               2
+                        (     -91.783 eV)
+    67      67      2.000      -2.158 au  FeCO4         1.00     15 A               2
+                        (     -58.723 eV)
+    68      68      2.000      -2.130 au  FeCO4         1.00     16 A               2
+                        (     -57.956 eV)
+    69      69      2.000      -2.113 au  FeCO4         1.00     17 A               2
+                        (     -57.507 eV)
+    70      70      2.000      -1.057 au  FeCO4         1.00     18 A               2
+                        (     -28.766 eV)
+    71      71      2.000      -1.057 au  FeCO4         1.00     19 A               2
+                        (     -28.763 eV)
+    72      72      2.000      -1.041 au  FeCO4         1.00     20 A               2
+                        (     -28.323 eV)
+    73      73      2.000      -1.041 au  FeCO4         1.00     21 A               2
+                        (     -28.320 eV)
+    74      74      2.000      -0.560 au  FeCO4         1.00     22 A               2
+                        (     -15.252 eV)
+    75      75      2.000      -0.519 au  FeCO4         1.00     23 A               2
+                        (     -14.124 eV)
+    76      76      2.000      -0.509 au  FeCO4         1.00     24 A               2
+                        (     -13.850 eV)
+    77      77      2.000      -0.506 au  FeCO4         1.00     25 A               2
+                        (     -13.782 eV)
+    78      78      2.000      -0.455 au  FeCO4         1.00     26 A               2
+                        (     -12.388 eV)
+    79      79      2.000      -0.439 au  FeCO4         1.00     27 A               2
+                        (     -11.945 eV)
+    80      80      2.000      -0.436 au  FeCO4         1.00     28 A               2
+                        (     -11.861 eV)
+    81      81      2.000      -0.431 au  FeCO4         1.00     29 A               2
+                        (     -11.718 eV)
+    82      82      2.000      -0.429 au  FeCO4         1.00     30 A               2
+                        (     -11.674 eV)
+    83      83      2.000      -0.420 au  FeCO4         1.00     31 A               2
+                        (     -11.422 eV)
+    84      84      2.000      -0.415 au  FeCO4         1.00     32 A               2
+                        (     -11.301 eV)
+    85      85      2.000      -0.408 au  FeCO4         1.00     33 A               2
+                        (     -11.097 eV)
+    86      86      2.000      -0.408 au  FeCO4         1.00     34 A               2
+                        (     -11.095 eV)
+    87      87      2.000      -0.403 au  FeCO4         1.00     35 A               2
+                        (     -10.970 eV)
+    88      88      2.000      -0.393 au  FeCO4         1.00     36 A               2
+                        (     -10.705 eV)
+    89      89      2.000      -0.378 au  FeCO4         1.00     37 A               2
+                        (     -10.284 eV)
+    90      90      2.000      -0.268 au  FeCO4         1.00     38 A               2
+                        (      -7.288 eV)
+    91      91      2.000      -0.253 au  FeCO4         1.00     39 A               2
+                        (      -6.876 eV)
+    92      92      2.000      -0.224 au  FeCO4         1.00     40 A               2
+                        (      -6.104 eV)
+    93      93      2.000      -0.194 au  FeCO4         1.00     41 A               2
+                        (      -5.286 eV)
+    94      94       --        -0.163 au  FeCO4         1.00     42 A               2
+                        (      -4.423 eV)
+    95      95       --        -0.069 au  FeCO4         1.00     43 A               2
+                        (      -1.887 eV)
+    96      96       --        -0.065 au  FeCO4         1.00     44 A               2
+                        (      -1.755 eV)
+    97      97       --        -0.064 au  FeCO4         1.00     45 A               2
+                        (      -1.736 eV)
+    98      98       --        -0.061 au  FeCO4         1.00     46 A               2
+                        (      -1.656 eV)
+    99      99       --        -0.047 au  FeCO4         1.00     47 A               2
+                        (      -1.290 eV)
+   100     100       --        -0.042 au  FeCO4         1.00     48 A               2
+                        (      -1.145 eV)
+   101     101       --        -0.040 au  FeCO4         1.00     49 A               2
+                        (      -1.094 eV)
+   102     102       --        -0.018 au  FeCO4         1.00     50 A               2
+                        (      -0.500 eV)
+   103     103       --        -0.000 au  FeCO4         1.00     51 A               2
+                        (      -0.006 eV)
+   104     104       --         0.059 au  FeCO4         1.00     52 A               2
+                        (       1.605 eV)
+   105     105       --         0.071 au  FeCO4         1.00     53 A               2
+                        (       1.946 eV)
+   106     106       --         0.075 au  FeCO4         1.00     54 A               2
+                        (       2.029 eV)
+   107     107       --         0.111 au  FeCO4         1.00     55 A               2
+                        (       3.012 eV)
+   108     108       --         0.146 au  FeCO4         1.00     56 A               2
+                        (       3.981 eV)
+   109     109       --         0.164 au  FeCO4         1.00     57 A               2
+                        (       4.459 eV)
+   110     110       --         0.169 au  FeCO4         1.00     58 A               2
+                        (       4.611 eV)
+   111     111       --         0.170 au  FeCO4         1.00     59 A               2
+                        (       4.629 eV)
+   112     112       --         0.198 au  FeCO4         1.00     60 A               2
+                        (       5.382 eV)
+   113     113       --         0.234 au  FeCO4         1.00     61 A               2
+                        (       6.363 eV)
+   114     114       --         0.245 au  FeCO4         1.00     62 A               2
+                        (       6.675 eV)
+   115     115       --         0.250 au  FeCO4         1.00     63 A               2
+                        (       6.814 eV)
+   116     116       --         0.304 au  FeCO4         1.00     64 A               2
+                        (       8.266 eV)
+   117     117       --         0.322 au  FeCO4         1.00     65 A               2
+                        (       8.776 eV)
+   118     118       --         0.332 au  FeCO4         1.00     66 A               2
+                        (       9.045 eV)
+   119     119       --         0.400 au  FeCO4         1.00     67 A               2
+                        (      10.885 eV)
+   120     120       --         0.409 au  FeCO4         1.00     68 A               2
+                        (      11.128 eV)
+   121     121       --         0.415 au  FeCO4         1.00     69 A               2
+                        (      11.295 eV)
+   122     122       --         0.419 au  FeCO4         1.00     70 A               2
+                        (      11.396 eV)
+   123     123       --         0.424 au  FeCO4         1.00     71 A               2
+                        (      11.550 eV)
+   124     124       --         0.450 au  FeCO4         1.00     72 A               2
+                        (      12.248 eV)
+   125     125       --         0.485 au  FeCO4         1.00     73 A               2
+                        (      13.210 eV)
+   126     126       --         0.498 au  FeCO4         1.00     74 A               2
+                        (      13.554 eV)
+   127     127       --         0.536 au  FeCO4         1.00     75 A               2
+                        (      14.577 eV)
+   128     128       --         0.539 au  FeCO4         1.00     76 A               2
+                        (      14.657 eV)
+   129     129       --         0.547 au  FeCO4         1.00     77 A               2
+                        (      14.895 eV)
+   130     130       --         0.555 au  FeCO4         1.00     78 A               2
+                        (      15.108 eV)
+   131     131       --         0.602 au  FeCO4         1.00     79 A               2
+                        (      16.384 eV)
+   132     132       --         0.628 au  FeCO4         1.00     80 A               2
+                        (      17.082 eV)
+   133     133       --         0.656 au  FeCO4         1.00     81 A               2
+                        (      17.841 eV)
+   134     134       --         0.656 au  FeCO4         1.00     82 A               2
+                        (      17.848 eV)
+   135     135       --         0.669 au  FeCO4         1.00     83 A               2
+                        (      18.215 eV)
+   136     136       --         0.735 au  FeCO4         1.00     84 A               2
+                        (      20.010 eV)
+   137     137       --         0.747 au  FeCO4         1.00     85 A               2
+                        (      20.315 eV)
+   138     138       --         0.751 au  FeCO4         1.00     86 A               2
+                        (      20.432 eV)
+   139     139       --         0.817 au  FeCO4         1.00     87 A               2
+                        (      22.234 eV)
+   140     140       --         0.821 au  FeCO4         1.00     88 A               2
+                        (      22.334 eV)
+   141     141       --         0.875 au  FeCO4         1.00     89 A               2
+                        (      23.805 eV)
+   142     142       --         0.881 au  FeCO4         1.00     90 A               2
+                        (      23.966 eV)
+   143     143       --         0.933 au  FeCO4         1.00     91 A               2
+                        (      25.394 eV)
+   144     144       --         0.937 au  FeCO4         1.00     92 A               2
+                        (      25.498 eV)
+   145     145       --         0.951 au  FeCO4         1.00     93 A               2
+                        (      25.866 eV)
+   146     146       --         0.952 au  FeCO4         1.00     94 A               2
+                        (      25.901 eV)
+   147     147       --         0.965 au  FeCO4         1.00     95 A               2
+                        (      26.250 eV)
+   148     148       --         0.998 au  FeCO4         1.00     96 A               2
+                        (      27.158 eV)
+   149     149       --         1.000 au  FeCO4         1.00     97 A               2
+                        (      27.205 eV)
+   150     150       --         1.012 au  FeCO4         1.00     98 A               2
+                        (      27.525 eV)
+   151     151       --         1.054 au  FeCO4         1.00     99 A               2
+                        (      28.675 eV)
+   152     152       --         1.093 au  FeCO4         1.00    100 A               2
+                        (      29.744 eV)
+   153     153       --         1.118 au  FeCO4         1.00    101 A               2
+                        (      30.418 eV)
+   154     154       --         1.135 au  FeCO4         1.00    102 A               2
+                        (      30.897 eV)
+   155     155       --         1.180 au  FeCO4         1.00    103 A               2
+                        (      32.097 eV)
+   156     156       --         1.223 au  FeCO4         1.00    104 A               2
+                        (      33.267 eV)
+   157     157       --         1.309 au  FeCO4         1.00    105 A               2
+                        (      35.610 eV)
+   158     158       --         1.337 au  FeCO4         1.00    106 A               2
+                        (      36.369 eV)
+   159     159       --         1.345 au  FeCO4         1.00    107 A               2
+                        (      36.596 eV)
+   160     160       --         1.358 au  FeCO4         1.00    108 A               2
+                        (      36.943 eV)
+   161     161       --         1.406 au  FeCO4         1.00    109 A               2
+                        (      38.267 eV)
+   162     162       --         1.412 au  FeCO4         1.00    110 A               2
+                        (      38.422 eV)
+   163     163       --         1.419 au  FeCO4         1.00    111 A               2
+                        (      38.611 eV)
+   164     164       --         1.432 au  FeCO4         1.00    112 A               2
+                        (      38.971 eV)
+   165     165       --         1.510 au  FeCO4         1.00    113 A               2
+                        (      41.087 eV)
+   166     166       --         1.531 au  FeCO4         1.00    114 A               2
+                        (      41.668 eV)
+   167     167       --         1.545 au  FeCO4         1.00    115 A               2
+                        (      42.035 eV)
+   168     168       --         1.576 au  FeCO4         1.00    116 A               2
+                        (      42.875 eV)
+   169     169       --         1.580 au  FeCO4         1.00    117 A               2
+                        (      42.982 eV)
+   170     170       --         1.588 au  FeCO4         1.00    118 A               2
+                        (      43.213 eV)
+   171     171       --         1.629 au  FeCO4         1.00    119 A               2
+                        (      44.340 eV)
+   172     172       --         1.644 au  FeCO4         1.00    120 A               2
+                        (      44.723 eV)
+   173     173       --         1.644 au  FeCO4         1.00    121 A               2
+                        (      44.731 eV)
+   174     174       --         1.649 au  FeCO4         1.00    122 A               2
+                        (      44.880 eV)
+   175     175       --         1.662 au  FeCO4         1.00    123 A               2
+                        (      45.213 eV)
+   176     176       --         1.737 au  FeCO4         1.00    124 A               2
+                        (      47.273 eV)
+   177     177       --         1.782 au  FeCO4         1.00    125 A               2
+                        (      48.485 eV)
+   178     178       --         1.816 au  FeCO4         1.00    126 A               2
+                        (      49.403 eV)
+   179     179       --         1.863 au  FeCO4         1.00    127 A               2
+                        (      50.703 eV)
+   180     180       --         1.891 au  FeCO4         1.00    128 A               2
+                        (      51.447 eV)
+   181     181       --         1.897 au  FeCO4         1.00    129 A               2
+                        (      51.623 eV)
+   182     182       --         2.033 au  FeCO4         1.00    130 A               2
+                        (      55.323 eV)
+   183     183       --         2.062 au  FeCO4         1.00    131 A               2
+                        (      56.103 eV)
+   184     184       --         2.176 au  FeCO4         1.00    132 A               2
+                        (      59.212 eV)
+   185     185       --         2.235 au  FeCO4         1.00    133 A               2
+                        (      60.826 eV)
+   186     186       --         2.252 au  FeCO4         1.00    134 A               2
+                        (      61.280 eV)
+   187     187       --         2.259 au  FeCO4         1.00    135 A               2
+                        (      61.470 eV)
+   188     188       --         2.266 au  FeCO4         1.00    136 A               2
+                        (      61.659 eV)
+   189     189       --         2.309 au  FeCO4         1.00    137 A               2
+                        (      62.820 eV)
+   190     190       --         2.312 au  FeCO4         1.00    138 A               2
+                        (      62.910 eV)
+   191     191       --         2.327 au  FeCO4         1.00    139 A               2
+                        (      63.317 eV)
+   192     192       --         2.335 au  FeCO4         1.00    140 A               2
+                        (      63.540 eV)
+   193     193       --         2.362 au  FeCO4         1.00    141 A               2
+                        (      64.265 eV)
+   194     194       --         2.421 au  FeCO4         1.00    142 A               2
+                        (      65.889 eV)
+   195     195       --         2.447 au  FeCO4         1.00    143 A               2
+                        (      66.597 eV)
+   196     196       --         2.491 au  FeCO4         1.00    144 A               2
+                        (      67.786 eV)
+   197     197       --         2.493 au  FeCO4         1.00    145 A               2
+                        (      67.850 eV)
+   198     198       --         2.582 au  FeCO4         1.00    146 A               2
+                        (      70.257 eV)
+   199     199       --         2.627 au  FeCO4         1.00    147 A               2
+                        (      71.478 eV)
+   200     200       --         2.662 au  FeCO4         1.00    148 A               2
+                        (      72.433 eV)
+   201     201       --         2.686 au  FeCO4         1.00    149 A               2
+                        (      73.103 eV)
+   202     202       --         2.723 au  FeCO4         1.00    150 A               2
+                        (      74.103 eV)
+   203     203       --         2.747 au  FeCO4         1.00    151 A               2
+                        (      74.759 eV)
+   204     204       --         2.922 au  FeCO4         1.00    152 A               2
+                        (      79.501 eV)
+   205     205       --         2.945 au  FeCO4         1.00    153 A               2
+                        (      80.138 eV)
+   206     206       --         2.975 au  FeCO4         1.00    154 A               2
+                        (      80.950 eV)
+   207     207       --         2.994 au  FeCO4         1.00    155 A               2
+                        (      81.484 eV)
+   208     208       --         3.234 au  FeCO4         1.00    156 A               2
+                        (      88.007 eV)
+   209     209       --         3.242 au  FeCO4         1.00    157 A               2
+                        (      88.213 eV)
+   210     210       --         3.246 au  FeCO4         1.00    158 A               2
+                        (      88.330 eV)
+   211     211       --         3.251 au  FeCO4         1.00    159 A               2
+                        (      88.464 eV)
+   212     212       --         3.260 au  FeCO4         1.00    160 A               2
+                        (      88.702 eV)
+   213     213       --         3.260 au  FeCO4         1.00    161 A               2
+                        (      88.710 eV)
+   214     214       --         3.262 au  FeCO4         1.00    162 A               2
+                        (      88.754 eV)
+   215     215       --         3.271 au  FeCO4         1.00    163 A               2
+                        (      89.002 eV)
+   216     216       --         3.272 au  FeCO4         1.00    164 A               2
+                        (      89.048 eV)
+   217     217       --         3.281 au  FeCO4         1.00    165 A               2
+                        (      89.291 eV)
+   218     218       --         3.312 au  FeCO4         1.00    166 A               2
+                        (      90.123 eV)
+   219     219       --         3.313 au  FeCO4         1.00    167 A               2
+                        (      90.159 eV)
+   220     220       --         3.336 au  FeCO4         1.00    168 A               2
+                        (      90.790 eV)
+   221     221       --         3.357 au  FeCO4         1.00    169 A               2
+                        (      91.351 eV)
+   222     222       --         3.358 au  FeCO4         1.00    170 A               2
+                        (      91.365 eV)
+   223     223       --         3.376 au  FeCO4         1.00    171 A               2
+                        (      91.863 eV)
+   224     224       --         3.378 au  FeCO4         1.00    172 A               2
+                        (      91.917 eV)
+   225     225       --         3.423 au  FeCO4         1.00    173 A               2
+                        (      93.156 eV)
+   226     226       --         3.507 au  FeCO4         1.00    174 A               2
+                        (      95.419 eV)
+   227     227       --         3.589 au  FeCO4         1.00    175 A               2
+                        (      97.660 eV)
+   228     228       --         3.939 au  FeCO4         1.00    176 A               2
+                        (     107.184 eV)
+   229     229       --         3.952 au  FeCO4         1.00    177 A               2
+                        (     107.551 eV)
+   230     230       --         3.957 au  FeCO4         1.00    178 A               2
+                        (     107.672 eV)
+   231     231       --         4.001 au  FeCO4         1.00    179 A               2
+                        (     108.874 eV)
+   232     232       --         4.006 au  FeCO4         1.00    180 A               2
+                        (     109.005 eV)
+   233     233       --         4.010 au  FeCO4         1.00    181 A               2
+                        (     109.116 eV)
+   234     234       --         4.062 au  FeCO4         1.00    182 A               2
+                        (     110.520 eV)
+   235     235       --         4.066 au  FeCO4         1.00    183 A               2
+                        (     110.647 eV)
+   236     236       --         4.112 au  FeCO4         1.00    184 A               2
+                        (     111.887 eV)
+   237     237       --         4.149 au  FeCO4         1.00    185 A               2
+                        (     112.913 eV)
+   238     238       --         4.175 au  FeCO4         1.00    186 A               2
+                        (     113.606 eV)
+   239     239       --         4.178 au  FeCO4         1.00    187 A               2
+                        (     113.695 eV)
+   240     240       --         4.194 au  FeCO4         1.00    188 A               2
+                        (     114.119 eV)
+   241     241       --         4.201 au  FeCO4         1.00    189 A               2
+                        (     114.321 eV)
+   242     242       --         4.219 au  FeCO4         1.00    190 A               2
+                        (     114.799 eV)
+   243     243       --         4.236 au  FeCO4         1.00    191 A               2
+                        (     115.263 eV)
+   244     244       --         4.245 au  FeCO4         1.00    192 A               2
+                        (     115.516 eV)
+   245     245       --         4.280 au  FeCO4         1.00    193 A               2
+                        (     116.460 eV)
+   246     246       --         4.309 au  FeCO4         1.00    194 A               2
+                        (     117.245 eV)
+   247     247       --         4.348 au  FeCO4         1.00    195 A               2
+                        (     118.309 eV)
+   248     248       --         4.410 au  FeCO4         1.00    196 A               2
+                        (     120.008 eV)
+   249     249       --         4.431 au  FeCO4         1.00    197 A               2
+                        (     120.564 eV)
+   250     250       --         4.468 au  FeCO4         1.00    198 A               2
+                        (     121.581 eV)
+   251     251       --         4.475 au  FeCO4         1.00    199 A               2
+                        (     121.770 eV)
+   252     252       --         4.511 au  FeCO4         1.00    200 A               2
+                        (     122.741 eV)
+   253     253       --         4.523 au  FeCO4         1.00    201 A               2
+                        (     123.083 eV)
+   254     254       --         4.550 au  FeCO4         1.00    202 A               2
+                        (     123.819 eV)
+   255     255       --         4.574 au  FeCO4         1.00    203 A               2
+                        (     124.457 eV)
+   256     256       --         5.135 au  FeCO4         1.00    204 A               2
+                        (     139.743 eV)
+   257     257       --         5.137 au  FeCO4         1.00    205 A               2
+                        (     139.773 eV)
+   258     258       --         5.168 au  FeCO4         1.00    206 A               2
+                        (     140.618 eV)
+   259     259       --         5.185 au  FeCO4         1.00    207 A               2
+                        (     141.082 eV)
+   260     260       --         5.201 au  FeCO4         1.00    208 A               2
+                        (     141.533 eV)
+   261     261       --         5.217 au  FeCO4         1.00    209 A               2
+                        (     141.960 eV)
+   262     262       --         5.234 au  FeCO4         1.00    210 A               2
+                        (     142.417 eV)
+   263     263       --         5.253 au  FeCO4         1.00    211 A               2
+                        (     142.948 eV)
+   264     264       --         5.270 au  FeCO4         1.00    212 A               2
+                        (     143.396 eV)
+   265     265       --         5.386 au  FeCO4         1.00    213 A               2
+                        (     146.558 eV)
+   266     266       --         5.503 au  FeCO4         1.00    214 A               2
+                        (     149.739 eV)
+   267     267       --         5.649 au  FeCO4         1.00    215 A               2
+                        (     153.708 eV)
+   268     268       --         5.676 au  FeCO4         1.00    216 A               2
+                        (     154.464 eV)
+   269     269       --         5.773 au  FeCO4         1.00    217 A               2
+                        (     157.097 eV)
+   270     270       --         5.859 au  FeCO4         1.00    218 A               2
+                        (     159.432 eV)
+   271     271       --         5.946 au  FeCO4         1.00    219 A               2
+                        (     161.800 eV)
+   272     272       --         6.285 au  FeCO4         1.00    220 A               2
+                        (     171.034 eV)
+   273     273       --         6.506 au  FeCO4         1.00    221 A               2
+                        (     177.048 eV)
+   274     274       --         6.514 au  FeCO4         1.00    222 A               2
+                        (     177.247 eV)
+   275     275       --         6.521 au  FeCO4         1.00    223 A               2
+                        (     177.439 eV)
+   276     276       --         6.667 au  FeCO4         1.00    224 A               2
+                        (     181.427 eV)
+   277     277       --         6.782 au  FeCO4         1.00    225 A               2
+                        (     184.544 eV)
+   278     278       --         7.058 au  FeCO4         1.00    226 A               2
+                        (     192.063 eV)
+   279     279       --         7.060 au  FeCO4         1.00    227 A               2
+                        (     192.102 eV)
+   280     280       --         7.091 au  FeCO4         1.00    228 A               2
+                        (     192.967 eV)
+   281     281       --         7.122 au  FeCO4         1.00    229 A               2
+                        (     193.790 eV)
+   282     282       --         7.142 au  FeCO4         1.00    230 A               2
+                        (     194.333 eV)
+   283     283       --         7.145 au  FeCO4         1.00    231 A               2
+                        (     194.433 eV)
+   284     284       --         7.195 au  FeCO4         1.00    232 A               2
+                        (     195.789 eV)
+   285     285       --         7.228 au  FeCO4         1.00    233 A               2
+                        (     196.683 eV)
+   286     286       --         9.306 au  FeCO4         1.00    234 A               2
+                        (     253.228 eV)
+   287     287       --         9.447 au  FeCO4         1.00    235 A               2
+                        (     257.059 eV)
+   288     288       --         9.847 au  FeCO4         1.00    236 A               2
+                        (     267.952 eV)
+   289     289       --        10.283 au  FeCO4         1.00    237 A               2
+                        (     279.806 eV)
+   290     290       --        10.516 au  FeCO4         1.00    238 A               2
+                        (     286.149 eV)
+   291     291       --        10.540 au  FeCO4         1.00    239 A               2
+                        (     286.796 eV)
+   292     292       --        10.723 au  FeCO4         1.00    240 A               2
+                        (     291.777 eV)
+   293     293       --        15.429 au  FeCO4         1.00    241 A               2
+                        (     419.850 eV)
+   294     294       --        15.468 au  FeCO4         1.00    242 A               2
+                        (     420.915 eV)
+   295     295       --        15.549 au  FeCO4         1.00    243 A               2
+                        (     423.104 eV)
+   296     296       --        15.566 au  FeCO4         1.00    244 A               2
+                        (     423.565 eV)
+   297     297       --        30.423 au  FeCO4         1.00    245 A               2
+                        (     827.864 eV)
+   298     298       --        54.863 au  FeCO4         1.00    246 A               2
+                        (    1492.902 eV)
+   299     299       --        55.048 au  FeCO4         1.00    247 A               2
+                        (    1497.930 eV)
+   300     300       --        56.007 au  FeCO4         1.00    248 A               2
+                        (    1524.041 eV)
+   301     301       --        56.114 au  FeCO4         1.00    249 A               2
+                        (    1526.937 eV)
+   302     302       --        66.841 au  FeCO4         1.00    250 A               2
+                        (    1818.832 eV)
+   303     303       --        67.494 au  FeCO4         1.00    251 A               2
+                        (    1836.602 eV)
+   304     304       --        68.511 au  FeCO4         1.00    252 A               2
+                        (    1864.283 eV)
+   305     305       --       127.286 au  FeCO4         1.00    253 A               2
+                        (    3463.618 eV)
+   306     306       --       127.377 au  FeCO4         1.00    254 A               2
+                        (    3466.095 eV)
+   307     307       --       127.660 au  FeCO4         1.00    255 A               2
+                        (    3473.813 eV)
+   308     308       --       127.673 au  FeCO4         1.00    256 A               2
+                        (    3474.146 eV)
+   309     309       --       470.091 au  FeCO4         1.00    257 A               2
+                        (   12791.831 eV)
+
+
+
+ ================================
+ (Slater-type)  F U N C T I O N S  ***  (Basis and Fit)  ***
+ ================================
+  
+
+ Atom Type    1  (O)
+ ==============
+
+ Valence Basis Sets:  10
+ -----------------------
+   1 S    9.800000
+   1 S    6.800000
+   2 S    7.580000
+   2 S    2.880000
+   2 S    1.720000
+   2 P    4.080000
+   2 P    2.080000
+   2 P    1.120000
+   3 D    2.000000
+   4 F    3.000000
+
+ Atom Type    2  (C)
+ ==============
+
+ Valence Basis Sets:  10
+ -----------------------
+   1 S    7.680000
+   1 S    5.000000
+   2 S    1.280000
+   2 S    2.100000
+   2 S    4.600000
+   2 P    0.820000
+   2 P    1.480000
+   2 P    2.940000
+   3 D    2.200000
+   4 F    3.300000
+
+ Atom Type    3  (C)
+ ==============
+
+ Valence Basis Sets:  10
+ -----------------------
+   1 S    7.680000
+   1 S    5.000000
+   2 S    1.280000
+   2 S    2.100000
+   2 S    4.600000
+   2 P    0.820000
+   2 P    1.480000
+   2 P    2.940000
+   3 D    2.200000
+   4 F    3.300000
+
+ Atom Type    4  (Fe)
+ ==============
+
+ Valence Basis Sets:  19
+ -----------------------
+   1 S   30.450000
+   1 S   23.900000
+   2 S   10.050000
+   2 S    6.350000
+   2 P   14.600000
+   2 P    9.200000
+   3 S    6.100000
+   3 S    3.700000
+   3 P    6.250000
+   3 P    4.150000
+   3 P    2.800000
+   3 D    6.400000
+   3 D    3.050000
+   3 D    1.400000
+   4 S    2.300000
+   4 S    1.400000
+   4 S    0.900000
+   4 P    1.390000
+   4 F    2.500000
+
+ Atom Type    5  (O)
+ ==============
+
+ Valence Basis Sets:  10
+ -----------------------
+   1 S    9.800000
+   1 S    6.800000
+   2 S    7.580000
+   2 S    2.880000
+   2 S    1.720000
+   2 P    4.080000
+   2 P    2.080000
+   2 P    1.120000
+   3 D    2.000000
+   4 F    3.000000
+
+
+ BAS: List of all Elementary Cartesian Basis Functions
+ =====================================================
+
+ The numbering in the list below (to the right of the function characteristics) is referred
+ to in print-outs of MO eigenvectors and Mulliken populations in the BAS representation
+ (as contrasted to the SFO representation).
+
+ Notes:
+ 1. The functions are characterized by a polynomial prefactor (powers of x,y,z and r) and
+    an exponential decay factor alpha.
+ 2. Since the basis sets are specific for an atom TYPE, the individual functions occur on
+    all atoms of that type.
+ 3. The word 'Core' in the left margin signals that it is a Core Function (CF) : not a
+    degree of freedom in the valence set, but only used to ensure orthogonalization of
+    the other valence basis functions on the frozen Core Orbitals.
+
+
+ (power of) X  Y  Z  R     Alpha  on Atom
+            ==========     =====     ==========
+
+ O                                    1
+                                  ---------------------------------------------------------------------------
+            0  0  0  0     9.800      1
+            0  0  0  0     6.800      2
+            0  0  0  1     7.580      3
+            0  0  0  1     2.880      4
+            0  0  0  1     1.720      5
+            1  0  0  0     4.080      6
+            0  1  0  0     4.080      7
+            0  0  1  0     4.080      8
+            1  0  0  0     2.080      9
+            0  1  0  0     2.080     10
+            0  0  1  0     2.080     11
+            1  0  0  0     1.120     12
+            0  1  0  0     1.120     13
+            0  0  1  0     1.120     14
+            2  0  0  0     2.000     15
+            1  1  0  0     2.000     16
+            1  0  1  0     2.000     17
+            0  2  0  0     2.000     18
+            0  1  1  0     2.000     19
+            0  0  2  0     2.000     20
+            3  0  0  0     3.000     21
+            2  1  0  0     3.000     22
+            2  0  1  0     3.000     23
+            1  2  0  0     3.000     24
+            1  1  1  0     3.000     25
+            1  0  2  0     3.000     26
+            0  3  0  0     3.000     27
+            0  2  1  0     3.000     28
+            0  1  2  0     3.000     29
+            0  0  3  0     3.000     30
+
+ C                                    2
+                                  ---------------------------------------------------------------------------
+            0  0  0  0     7.680     31
+            0  0  0  0     5.000     32
+            0  0  0  1     1.280     33
+            0  0  0  1     2.100     34
+            0  0  0  1     4.600     35
+            1  0  0  0     0.820     36
+            0  1  0  0     0.820     37
+            0  0  1  0     0.820     38
+            1  0  0  0     1.480     39
+            0  1  0  0     1.480     40
+            0  0  1  0     1.480     41
+            1  0  0  0     2.940     42
+            0  1  0  0     2.940     43
+            0  0  1  0     2.940     44
+            2  0  0  0     2.200     45
+            1  1  0  0     2.200     46
+            1  0  1  0     2.200     47
+            0  2  0  0     2.200     48
+            0  1  1  0     2.200     49
+            0  0  2  0     2.200     50
+            3  0  0  0     3.300     51
+            2  1  0  0     3.300     52
+            2  0  1  0     3.300     53
+            1  2  0  0     3.300     54
+            1  1  1  0     3.300     55
+            1  0  2  0     3.300     56
+            0  3  0  0     3.300     57
+            0  2  1  0     3.300     58
+            0  1  2  0     3.300     59
+            0  0  3  0     3.300     60
+
+ C                                    3    4    5    6
+                                  ---------------------------------------------------------------------------
+            0  0  0  0     7.680     61   91  121  151
+            0  0  0  0     5.000     62   92  122  152
+            0  0  0  1     1.280     63   93  123  153
+            0  0  0  1     2.100     64   94  124  154
+            0  0  0  1     4.600     65   95  125  155
+            1  0  0  0     0.820     66   96  126  156
+            0  1  0  0     0.820     67   97  127  157
+            0  0  1  0     0.820     68   98  128  158
+            1  0  0  0     1.480     69   99  129  159
+            0  1  0  0     1.480     70  100  130  160
+            0  0  1  0     1.480     71  101  131  161
+            1  0  0  0     2.940     72  102  132  162
+            0  1  0  0     2.940     73  103  133  163
+            0  0  1  0     2.940     74  104  134  164
+            2  0  0  0     2.200     75  105  135  165
+            1  1  0  0     2.200     76  106  136  166
+            1  0  1  0     2.200     77  107  137  167
+            0  2  0  0     2.200     78  108  138  168
+            0  1  1  0     2.200     79  109  139  169
+            0  0  2  0     2.200     80  110  140  170
+            3  0  0  0     3.300     81  111  141  171
+            2  1  0  0     3.300     82  112  142  172
+            2  0  1  0     3.300     83  113  143  173
+            1  2  0  0     3.300     84  114  144  174
+            1  1  1  0     3.300     85  115  145  175
+            1  0  2  0     3.300     86  116  146  176
+            0  3  0  0     3.300     87  117  147  177
+            0  2  1  0     3.300     88  118  148  178
+            0  1  2  0     3.300     89  119  149  179
+            0  0  3  0     3.300     90  120  150  180
+
+ Fe                                   7
+                                  ---------------------------------------------------------------------------
+            0  0  0  0    30.450    181
+            0  0  0  0    23.900    182
+            0  0  0  1    10.050    183
+            0  0  0  1     6.350    184
+            1  0  0  0    14.600    185
+            0  1  0  0    14.600    186
+            0  0  1  0    14.600    187
+            1  0  0  0     9.200    188
+            0  1  0  0     9.200    189
+            0  0  1  0     9.200    190
+            0  0  0  2     6.100    191
+            0  0  0  2     3.700    192
+            1  0  0  1     6.250    193
+            0  1  0  1     6.250    194
+            0  0  1  1     6.250    195
+            1  0  0  1     4.150    196
+            0  1  0  1     4.150    197
+            0  0  1  1     4.150    198
+            1  0  0  1     2.800    199
+            0  1  0  1     2.800    200
+            0  0  1  1     2.800    201
+            2  0  0  0     6.400    202
+            1  1  0  0     6.400    203
+            1  0  1  0     6.400    204
+            0  2  0  0     6.400    205
+            0  1  1  0     6.400    206
+            0  0  2  0     6.400    207
+            2  0  0  0     3.050    208
+            1  1  0  0     3.050    209
+            1  0  1  0     3.050    210
+            0  2  0  0     3.050    211
+            0  1  1  0     3.050    212
+            0  0  2  0     3.050    213
+            2  0  0  0     1.400    214
+            1  1  0  0     1.400    215
+            1  0  1  0     1.400    216
+            0  2  0  0     1.400    217
+            0  1  1  0     1.400    218
+            0  0  2  0     1.400    219
+            0  0  0  3     2.300    220
+            0  0  0  3     1.400    221
+            0  0  0  3     0.900    222
+            1  0  0  2     1.390    223
+            0  1  0  2     1.390    224
+            0  0  1  2     1.390    225
+            3  0  0  0     2.500    226
+            2  1  0  0     2.500    227
+            2  0  1  0     2.500    228
+            1  2  0  0     2.500    229
+            1  1  1  0     2.500    230
+            1  0  2  0     2.500    231
+            0  3  0  0     2.500    232
+            0  2  1  0     2.500    233
+            0  1  2  0     2.500    234
+            0  0  3  0     2.500    235
+
+ O                                    8    9   10   11
+                                  ---------------------------------------------------------------------------
+            0  0  0  0     9.800    236  266  296  326
+            0  0  0  0     6.800    237  267  297  327
+            0  0  0  1     7.580    238  268  298  328
+            0  0  0  1     2.880    239  269  299  329
+            0  0  0  1     1.720    240  270  300  330
+            1  0  0  0     4.080    241  271  301  331
+            0  1  0  0     4.080    242  272  302  332
+            0  0  1  0     4.080    243  273  303  333
+            1  0  0  0     2.080    244  274  304  334
+            0  1  0  0     2.080    245  275  305  335
+            0  0  1  0     2.080    246  276  306  336
+            1  0  0  0     1.120    247  277  307  337
+            0  1  0  0     1.120    248  278  308  338
+            0  0  1  0     1.120    249  279  309  339
+            2  0  0  0     2.000    250  280  310  340
+            1  1  0  0     2.000    251  281  311  341
+            1  0  1  0     2.000    252  282  312  342
+            0  2  0  0     2.000    253  283  313  343
+            0  1  1  0     2.000    254  284  314  344
+            0  0  2  0     2.000    255  285  315  345
+            3  0  0  0     3.000    256  286  316  346
+            2  1  0  0     3.000    257  287  317  347
+            2  0  1  0     3.000    258  288  318  348
+            1  2  0  0     3.000    259  289  319  349
+            1  1  1  0     3.000    260  290  320  350
+            1  0  2  0     3.000    261  291  321  351
+            0  3  0  0     3.000    262  292  322  352
+            0  2  1  0     3.000    263  293  323  353
+            0  1  2  0     3.000    264  294  324  354
+            0  0  3  0     3.000    265  295  325  355
+
+ Total number of charge fitting functions (nprimf)      1010
+ Total number of Cartesian basis functions (naos)        355
+ Total number of Cartesian core functions  (ncos)          0
+
+1
+ ***************************************************************************************************
+
+
+
+                                              ***********************
+                                              *  T E C H N I C A L  *
+                                              ***********************
+  
+
+
+
+ =============================================================
+ P A R A L L E L I Z A T I O N  and  V E C T O R I Z A T I O N
+ =============================================================
+  
+ Nr of parallel processes:                               10
+ Maximum vector length in NumInt loops:                 128
+
+
+
+ =====================
+ S C F   U P D A T E S
+ =====================
+  
+ Max. nr. of cycles:                               300
+ Convergence criterion:                              0.0000010000
+   secondary criterion:                              0.0010000000
+
+ Mix parameter (when DIIS does not apply):           0.2000000000
+ Mixed ADIIS+SDIIS will be used                  
+    Max number of expansion vectors:                10
+    Pure ADIIS when Max([F,P]) is above              0.1000000000
+    Pure SDIIS when Max([F,P]) is below              0.0010000000
+ Automatic ElectronSmearing (in case of problematic SCF convergence) disabled
+
+
+
+ =================
+ P R E C I S I O N  ***  (General: NumInt, NeglectFunctionTails, ...)  ***
+ =================
+  
+
+ NumInt:           Target precision:                 8.0000000000
+ -------           Initial precision:                8.0000000000
+                   Min. precision (optimization):    8.0000000000
+
+ Neglect Functions:          Basis functions:        0.1000000000E-09
+ ------------------          Fit functions:          0.1000000000E-09
+
+
+
+ ===========================
+ L I N E A R   S C A L I N G
+ ===========================
+  
+
+ Cut-off radii density fit:                        0.1000000000E-11
+ Overlap cut-off criterion AO matrix elements:     0.1000000000E-09
+ Cut-offs for Coulomb potential and fitted density:0.1000000000E-11
+ Cut-off criterion for Coulomb multipole terms:    0.1000000000E-11
+ Progressive Convergence parameter:                 0.000000000    
+1
+ ***************************************************************************************************
+
+
+
+                                            ***************************
+                                            *  C O M P U T A T I O N  *
+                                            ***************************
+  
+
+ Number of elements of the density matrix on this node (used, total):      6940     63190
+
+
+
+ ===========================================
+ Numerical Integration : Fuzzy Cells (Becke)
+ ===========================================
+  
+ Becke grid quality: VERYGOOD       
+  
+ Lebedev angular grid order:             min:  13 max:  41
+ Nr. of radial points:                   min:  68 max: 106
+
+ Total nr. of points:     283383
+ Nr. of blocks:             2214
+ Block length:               128
+ Nr. of dummy points:          9
+
+
+ Test of Precision of the Numerical Integration Grid
+ ===================================================
+
+ Integral of the Total Core Density:                   0.00000000000000
+
+
+
+ ========================
+ Density Fitting (zlmFit)
+ ========================
+  
+ ZlmFit Fit Quality: VERYGOOD       
+  
+ Max L-expansion:                        min:  11 max:  11
+ Nr. of radial interpolation points:     min: 160 max: 220
+
+
+
+ =====
+ S C F  ***  ScaSCF  ***
+ =====
+  
+ Initial density matrix is calculated as sum of fragments
+
+ CYCLE    1
+ SCF Error: norm([F,P])=      2.851481255293, max([F,P])=      1.906145416240
+ orbitals (Q,E):
+ ---------------
+ A :39...58          ( 2.00    -0.4109)  ( 2.00    -0.4052)  ( 2.00    -0.4014)  ( 2.00    -0.3997)
+                     ( 2.00    -0.3886)  ( 2.00    -0.3751)  ( 2.00    -0.2623)  ( 2.00    -0.2570)
+                     ( 2.00    -0.2253)  ( 2.00    -0.2078)  ( 0.00    -0.0982)  ( 0.00    -0.0898)
+                     ( 0.00    -0.0683)  ( 0.00    -0.0614)  ( 0.00    -0.0613)  ( 0.00    -0.0588)
+                     ( 0.00    -0.0451)  ( 0.00    -0.0386)  ( 0.00    -0.0312)  ( 0.00    -0.0289)
+
+ CYCLE    2
+   MIX coefficients:  0.8000  0.2000
+ SCF Error: norm([F,P])=      1.676247694456, max([F,P])=      0.484262477361
+ orbitals (Q,E):
+ ---------------
+ A :39...49          ( 2.00    -0.4151)  ( 2.00    -0.4122)  ( 2.00    -0.4121)  ( 2.00    -0.4107)
+                     ( 2.00    -0.4098)  ( 2.00    -0.3884)  ( 2.00    -0.3375)  ( 2.00    -0.3352)
+                     ( 2.00    -0.2739)  ( 2.00    -0.2737)  ( 0.00    -0.1223)
+
+ CYCLE    3
+  SDIIS (wt  0.000):  0.5927  0.4073
+ A-DIIS (wt  1.000):  0.5795  0.4205
+  DIIS coefficients:  0.5795  0.4205
+ SCF Error: norm([F,P])=      2.403346718922, max([F,P])=      0.669346835219
+ orbitals (Q,E):
+ ---------------
+ A :39...49          ( 2.00    -0.4269)  ( 2.00    -0.4252)  ( 2.00    -0.4114)  ( 2.00    -0.3418)
+                     ( 2.00    -0.3362)  ( 2.00    -0.3334)  ( 2.00    -0.2804)  ( 2.00    -0.2675)
+                     ( 2.00    -0.2330)  ( 2.00    -0.2141)  ( 0.00    -0.0932)
+
+ CYCLE    4
+  SDIIS (wt  0.000):  0.3566  0.3456  0.2978
+ A-DIIS (wt  1.000):  0.3771  0.3555  0.2673
+  DIIS coefficients:  0.3771  0.3555  0.2673
+ SCF Error: norm([F,P])=      1.152988699424, max([F,P])=      0.362021197959
+ orbitals (Q,E):
+ ---------------
+ A :39...49          ( 2.00    -0.4119)  ( 2.00    -0.4101)  ( 2.00    -0.4097)  ( 2.00    -0.4050)
+                     ( 2.00    -0.4041)  ( 2.00    -0.3859)  ( 2.00    -0.2871)  ( 2.00    -0.2871)
+                     ( 2.00    -0.2356)  ( 2.00    -0.2356)  ( 0.00    -0.0848)
+
+ CYCLE    5
+  SDIIS (wt  0.658):  0.1054  0.0600  0.0581  0.7765
+ A-DIIS (wt  0.342):  0.0160  0.0000  0.0000  0.9840
+  DIIS coefficients:  0.0748  0.0395  0.0382  0.8475
+ SCF Error: norm([F,P])=      0.125427896998, max([F,P])=      0.034883052786
+ orbitals (Q,E):
+ ---------------
+ A :39...49          ( 2.00    -0.4183)  ( 2.00    -0.4134)  ( 2.00    -0.4133)  ( 2.00    -0.4033)
+                     ( 2.00    -0.4025)  ( 2.00    -0.3812)  ( 2.00    -0.2740)  ( 2.00    -0.2740)
+                     ( 2.00    -0.2262)  ( 2.00    -0.2258)  ( 0.00    -0.0767)
+
+ CYCLE    6
+  SDIIS (wt  0.000): -0.0046  0.0374 -0.0093  0.6143  0.3622
+ A-DIIS (wt  1.000):  0.0000  0.0000  0.0000  0.7963  0.2037
+  DIIS coefficients:  0.0000  0.0000  0.0000  0.7963  0.2037
+ SCF Error: norm([F,P])=      0.468837481792, max([F,P])=      0.152455080666
+ orbitals (Q,E):
+ ---------------
+ A :39...49          ( 2.00    -0.4162)  ( 2.00    -0.4134)  ( 2.00    -0.4115)  ( 2.00    -0.4053)
+                     ( 2.00    -0.4038)  ( 2.00    -0.3830)  ( 2.00    -0.2829)  ( 2.00    -0.2825)
+                     ( 2.00    -0.2329)  ( 2.00    -0.2325)  ( 0.00    -0.0828)
+
+ CYCLE    7
+  SDIIS (wt  0.865):  0.0195 -0.0055  0.0317  0.3938 -0.0546  0.6151
+ A-DIIS (wt  0.135):  0.0000  0.0000  0.0000  0.3547  0.0406  0.6047
+  DIIS coefficients:  0.0169 -0.0048  0.0274  0.3885 -0.0417  0.6137
+ SCF Error: norm([F,P])=      0.067543116700, max([F,P])=      0.014373277171
+ orbitals (Q,E):
+ ---------------
+ A :39...49          ( 2.00    -0.4128)  ( 2.00    -0.4120)  ( 2.00    -0.4117)  ( 2.00    -0.4042)
+                     ( 2.00    -0.4042)  ( 2.00    -0.3846)  ( 2.00    -0.2825)  ( 2.00    -0.2824)
+                     ( 2.00    -0.2316)  ( 2.00    -0.2315)  ( 0.00    -0.0819)
+
+ CYCLE    8
+  SDIIS (wt  0.865):  0.0016 -0.0013  0.0130  0.2157 -0.0309  0.3992  0.4026
+ A-DIIS (wt  0.135):  0.0000  0.0000  0.0000  0.1436  0.0000  0.1921  0.6644
+  DIIS coefficients:  0.0014 -0.0011  0.0113  0.2059 -0.0267  0.3712  0.4379
+ SCF Error: norm([F,P])=      0.060958817238, max([F,P])=      0.019720950071
+ orbitals (Q,E):
+ ---------------
+ A :39...49          ( 2.00    -0.4136)  ( 2.00    -0.4121)  ( 2.00    -0.4119)  ( 2.00    -0.4046)
+                     ( 2.00    -0.4046)  ( 2.00    -0.3846)  ( 2.00    -0.2841)  ( 2.00    -0.2840)
+                     ( 2.00    -0.2331)  ( 2.00    -0.2330)  ( 0.00    -0.0826)
+
+ CYCLE    9
+  SDIIS (wt  0.908): -0.0007 -0.0011  0.0050  0.1094 -0.0090  0.2056  0.3694  0.3215
+ A-DIIS (wt  0.092):  0.0000  0.0000  0.0000  0.0000  0.0000  0.0000  0.3185  0.6815
+  DIIS coefficients: -0.0006 -0.0010  0.0046  0.0994 -0.0082  0.1867  0.3647  0.3545
+ SCF Error: norm([F,P])=      0.032579648320, max([F,P])=      0.010073888517
+ orbitals (Q,E):
+ ---------------
+ A :39...49          ( 2.00    -0.4135)  ( 2.00    -0.4120)  ( 2.00    -0.4119)  ( 2.00    -0.4046)
+                     ( 2.00    -0.4046)  ( 2.00    -0.3845)  ( 2.00    -0.2835)  ( 2.00    -0.2835)
+                     ( 2.00    -0.2327)  ( 2.00    -0.2327)  ( 0.00    -0.0823)
+
+ CYCLE   10
+  SDIIS (wt  1.000): -0.0010 -0.0000  0.0001  0.0293  0.0063  0.0414  0.1659  0.2426  0.5154
+  DIIS coefficients: -0.0010 -0.0000  0.0001  0.0293  0.0063  0.0414  0.1659  0.2426  0.5154
+ SCF Error: norm([F,P])=      0.002335550477, max([F,P])=      0.000547289703
+ orbitals (Q,E):
+ ---------------
+ A :39...49          ( 2.00    -0.4135)  ( 2.00    -0.4120)  ( 2.00    -0.4120)  ( 2.00    -0.4046)
+                     ( 2.00    -0.4045)  ( 2.00    -0.3845)  ( 2.00    -0.2835)  ( 2.00    -0.2835)
+                     ( 2.00    -0.2327)  ( 2.00    -0.2326)  ( 0.00    -0.0823)
+
+ CYCLE   11
+  SDIIS (wt  1.000): -0.0002 -0.0001  0.0001  0.0113  0.0025  0.0143  0.0723  0.1249  0.3085  0.4666
+  DIIS coefficients: -0.0002 -0.0001  0.0001  0.0113  0.0025  0.0143  0.0723  0.1249  0.3085  0.4666
+ SCF Error: norm([F,P])=      0.000579004459, max([F,P])=      0.000100024283
+ orbitals (Q,E):
+ ---------------
+ A :39...49          ( 2.00    -0.4135)  ( 2.00    -0.4120)  ( 2.00    -0.4120)  ( 2.00    -0.4045)
+                     ( 2.00    -0.4045)  ( 2.00    -0.3845)  ( 2.00    -0.2835)  ( 2.00    -0.2835)
+                     ( 2.00    -0.2327)  ( 2.00    -0.2326)  ( 0.00    -0.0823)
+
+ CYCLE   12
+  SDIIS (wt  1.000): -0.0001  0.0000  0.0055  0.0012  0.0064  0.0374  0.0714  0.1843  0.3613  0.3326
+  DIIS coefficients: -0.0001  0.0000  0.0055  0.0012  0.0064  0.0374  0.0714  0.1843  0.3613  0.3326
+ SCF Error: norm([F,P])=      0.000273047226, max([F,P])=      0.000048324584
+ orbitals (Q,E):
+ ---------------
+ A :39...49          ( 2.00    -0.4135)  ( 2.00    -0.4120)  ( 2.00    -0.4120)  ( 2.00    -0.4046)
+                     ( 2.00    -0.4045)  ( 2.00    -0.3845)  ( 2.00    -0.2835)  ( 2.00    -0.2835)
+                     ( 2.00    -0.2327)  ( 2.00    -0.2326)  ( 0.00    -0.0823)
+
+ CYCLE   13
+  SDIIS (wt  1.000): -0.0001  0.0007  0.0006 -0.0001  0.0058  0.0133  0.0323  0.0779  0.1681  0.7015
+  DIIS coefficients: -0.0001  0.0007  0.0006 -0.0001  0.0058  0.0133  0.0323  0.0779  0.1681  0.7015
+ SCF Error: norm([F,P])=      0.000062285683, max([F,P])=      0.000012167361
+ orbitals (Q,E):
+ ---------------
+ A :39...49          ( 2.00    -0.4135)  ( 2.00    -0.4120)  ( 2.00    -0.4120)  ( 2.00    -0.4046)
+                     ( 2.00    -0.4045)  ( 2.00    -0.3845)  ( 2.00    -0.2835)  ( 2.00    -0.2835)
+                     ( 2.00    -0.2327)  ( 2.00    -0.2326)  ( 0.00    -0.0823)
+
+ CYCLE   14
+  SDIIS (wt  1.000):  0.0000  0.0000 -0.0000  0.0004  0.0004  0.0026  0.0108  0.0287  0.1518  0.8051
+  DIIS coefficients:  0.0000  0.0000 -0.0000  0.0004  0.0004  0.0026  0.0108  0.0287  0.1518  0.8051
+ SCF Error: norm([F,P])=      0.000019723306, max([F,P])=      0.000006457810
+ orbitals (Q,E):
+ ---------------
+ A :39...49          ( 2.00    -0.4135)  ( 2.00    -0.4120)  ( 2.00    -0.4120)  ( 2.00    -0.4046)
+                     ( 2.00    -0.4045)  ( 2.00    -0.3845)  ( 2.00    -0.2835)  ( 2.00    -0.2835)
+                     ( 2.00    -0.2327)  ( 2.00    -0.2326)  ( 0.00    -0.0823)
+
+ CYCLE   15
+  SDIIS (wt  1.000):  0.0000 -0.0000  0.0001  0.0000  0.0005  0.0029  0.0102  0.0668  0.3664  0.5531
+  DIIS coefficients:  0.0000 -0.0000  0.0001  0.0000  0.0005  0.0029  0.0102  0.0668  0.3664  0.5531
+ SCF Error: norm([F,P])=      0.000002654932, max([F,P])=      0.000000601074
+ orbitals (Q,E):
+ ---------------
+ A :39...49          ( 2.00    -0.4135)  ( 2.00    -0.4120)  ( 2.00    -0.4120)  ( 2.00    -0.4046)
+                     ( 2.00    -0.4045)  ( 2.00    -0.3845)  ( 2.00    -0.2835)  ( 2.00    -0.2835)
+                     ( 2.00    -0.2327)  ( 2.00    -0.2326)  ( 0.00    -0.0823)
+
+ SCF CONVERGED
+
+ CYCLE   16
+1
+ ***************************************************************************************************
+
+
+
+                                                *******************
+                                                *  R E S U L T S  *
+                                                *******************
+  
+ *** Using FIT density in Focky
+  SDIIS (wt  1.000):  0.0000  0.0000 -0.0000 -0.0000  0.0004  0.0018  0.0143  0.0806  0.2384  0.6646
+  DIIS coefficients:  0.0000  0.0000 -0.0000 -0.0000  0.0004  0.0018  0.0143  0.0806  0.2384  0.6646
+ SCF Error: norm([F,P])=      0.000000610123, max([F,P])=      0.000000161031
+
+ Scaled ZORA Orbital Energies, per Irrep and Spin:
+ =================================================
+                        Occup              E (au)              E (eV)       Diff (eV) with prev. cycle
+                        -----      --------------------        ------       --------------------------
+ A
+              39        2.000     -0.41346721916560E+00       -11.251               9.69E-08
+              40        2.000     -0.41196662053582E+00       -11.210              -1.60E-07
+              41        2.000     -0.41196202472473E+00       -11.210               2.20E-07
+              42        2.000     -0.40455003151746E+00       -11.008               2.55E-08
+              43        2.000     -0.40453534507816E+00       -11.008               4.75E-07
+              44        2.000     -0.38452056924438E+00       -10.463               2.37E-07
+              45        2.000     -0.28351884219107E+00        -7.715               5.46E-07
+              46        2.000     -0.28349311973243E+00        -7.714               4.54E-07
+              47        2.000     -0.23267132565992E+00        -6.331               4.71E-07
+              48        2.000     -0.23262405046567E+00        -6.330               6.45E-07
+              49        0.000     -0.82305223961023E-01        -2.240
+              50        0.000     -0.82266356582106E-01        -2.239
+              51        0.000     -0.76222046332881E-01        -2.074
+              52        0.000     -0.76206086129845E-01        -2.074
+              53        0.000     -0.71395160050739E-01        -1.943
+              54        0.000     -0.71018491315076E-01        -1.933
+              55        0.000     -0.67827102454235E-01        -1.846
+              56        0.000     -0.52386247378958E-01        -1.426
+              57        0.000     -0.52346700839310E-01        -1.424
+              58        0.000     -0.29030238733527E-01        -0.790
+  
+ HOMO :       48 A                -0.23262405046567E+00
+ LUMO :       49 A                -0.82305223961023E-01
+  
+
+
+ All Electron Calculation, thus no Orbital Energies of the Core Orbitals are calculated
+
+
+ Fit test: (difference of exact and fit density, squared integrated, result summed over spins)
+         Sum-of-Fragments:                             0.00000474935197
+         Orthogonalized Fragments:                     0.00000575929378
+         SCF:                                          0.00000643771752
+
+
+
+ ==========================
+ Electron Density at Nuclei
+ ==========================
+  
+ The electron density is calculated at points on a small sphere around the center of a nucleus.
+ The printed electron density is the average electron density on these points.
+ The radius of the sphere is the printed approximate finite nuclear radius.
+ Note: ZORA-4 density is used, which includes small component density
+
+         Atom        Nuclear Radius (Angstrom)             Electron Density (a.u.)
+         ----        -------------------------             -----------------------
+     1)   O                 0.0000345546                              314.26215
+     2)   C                 0.0000320678                              127.83333
+     3)   Fe                0.0000486501                            12759.34402
+     4)   O                 0.0000345546                              314.26349
+     5)   C                 0.0000320678                              127.83874
+     6)   O                 0.0000345546                              314.26192
+     7)   O                 0.0000345546                              314.26348
+     8)   O                 0.0000345546                              314.26234
+     9)   C                 0.0000320678                              127.83338
+    10)   C                 0.0000320678                              127.83876
+    11)   C                 0.0000320678                              127.83381
+
+
+
+ =======================================
+ M U L L I K E N   P O P U L A T I O N S
+ =======================================
+  
+ The survey below gives for each atom:
+ a) the total charge (Z minus electrons)
+ b) the net spin polarization (nr of electrons spin-A minus spin-B)
+ c) for each spin the atomic electron valence density (integrated) per L-value.
+
+ Atom              Charge    Spin density          S         P         D         F
+ ----              ------    ------------       ------    ------    ------    ------
+ 1 O              -0.3280                       3.8095    4.4520    0.0601    0.0063
+ 2 C               0.4052                       3.2891    2.1989    0.0974    0.0095
+ 3 Fe             -0.4054                       6.2401   13.2395    6.9035    0.0224
+ 4 O              -0.3216                       3.8120    4.4420    0.0611    0.0064
+ 5 C               0.4084                       3.2718    2.2147    0.0953    0.0098
+ 6 O              -0.3280                       3.8095    4.4520    0.0601    0.0063
+ 7 O              -0.3216                       3.8120    4.4420    0.0611    0.0064
+ 8 O              -0.3280                       3.8095    4.4520    0.0601    0.0063
+ 9 C               0.4052                       3.2890    2.1989    0.0974    0.0095
+ 10 C              0.4084                       3.2718    2.2147    0.0953    0.0098
+ 11 C              0.4052                       3.2890    2.1988    0.0974    0.0095
+
+ Populations of individual BAS functions
+ ----------------------------------------
+ 1 O            0.7144  1.2088  0.0472  1.0542  0.7849  0.2654  0.2764  0.2959  0.8481  0.8707
+                0.9032  0.3667  0.3722  0.2534 -0.0048  0.0000  0.0210 -0.0061  0.0211  0.0288
+               -0.0084 -0.0026 -0.0099 -0.0032  0.0000  0.0141 -0.0091 -0.0102  0.0142  0.0215
+ 2 C            0.5059  1.4806  0.4053  0.9337 -0.0363 -0.0411 -0.0040  0.0063  0.5234  0.5750
+                0.6265  0.1205  0.1343  0.2580 -0.0073  0.0008  0.0347 -0.0112  0.0369  0.0434
+               -0.0045 -0.0014 -0.0063 -0.0020  0.0001  0.0096 -0.0056 -0.0070  0.0100  0.0166
+ 10 C           0.5058  1.4809  0.3890  0.9332 -0.0371  0.0056 -0.0218 -0.0218  0.6339  0.5531
+                0.5531  0.2584  0.1270  0.1270  0.0443  0.0364  0.0364 -0.0114  0.0011 -0.0114
+                0.0174  0.0100  0.0100 -0.0070  0.0001 -0.0070 -0.0051 -0.0017 -0.0017 -0.0051
+ 11 C           0.5059  1.4805  0.4052  0.9337 -0.0363 -0.0411  0.0034 -0.0010  0.5234  0.6117
+                0.5897  0.1205  0.2226  0.1697 -0.0073  0.0250  0.0105  0.0354  0.0218  0.0120
+               -0.0045 -0.0049 -0.0028  0.0055  0.0016  0.0006  0.0080  0.0072  0.0007 -0.0018
+ 5 C            0.5058  1.4809  0.3890  0.9331 -0.0371  0.0056 -0.0218 -0.0218  0.6339  0.5531
+                0.5531  0.2584  0.1270  0.1270  0.0443  0.0364  0.0364 -0.0114  0.0011 -0.0114
+                0.0174  0.0100  0.0100 -0.0070  0.0001 -0.0070 -0.0051 -0.0017 -0.0017 -0.0051
+ 9 C            0.5059  1.4805  0.4052  0.9336 -0.0363 -0.0411  0.0041 -0.0018  0.5234  0.6154
+                0.5860  0.1205  0.2315  0.1608 -0.0073  0.0275  0.0080  0.0380  0.0244  0.0067
+               -0.0045 -0.0052 -0.0025  0.0065  0.0014 -0.0001  0.0100  0.0079 -0.0009 -0.0030
+ 3 Fe           0.7166  1.2156  2.0332 -0.4018  0.6727  0.6726  0.6726  1.3043  1.3047  1.3047
+                1.4795  0.9331  0.4821  0.4837  0.4837  1.2182  1.2084  1.2084  0.3636  0.3658
+                0.3657  0.1123  0.3355  0.3355  0.1837  0.3140  0.1837  0.3276  0.7855  0.7855
+                0.4586  0.7588  0.4586  0.1964  0.4150  0.4150  0.2346  0.3685  0.2346  0.2085
+                0.0783 -0.0229  0.2928  0.4178  0.4178  0.0195  0.0023  0.0023 -0.0058  0.0012
+               -0.0058  0.0009  0.0041  0.0018  0.0017
+ 4 O            0.7144  1.2092  0.0468  1.0553  0.7864  0.2953  0.2710  0.2710  0.9034  0.8611
+                0.8611  0.2504  0.3643  0.3643  0.0295  0.0214  0.0214 -0.0056  0.0000 -0.0056
+                0.0217  0.0144  0.0144 -0.0102  0.0000 -0.0102 -0.0089 -0.0030 -0.0030 -0.0089
+ 6 O            0.7143  1.2090  0.0471  1.0542  0.7849  0.2654  0.2903  0.2820  0.8481  0.8939
+                0.8800  0.3667  0.2874  0.3382 -0.0048  0.0150  0.0060  0.0220  0.0148  0.0071
+               -0.0084 -0.0078 -0.0047  0.0085  0.0013  0.0011  0.0116  0.0079 -0.0011 -0.0020
+ 7 O            0.7144  1.2092  0.0468  1.0553  0.7864  0.2953  0.2710  0.2710  0.9034  0.8611
+                0.8611  0.2504  0.3643  0.3643  0.0295  0.0214  0.0214 -0.0056  0.0000 -0.0056
+                0.0217  0.0144  0.0144 -0.0102  0.0000 -0.0102 -0.0089 -0.0030 -0.0030 -0.0089
+ 8 O            0.7144  1.2089  0.0472  1.0542  0.7849  0.2654  0.2917  0.2806  0.8481  0.8962
+                0.8776  0.3667  0.2788  0.3468 -0.0048  0.0165  0.0045  0.0239  0.0160  0.0040
+               -0.0084 -0.0083 -0.0042  0.0099  0.0011 -0.0000  0.0141  0.0093 -0.0030 -0.0040
+
+ Gross Charges per Atom (Z minus electrons)
+ ==========================================
+            -0.3280    0.4052   -0.4054   -0.3216    0.4084   -0.3280   -0.3216   -0.3280    0.4052    0.4084
+             0.4052
+ Net Total:  0.00000000
+
+
+ Atom-Atom Population Matrix (off-diagonal elements not doubled)
+ ===============================================================
+
+     1 :     7.7674
+     2 :     0.6104    4.5395
+     3 :    -0.0329    0.3912   24.6595
+     4 :     0.0015   -0.0071   -0.0269    7.7475
+     5 :    -0.0082    0.0300    0.3623    0.6167    4.5581
+     6 :     0.0003   -0.0021   -0.0329    0.0015   -0.0082    7.7674
+     7 :     0.0015   -0.0070   -0.0269   -0.0001    0.0009    0.0015    7.7475
+     8 :     0.0003   -0.0021   -0.0329    0.0015   -0.0082    0.0003    0.0015    7.7674
+     9 :    -0.0021    0.0060    0.3912   -0.0071    0.0300   -0.0021   -0.0071    0.6104    4.5395
+    10 :    -0.0082    0.0300    0.3623    0.0009   -0.0117   -0.0082    0.6167   -0.0082    0.0300    4.5581
+    11 :    -0.0021    0.0060    0.3912   -0.0071    0.0300    0.6104   -0.0071   -0.0021    0.0060    0.0300
+             4.5394
+
+
+ Frag-Frag Population Matrix (off-diagonal elements not doubled)
+ ===============================================================
+
+     1 :    13.5277
+     2 :     0.3951   81.6821
+
+
+
+ =================================================
+ H I R S H F E L D   C H A R G E   A N A L Y S I S
+ =================================================
+  
+ For each fragment: the (numerical) integral of rho(scf) * rho(fragment)/rho(sum-of-fragments)
+ (nuclear charges are included, electrons are counted negative)
+
+ The fragments and their ordering are defined in the early G E O M E T R Y output section.
+ If you use single-atom fragments, this usually implies that all atoms of the same
+ chemical type are grouped together. This may not be the order in which you listed them
+ in the input file!
+
+    1  CO                       -0.1828
+    2  FeCO4                     0.1828
+
+ Sum of these charges (accuracy NumInt/Tails) =          -0.00001022
+
+
+
+ =============================
+ V O R O N O I   C H A R G E S
+ =============================
+  
+ For each atom: the (numerical) integral of the total electronic charge density in its Voronoi cell,
+ i.e. the region of space that is closer to that atom than to any other atom.
+ (cf. Wigner-Seitz cells in crystals)
+
+ Within the Voronoi cell the subintegrals over the atomic sphere and the remaining part are evaluated
+ separately to give the numbers of electrons (negative charge) in these regions.
+ The net total charge in the cell (including the nuclear charge) is also given.
+
+ Values are provided for
+    a) the Initial (sum-of-fragments) density
+    b) the Orthogonalized-Fragments density
+    c) the SCF density
+    d) the Voronoi Deformation Density (VDD): the difference SCF-Initial for the complete atomic cell
+
+
+  Atom                Initial                    OrthFrag                   SCF
+             Sphere RestCell NetTotal   Sphere RestCell NetTotal   Sphere RestCell NetTotal      VDD
+ -----       ------------------------   ------------------------   ------------------------    -----
+    1 O      -3.384   -4.813   -0.197   -3.393   -4.833   -0.226   -3.385   -4.848   -0.234   -0.037
+    2 C      -2.304   -3.545    0.151   -2.315   -3.522    0.163   -2.317   -3.704   -0.022   -0.173
+    3 Fe    -19.327   -5.633    1.040  -19.356   -5.551    1.094  -19.289   -5.584    1.127    0.086
+    4 O      -3.385   -4.837   -0.222   -3.388   -4.843   -0.230   -3.385   -4.834   -0.219    0.003
+    5 C      -2.320   -3.675    0.004   -2.322   -3.666    0.012   -2.319   -3.642    0.039    0.035
+    6 O      -3.386   -4.861   -0.247   -3.388   -4.866   -0.253   -3.385   -4.851   -0.236    0.011
+    7 O      -3.385   -4.838   -0.224   -3.388   -4.844   -0.232   -3.385   -4.835   -0.221    0.003
+    8 O      -3.386   -4.853   -0.238   -3.387   -4.857   -0.245   -3.385   -4.843   -0.228    0.011
+    9 C      -2.317   -3.721   -0.039   -2.318   -3.731   -0.050   -2.317   -3.709   -0.026    0.013
+   10 C      -2.320   -3.675    0.005   -2.322   -3.665    0.013   -2.319   -3.642    0.040    0.035
+   11 C      -2.318   -3.716   -0.034   -2.319   -3.726   -0.045   -2.317   -3.704   -0.021    0.013
+ ---------------------------------------------------------------------------------------------------
+ Total NetCharge:              -0.000                     -0.000                     -0.000   -0.000
+ (accuracy NumInt/Tails)
+
+ Remark: the 'NetTotal' Voronoi charges often do not match the Mulliken and/or Hirshfeld charges very
+ well. This is caused by the fact that chemically different atoms are not treated in accordance with
+ their relative sizes. (Voronoi cells are defined by boundary planes halfway between the atoms.)
+ However, the CHANGES in charge, comparing 'Initial' to 'SCF' for instance, do give a fair indication
+ of the flow of charge caused by the relaxation from sum-of-fragments to self-consistency.
+
+ Warning: the absolute accuracy of the VDD charges obtained using the Fuzzy Cells (Becke) integration
+ scheme is much poorer than the one obtained with an 'equivalent' Voronoi integration grid. 
+
+
+
+ =================================================================
+ M U L T I P O L E   D E R I V E D   C H A R G E   A N A L Y S I S
+ =================================================================
+
+ This charge analysis uses the atomic multipoles (obtained from the fitted density) up to some level X,
+ and reconstructs these multipoles exactly (up to level X) by distributing charges over all atoms.
+ This is achieved by using Lagrange multipliers and a weight function to keep the multipoles local.
+
+ Dummy atoms can be included (by setting INCDUM in MDC-block to 1) to obtain a fractional charge.
+ This is generally useful and necessary only for small symmetrical molecules, when there are not
+ enough degrees of freedom to reconstruct the multipoles.
+
+ Since the atomic multipoles are reconstructed up to level X,
+ the molecular multipoles are represented also up to level X.
+ The recommended level is to reconstruct up to quadrupole : -> MDC-q charges.
+
+ See: M. Swart, P.Th. van Duijnen, J.G. Snijders, J.Comput.Chem., (2001), p. 79-88.
+
+ ------------------------------------------------------------- 
+ Atomic electronic multipole moments from SCF equations (a.u.)
+ ------------------------------------------------------------- 
+
+   atom        charge        dip-x     dip-y     dip-z      quad-xx   quad-xy   quad-xz   quad-yy   quad-yz   quad-zz
+ --------------------------------------------------------------------------------------------------------------------
+    1 O     -0.185527     0.001825 -0.010609  0.256559    -0.217877 -0.000141  0.003542 -0.311803 -0.023222  0.529680
+    2 C     -0.068748    -0.004125  0.023903 -0.577121     0.149420 -0.000004  0.001089 -0.530224 -0.025189  0.380804
+    3 Fe     1.127610    -0.000040  0.000000  0.000177     0.505619  0.000181 -0.003614 -0.253015 -0.000184 -0.252603
+    4 O     -0.166253     0.257516  0.000186 -0.001892     0.519378  0.000373 -0.003806 -0.259712 -0.000031 -0.259667
+    5 C     -0.016171    -0.531996 -0.000397  0.003950     0.265618  0.000138 -0.001841 -0.132801 -0.000152 -0.132817
+    6 O     -0.185520    -0.000863 -0.216828 -0.137583    -0.217936  0.001633  0.000570  0.288730  0.254665 -0.070794
+    7 O     -0.166256    -0.257518 -0.000006  0.001733     0.519383  0.000010 -0.003487 -0.259710 -0.000029 -0.259673
+    8 O     -0.185520    -0.000900  0.227510 -0.119061    -0.217846 -0.001734  0.000470  0.349620 -0.231229 -0.131774
+    9 C     -0.068676     0.002012 -0.511625  0.267909     0.149686 -0.001802 -0.002190  0.185607 -0.250398 -0.335293
+   10 C     -0.016191     0.532033  0.000001 -0.003595     0.265663  0.000058 -0.001877 -0.132854 -0.000160 -0.132808
+   11 C     -0.068746     0.001924  0.487745  0.309396     0.149244  0.001979 -0.002069  0.120368  0.275526 -0.269612
+
+ --------------------------------------- 
+ Multipole derived atomic charges (a.u.)
+ --------------------------------------- 
+
+ The MDC-m charges are just the Monopole terms in the multipole expansion, while for the MDC-d charges
+ also the Dipoles are reconstructed. The usually preferred charges are the MDC-q charges.
+ These reconstruct the Monopoles, Dipoles and Quadrupoles (both atomic AND molecular).
+
+        Atom    Level:     MDC-m        MDC-d        MDC-q
+ ---------------------------------------------------------
+     1     O           -0.185527    -0.140109    -0.133066
+     2     C           -0.068748    -0.015340    -0.067082
+     3     Fe           1.127610     0.652838     0.788371
+     4     O           -0.166253    -0.132129    -0.496735
+     5     C           -0.016171     0.038776     0.654583
+     6     O           -0.185520    -0.140106    -0.133316
+     7     O           -0.166256    -0.132126     0.279158
+     8     O           -0.185520    -0.140119    -0.133163
+     9     C           -0.068676    -0.015169    -0.066781
+    10     C           -0.016191     0.038726    -0.625398
+    11     C           -0.068746    -0.015242    -0.066571
+
+ ------------------------------------------------ 
+ Average absolute deviations in atomic multipoles
+ ------------------------------------------------ 
+
+ Stated here are the average differences between the atomic multipoles
+ and the reconstructed atomic multipoles (from the distributed charges).
+ If these values are not zero, this means there are not enough degrees of freedom,
+ to be able to reconstruct the atomic multipoles. (This usually happens only
+ for small and/or highly symmetric molecules). If this is the case, one could add
+ dummy atoms as extra point charges (and setting INCDUM in MDC-block to 1).
+
+ Level:                                 MDC-d        MDC-q
+ ---------------------------------------------------------
+ Charge   (a.u.)                       0.0000       0.0000
+ Dipole   (Debye)                      0.0000       0.0002
+ Quad.    (a.u.)                       0.0982       0.0001
+
+ --------------------------------------- 
+ Represented molecular multipole moments
+ --------------------------------------- 
+
+ Given here are the Molecular multipole moments from the atomic charges, and from the Fit Density.
+ Note that the atomic charges represent the latter, NOT the ones from the Exact density.
+
+            Q (a.u.)             Dipole moment (Debye)                                          Quadrupole moment (a.u.)
+                                 x         y         z              xx        xy        xz        yy        yz        zz
+------------------------------------------------------------------------------------------------------------------------
+MDC-m         0.0000        0.0003    0.0008   -0.0012         -0.8650   -0.0004    0.0095    0.4352    0.0001    0.4298
+MDC-d         0.0000       -0.0000    0.0005   -0.0000         -0.5253   -0.0003    0.0058    0.2653    0.0001    0.2601
+MDC-q        -0.0000       -0.0028    0.0004    0.0002          0.9038   -0.0045   -0.0050   -0.4508   -0.0010   -0.4530
+ 
+Fit.Dens.     0.0000       -0.0000    0.0005   -0.0000          0.9039    0.0002   -0.0030   -0.4507   -0.0012   -0.4532
+
+
+
+ =============
+ Dipole Moment  ***  (Debye)  ***
+ =============
+  
+ Vector   :        -0.00000499      0.00038808     -0.00003618
+ Magnitude:         0.00038979
+
+ This molecular dipole moment is calculated with analytic integration
+
+
+
+ =========================================
+ Quadrupole Moment (Buckingham convention)  ***  (a.u.)  ***
+ =========================================
+  
+      quad-xx        quad-xy        quad-xz        quad-yy        quad-yz        quad-zz
+      0.90395709     0.00052847    -0.00962337    -0.45075439    -0.00151120    -0.45320271
+
+ This molecular quadrupole moment is calculated with analytic integration
+ Becke grid quality: Special        
+  
+ Lebedev angular grid order:             min:  53 max:  53
+ Nr. of radial points:                   min: 136 max: 212
+
+
+
+ ========================
+ Density Fitting (zlmFit)
+ ========================
+  
+ ZlmFit Fit Quality: VERYGOOD       
+  
+ Max L-expansion:                        min:  11 max:  11
+ Nr. of radial interpolation points:     min: 160 max: 180
+
+
+
+ ========================
+ Density Fitting (zlmFit)
+ ========================
+  
+ ZlmFit Fit Quality: VERYGOOD       
+  
+ Max L-expansion:                        min:  11 max:  11
+ Nr. of radial interpolation points:     min: 160 max: 220
+1
+
+
+
+ ===========================
+ B O N D I N G   E N E R G Y  ***  (decomposition)  ***
+ ===========================
+  
+*** IMPORTANT NOTE ***
+
+The bond energy is computed as an energy difference between molecule and
+fragments. In particular when the fragments are single atoms, they are usually
+computed as SPHERICALLY SYMMETRIC and SPIN-RESTRICTED. Obviously, this usually
+does NOT represent the true atomic groundstate.
+
+To obtain the 'real' bond energy, (atomic) correction terms must be applied
+for the true (multiplet) fragment ground state. See ref: E.J.Baerends,
+V.Branchadell, M.Sodupe, Chem.Phys.Lett.265 (1997) 481
+
+General theoretical background on the bond energy decomposition scheme used
+here (Morokuma-Ziegler) can be found in the review paper:
+F.M. Bickelhaupt and E.J. Baerends,
+"Kohn-Sham Density Functional Theory: Predicting and Understanding Chemistry"
+In: Rev. Comput. Chem.; Lipkowitz, K. B. and Boyd, D. B., Eds.;
+Wiley-VCH: New York, 2000, Vol. 15, 1-86.
+
+Symbols used in the Bickelhaupt-Baerends (BB) paper are given below to make
+the direct connection to that paper, where detailed explanations can be found
+on the meaning of the various terms.
+
+
+                                                   hartree              eV         kcal/mol           kJ/mol
+                                      --------------------     -----------       ----------      -----------
+
+Pauli Repulsion
+  Kinetic (Delta T^0):                   1.440710740388994         39.2037           904.06          3782.59
+  Delta V^Pauli Coulomb:                -0.944309167684937        -25.6960          -592.56         -2479.28
+  Delta V^Pauli LDA-XC:                 -0.223932402416371         -6.0935          -140.52          -587.93
+  Delta V^Pauli GGA-Exchange:            0.043076845014166          1.1722            27.03           113.10
+  Delta V^Pauli GGA-Correlation:        -0.024130487743015         -0.6566           -15.14           -63.35
+                                      --------------------     -----------       ----------      -----------
+  Total Pauli Repulsion:                 0.291415527558837          7.9298           182.87           765.11
+ (Total Pauli Repulsion =
+  Delta E^Pauli in BB paper)
+
+Steric Interaction
+  Pauli Repulsion (Delta E^Pauli):       0.291415527558837          7.9298           182.87           765.11
+  Electrostatic Interaction:            -0.202724754502839         -5.5164          -127.21          -532.25
+ (Electrostatic Interaction =
+  Delta V_elstat in the BB paper)
+                                      --------------------     -----------       ----------      -----------
+  Total Steric Interaction:              0.088690773055998          2.4134            55.65           232.86
+ (Total Steric Interaction =
+  Delta E^0 in the BB paper)
+
+Orbital Interactions
+  A:                                    -0.157752056343082         -4.2927           -98.99          -414.18
+                                      --------------------     -----------       ----------      -----------
+  Total Orbital Interactions:           -0.157752056343082         -4.2927           -98.99          -414.18
+
+Alternative Decomposition Orb.Int.
+  Kinetic:                              -1.204117862488451        -32.7657          -755.60         -3161.41
+  Coulomb:                               0.916058792332107         24.9272           574.84          2405.11
+  XC:                                    0.130307013813263          3.5458            81.77           342.12
+                                      --------------------     -----------       ----------      -----------
+  Total Orbital Interactions:           -0.157752056343082         -4.2927           -98.99          -414.18
+
+  Residu (E=Steric+OrbInt+Res):         -0.000000091208418         -0.0000            -0.00            -0.00
+
+Total Bonding Energy:                   -0.069061374495502         -1.8793           -43.34          -181.32
+
+
+Summary of Bonding Energy (energy terms are taken from the energy decomposition above)
+======================================================================================
+
+  Electrostatic Energy:                 -0.202724754502839         -5.5164          -127.21          -532.25
+  Kinetic Energy:                        0.236592877900543          6.4380           148.46           621.17
+  Coulomb (Steric+OrbInt) Energy:       -0.028250466561248         -0.7687           -17.73           -74.17
+  XC Energy:                            -0.074679031331958         -2.0321           -46.86          -196.07
+                                      --------------------     -----------       ----------      -----------
+  Total Bonding Energy:                 -0.069061374495501         -1.8793           -43.34          -181.32
+
+
+Correction terms (incorporated in energies above; only for test purposes):
+
+1. Indication of fit-quality: 1st-order fit-correction used in the energy (hartree):  -0.0000068126
+2. Electrostatic (Fit correction):   0.0000000000
+
+Scaled ZORA energy correction, not included in bonding energy (hartree):           -0.0001210368
+ NOTE: This scaled ZORA energy correction should only be used to compare two calculations
+ in which the only difference in the calculation is the electron configuration.
+ Then the difference in energy of this term should be added to the difference in energy of
+ the two electron configurations.
+ This term should not be used otherwise.
+ In practice it is useful only for core excitation energy calculations.
+
+
+
+ =========================================
+ F R A G M E N T   E N E R G Y   T E R M S  ***  (summed over all fragments)  ***
+ =========================================
+  
+
+The energy terms below are (parts of) the Total Energy of the fragments from which the molecule
+ is built.
+
+Exchange and Correlation
+  Exchange LDA:                       -112.105675744780655      -3050.5507        -70347.38       -294333.41
+  Exchange GGA:                        -10.178423418980378       -276.9690         -6387.06        -26723.45
+  Correlation LDA:                       0.000000000000000          0.0000             0.00             0.00
+  Correlation GGA:                      -3.702592132580211       -100.7527         -2323.41         -9721.15
+                                      --------------------     -----------       ----------      -----------
+  Total XC:                           -125.986691296341235      -3428.2723        -79057.85       -330778.01
+1
+
+
+
+ =======================================================
+ S F O   P O P U L A T I O N S ,   M O   A N A L Y S I S
+ =======================================================
+  
+ A Mulliken population analysis is performed on (input-)selected MOs. All populations refer to SFOs.
+ BAS populations may have been printed directly after the SCF part.
+
+
+                                       === A ===
+
+
+ SFO contributions (%) per orbital
+ (multiplication by the orbital occupation yields the SFO Gross Populations)
+
+ Orb.:       39     40     41     42     43     44     45     46     47     48     49     50     51     52
+ occup:     2.00   2.00   2.00   2.00   2.00   2.00   2.00   2.00   2.00   2.00   0.00   0.00   0.00   0.00
+ CF+SFO     ----   ----   ----   ----   ----   ----   ----   ----   ----   ----   ----   ----   ----   ----
+ ------
+      4:    0.00   0.00   0.00   1.23   1.24   0.00  -0.00  -0.00  -0.01  -0.00   0.00   0.00   0.07   0.06
+      5:    0.00   0.00   0.00  12.23  12.34   0.00  -0.00  -0.00   3.44   0.64   0.00   0.00   2.01   1.84
+     21:    0.00  13.77  29.74   0.00   0.00  15.13   1.39   2.01   0.00   0.00   0.02   0.05   0.00   0.00
+     22:    0.00  -0.02  -0.04   0.00  -0.00   0.70   2.20   3.19   0.00   0.00   6.94  17.06   0.00   0.00
+     31:   33.28   0.00   0.00   4.41   4.38   0.00   0.00   0.00   0.43   2.30  -0.00  -0.00  -0.00  -0.00
+     32:   -0.02   0.00   0.00  -0.00  -0.00   0.00   0.00   0.00   2.35  12.61   0.00   0.00   0.81   0.85
+     78:    0.00   0.00   0.00   0.99   1.00   0.00   0.00   0.00   0.05   0.01   0.00   0.00   0.02   0.02
+     80:    0.00   0.93   2.00   0.00   0.00   0.10   0.04   0.05   0.00   0.00   0.01   0.01   0.00   0.00
+     82:    0.00   0.00   0.00   3.63   3.64   0.00   0.00   0.00   0.06   0.01   0.00   0.00   0.01   0.00
+     83:    0.00  12.57  27.17   0.00   0.00   0.60   0.05   0.08   0.00   0.00   0.07   0.18   0.00   0.00
+     85:   62.11   0.00   0.00   0.00   0.01   0.00   0.00   0.00   0.01   0.06   0.00   0.00   0.00   0.00
+     86:    0.02   0.00   0.00  23.62  23.78   0.00   0.00   0.00   0.01   0.00  -0.00  -0.00   0.01   0.01
+     87:    0.00  68.33  31.63   0.00   0.00   0.00   0.00   0.00   0.00   0.00   0.00   0.00   0.00   0.00
+     88:    3.38   0.00   0.00  45.44  45.08   0.00   0.00   0.00   0.02   0.12   0.00   0.00  -0.00  -0.00
+     89:    0.00   3.82   8.24   0.00   0.00  83.46   0.06   0.09   0.00   0.00   0.07   0.18   0.00   0.00
+     90:    0.00   0.00   0.00   0.00   0.00   0.00  59.19  40.70   0.00   0.00   0.04   0.02   0.00   0.00
+     91:    0.00   0.39   0.85   0.00   0.00   0.27  36.77  53.50   0.00   0.00   0.20   0.50   0.00   0.00
+     92:    0.00   0.00   0.00   3.32   3.34   0.00   0.00   0.00  66.94  12.46   0.00   0.00   0.97   0.89
+     93:    0.66   0.00   0.00   0.00   0.00  -0.00   0.00   0.00  12.92  69.45   0.00   0.00   0.60   0.64
+     94:    0.00   0.00   0.00   3.24   3.27   0.00   0.00   0.00  12.69   2.37   0.00   0.00  13.89  12.72
+     95:   -0.00   0.00   0.00   0.00   0.00  -0.00   0.03   0.02   0.00   0.00  71.22  28.71   0.00   0.00
+     96:   -0.00   0.00  -0.00   0.00   0.00  -0.00   0.00   0.00   0.01   0.07   0.00   0.00  44.43  48.43
+     97:    0.00  -0.00  -0.00   0.00   0.00  -0.00   0.08   0.12   0.00   0.00  18.27  45.55   0.00   0.00
+     98:    0.00  -0.00  -0.00   0.04   0.05  -0.00   0.00   0.00   0.01   0.00   0.00   0.00  27.71  25.53
+     99:    0.01   0.00   0.00   0.00   0.00   0.00   0.00   0.00   0.07   0.36   0.00   0.00   1.98   2.14
+    100:    0.00   0.00   0.00   0.08   0.08   0.00   0.00   0.00   0.01   0.00   0.00   0.00   3.01   2.74
+    101:    0.00   0.01   0.02   0.00   0.00   0.02   0.01   0.02   0.00   0.00   3.14   7.71   0.00   0.00
+    105:   -0.00   0.00   0.00   0.03   0.03   0.00   0.00  -0.00   0.38   0.07   0.00   0.00   2.62   2.40
+
+
+ Summation over all MOs, multiplied by occupation: Total SFO Gross Populations in this Irrep
+ ===========================================================================================
+
+     2.00    2.00    1.98    1.98    1.49    0.00    0.02    0.01    0.01   -0.00    0.00    0.00
+    -0.00   -0.00    0.00   -0.00   -0.00    0.00    0.00   -0.00    1.99    0.16   -0.02   -0.00
+     0.01    0.00    0.00   -0.00    0.00    0.00    2.00    0.31   -0.02   -0.00    0.01   -0.00
+     0.00   -0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00
+     0.00    0.00    0.00    0.00    2.00    2.00    2.00    2.00    2.00    2.00    2.00    2.00
+     2.00    2.00    2.00    2.00    2.00    1.99    2.00    2.00    2.00    2.00    2.00    2.00
+     2.00    1.98    2.00    2.00    2.00    1.99    2.00    2.00    2.00    2.00    1.99    2.00
+     2.00    2.00    2.00    2.00    1.99    2.00    1.87    1.87    1.69    0.62    0.00    0.00
+     0.00    0.00    0.01    0.01    0.00    0.00    0.00    0.00    0.02    0.00    0.01    0.00
+     0.00    0.00    0.00    0.02    0.00    0.00    0.00    0.00    0.00    0.00   -0.00    0.00
+     0.00    0.00    0.00    0.00    0.00   -0.00   -0.00    0.00   -0.00    0.00    0.00   -0.00
+     0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00
+    -0.00   -0.00    0.00    0.00    0.00   -0.00   -0.00   -0.00    0.00    0.00    0.00    0.00
+     0.00    0.00    0.00   -0.00    0.00   -0.00    0.00    0.00   -0.00    0.00    0.00    0.00
+    -0.00   -0.00    0.00   -0.00   -0.00   -0.00   -0.00    0.00    0.00    0.00    0.00    0.00
+    -0.00    0.00   -0.00    0.00   -0.00    0.00    0.00    0.00   -0.00   -0.00    0.00   -0.00
+     0.00    0.00   -0.00    0.00    0.00    0.00   -0.00    0.00    0.00    0.00    0.00   -0.00
+    -0.00   -0.00   -0.00   -0.00    0.00   -0.00    0.00   -0.00    0.00    0.00    0.00   -0.00
+    -0.00    0.00   -0.00   -0.00    0.00   -0.00   -0.00    0.00   -0.00   -0.00    0.00    0.00
+     0.00   -0.00    0.00   -0.00   -0.00    0.00    0.00    0.00   -0.00    0.00   -0.00    0.00
+     0.00   -0.00   -0.00   -0.00   -0.00    0.00    0.00    0.00   -0.00   -0.00   -0.00   -0.00
+     0.00   -0.00    0.00    0.00   -0.00    0.00    0.00    0.00   -0.00    0.00   -0.00   -0.00
+    -0.00   -0.00    0.00    0.00   -0.00    0.00   -0.00   -0.00    0.00   -0.00    0.00    0.00
+    -0.00    0.00    0.00    0.00   -0.00    0.00    0.00   -0.00    0.00   -0.00   -0.00    0.00
+    -0.00   -0.00    0.00    0.00   -0.00   -0.00   -0.00    0.00    0.00    0.00   -0.00   -0.00
+    -0.00   -0.00   -0.00   -0.00   -0.00   -0.00    0.00   -0.00    0.00
+
+
+
+ List of all MOs, ordered by energy, with the most significant SFO gross populations
+ ===================================================================================
+
+ Each percentage contribution in the table below corres ponds to the indicated SFO.
+ In general, a SFO may be a linear combination of several Fragment Orbitals on the same,
+ or on symmetry-related Fragments. Only the first 'member' of such a combination is
+ specified here. A full definition of all SFOs is given in an earlier part of the output.
+ The numbering of the SFOs in this table does NOT include the Core Orbitals, and starts
+ from one for each symmetry representation, as in the SFO definition list earlier.
+
+       E(eV)  Occ       MO           %     SFO (first member)   E(eV)  Occ   Fragment
+ -------------------------------------------------------------------------------------
+
+     -15.815  2.00    25 A         85.46%    22 A             -15.252  2.00     2 FeCO4
+                                    6.79%     5 SIGMA          -8.988  2.00     1 CO
+                                    6.76%     4 SIGMA         -13.960  2.00     1 CO
+     -14.373  2.00    26 A         98.80%    23 A             -14.124  2.00     2 FeCO4
+                                    0.82%     1 PI:x          -11.455  2.00     1 CO
+     -14.132  2.00    27 A         85.47%    24 A             -13.850  2.00     2 FeCO4
+                                    8.14%     4 SIGMA         -13.960  2.00     1 CO
+                                    3.03%    25 A             -13.782  2.00     2 FeCO4
+                                    1.36%    22 A             -15.252  2.00     2 FeCO4
+     -14.132  2.00    28 A         47.67%     4 SIGMA         -13.960  2.00     1 CO
+                                   18.30%    25 A             -13.782  2.00     2 FeCO4
+                                   14.50%    24 A             -13.850  2.00     2 FeCO4
+                                    7.96%    22 A             -15.252  2.00     2 FeCO4
+                                    3.54%     5 SIGMA          -8.988  2.00     1 CO
+                                    2.51%    42 A              -4.423  0.00     2 FeCO4
+                                    2.10%    26 A             -12.388  2.00     2 FeCO4
+                                    1.54%    40 A              -6.104  2.00     2 FeCO4
+     -14.016  2.00    29 A         78.48%    25 A             -13.782  2.00     2 FeCO4
+                                   15.85%     4 SIGMA         -13.960  2.00     1 CO
+                                    2.45%    22 A             -15.252  2.00     2 FeCO4
+     -12.661  2.00    30 A         88.94%    26 A             -12.388  2.00     2 FeCO4
+                                    6.84%     4 SIGMA         -13.960  2.00     1 CO
+                                    3.88%     5 SIGMA          -8.988  2.00     1 CO
+     -12.199  2.00    31 A         77.28%    27 A             -11.945  2.00     2 FeCO4
+                                   14.61%    28 A             -11.861  2.00     2 FeCO4
+                                    4.46%     1 PI:x          -11.455  2.00     1 CO
+                                    2.64%    31 A             -11.422  2.00     2 FeCO4
+     -12.198  2.00    32 A         50.14%    28 A             -11.861  2.00     2 FeCO4
+                                   22.64%    27 A             -11.945  2.00     2 FeCO4
+                                   15.05%     1 PI:x          -11.455  2.00     1 CO
+                                    8.93%    31 A             -11.422  2.00     2 FeCO4
+                                    1.31%    37 A             -10.284  2.00     2 FeCO4
+     -11.975  2.00    33 A         77.15%    29 A             -11.718  2.00     2 FeCO4
+                                   15.96%    30 A             -11.674  2.00     2 FeCO4
+                                    2.68%     5 SIGMA          -8.988  2.00     1 CO
+                                    1.47%     4 SIGMA         -13.960  2.00     1 CO
+     -11.975  2.00    34 A         57.73%    30 A             -11.674  2.00     2 FeCO4
+                                   21.42%    29 A             -11.718  2.00     2 FeCO4
+                                    9.53%     5 SIGMA          -8.988  2.00     1 CO
+                                    5.24%     4 SIGMA         -13.960  2.00     1 CO
+                                    2.23%    26 A             -12.388  2.00     2 FeCO4
+                                    1.11%    42 A              -4.423  0.00     2 FeCO4
+                                    1.00%    34 A             -11.095  2.00     2 FeCO4
+     -11.966  2.00    35 A         47.12%    31 A             -11.422  2.00     2 FeCO4
+                                   32.03%    28 A             -11.861  2.00     2 FeCO4
+                                   17.29%     1 PI:x          -11.455  2.00     1 CO
+                                    1.92%    37 A             -10.284  2.00     2 FeCO4
+     -11.737  2.00    36 A         33.60%    32 A             -11.301  2.00     2 FeCO4
+                                   29.55%    34 A             -11.095  2.00     2 FeCO4
+                                   13.31%     5 SIGMA          -8.988  2.00     1 CO
+                                   12.82%    30 A             -11.674  2.00     2 FeCO4
+                                    3.67%     4 SIGMA         -13.960  2.00     1 CO
+                                    2.29%    42 A              -4.423  0.00     2 FeCO4
+                                    2.20%    40 A              -6.104  2.00     2 FeCO4
+                                    1.59%    26 A             -12.388  2.00     2 FeCO4
+     -11.539  2.00    37 A         63.94%    32 A             -11.301  2.00     2 FeCO4
+                                   20.19%    34 A             -11.095  2.00     2 FeCO4
+                                    4.58%    30 A             -11.674  2.00     2 FeCO4
+                                    4.16%     5 SIGMA          -8.988  2.00     1 CO
+                                    1.39%     1 PI:y          -11.455  2.00     1 CO
+                                    1.22%    40 A              -6.104  2.00     2 FeCO4
+                                    1.14%    33 A             -11.097  2.00     2 FeCO4
+     -11.539  2.00    38 A         52.49%     1 PI:y          -11.455  2.00     1 CO
+                                   36.60%    33 A             -11.097  2.00     2 FeCO4
+                                    5.47%    36 A             -10.705  2.00     2 FeCO4
+                                    1.70%    32 A             -11.301  2.00     2 FeCO4
+                                    1.64%    41 A              -5.286  2.00     2 FeCO4
+     -11.251  2.00    39 A         62.11%    33 A             -11.097  2.00     2 FeCO4
+                                   33.28%     1 PI:y          -11.455  2.00     1 CO
+                                    3.38%    36 A             -10.705  2.00     2 FeCO4
+     -11.210  2.00    40 A         68.33%    35 A             -10.970  2.00     2 FeCO4
+                                   13.77%     1 PI:x          -11.455  2.00     1 CO
+                                   12.57%    31 A             -11.422  2.00     2 FeCO4
+                                    3.82%    37 A             -10.284  2.00     2 FeCO4
+     -11.210  2.00    41 A         31.63%    35 A             -10.970  2.00     2 FeCO4
+                                   29.74%     1 PI:x          -11.455  2.00     1 CO
+                                   27.17%    31 A             -11.422  2.00     2 FeCO4
+                                    8.24%    37 A             -10.284  2.00     2 FeCO4
+                                    2.00%    28 A             -11.861  2.00     2 FeCO4
+     -11.008  2.00    42 A         45.44%    36 A             -10.705  2.00     2 FeCO4
+                                   23.62%    34 A             -11.095  2.00     2 FeCO4
+                                   12.23%     5 SIGMA          -8.988  2.00     1 CO
+                                    4.41%     1 PI:y          -11.455  2.00     1 CO
+                                    3.63%    30 A             -11.674  2.00     2 FeCO4
+                                    3.32%    40 A              -6.104  2.00     2 FeCO4
+                                    3.24%    42 A              -4.423  0.00     2 FeCO4
+                                    1.23%     4 SIGMA         -13.960  2.00     1 CO
+     -11.008  2.00    43 A         45.08%    36 A             -10.705  2.00     2 FeCO4
+                                   23.78%    34 A             -11.095  2.00     2 FeCO4
+                                   12.34%     5 SIGMA          -8.988  2.00     1 CO
+                                    4.38%     1 PI:y          -11.455  2.00     1 CO
+                                    3.64%    30 A             -11.674  2.00     2 FeCO4
+                                    3.34%    40 A              -6.104  2.00     2 FeCO4
+                                    3.27%    42 A              -4.423  0.00     2 FeCO4
+                                    1.24%     4 SIGMA         -13.960  2.00     1 CO
+                                    1.00%    26 A             -12.388  2.00     2 FeCO4
+     -10.463  2.00    44 A         83.46%    37 A             -10.284  2.00     2 FeCO4
+                                   15.13%     1 PI:x          -11.455  2.00     1 CO
+      -7.715  2.00    45 A         59.19%    38 A              -7.288  2.00     2 FeCO4
+                                   36.77%    39 A              -6.876  2.00     2 FeCO4
+                                    2.20%     2 PI:x           -2.103  0.00     1 CO
+                                    1.39%     1 PI:x          -11.455  2.00     1 CO
+      -7.714  2.00    46 A         53.50%    39 A              -6.876  2.00     2 FeCO4
+                                   40.70%    38 A              -7.288  2.00     2 FeCO4
+                                    3.19%     2 PI:x           -2.103  0.00     1 CO
+                                    2.01%     1 PI:x          -11.455  2.00     1 CO
+      -6.331  2.00    47 A         66.94%    40 A              -6.104  2.00     2 FeCO4
+                                   12.92%    41 A              -5.286  2.00     2 FeCO4
+                                   12.69%    42 A              -4.423  0.00     2 FeCO4
+                                    3.44%     5 SIGMA          -8.988  2.00     1 CO
+                                    2.35%     2 PI:y           -2.103  0.00     1 CO
+      -6.330  2.00    48 A         69.45%    41 A              -5.286  2.00     2 FeCO4
+                                   12.61%     2 PI:y           -2.103  0.00     1 CO
+                                   12.46%    40 A              -6.104  2.00     2 FeCO4
+                                    2.37%    42 A              -4.423  0.00     2 FeCO4
+                                    2.30%     1 PI:y          -11.455  2.00     1 CO
+      -2.240  0.00    49 A         71.22%    43 A              -1.887  0.00     2 FeCO4
+                                   18.27%    45 A              -1.736  0.00     2 FeCO4
+                                    6.94%     2 PI:x           -2.103  0.00     1 CO
+                                    3.14%    49 A              -1.094  0.00     2 FeCO4
+      -2.239  0.00    50 A         45.55%    45 A              -1.736  0.00     2 FeCO4
+                                   28.71%    43 A              -1.887  0.00     2 FeCO4
+                                   17.06%     2 PI:x           -2.103  0.00     1 CO
+                                    7.71%    49 A              -1.094  0.00     2 FeCO4
+      -2.074  0.00    51 A         44.43%    44 A              -1.755  0.00     2 FeCO4
+                                   27.71%    46 A              -1.656  0.00     2 FeCO4
+                                   13.89%    42 A              -4.423  0.00     2 FeCO4
+                                    3.01%    48 A              -1.145  0.00     2 FeCO4
+                                    2.62%    53 A               1.946  0.00     2 FeCO4
+                                    2.01%     5 SIGMA          -8.988  2.00     1 CO
+                                    1.98%    47 A              -1.290  0.00     2 FeCO4
+      -2.074  0.00    52 A         48.43%    44 A              -1.755  0.00     2 FeCO4
+                                   25.53%    46 A              -1.656  0.00     2 FeCO4
+                                   12.72%    42 A              -4.423  0.00     2 FeCO4
+                                    2.74%    48 A              -1.145  0.00     2 FeCO4
+                                    2.40%    53 A               1.946  0.00     2 FeCO4
+                                    2.14%    47 A              -1.290  0.00     2 FeCO4
+                                    1.84%     5 SIGMA          -8.988  2.00     1 CO
+      -1.943  0.00    53 A         44.51%    46 A              -1.656  0.00     2 FeCO4
+                                   19.77%    42 A              -4.423  0.00     2 FeCO4
+                                   18.84%    48 A              -1.145  0.00     2 FeCO4
+                                    5.96%    53 A               1.946  0.00     2 FeCO4
+                                    5.00%     5 SIGMA          -8.988  2.00     1 CO
+                                    1.55%    60 A               5.382  0.00     2 FeCO4
+                                    1.22%    40 A              -6.104  2.00     2 FeCO4
+      -1.933  0.00    54 A         35.08%    45 A              -1.736  0.00     2 FeCO4
+                                   30.39%    49 A              -1.094  0.00     2 FeCO4
+                                   30.01%     2 PI:x           -2.103  0.00     1 CO
+                                    2.76%    39 A              -6.876  2.00     2 FeCO4
+      -1.846  0.00    55 A         48.70%    47 A              -1.290  0.00     2 FeCO4
+                                   32.34%     2 PI:y           -2.103  0.00     1 CO
+                                    9.19%    41 A              -5.286  2.00     2 FeCO4
+                                    7.02%    44 A              -1.755  0.00     2 FeCO4
+                                    1.01%    64 A               8.266  0.00     2 FeCO4
+      -1.426  0.00    56 A         62.00%    48 A              -1.145  0.00     2 FeCO4
+                                    7.96%    42 A              -4.423  0.00     2 FeCO4
+                                    7.36%    47 A              -1.290  0.00     2 FeCO4
+                                    7.21%     2 PI:y           -2.103  0.00     1 CO
+                                    5.17%    53 A               1.946  0.00     2 FeCO4
+                                    3.05%     5 SIGMA          -8.988  2.00     1 CO
+                                    1.23%    46 A              -1.656  0.00     2 FeCO4
+                                    1.21%    51 A              -0.006  0.00     2 FeCO4
+                                    1.07%     6 SIGMA           2.797  0.00     1 CO
+                                    1.02%    60 A               5.382  0.00     2 FeCO4
+      -1.424  0.00    57 A         38.70%    47 A              -1.290  0.00     2 FeCO4
+                                   38.22%     2 PI:y           -2.103  0.00     1 CO
+                                   11.74%    48 A              -1.145  0.00     2 FeCO4
+                                    4.88%    41 A              -5.286  2.00     2 FeCO4
+                                    1.51%    42 A              -4.423  0.00     2 FeCO4
+                                    1.19%    64 A               8.266  0.00     2 FeCO4
+      -0.790  0.00    58 A         40.02%    49 A              -1.094  0.00     2 FeCO4
+                                   32.11%    50 A              -0.500  0.00     2 FeCO4
+                                   23.80%     2 PI:x           -2.103  0.00     1 CO
+                                    2.14%    39 A              -6.876  2.00     2 FeCO4
+      -0.789  0.00    59 A         67.85%    50 A              -0.500  0.00     2 FeCO4
+                                   18.92%    49 A              -1.094  0.00     2 FeCO4
+                                   11.28%     2 PI:x           -2.103  0.00     1 CO
+                                    1.02%    39 A              -6.876  2.00     2 FeCO4
+      -0.240  0.00    60 A         98.11%    51 A              -0.006  0.00     2 FeCO4
+                                    1.94%     6 SIGMA           2.797  0.00     1 CO
+                                    1.60%    42 A              -4.423  0.00     2 FeCO4
+                                   -1.44%     7 SIGMA           7.831  0.00     1 CO
+                                   -1.08%     5 SIGMA          -8.988  2.00     1 CO
+       1.384  0.00    61 A         85.28%    52 A               1.605  0.00     2 FeCO4
+                                   13.71%     3 PI:x            4.292  0.00     1 CO
+       1.787  0.00    62 A         38.63%    54 A               2.029  0.00     2 FeCO4
+                                   27.28%     6 SIGMA           2.797  0.00     1 CO
+                                   23.13%    53 A               1.946  0.00     2 FeCO4
+                                   13.17%    55 A               3.012  0.00     2 FeCO4
+                                   -4.72%     7 SIGMA           7.831  0.00     1 CO
+                                    3.54%     3 PI:y            4.292  0.00     1 CO
+                                    2.98%    42 A              -4.423  0.00     2 FeCO4
+                                   -2.02%    60 A               5.382  0.00     2 FeCO4
+                                   -1.38%     8 SIGMA          10.468  0.00     1 CO
+                                   -1.10%    67 A              10.885  0.00     2 FeCO4
+       1.787  0.00    63 A         52.62%    54 A               2.029  0.00     2 FeCO4
+                                   20.00%     6 SIGMA           2.797  0.00     1 CO
+                                   16.99%    53 A               1.946  0.00     2 FeCO4
+                                    9.67%    55 A               3.012  0.00     2 FeCO4
+                                    4.82%     3 PI:y            4.292  0.00     1 CO
+                                   -3.46%     7 SIGMA           7.831  0.00     1 CO
+                                    2.19%    42 A              -4.423  0.00     2 FeCO4
+                                   -1.48%    60 A               5.382  0.00     2 FeCO4
+                                   -1.01%     8 SIGMA          10.468  0.00     1 CO
+
+
+
+ =======================================================================
+ Electrostatic potential at the Nuclei due to electrons and other nuclei
+ =======================================================================
+  
+         Atom                  Potential
+         ----                  ---------
+     1)   O                  22.32294083
+     2)   C                  14.68732731
+     3)   Fe                117.45129893
+     4)   O                  22.31027446
+     5)   C                  14.67374714
+     6)   O                  22.32295546
+     7)   O                  22.31027898
+     8)   O                  22.32293527
+     9)   C                  14.68730738
+    10)   C                  14.67375541
+    11)   C                  14.68732267
+ Mulliken charges used for AMS results%charges...
+
+
+    =====================
+     CALCULATION RESULTS
+    =====================
+
+Energy (hartree)            -0.06906137
+
+
+--------------
+Atomic charges
+--------------
+  Index   Atom    Charge
+      1      O   -0.3280
+      2      C    0.4052
+      3     Fe   -0.4054
+      4      O   -0.3216
+      5      C    0.4084
+      6      O   -0.3280
+      7      O   -0.3216
+      8      O   -0.3280
+      9      C    0.4052
+     10      C    0.4084
+     11      C    0.4052
+
+
+Dipole moment vector    (Debye):    -0.00000499    0.00038808   -0.00003618
+              magnitude (Debye):     0.00038979
+
+
+AMS application finished. Exiting.
+NORMAL TERMINATION
+     Total cpu time:     165.65
+  Total system time:       2.88
+ Total elapsed time:     177.53

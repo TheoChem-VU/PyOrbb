@@ -1,0 +1,53 @@
+#!/bin/sh
+
+# dependency: /Users/yumanhordijk/PhD/TheoCheM_stack/calculations/PyOrb_testing/CoordinationBondFeCO4CO/FeCO4CO.CO FeCO4CO.CO.results/adf.rkf CO.rkf
+# dependency: /Users/yumanhordijk/PhD/TheoCheM_stack/calculations/PyOrb_testing/CoordinationBondFeCO4CO/FeCO4CO.FeCO4 FeCO4CO.FeCO4.results/adf.rkf FeCO4.rkf
+
+"$AMSBIN/ams" << eor
+
+Task SinglePoint
+System
+    Atoms
+        O -0.030933 0.173098 -2.906776 region=CO adf.f=CO
+        C -0.022738 0.12546 -1.754801 region=CO adf.f=CO
+        Fe -0.010158 0.052195 0.012724 region=FeCO4 adf.f=FeCO4
+        O -2.932253 0.050321 0.033974 region=FeCO4 adf.f=FeCO4
+        C -1.781978 0.051149 0.025521 region=FeCO4 adf.f=FeCO4
+        O -0.000246 2.519915 1.577453 region=FeCO4 adf.f=FeCO4
+        O 2.911951 0.052501 -0.007313 region=FeCO4 adf.f=FeCO4
+        O 0.000182 -2.536505 1.368079 region=FeCO4 adf.f=FeCO4
+        C -0.003861 -1.514965 0.833458 region=FeCO4 adf.f=FeCO4
+        C 1.761672 0.052473 0.000415 region=FeCO4 adf.f=FeCO4
+        C -0.004125 1.546377 0.959736 region=FeCO4 adf.f=FeCO4
+    End
+    BondOrders
+         1 2 2.0
+         3 2 1.0
+         3 5 1.0
+         3 9 1.0
+         3 10 1.0
+         3 11 1.0
+         4 5 2.0
+         6 11 2.0
+         7 10 2.0
+         8 9 2.0
+    End
+End
+
+Engine ADF
+    Basis
+        Type TZ2P
+        Core None
+    End
+    Fragments
+        CO CO.rkf 
+        FeCO4 FeCO4.rkf 
+    End
+    
+    XC
+        GGA BLYP
+    End
+    NumericalQuality VeryGood
+EndEngine
+eor
+

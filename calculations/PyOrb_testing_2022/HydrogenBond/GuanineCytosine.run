@@ -1,0 +1,90 @@
+#!/bin/sh
+
+"$AMSBIN/ams" << eor
+
+Task SinglePoint
+System
+    Atoms
+        N 0.036641 -0.07530199999999999 0.0 region=Cytosine adf.f=Cytosine
+        C -0.537157 1.142912 0.0 region=Cytosine adf.f=Cytosine
+        C -1.973458 1.301624 0.0 region=Cytosine adf.f=Cytosine
+        C -2.727482 0.170004 0.0 region=Cytosine adf.f=Cytosine
+        N -2.125085 -1.054943 0.0 region=Cytosine adf.f=Cytosine
+        C -0.712318 -1.211915 0.0 region=Cytosine adf.f=Cytosine
+        N 0.271406 2.212494 0.0 region=Cytosine adf.f=Cytosine
+        H -2.434912 2.282696 0.0 region=Cytosine adf.f=Cytosine
+        H -3.81337 0.179669 0.0 region=Cytosine adf.f=Cytosine
+        H -2.666246 -1.913322 0.0 region=Cytosine adf.f=Cytosine
+        O -0.247379 -2.363613 0.0 region=Cytosine adf.f=Cytosine
+        H -0.127368 3.141263 0.0 region=Cytosine adf.f=Cytosine
+        H 1.312781 2.100342 0.0 region=Cytosine adf.f=Cytosine
+        C 3.490481 -1.634087 0.0 region=Guanine adf.f=Guanine
+        N 6.12296 1.529813 0.0 region=Guanine adf.f=Guanine
+        C 7.198664 0.774875 0.0 region=Guanine adf.f=Guanine
+        N 6.895847 -0.589089 0.0 region=Guanine adf.f=Guanine
+        N 2.928848 -0.3735 0.0 region=Guanine adf.f=Guanine
+        C 3.640923 0.852424 0.0 region=Guanine adf.f=Guanine
+        C 5.055913 0.633791 0.0 region=Guanine adf.f=Guanine
+        C 5.519416 -0.696573 0.0 region=Guanine adf.f=Guanine
+        N 4.807474 -1.844049 0.0 region=Guanine adf.f=Guanine
+        H 8.222562 1.127841 0.0 region=Guanine adf.f=Guanine
+        O 3.016707 1.933757 0.0 region=Guanine adf.f=Guanine
+        N 2.635991 -2.685136 0.0 region=Guanine adf.f=Guanine
+        H 3.046607 -3.608016 0.0 region=Guanine adf.f=Guanine
+        H 1.61449 -2.573989 0.0 region=Guanine adf.f=Guanine
+        H 7.543875 -1.36806 0.0 region=Guanine adf.f=Guanine
+        H 1.89127 -0.289241 0.0 region=Guanine adf.f=Guanine
+    End
+    BondOrders
+         1 2 2.0
+         1 6 1.0
+         2 3 1.0
+         2 7 1.0
+         3 4 2.0
+         3 8 1.0
+         4 5 1.0
+         4 9 1.0
+         5 6 1.0
+         5 10 1.0
+         6 11 2.0
+         7 12 1.0
+         7 13 1.0
+         14 18 1.0
+         14 22 2.0
+         14 25 1.0
+         15 16 2.0
+         15 20 1.0
+         16 17 1.0
+         16 23 1.0
+         17 21 1.0
+         17 28 1.0
+         18 19 1.0
+         18 29 1.0
+         19 20 1.0
+         19 24 2.0
+         20 21 2.0
+         21 22 1.0
+         25 26 1.0
+         25 27 1.0
+    End
+End
+
+Engine ADF
+    Basis
+        Type TZ2P
+        Core None
+    End
+    Fragments
+        Guanine ${SCM_ROOT}/Users/yumanhordijk/PhD/Programs/TheoCheM/PyFMO/calculations/PyOrb_testing_2022/HydrogenBond/GuanineCytosine.Guanine.results/adf.rkf
+        Cytosine ${SCM_ROOT}/Users/yumanhordijk/PhD/Programs/TheoCheM/PyFMO/calculations/PyOrb_testing_2022/HydrogenBond/GuanineCytosine.Cytosine.results/adf.rkf
+    End
+    Print SFOSITEENERGIES
+    XC
+        GGA BLYP
+    End
+    NumericalQuality VeryGood
+EndEngine
+eor
+
+# dependency: /Users/yumanhordijk/PhD/Programs/TheoCheM/PyFMO/calculations/PyOrb_testing_2022/HydrogenBond/GuanineCytosine.Cytosine -
+# dependency: /Users/yumanhordijk/PhD/Programs/TheoCheM/PyFMO/calculations/PyOrb_testing_2022/HydrogenBond/GuanineCytosine.Guanine -

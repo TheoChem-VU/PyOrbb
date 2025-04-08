@@ -1,0 +1,36 @@
+# status: ready
+# pid: 19175
+# hostname: localhost
+# username: 
+# jobscript: 
+# prolog: 
+# epilog: 
+# jobdir: $HOME/jobs
+# fakejob: 0
+# comparewithtarget: ok
+# error: 0
+# warning: 0
+# runcmd: sh "$job" "NSCM=$options ; export NSCM"
+# plamscmd: local:*,1
+# batch: yes
+# options: 
+# killcmd: killall $pid
+# jobstatuscmd: ps -e | grep -w $pid | grep -v grep
+# sysstatuscmd: uptime
+# pidfile: no
+# label: Sequential
+# logfile: logfile
+# backup: 
+# whenready: 
+# scmjobid: 1674823941320-35332
+# paused: 0
+# remoteprefix: 
+# jobtype: .adf
+# mtime: 1674823946
+# cloudinit: 
+# cloudid: 
+# copyback: 
+# privatesshkeypath: 
+# comments: 
+# dependency: start /Users/yumanhordijk/PhD/TheoCheM_stack/calculations/PyOrb_testing/TransitionState/DielsAlder.Dienophile.job
+# dependency: start /Users/yumanhordijk/PhD/TheoCheM_stack/calculations/PyOrb_testing/TransitionState/DielsAlder.Diene.job
