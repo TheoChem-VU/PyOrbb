@@ -37,8 +37,8 @@ def main(args: argparse.Namespace):
 
     mixers = {etype: pyfmo.analysis.mixing.Mixer(orbs, energy_type=etype) for etype in orbs.sfo_energy_types}
 
-    oi_mixes = {etype: mixer.orbital_interactions(N=100) for etype, mixer in mixers.items()}
-    pauli_mixes = {etype: mixer.pauli_repulsions(N=100) for etype, mixer in mixers.items()}
+    oi_mixes = {etype: mixer.orbital_interactions(N=20) for etype, mixer in mixers.items()}
+    pauli_mixes = {etype: mixer.pauli_repulsions(N=20) for etype, mixer in mixers.items()}
 
     def update(arg=None):
         draw_diagram(
@@ -193,6 +193,8 @@ def main(args: argparse.Namespace):
         artists = sorted(artists, key=lambda artist: artist.zorder)
         submixes = main_mix.split()
         submix = [submix for submix in submixes if orb in submix.sfos or orb in submix.mos][0]
+        connections = submix.find_closed_interactions(orb)
+        print(connections)
         faded_artists = []
         for artist in artists:
             gid = artist.get_gid()
@@ -210,42 +212,40 @@ def main(args: argparse.Namespace):
 
             if gid.startswith('MO_'):
                 mo = orbs.mos[gid[3:]]
-                if mo in submix.mos:
+                if any(mo in conn for conn in connections):
                     continue
 
             if gid.startswith('SFO_'):
                 sfo = orbs.sfos[gid[4:]]
-                if sfo in submix.sfos:
+                if any(sfo in conn for conn in connections):
                     continue
 
             if gid.startswith('ARROWMO_'):
                 mo = orbs.mos[gid[8:]]
-                if mo in submix.mos:
+                if any(mo in conn for conn in connections):
                     continue
 
             if gid.startswith('ARROWSFO_'):
                 sfo = orbs.sfos[gid[9:]]
-                if sfo in submix.sfos:
+                if any(sfo in conn for conn in connections):
                     continue
 
             if gid.startswith('TEXTMO_'):
                 mo = orbs.mos[gid[7:]]
-                if mo in submix.mos:
+                if any(mo in conn for conn in connections):
                     continue
 
             if gid.startswith('TEXTSFO_'):
                 sfo = orbs.sfos[gid[8:]]
-                if sfo in submix.sfos:
+                if any(sfo in conn for conn in connections):
                     continue
 
             if gid.startswith('MIX_'):
                 sfo = orbs.sfos[gid[4:].split('->')[0].strip()]
                 mo = orbs.mos[gid[4:].split('->')[1].strip()]
-                if mo in submix.mos:
+                # print(mo, any(mo in conn for conn in connections), sfo, any(sfo in conn for conn in connections))
+                if any(mo in conn for conn in connections) and any(sfo in conn for conn in connections):
                     continue
-                if sfo in submix.sfos:
-                    continue
-
             faded_artists.append(artist)
 
         for artist in faded_artists:
@@ -255,7 +255,7 @@ def main(args: argparse.Namespace):
             plt.gcf().canvas.blit()
 
             artist.set_color(artist.orig_color)
-            artist.set_alpha(artist.orig_alpha * .1)
+            artist.set_alpha(artist.orig_alpha * .0)
             plt.gca().draw_artist(artist)
             plt.gcf().canvas.blit()
 
@@ -301,7 +301,8 @@ def main(args: argparse.Namespace):
                 submix = [submix for submix in submixes if mo in submix.mos][0]
                 s += f'MO'.ljust(35)
                 s += f'\n   {mo}'
-                s += f'\n   {mo.relative_name}\n'
+                s += f'\n   {mo.relative_name}'
+                s += f'\n   {mo.symmetry} {mo.irrep_relative_name}\n'
                 s += f'\nEnergy     {mo.energy:.2f} eV'
                 s += f'\nOccupation {mo.occupation}'
                 s += f'\nSpin       {mo.spin}'
@@ -328,7 +329,8 @@ def main(args: argparse.Namespace):
                 submix = [submix for submix in submixes if sfo in submix.sfos][0]
                 s += f'SFO'.ljust(35)
                 s += f'\n   {sfo}'
-                s += f'\n   {sfo.relative_name}\n'
+                s += f'\n   {sfo.relative_name}'
+                s += f'\n   {sfo.symmetry} {sfo.irrep_relative_name}\n'
                 s += f'\nFragment   {sfo.fragment_unique}'
                 s += f'\nEnergy    {getattr(sfo, orbs.sfo_energy_types[etype_b.index_selected]): .2f} eV'
                 s += f'\nPop.      {sfo.gross_population: .3f}'
@@ -366,10 +368,12 @@ def main(args: argparse.Namespace):
                 connected_sfos = [conn[0] for conn in main_mix.connections if conn[1] == mo and conn[0].fragment_unique != sfo.fragment_unique]
                 s += f'SFO'.ljust(35)
                 s += f'\n   {sfo}'
-                s += f'\n   {sfo.relative_name}\n'
+                s += f'\n   {sfo.relative_name}'
+                s += f'\n   {sfo.symmetry} {sfo.irrep_relative_name}\n'
                 s += f'\nMO'
                 s += f'\n   {mo}'
-                s += f'\n   {mo.relative_name}\n'
+                s += f'\n   {mo.relative_name}'
+                s += f'\n   {mo.symmetry} {mo.irrep_relative_name}\n'
                 s += f'\nContr.    {sfo.mulliken_contribution(mo): .2%}'
                 s += f'\nCoeff.    {sfo.coefficient(mo): .6f}'
                 s += f'\nSpin       {sfo.spin}'
