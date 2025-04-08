@@ -16,6 +16,9 @@ def draw_interaction(sfos, mos, connections, title=None, energy_type='energy', c
     level_thickness = 3
     degenerate_threshold = .08
 
+    if ax is None:
+        ax = plt.gca()
+
     if ylim is None:
         try:
             energies = [getattr(orb, energy_type) for orb in list(sfos)] + [orb.energy for orb in list(mos)]
@@ -27,9 +30,6 @@ def draw_interaction(sfos, mos, connections, title=None, energy_type='energy', c
     else:
         energy_span = ylim[1] - ylim[0]
         ax.set_ylim(*ylim, auto=False)
-
-    if ax is None:
-        ax = plt.gca()
 
     energy_span *= 1.2
 
@@ -159,7 +159,7 @@ def draw_interaction(sfos, mos, connections, title=None, energy_type='energy', c
             pmo  += level_width/2
 
         c = connection_colors.get((sfo, mo), 'k')
-        ax.plot([psfo, pmo], [getattr(sfo, energy_type), mo.energy], c=c, linewidth=1, alpha=np.clip(sfo.mulliken_contribution(mo), 0.1, 1), gid=f'MIX_{sfo} -> {mo}', zorder=-10)
+        ax.plot([psfo, pmo], [getattr(sfo, energy_type), mo.energy], c=c, linewidth=1, alpha=np.clip(sfo.mulliken_contribution(mo), 0., 1), gid=f'MIX_{sfo} -> {mo}', zorder=-10)
 
     # ax.fill_betweenx(ax.get_ylim(), 0, 1, alpha=.05, facecolor='k')
           
