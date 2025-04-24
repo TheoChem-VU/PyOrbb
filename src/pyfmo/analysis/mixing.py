@@ -29,7 +29,11 @@ class Mixer:
         for i, frag in enumerate(self.orbs.sfos.fragments):
             self.sfos[frag] = [sfo for sfo in self.orbs.sfos if sfo.fragment_unique == frag]
             self.sfos_occ[frag] = np.array([sfo.occupation > 0 for sfo in self.sfos[frag]]).reshape(-1, 1)
-            self.sfos_vir[frag] = np.array([sfo.occupation < 2 for sfo in self.sfos[frag]]).reshape(-1, 1)
+            if not self.orbs.sfos.unrestricted:
+                self.sfos_vir[frag] = np.array([sfo.occupation < 2 for sfo in self.sfos[frag]]).reshape(-1, 1)
+            else:
+                self.sfos_vir[frag] = np.array([sfo.occupation < 1 for sfo in self.sfos[frag]]).reshape(-1, 1)
+
             self.sfos_energy[frag] = np.array([getattr(sfo, self.energy_type) for sfo in self.sfos[frag]]).reshape(-1, 1)
 
         self.mos = list(self.orbs.mos)
@@ -206,7 +210,7 @@ class Mixing:
             title = rf'$\Delta E^{{({self.nelectrons()})}}_{{ij}} \approx {self.strength:5.1f}$ kcal/mol (${self.fraction:5.1%}$% of total)'
         else:
             title = None
-        print('draw!', self.energy_type)
+
         pyfmo.plotting.orbital_diagram.draw_interaction(self.sfos, self.mos, self.connections, None, energy_type=self.energy_type, connection_colors=self.connection_colors, ax=ax, ylim=ylim)
 
     def draw_sfos(self, overlap=False, screen=None):
@@ -497,13 +501,13 @@ class Mixing:
                 for i in range(excess_virt):
                     try:
                         self._add_extra_virtual_mo()
-                    except:
+                    except Exception:
                         pass
             elif excess_virt < 0:
                 for i in range(-excess_virt):
                     try:
                         self._add_extra_virtual_sfo()
-                    except:
+                    except Exception:
                         pass
 
             nsfos_occ = len([sfo for sfo in mix.sfos if sfo.occupied])
@@ -513,7 +517,7 @@ class Mixing:
                 for i in range(-excess_occ):
                     try:
                         self._add_extra_occupied_sfo()
-                    except:
+                    except Exception:
                         pass
 
 
@@ -726,8 +730,6 @@ def oi2(orbs, index=0, irrep=None):
 #     # plt.plot(gains)
 #     plt.plot(gains)
 #     plt.show()
-
-
 
 
 
