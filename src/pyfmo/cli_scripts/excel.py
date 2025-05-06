@@ -194,7 +194,7 @@ def main(args: argparse.Namespace):
         submixes = main_mix.split()
         submix = [submix for submix in submixes if orb in submix.sfos or orb in submix.mos][0]
         connections = submix.find_closed_interactions(orb)
-        print(connections)
+        # print(connections)
         faded_artists = []
         for artist in artists:
             gid = artist.get_gid()
