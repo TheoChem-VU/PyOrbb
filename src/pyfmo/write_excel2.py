@@ -15,7 +15,7 @@ def overlap_mat(sfos1, sfos2):
     for sfo1 in ensure_list(sfos1):
         ret.append([])
         for sfo2 in ensure_list(sfos2):
-            ret[-1].append(abs(sfo1 @ sfo2))
+            ret[-1].append((sfo1 @ sfo2))
     return np.array(ret).squeeze()
 
 
@@ -49,19 +49,12 @@ def orbint_mat(sfos1, sfos2):
     return np.array(ret).squeeze()
 
 
-def coefficient_mat(sfos, mos):
-    ret = []
-    for sfo in ensure_list(sfos):
-        ret.append([])
-        for mo in ensure_list(mos):
-            ret[-1].append(mo.get_coeff(sfo))
-    return np.array(ret).squeeze()
-
-
 def contribution_mat(orbs, sfos, mos):
-    sfo_idx = [sfo.index - 1 for sfo in sfos]
-    mo_idx = [mo.index - 1 for mo in mos]
-    return orbs.data.matrices.mulliken_contribution.total[:, sfo_idx][mo_idx, :]
+    idx_offset = 0 if mos[0].spin in ['AB', 'A'] else len(mos)
+    sfo_idx = [sfo.index - 1 + idx_offset for sfo in sfos]
+    mo_idx = [mo.index - 1 + idx_offset for mo in mos]
+    C = orbs.data.matrices.mulliken_contribution.total[:, sfo_idx][mo_idx, :]
+    return C
 
 
 def _detect_nan_rects(arr):
@@ -482,7 +475,7 @@ def to_excel(orbs, out_file: str = 'pyfmo.xlsx', sfo_energy_type: str = 'energy'
             ])
 
         headers = [
-            'Index', 
+            'Index',
             'Name', 
             'Relative Name', 
             'Occupation',
@@ -498,7 +491,6 @@ def to_excel(orbs, out_file: str = 'pyfmo.xlsx', sfo_energy_type: str = 'energy'
     sfos1_spin = {spin: [sfo for sfo in sfos_spin[spin] if sfo.fragment_unique == list(orbs.sfos.fragments)[0]] for spin in orbs.sfos.spins}
     sfos2_spin = {spin: [sfo for sfo in sfos_spin[spin] if sfo.fragment_unique == list(orbs.sfos.fragments)[1]] for spin in orbs.sfos.spins}
     mos_spin = {spin: [mo for mo in orbs.mos if mo.spin == spin or mo.spin == 'AB' or spin == 'AB'] for spin in orbs.sfos.spins}
-
     spin_names = {'A': '𝛼', 'B': '𝛽'}
     # we add a new sheet for each spin species
     for spin in orbs.sfos.spins:
@@ -519,6 +511,17 @@ def to_excel(orbs, out_file: str = 'pyfmo.xlsx', sfo_energy_type: str = 'energy'
             make_matrix_sheet(name, title, sfos1_spin[spin], sfos2_spin[spin], overlap_mat(sfos1_spin[spin], sfos2_spin[spin])**2, number_format=float_fmt, tab_color='FF6666')
 
     for spin in orbs.sfos.spins:
+        name = f"S²_occ {spin_names[spin]}" if spin != 'AB' else "S²_occ"
+        title = f"Pauli Overlaps² (spin {spin_names[spin]})" if spin != 'AB' else "Pauli Overlaps²"
+        if not orbs.data.calc_info.used_regions:
+            _sfos = [sfo for sfo in sfos_spin[spin] if sfo.occupation > 0]
+            make_matrix_sheet(name, title, _sfos, _sfos, overlap_mat(_sfos, _sfos)**2, number_format=float_fmt, tab_color='FF6666')
+        else:
+            _sfos1 = [sfo for sfo in sfos1_spin[spin] if sfo.occupation > 0]
+            _sfos2 = [sfo for sfo in sfos2_spin[spin] if sfo.occupation > 0]
+            make_matrix_sheet(name, title, _sfos1, _sfos2, overlap_mat(_sfos1, _sfos2)**2, number_format=float_fmt, tab_color='FF6666')
+
+    for spin in orbs.sfos.spins:
         name = f"Δε {spin_names[spin]}" if spin != 'AB' else "Δε"
         title = f"Orbital Energy Gap (spin {spin_names[spin]}) (eV)" if spin != 'AB' else "Orbital Energy Gap (eV)"
         if not orbs.data.calc_info.used_regions:
@@ -533,7 +536,6 @@ def to_excel(orbs, out_file: str = 'pyfmo.xlsx', sfo_energy_type: str = 'energy'
             oi = orbint_mat(sfos_spin[spin], sfos_spin[spin])
             oi[~np.isnan(oi)] *= 1000  # in the case of orbital interactions, there is a mask applied to the matrix and we want to multiply each value with 1000 for easier reading
             make_matrix_sheet(name, title, sfos_spin[spin], sfos_spin[spin], oi, number_format=float_fmt, tab_color='4D8B31')
-
         else:
             oi = orbint_mat(sfos1_spin[spin], sfos2_spin[spin])
             oi[~np.isnan(oi)] *= 1000  # in the case of orbital interactions, there is a mask applied to the matrix and we want to multiply each value with 1000 for easier reading
@@ -548,9 +550,11 @@ def to_excel(orbs, out_file: str = 'pyfmo.xlsx', sfo_energy_type: str = 'energy'
             name = f"Coeff {fragment_name} {spin_names[spin]}" if spin != 'AB' else f"Coeff {fragment_name}"
             title = f"MO Coefficients from {fragment_name} (spin {spin_names[spin]})" if spin != 'AB' else f"MO Coefficients from {fragment_name}"
             sfos_ = [sfo for sfo in sfos_spin[spin] if sfo.fragment_unique == fragment]
-            sfo_idx = [sfo.index - 1 for sfo in sfos_]
-            mo_idx = [mo.index - 1 for mo in mos_spin[spin]]
+            idx_offset = 0 if spin in ['A', 'AB'] else len(mos_spin[spin])
+            sfo_idx = [sfo.index - 1 + idx_offset for sfo in sfos_]
+            mo_idx = [mo.index - 1 + idx_offset for mo in mos_spin[spin]]
             coeff = orbs.data.matrices.coefficients.total[:, sfo_idx][mo_idx, :]
+
             cnd_fmt = {
                 'type': '3_color_scale',
                 'min_color': 'f8696b',
