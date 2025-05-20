@@ -20,14 +20,14 @@ class OrbitalSelector:
         '''
         Keys are given in the following format:
 
-            {fragname}[:{fragidx}]({orbname}[ {symmetry}])[_{spin}]
+            {fragname}[:{fragment_index}]({orbname}[ {symmetry}])[_{spin}]
 
-        Where [:fragidx] is optional
+        Where [:fragment_index] is optional
         '''
         decoded = {
             'index': None,
             'fragment': None,
-            'fragidx': None,
+            'fragment_index': None,
             'orbname': None,
             'spin': None,
             'symmetry': None,
@@ -54,11 +54,12 @@ class OrbitalSelector:
 
         # extract fragment index from fragment name if present
         if decoded['fragment'] is not None and ':' in decoded['fragment']:
-            decoded['fragment'], decoded['fragidx'] = decoded['fragment'].split(':')
-            decoded['fragidx'] = int(decoded['fragidx'])
+            decoded['fragment'], decoded['fragment_index'] = decoded['fragment'].split(':')
+            decoded['fragment_index'] = int(decoded['fragment_index'])
+        print(decoded)
         return decoded
 
-    def get(self, symmetry=None, spin=None, fragment=None, orbname=None, **kargs):
+    def get(self, symmetry=None, spin=None, fragment=None, fragment_index=None, orbname=None, **kwargs):
         orbs = self.orbitals
         # print([orb.subspecies for orb in orbs])
         if symmetry:
@@ -70,6 +71,8 @@ class OrbitalSelector:
             orbs = [orb for orb in orbs if orb.spin == spin]
         if fragment:
             orbs = [orb for orb in orbs if orb.fragment_unique == fragment or orb.fragment == fragment]
+        if fragment_index:
+            orbs = [orb for orb in orbs if orb.fragment_index == fragment_index]
         if orbname:
             orbs = [orb for orb in orbs if orb.name == orbname or orb.relative_name == orbname]
 
@@ -443,6 +446,7 @@ class Orbitals:
                     'index_in_symlabel': self.data.SFOs.symmetry_index[sfo_idx], # rmove this later
                     'fragment': self.data.calc_info.fragments[self.data.SFOs.fragment_index[sfo_idx] - 1].split(':')[0],
                     'fragment_unique': self.data.SFOs.fragment_unique.total[sfo_idx],
+                    'fragment_index': self.data.SFOs.fragment_index[sfo_idx],
                     'spin': sfo_spin,
                     'energy': self.data.SFOs.energy[sfo_spin][sfo_idx] * 27.2114079527,
                     'occupation': float(self.data.SFOs.occupation[sfo_spin][sfo_idx]),
