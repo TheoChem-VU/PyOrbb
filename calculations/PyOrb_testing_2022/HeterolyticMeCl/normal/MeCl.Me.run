@@ -1,0 +1,39 @@
+#!/bin/sh
+
+"$AMSBIN/ams" << eor
+
+Task SinglePoint
+System
+    Atoms
+        C 0.0 0.0 0.157354 region=Me
+        H -0.51946757 -0.89974422 0.498224 region=Me
+        H 1.03893513 0.0 0.498224 region=Me
+        H -0.51946757 0.89974422 0.498224 region=Me
+    End
+    Symmetrize Yes
+    Charge 1
+    BondOrders
+         1 2 1.0
+         1 3 1.0
+         1 4 1.0
+    End
+End
+Symmetry
+    SymmetrizeTolerance 1.0e-7
+End
+
+Engine ADF
+    Basis
+        Type TZ2P
+        Core None
+    End
+    ALLOW  FRACTIONAL
+    XC
+        GGA OLYP
+    End
+    Title Me fragment
+    Symmetry C(3V)
+    NumericalQuality Good
+EndEngine
+eor
+

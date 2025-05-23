@@ -1,0 +1,160 @@
+
+
+ Parallel Execution: Process Information
+ ==============================================================================
+ Rank   Node Name                              NodeID   MyNodeRank  NodeMaster
+    0   dhcp-187-164.clients.vu.nl                0          0          0
+    1   dhcp-187-164.clients.vu.nl                0          1         -1
+    2   dhcp-187-164.clients.vu.nl                0          2         -1
+    3   dhcp-187-164.clients.vu.nl                0          3         -1
+    4   dhcp-187-164.clients.vu.nl                0          4         -1
+    5   dhcp-187-164.clients.vu.nl                0          5         -1
+    6   dhcp-187-164.clients.vu.nl                0          6         -1
+    7   dhcp-187-164.clients.vu.nl                0          7         -1
+ ==============================================================================
+
+
+May use up to 15625MB of RAM as shared memory on node 0
+
+ *******************************************************************************
+ *                                                                             *
+ *  --------------------------------                                           *
+ *   Amsterdam Modeling Suite (AMS)              2023.104                      *
+ *  --------------------------------                                           *
+ *                                               r115785 2023-10-06            *
+ *                                                                             *
+ *                                                                             *
+ *                              =================                              *
+ *                              |               |                              *
+ *                              |     A M S     |                              *
+ *                              |               |                              *
+ *                              =================                              *
+ *                                                                             *
+ *                                                                             *
+ *   Online information and documentation:  https://www.scm.com/support/       *
+ *   E-mail:  support@scm.com   info@scm.com                                   *
+ *                                                                             *
+ *   Scientific publications using AMS results must be properly referenced     *
+ *   See the User Manuals (or the web site) for recommended citations          *
+ *   The terms and conditions of the End User License Agreement apply to       *
+ *   the use of AMS, https://www.scm.com/license-terms/                        *
+ *                                                                             *
+ ************************  arm64_darwin_gnu / openmpi  *************************
+ 
+ Licensed to: Prof Visscher, Prof Bickelhaupt, Prof Fonseca Guerra / Vrije Universiteit, Theoretische Chemie / Amsterdam / NETHERLANDS 2024-02-02 11:14:22
+ SCM User ID: u21794
+  
+ AMS 2023.104  RunTime: Apr09-2024 13:24:17  ShM Nodes: 1  Procs: 8
+
+ AMS jobname: ams
+ AMS jobid  : 23566439
+
+ Start   directory: /Users/yumanhordijk/PhD/TheoCheM_stack/PyFMO/test/fixtures/NH3BH3_symm/tmp.yumanhordijk.89734.0.noindex/
+ Results directory: /Users/yumanhordijk/PhD/TheoCheM_stack/PyFMO/test/fixtures/NH3BH3_symm/NH3BH3_symm.results/
+ Scratch directory: /tmp/amstmp_ams_kid0.23566439/
+
+
+ Communication costs MPI_COMM_WORLD:      1.025 usec per message,   0.0164 usec per 8-byte item
+ Communication costs for intra-node:      1.038 usec per message,   0.0133 usec per 8-byte item
+
+ RNG seed: 1181162390 -1808583518 1673996335 1808245400 786039874 653852757 1562971354 -2030776840
+
+
+
+                      ************************************************************************
+                      *  ADF 2023.104  RunTime: Apr09-2024 13:24:18  ShM Nodes: 1  Procs: 8  *
+                      ************************************************************************
+  
+
+       ****************************
+       * SINGLE POINT CALCULATION *
+       ****************************
+
+--------
+Geometry
+--------
+Formula: H6BN
+Atoms
+  Index Symbol   x (angstrom)   y (angstrom)   z (angstrom)
+      1      N    -0.00000000     0.00000000    -0.81491700       region=Donor adf.f=Donor
+      2      B    -0.00000000     0.00000000     0.83670033       region=Acceptor adf.f=Acceptor
+      3      H     0.47606708    -0.82457237    -1.14409375       region=Donor adf.f=Donor
+      4      H     0.47606708     0.82457237    -1.14409375       region=Donor adf.f=Donor
+      5      H    -0.58141449    -1.00703944     1.13683264       region=Acceptor adf.f=Acceptor
+      6      H    -0.58141449     1.00703944     1.13683264       region=Acceptor adf.f=Acceptor
+      7      H     1.16282899     0.00000000     1.13683264       region=Acceptor adf.f=Acceptor
+      8      H    -0.95213416     0.00000000    -1.14409375       region=Donor adf.f=Donor
+
+Total System Charge             0.00000
+Bonding info available!
+
+
+----------------
+ADF Engine Input
+----------------
+ 
+ Basis
+ Type TZ2P
+ Core None
+ End
+ Fragments
+ Donor Donor.rkf
+ Acceptor Acceptor.rkf
+ End
+ XC
+ GGA BLYP
+ End
+ 
+
+ Title: *** (NO TITLE) ***
+
+ *** adf ***
+
+
+
+ ===========================
+ A T T A C H E D   F I L E S
+ ===========================
+  
+
+
+
+ ===============================
+ M O D E L   P A R A M E T E R S
+ ===============================
+  
+ DENSITY FUNCTIONAL POTENTIAL (scf)
+    LDA:                               Exchange only                           == Not Default ==
+    Gradient Corrections:              Becke88 LYP                             == Not Default ==
+
+ SPIN  (restricted / unrestr.)
+    Molecule:                          Restricted                               
+    Fragments:                         Restricted                               
+
+ OTHER ASPECTS
+    Relativistic Corrections:          scalar (ZORA,MAPA)                       
+
+    Nuclear Charge Density Model:      Point Charge Nuclei                      
+    Core Treatment:                    Frozen Orbital(s)                        
+
+    Hyperfine or Zeeman Interaction:   ---                                      
+  (KFERR) Missing file: Donor.rkf
+ iu:   1   cursec/var:   NONE                             % NONE                             in /Users/yumanhordijk/PhD/TheoCheM_stack/PyFMO/test/fixtures/NH3BH3_symm/NH3BH3_symm.results/ams.rkf
+ iu:   2   cursec/var:   NONE                             % NONE                             in /tmp/amstmp_ams_kid0.23566439/adf.rkf
+ iu:   3   cursec/var:   NONE                             % NONE                             in /tmp/amstmp_ams_kid0.23566439/TAPE10
+ iu:   4   cursec/var:   NONE                             % NONE                             in /tmp/amstmp_ams_kid0.23566439/TAPE14
+ iu:   5   cursec/var:   NONE                             % NONE                             in /tmp/amstmp_ams_kid0.23566439/TAPE15
+ iu:   6   cursec/var:   NONE                             % NONE                             in /tmp/amstmp_ams_kid0.23566439/RIHartreeFock
+ iu:   7   cursec/var:   NONE                             % NONE                             in /tmp/amstmp_ams_kid0.23566439/GW
+
+ ============
+ Timer stack:
+ ------------
+  1712661857.44  AMS
+  1712661858.20  ADFEngine%Solve
+  1712661858.31  Geomet
+  1712661858.31  geoinp
+  1712661858.31  kfopflpp Donor.rkf
+ ============
+
+Missing file: Donor.rkf

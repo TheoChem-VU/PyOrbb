@@ -1,0 +1,45 @@
+#!/bin/sh
+
+"$AMSBIN/ams" << eor
+
+Task SinglePoint
+System
+    Atoms
+        H -4.301540078502102 -0.5417050181567523 1.099185054059079 region=Alkyl
+        C -4.580939195816399 -0.6534810917280787 0.04608047741606727 region=Alkyl
+        H -3.175039169985349 0.8462881164012701 -0.6213562252270456 region=Alkyl
+        H -4.798339201290763 1.473703834460455 -0.2970197547881419 region=Alkyl
+        H -4.490196785076228 0.532167620496329 -1.763950551222737 region=Alkyl
+        C -4.24027147218737 0.6307548866993307 -0.7067498068266738 region=Alkyl
+        H -3.99763660219786 -1.482924291969936 -0.3679769977090724 region=Alkyl
+    End
+    Symmetrize Yes
+    BondOrders
+         2 1 1.0
+         2 6 1.0
+         2 7 1.0
+         6 3 1.0
+         6 4 1.0
+         6 5 1.0
+    End
+End
+Symmetry
+    SymmetrizeTolerance 1.0e-7
+End
+
+Engine ADF
+    Basis
+        Type TZ2P
+        Core None
+    End
+    SpinPolarization 1
+    XC
+        GGA BLYP
+    End
+    Title Alkyl fragment
+    Symmetry NOSYM
+    Unrestricted Yes
+    NumericalQuality VeryGood
+EndEngine
+eor
+

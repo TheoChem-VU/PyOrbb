@@ -1,0 +1,216 @@
+
+ *******************************************************************************
+ *                                                                             *
+ *  --------------------------------                                           *
+ *   Amsterdam Modeling Suite (AMS)              2023.104                      *
+ *  --------------------------------                                           *
+ *                                               r115785 2023-10-06            *
+ *                                                                             *
+ *                                                                             *
+ *                            =====================                            *
+ *                            |                   |                            *
+ *                            |     D E N S F     |                            *
+ *                            |                   |                            *
+ *                            =====================                            *
+ *                                                                             *
+ *                                                                             *
+ *   Online information and documentation:  https://www.scm.com/support/       *
+ *   E-mail:  support@scm.com   info@scm.com                                   *
+ *                                                                             *
+ *   Scientific publications using AMS results must be properly referenced     *
+ *   See the User Manuals (or the web site) for recommended citations          *
+ *   The terms and conditions of the End User License Agreement apply to       *
+ *   the use of AMS, https://www.scm.com/license-terms/                        *
+ *                                                                             *
+ ************************  arm64_darwin_gnu / openmpi  *************************
+ 
+ Licensed to: Prof Visscher, Prof Bickelhaupt, Prof Fonseca Guerra / Vrije Universiteit, Theoretische Chemie / Amsterdam / NETHERLANDS 2024-02-02 11:14:22
+ SCM User ID: u21794
+  
+ DENSF 2023.104  RunTime: May17-2024 12:11:49  ShM Nodes: 1  Procs: 1
+
+ Temporary files are created in /tmp/kid_0.1801939388
+
+ADFFile /Users/yumanhordijk/PhD/TheoCheM_stack/PyFMO/test/fixtures/NH3BH3/adf.rkf
+GRID medium
+END
+Orbitals SFO
+    A 3
+END
+CUBOUTPUT /Users/yumanhordijk/PhD/TheoCheM_stack/PyFMO/test/fixtures/NH3BH3/medium
+ read unit definitions from tape21
+
+ Automatic Grid generation
+ =========================
+
+ Grid type: Medium                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
+ Grid extends around the atom bounding box by: 4.00 bohr
+ Grid spacing: 0.20 bohr
+ Number of points:      67 x       60 x       60 =   241200
+
+ Summary of selected items
+ =========================
+ 
+ Exact Density (SumFrag, Orth, SCF)        :      F F F
+ Exact Density Gradient (SCF)              :      F
+ Exact Density Hessian (SCF)               :      F
+ Exact Density Laplacian (SCF)             :      F
+ Fit   Density (SumFrag, Orth, SCF, Trans) :      F F F F
+ Fit   Density Gradient (SCF)              :      F
+ Fit   Density Hessian (SCF)               :      F
+ Fit   Density Laplacian (SCF)             :      F
+ 
+ Kinetic Energy Density (SumFrag, Orth, SCF) :    F F F
+ Single Exponential Decay Detector, SEDD (SCF) :  F
+ Exact RDG and Lambda2 for NCI (SCF)       :      F
+ Fit   RDG and Lambda2 for NCI (SCF)       :      F
+ Ridge function value (SCF)                :      F
+ Fractional Orbital Density, FOD (SCF)     :      F
+ Spin Magnetization Density                :      F
+ Steric Interaction                        :      F
+ Dual Descriptor                           :      F
+ POLTDDFT                                  :      F
+ 
+ Coulomb Potential (SumFrag, Orth, SCF, Trans) :  F F F F
+ XC Potential from fit density (Orth, SCF)     :  F F
+ XC Potential from exact density (SCF)         :  F
+ 
+ COSMO surface                                 :  F
+ 
+ Selected Orbitals (per spin and subspecies):
+ --------------------------------------------
+ 
+ Spin 1
+ A          :
+ 
+ Selected SFOs:
+ --------------
+ 
+ Spin 1
+ A          : 3
+  1% done
+  2% done
+  3% done
+  4% done
+  5% done
+  6% done
+  7% done
+  8% done
+  9% done
+ 10% done
+ 11% done
+ 12% done
+ 13% done
+ 14% done
+ 15% done
+ 16% done
+ 17% done
+ 18% done
+ 19% done
+ 20% done
+ 21% done
+ 22% done
+ 23% done
+ 24% done
+ 25% done
+ 26% done
+ 27% done
+ 28% done
+ 29% done
+ 30% done
+ 31% done
+ 32% done
+ 33% done
+ 34% done
+ 35% done
+ 36% done
+ 37% done
+ 38% done
+ 39% done
+ 40% done
+ 41% done
+ 42% done
+ 43% done
+ 44% done
+ 45% done
+ 46% done
+ 47% done
+ 48% done
+ 49% done
+ 50% done
+ 51% done
+ 52% done
+ 53% done
+ 54% done
+ 55% done
+ 56% done
+ 57% done
+ 58% done
+ 59% done
+ 60% done
+ 61% done
+ 62% done
+ 63% done
+ 64% done
+ 65% done
+ 66% done
+ 67% done
+ 68% done
+ 69% done
+ 70% done
+ 71% done
+ 72% done
+ 73% done
+ 74% done
+ 75% done
+ 76% done
+ 77% done
+ 78% done
+ 79% done
+ 80% done
+ 81% done
+ 82% done
+ 83% done
+ 84% done
+ 85% done
+ 86% done
+ 87% done
+ 88% done
+ 89% done
+ 90% done
+ 91% done
+ 92% done
+ 93% done
+ 94% done
+ 95% done
+ 96% done
+ 97% done
+ 98% done
+ 99% done
+100% done
+ *******************************************************************************
+
+                             D E N S F   E X I T
+ NORMAL TERMINATION
+
+
+
+ =================
+ Timing Statistics
+ =================
+  
+ Total Used :                     CPU=        0.24      System=        0.10     Elapsed=        0.35
+
+ Calls  Section                     ( Mean, Percentage )
+ ---------------------------------------------------------------------------------------------------
+     2  ><      ................      0.00    0.00             0.00    0.00             0.00    0.00
+     1  EXIT PROCEDURE .........      0.24  100.00             0.10  100.00             0.35  100.00
+
+
+ Currently Open Files (EXIT00)
+ ====================
+
+ Unit    Access Format  Status   Type       Ident (file)
+ -------------------------------------------------------
+   3      SEQ    FORM   TRANSP  NORMAL      LOGFILE
+                                          ( logfile )

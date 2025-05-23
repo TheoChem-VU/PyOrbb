@@ -1,0 +1,37 @@
+#!/bin/sh
+
+"$AMSBIN/ams" << eor
+
+Task SinglePoint
+System
+    Atoms
+        H 0.51141216 -0.88579185 1.14311139 region=right
+        C 0.0 0.0 0.76281188 region=right
+        H -1.02282433 0.0 1.14311139 region=right
+        H 0.51141216 0.88579185 1.14311139 region=right
+    End
+    Symmetrize Yes
+    BondOrders
+         2 1 1.0
+         2 3 1.0
+         2 4 1.0
+    End
+End
+Symmetry
+    SymmetrizeTolerance 1.0e-7
+End
+
+Engine ADF
+    Basis
+        Type TZ2P
+        Core None
+    End
+    SpinPolarization -1
+    XC
+        GGA BLYP
+    End
+    Title right fragment
+    Unrestricted Yes
+EndEngine
+eor
+

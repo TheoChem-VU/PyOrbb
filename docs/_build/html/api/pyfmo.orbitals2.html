@@ -1,0 +1,820 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>pyfmo.orbitals2 package &#8212; PyOrbb v0.1.0 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=e353d410970836974a52" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=e353d410970836974a52" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=e353d410970836974a52" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=e353d410970836974a52" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=a746c00c" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=e353d410970836974a52" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52" />
+
+    <script src="../_static/documentation_options.js?v=58152727"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'api/pyfmo.orbitals2';</script>
+    <link rel="icon" href="https://avatars.githubusercontent.com/u/119413491"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="pyfmo.plotting package" href="pyfmo.plotting.html" />
+    <link rel="prev" title="pyfmo.analysis package" href="pyfmo.analysis.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+<div class="bd-header__inner bd-page-width">
+  <label class="sidebar-toggle primary-toggle" for="__primary">
+    <span class="fa-solid fa-bars"></span>
+  </label>
+  
+  <div class="navbar-header-items__start">
+    
+      <div class="navbar-item"><!-- _templates/logo.html -->
+<style>
+    .myDiv {
+      color: #323232;
+      font-size: 30px;
+      font-weight: 400;
+      line-height: : 33px;
+      text-decoration: none;
+    }
+</style>
+<div class="myDiv">
+    <a href="./index.html">
+        <img src="https://avatars.githubusercontent.com/u/119413491?s=60&v=4">
+        PyOrbb
+    </a>
+</div></div>
+    
+  </div>
+  
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+  </button>
+`);
+</script>
+        </div>
+      
+      
+        <div class="navbar-item"><!-- _templates/star.html -->
+<a href=https://github.com/TheoChem-VU><i class="fa-brands fa-github"></i> TheoCheM</a></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+  </button>
+`);
+</script>
+    </div>
+  
+
+  
+    <label class="sidebar-toggle secondary-toggle" for="__secondary">
+      <span class="fa-solid fa-outdent"></span>
+    </label>
+  
+</div>
+
+    </nav>
+  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item"><!-- _templates/star.html -->
+<a href=https://github.com/TheoChem-VU><i class="fa-brands fa-github"></i> TheoCheM</a></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item"><nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="pyfmo.html">pyfmo package</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="pyfmo.analysis.html">pyfmo.analysis package</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">pyfmo.orbitals2 package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyfmo.plotting.html">pyfmo.plotting package</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+
+
+<nav aria-label="Breadcrumbs">
+  <ul class="bd-breadcrumbs" role="navigation" aria-label="Breadcrumb">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="modules.html" class="nav-link">pyfmo</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="pyfmo.html" class="nav-link">pyfmo package</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page">pyfmo.orbitals2 package</li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  <section id="pyfmo-orbitals2-package">
+<h1>pyfmo.orbitals2 package<a class="headerlink" href="#pyfmo-orbitals2-package" title="Link to this heading">#</a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">#</a></h2>
+</section>
+<section id="module-pyfmo.orbitals2.adf">
+<span id="pyfmo-orbitals2-adf-module"></span><h2>pyfmo.orbitals2.adf module<a class="headerlink" href="#module-pyfmo.orbitals2.adf" title="Link to this heading">#</a></h2>
+</section>
+<section id="module-pyfmo.orbitals2.objects">
+<span id="pyfmo-orbitals2-objects-module"></span><h2>pyfmo.orbitals2.objects module<a class="headerlink" href="#module-pyfmo.orbitals2.objects" title="Link to this heading">#</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="pyfmo.orbitals2.objects.MO">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">MO</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyfmo/orbitals2/objects.html#MO"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfmo.orbitals2.objects.MO" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyfmo.orbitals2.objects.Orbital" title="pyfmo.orbitals2.objects.Orbital"><code class="xref py py-class docutils literal notranslate"><span class="pre">Orbital</span></code></a></p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyfmo.orbitals2.objects.MOs">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">MOs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">orbitals</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Container</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#pyfmo.orbitals2.objects.Orbital" title="pyfmo.orbitals2.objects.Orbital"><span class="pre">Orbital</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#pyfmo.orbitals2.objects.Orbitals" title="pyfmo.orbitals2.objects.Orbitals"><span class="pre">Orbitals</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyfmo/orbitals2/objects.html#MOs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfmo.orbitals2.objects.MOs" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyfmo.orbitals2.objects.OrbitalSelector" title="pyfmo.orbitals2.objects.OrbitalSelector"><code class="xref py py-class docutils literal notranslate"><span class="pre">OrbitalSelector</span></code></a></p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyfmo.orbitals2.objects.Orbital">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Orbital</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyfmo/orbitals2/objects.html#Orbital"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfmo.orbitals2.objects.Orbital" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="pyfmo.orbitals2.objects.Orbital.cube_file">
+<span class="sig-name descname"><span class="pre">cube_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gridsize</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'medium'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyfmo/orbitals2/objects.html#Orbital.cube_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfmo.orbitals2.objects.Orbital.cube_file" title="Link to this definition">#</a></dt>
+<dd><p>Generate a cube-file for this SFO with a certain grid-size.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>gridsize</strong> – the size of the grid to generate the cube-file with.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyfmo.orbitals2.objects.Orbital.degeneracy">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">degeneracy</span></span><a class="headerlink" href="#pyfmo.orbitals2.objects.Orbital.degeneracy" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyfmo.orbitals2.objects.Orbital.degeneracy_index">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">degeneracy_index</span></span><a class="headerlink" href="#pyfmo.orbitals2.objects.Orbital.degeneracy_index" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyfmo.orbitals2.objects.Orbital.degenerate">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">degenerate</span></span><a class="headerlink" href="#pyfmo.orbitals2.objects.Orbital.degenerate" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyfmo.orbitals2.objects.Orbital.degenerate_orbitals">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">degenerate_orbitals</span></span><a class="headerlink" href="#pyfmo.orbitals2.objects.Orbital.degenerate_orbitals" title="Link to this definition">#</a></dt>
+<dd><p>The main timer class. It acts both as a context-manager and decorator.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyfmo.orbitals2.objects.Orbital.doubly_occupied">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">doubly_occupied</span></span><a class="headerlink" href="#pyfmo.orbitals2.objects.Orbital.doubly_occupied" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyfmo.orbitals2.objects.Orbital.draw">
+<span class="sig-name descname"><span class="pre">draw</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gridsize</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'medium'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">isovalue</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.03</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">screen</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transform</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyfmo/orbitals2/objects.html#Orbital.draw"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfmo.orbitals2.objects.Orbital.draw" title="Link to this definition">#</a></dt>
+<dd><p>Generate and draw a cube-file for this SFO object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>gridsize</strong> – the size of the grid to generate the cube-file with.</p></li>
+<li><p><strong>isovalue</strong> – the value with which to generate the isosurface of this SFO.</p></li>
+</ul>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><code class="xref py py-meth docutils literal notranslate"><span class="pre">SFO.cube_file()</span></code> to generate and return a cube-file for this SFO.</p>
+</div>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyfmo.orbitals2.objects.Orbital.irrep_relative_name">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">irrep_relative_name</span></span><a class="headerlink" href="#pyfmo.orbitals2.objects.Orbital.irrep_relative_name" title="Link to this definition">#</a></dt>
+<dd><p>The main timer class. It acts both as a context-manager and decorator.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyfmo.orbitals2.objects.Orbital.relative_name">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">relative_name</span></span><a class="headerlink" href="#pyfmo.orbitals2.objects.Orbital.relative_name" title="Link to this definition">#</a></dt>
+<dd><p>The main timer class. It acts both as a context-manager and decorator.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyfmo.orbitals2.objects.Orbital.singly_occupied">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">singly_occupied</span></span><a class="headerlink" href="#pyfmo.orbitals2.objects.Orbital.singly_occupied" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyfmo.orbitals2.objects.Orbital.spin_total_occupation">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">spin_total_occupation</span></span><a class="headerlink" href="#pyfmo.orbitals2.objects.Orbital.spin_total_occupation" title="Link to this definition">#</a></dt>
+<dd><p>The main timer class. It acts both as a context-manager and decorator.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyfmo.orbitals2.objects.Orbital.unoccupied">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">unoccupied</span></span><a class="headerlink" href="#pyfmo.orbitals2.objects.Orbital.unoccupied" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyfmo.orbitals2.objects.OrbitalSelector">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">OrbitalSelector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">orbitals</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Container</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#pyfmo.orbitals2.objects.Orbital" title="pyfmo.orbitals2.objects.Orbital"><span class="pre">Orbital</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#pyfmo.orbitals2.objects.Orbitals" title="pyfmo.orbitals2.objects.Orbitals"><span class="pre">Orbitals</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyfmo/orbitals2/objects.html#OrbitalSelector"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfmo.orbitals2.objects.OrbitalSelector" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class used to select MOs or SFOs.
+It is responsible for decoding selection keys and filtering orbitals based on the selection key.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>orbitals</strong> – a list of SFOs or MOs that will be managed by this class.</p></li>
+<li><p><strong>parent</strong> – the parent <code class="docutils literal notranslate"><span class="pre">Orbitals</span></code> object.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="pyfmo.orbitals2.objects.OrbitalSelector.decode_key">
+<span class="sig-name descname"><span class="pre">decode_key</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="../_modules/pyfmo/orbitals2/objects.html#OrbitalSelector.decode_key"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfmo.orbitals2.objects.OrbitalSelector.decode_key" title="Link to this definition">#</a></dt>
+<dd><p>Decode a key into the relevant parts.
+Keys are given in the following format:</p>
+<blockquote>
+<div><p>{fragname}[:{fragment_index}]({orbname}[_{spin}][ {symmetry}])</p>
+</div></blockquote>
+<p>Where [:fragment_index], [_{spin}], and [ {symmetry}] are optional.</p>
+<p>If an SFO is desired you must begin the key with the fragment name
+and put the rest of the key within parentheses.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A dictionary containing <code class="docutils literal notranslate"><span class="pre">index</span></code>,  <code class="docutils literal notranslate"><span class="pre">fragment</span></code>,
+<code class="docutils literal notranslate"><span class="pre">fragment_index</span></code>, <code class="docutils literal notranslate"><span class="pre">orbname</span></code>, <code class="docutils literal notranslate"><span class="pre">spin</span></code>, <code class="docutils literal notranslate"><span class="pre">symmetry</span></code>.</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<p>Decode a key specifying an MO.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">MOs</span><span class="o">.</span><span class="n">decode_key</span><span class="p">(</span><span class="s1">&#39;4A1&#39;</span><span class="p">)</span>
+<span class="go">{&#39;orbname&#39;: &#39;4A1&#39;}</span>
+</pre></div>
+</div>
+<p>One can also use relative naming. Also specify alpha spin.
+.. code-block:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">MOs</span><span class="o">.</span><span class="n">decode_key</span><span class="p">(</span><span class="s1">&#39;HOMO-2_A&#39;</span><span class="p">)</span>
+<span class="go">{&#39;orbname&#39;: &#39;HOMO-2&#39;, &#39;spin&#39;: &#39;A&#39;}</span>
+</pre></div>
+</div>
+<p>Decode a key for an SFO specifying the fragment, orbname and spin.
+.. code-block:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">SFOs</span><span class="o">.</span><span class="n">decode_key</span><span class="p">(</span><span class="s1">&#39;NH3(1E1:1_B)&#39;</span><span class="p">)</span>
+<span class="go">{&#39;fragment&#39;: &#39;NH3&#39;, &#39;orbname&#39;: &#39;1E1:1_B&#39;}</span>
+</pre></div>
+</div>
+<p>If multiple fragments have the same name (e.g. in a non-fragment analysis with atomic fragments)
+we can specify the fragment index with the colon.
+.. code-block:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">SFOs</span><span class="o">.</span><span class="n">decode_key</span><span class="p">(</span><span class="s1">&#39;C:4(1P:x)&#39;</span><span class="p">)</span>
+<span class="go">{&#39;fragment&#39;: &#39;C&#39;, &#39;fragment_index&#39;: 4, &#39;orbname&#39;: &#39;1P:x&#39;}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyfmo.orbitals2.objects.OrbitalSelector.filter">
+<span class="sig-name descname"><span class="pre">filter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">symmetry</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spin</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fragment</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fragment_index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orbname</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#pyfmo.orbitals2.objects.Orbital" title="pyfmo.orbitals2.objects.Orbital"><span class="pre">Orbital</span></a></span></span><a class="reference internal" href="../_modules/pyfmo/orbitals2/objects.html#OrbitalSelector.filter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfmo.orbitals2.objects.OrbitalSelector.filter" title="Link to this definition">#</a></dt>
+<dd><p>filter <code class="docutils literal notranslate"><span class="pre">Orbital</span></code> objects that match the given parameters.
+If any of the arguments is given as a <code class="docutils literal notranslate"><span class="pre">Container</span></code> we check for membership.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>index</strong> – the index of the orbital.</p></li>
+<li><p><strong>symmetry</strong> – the symmetry label of the orbital.</p></li>
+<li><p><strong>spin</strong> – the spin label of the orbital, should be one of [<code class="docutils literal notranslate"><span class="pre">A</span></code>, <code class="docutils literal notranslate"><span class="pre">B</span></code>, <code class="docutils literal notranslate"><span class="pre">AB</span></code>].</p></li>
+<li><p><strong>fragment</strong> – the fragment name of the SFO.</p></li>
+<li><p><strong>fragment_index</strong> – the index of the fragment of the SFO.</p></li>
+<li><p><strong>orbname</strong> – the name of the orbital. Can be either the proper name or a relative name, e.g. <code class="docutils literal notranslate"><span class="pre">SOMO</span></code> or <code class="docutils literal notranslate"><span class="pre">LUMO+5</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The <code class="docutils literal notranslate"><span class="pre">Orbital</span></code> objects that match the provided arguments.
+If there is only one <code class="docutils literal notranslate"><span class="pre">Orbital</span></code> object selected, return only that one.
+Otherwise return a <code class="docutils literal notranslate"><span class="pre">list</span></code> of <code class="docutils literal notranslate"><span class="pre">Orbital</span></code> objects.
+Returns <code class="docutils literal notranslate"><span class="pre">None</span></code> if no matching <code class="docutils literal notranslate"><span class="pre">Orbital</span></code> objects were found.</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<p>Select all SFOs of a given fragment.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">SFOs</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">fragment</span><span class="o">=</span><span class="s1">&#39;NH3&#39;</span><span class="p">)</span>
+<span class="go">[NH3(1A1), NH3(2A1), NH3(3A1), ...]</span>
+</pre></div>
+</div>
+<p>Select all SFOs from the A2 irrep of the BH3 fragment.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">SFOs</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">symmetry</span><span class="o">=</span><span class="s1">&#39;A2&#39;</span><span class="p">,</span> <span class="n">fragment</span><span class="o">=</span><span class="s1">&#39;BH3&#39;</span><span class="p">)</span>
+<span class="go">[BH3(1A2), BH3(2A2), BH3(3A2), BH3(4A2)]</span>
+</pre></div>
+</div>
+<p>Select all MOs that are named ‘1E1:1’ or ‘1E1:2’.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">MOs</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">orbname</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;1E1:1&#39;</span><span class="p">,</span> <span class="s1">&#39;1E1:2&#39;</span><span class="p">))</span>
+<span class="go">[1E1:1, 1E1:2]</span>
+</pre></div>
+</div>
+<p>Select the HOMO of the NH3 fragment.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">SFOs</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">orbname</span><span class="o">=</span><span class="s1">&#39;HOMO&#39;</span><span class="p">,</span> <span class="n">fragment</span><span class="o">=</span><span class="s1">&#39;NH3&#39;</span><span class="p">)</span>
+<span class="go">NH3(3A1)</span>
+</pre></div>
+</div>
+<p>Get 1P orbitals for all carbons</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">SFOs</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">orbname</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;1P:x&#39;</span><span class="p">,</span> <span class="s1">&#39;1P:y&#39;</span><span class="p">,</span> <span class="s1">&#39;1P:z&#39;</span><span class="p">),</span> <span class="n">fragment</span><span class="o">=</span><span class="s1">&#39;C&#39;</span><span class="p">)</span>
+<span class="go">[C:1(1P:x), C:1(1P:y), C:1(1P:z), C:2(1P:x), C:2(1P:y), C:2(1P:z), C:3(1P:x), C:3(1P:y), C:3(1P:z), C:4(1P:x), C:4(1P:y), C:4(1P:z)]</span>
+</pre></div>
+</div>
+<p>Get 1P orbitals for the second carbon</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">SFOs</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">orbname</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;1P:x&#39;</span><span class="p">,</span> <span class="s1">&#39;1P:y&#39;</span><span class="p">,</span> <span class="s1">&#39;1P:z&#39;</span><span class="p">),</span> <span class="n">fragment</span><span class="o">=</span><span class="s1">&#39;C:2&#39;</span><span class="p">)</span>
+<span class="go">[C:2(1P:x), C:2(1P:y), C:2(1P:z)]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">SFOs</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">orbname</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;1P:x&#39;</span><span class="p">,</span> <span class="s1">&#39;1P:y&#39;</span><span class="p">,</span> <span class="s1">&#39;1P:z&#39;</span><span class="p">),</span> <span class="n">fragment</span><span class="o">=</span><span class="s1">&#39;C&#39;</span><span class="p">,</span> <span class="n">fragment_index</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="go">[C:2(1P:x), C:2(1P:y), C:2(1P:z)]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyfmo.orbitals2.objects.OrbitalSelector.get">
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#pyfmo.orbitals2.objects.Orbital" title="pyfmo.orbitals2.objects.Orbital"><span class="pre">Orbital</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/pyfmo/orbitals2/objects.html#OrbitalSelector.get"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfmo.orbitals2.objects.OrbitalSelector.get" title="Link to this definition">#</a></dt>
+<dd><p>Get <code class="docutils literal notranslate"><span class="pre">Orbital</span></code> objects based on the given key.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>key</strong> – a string describing the orbital to be selected or the integer index of the orbital.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A list of <code class="docutils literal notranslate"><span class="pre">Orbital</span></code> objects that match the given key.
+If there is only one return a single <code class="docutils literal notranslate"><span class="pre">Orbital</span></code> object.</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<p>Select the HOMO of the NH3 fragment.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">SFOs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;NH3(HOMO)&#39;</span><span class="p">)</span>
+<span class="go">NH3(3A1)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">SFOs</span><span class="p">[</span><span class="s1">&#39;NH3(HOMO)&#39;</span><span class="p">]</span>
+<span class="go">NH3(3A1)</span>
+</pre></div>
+</div>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="#pyfmo.orbitals2.objects.OrbitalSelector.filter" title="pyfmo.orbitals2.objects.OrbitalSelector.filter"><code class="xref py py-func docutils literal notranslate"><span class="pre">filter()</span></code></a> and <a class="reference internal" href="#pyfmo.orbitals2.objects.OrbitalSelector.decode_key" title="pyfmo.orbitals2.objects.OrbitalSelector.decode_key"><code class="xref py py-func docutils literal notranslate"><span class="pre">decode_key()</span></code></a>.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">__getitem__</span></code> method of this class redirects to this method,
+allowing you to use indexing notation to obtain orbitals.</p>
+</div>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyfmo.orbitals2.objects.OrbitalSelector.spins">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">spins</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pyfmo.orbitals2.objects.OrbitalSelector.spins" title="Link to this definition">#</a></dt>
+<dd><p>The spin species that are present in the given orbitals.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyfmo.orbitals2.objects.OrbitalSelector.unrestricted">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">unrestricted</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#pyfmo.orbitals2.objects.OrbitalSelector.unrestricted" title="Link to this definition">#</a></dt>
+<dd><p>Whether the calculation was performed in an unrestricted manner.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyfmo.orbitals2.objects.Orbitals">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Orbitals</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_SCF0</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_fragments</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">moleculename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_output</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyfmo/orbitals2/objects.html#Orbitals"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfmo.orbitals2.objects.Orbitals" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Container class that stores information about both MO’s and SFO’s.</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="pyfmo.orbitals2.objects.Orbitals.fragments">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">fragments</span></span><a class="headerlink" href="#pyfmo.orbitals2.objects.Orbitals.fragments" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyfmo.orbitals2.objects.Orbitals.gather_mos">
+<span class="sig-name descname"><span class="pre">gather_mos</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyfmo/orbitals2/objects.html#Orbitals.gather_mos"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfmo.orbitals2.objects.Orbitals.gather_mos" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyfmo.orbitals2.objects.Orbitals.gather_sfos">
+<span class="sig-name descname"><span class="pre">gather_sfos</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyfmo/orbitals2/objects.html#Orbitals.gather_sfos"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfmo.orbitals2.objects.Orbitals.gather_sfos" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyfmo.orbitals2.objects.Orbitals.get_data">
+<span class="sig-name descname"><span class="pre">get_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyfmo/orbitals2/objects.html#Orbitals.get_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfmo.orbitals2.objects.Orbitals.get_data" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyfmo.orbitals2.objects.Orbitals.molecule">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">molecule</span></span><a class="headerlink" href="#pyfmo.orbitals2.objects.Orbitals.molecule" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyfmo.orbitals2.objects.Orbitals.overlap_matrix">
+<span class="sig-name descname"><span class="pre">overlap_matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sfos1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sfos2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyfmo/orbitals2/objects.html#Orbitals.overlap_matrix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfmo.orbitals2.objects.Orbitals.overlap_matrix" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyfmo.orbitals2.objects.Orbitals.sfo_energy_types">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">sfo_energy_types</span></span><a class="headerlink" href="#pyfmo.orbitals2.objects.Orbitals.sfo_energy_types" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyfmo.orbitals2.objects.Orbitals.write_excel">
+<span class="sig-name descname"><span class="pre">write_excel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">out_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'pyfmo.xlsx'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyfmo/orbitals2/objects.html#Orbitals.write_excel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfmo.orbitals2.objects.Orbitals.write_excel" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyfmo.orbitals2.objects.Orbitals.write_excel2">
+<span class="sig-name descname"><span class="pre">write_excel2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">out_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyfmo/orbitals2/objects.html#Orbitals.write_excel2"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfmo.orbitals2.objects.Orbitals.write_excel2" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyfmo.orbitals2.objects.SFO">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">SFO</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyfmo/orbitals2/objects.html#SFO"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfmo.orbitals2.objects.SFO" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyfmo.orbitals2.objects.Orbital" title="pyfmo.orbitals2.objects.Orbital"><code class="xref py py-class docutils literal notranslate"><span class="pre">Orbital</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="pyfmo.orbitals2.objects.SFO.coefficient">
+<span class="sig-name descname"><span class="pre">coefficient</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyfmo/orbitals2/objects.html#SFO.coefficient"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfmo.orbitals2.objects.SFO.coefficient" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyfmo.orbitals2.objects.SFO.fock">
+<span class="sig-name descname"><span class="pre">fock</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyfmo/orbitals2/objects.html#SFO.fock"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfmo.orbitals2.objects.SFO.fock" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyfmo.orbitals2.objects.SFO.make_name">
+<span class="sig-name descname"><span class="pre">make_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frag_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">relative_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyfmo/orbitals2/objects.html#SFO.make_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfmo.orbitals2.objects.SFO.make_name" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyfmo.orbitals2.objects.SFO.mulliken_contribution">
+<span class="sig-name descname"><span class="pre">mulliken_contribution</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyfmo/orbitals2/objects.html#SFO.mulliken_contribution"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfmo.orbitals2.objects.SFO.mulliken_contribution" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyfmo.orbitals2.objects.SFO.overlap">
+<span class="sig-name descname"><span class="pre">overlap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyfmo/orbitals2/objects.html#SFO.overlap"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfmo.orbitals2.objects.SFO.overlap" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyfmo.orbitals2.objects.SFOs">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">SFOs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">orbitals</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Container</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#pyfmo.orbitals2.objects.Orbital" title="pyfmo.orbitals2.objects.Orbital"><span class="pre">Orbital</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#pyfmo.orbitals2.objects.Orbitals" title="pyfmo.orbitals2.objects.Orbitals"><span class="pre">Orbitals</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyfmo/orbitals2/objects.html#SFOs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfmo.orbitals2.objects.SFOs" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyfmo.orbitals2.objects.OrbitalSelector" title="pyfmo.orbitals2.objects.OrbitalSelector"><code class="xref py py-class docutils literal notranslate"><span class="pre">OrbitalSelector</span></code></a></p>
+<dl class="py property">
+<dt class="sig sig-object py" id="pyfmo.orbitals2.objects.SFOs.energy_types">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">energy_types</span></span><a class="headerlink" href="#pyfmo.orbitals2.objects.SFOs.energy_types" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyfmo.orbitals2.objects.SFOs.fragments">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">fragments</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pyfmo.orbitals2.objects.SFOs.fragments" title="Link to this definition">#</a></dt>
+<dd><p>Return a list of fragment names found in the orbitals.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyfmo.orbitals2.objects.SFOs.get_fragment_sfos">
+<span class="sig-name descname"><span class="pre">get_fragment_sfos</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fragment</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#pyfmo.orbitals2.objects.SFO" title="pyfmo.orbitals2.objects.SFO"><span class="pre">SFO</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/pyfmo/orbitals2/objects.html#SFOs.get_fragment_sfos"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfmo.orbitals2.objects.SFOs.get_fragment_sfos" title="Link to this definition">#</a></dt>
+<dd><p>Return all SFOs that belong to a given fragment.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>fragment</strong> – the fragment or unique fragment name.</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<p># return all SFOs that belong to a carbon atom
+&gt;&gt;&gt; sfos = orbs.sfos.get_fragment_sfos(‘C’)
+# return all SFOs that belong to carbon C:1
+&gt;&gt;&gt; sfos = orbs.sfos.get_fragment_sfos(‘C:1’)
+# return all SFOs that belong to a named fragment
+&gt;&gt;&gt; sfos = orbs.sfos.get_fragment_sfos(‘Donor’)</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-pyfmo.orbitals2">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-pyfmo.orbitals2" title="Link to this heading">#</a></h2>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+                <footer class="bd-footer-article">
+                  
+<div class="footer-article-items footer-article__inner">
+  
+    <div class="footer-article-item"><!-- Previous / next buttons -->
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="pyfmo.analysis.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">pyfmo.analysis package</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="pyfmo.plotting.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">pyfmo.plotting package</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div></div>
+  
+</div>
+
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#submodules">Submodules</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-pyfmo.orbitals2.adf">pyfmo.orbitals2.adf module</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-pyfmo.orbitals2.objects">pyfmo.orbitals2.objects module</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pyfmo.orbitals2.objects.MO"><code class="docutils literal notranslate"><span class="pre">MO</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pyfmo.orbitals2.objects.MOs"><code class="docutils literal notranslate"><span class="pre">MOs</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pyfmo.orbitals2.objects.Orbital"><code class="docutils literal notranslate"><span class="pre">Orbital</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pyfmo.orbitals2.objects.Orbital.cube_file"><code class="docutils literal notranslate"><span class="pre">Orbital.cube_file()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pyfmo.orbitals2.objects.Orbital.degeneracy"><code class="docutils literal notranslate"><span class="pre">Orbital.degeneracy</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pyfmo.orbitals2.objects.Orbital.degeneracy_index"><code class="docutils literal notranslate"><span class="pre">Orbital.degeneracy_index</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pyfmo.orbitals2.objects.Orbital.degenerate"><code class="docutils literal notranslate"><span class="pre">Orbital.degenerate</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pyfmo.orbitals2.objects.Orbital.degenerate_orbitals"><code class="docutils literal notranslate"><span class="pre">Orbital.degenerate_orbitals</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pyfmo.orbitals2.objects.Orbital.doubly_occupied"><code class="docutils literal notranslate"><span class="pre">Orbital.doubly_occupied</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pyfmo.orbitals2.objects.Orbital.draw"><code class="docutils literal notranslate"><span class="pre">Orbital.draw()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pyfmo.orbitals2.objects.Orbital.irrep_relative_name"><code class="docutils literal notranslate"><span class="pre">Orbital.irrep_relative_name</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pyfmo.orbitals2.objects.Orbital.relative_name"><code class="docutils literal notranslate"><span class="pre">Orbital.relative_name</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pyfmo.orbitals2.objects.Orbital.singly_occupied"><code class="docutils literal notranslate"><span class="pre">Orbital.singly_occupied</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pyfmo.orbitals2.objects.Orbital.spin_total_occupation"><code class="docutils literal notranslate"><span class="pre">Orbital.spin_total_occupation</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pyfmo.orbitals2.objects.Orbital.unoccupied"><code class="docutils literal notranslate"><span class="pre">Orbital.unoccupied</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pyfmo.orbitals2.objects.OrbitalSelector"><code class="docutils literal notranslate"><span class="pre">OrbitalSelector</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pyfmo.orbitals2.objects.OrbitalSelector.decode_key"><code class="docutils literal notranslate"><span class="pre">OrbitalSelector.decode_key()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pyfmo.orbitals2.objects.OrbitalSelector.filter"><code class="docutils literal notranslate"><span class="pre">OrbitalSelector.filter()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pyfmo.orbitals2.objects.OrbitalSelector.get"><code class="docutils literal notranslate"><span class="pre">OrbitalSelector.get()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pyfmo.orbitals2.objects.OrbitalSelector.spins"><code class="docutils literal notranslate"><span class="pre">OrbitalSelector.spins</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pyfmo.orbitals2.objects.OrbitalSelector.unrestricted"><code class="docutils literal notranslate"><span class="pre">OrbitalSelector.unrestricted</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pyfmo.orbitals2.objects.Orbitals"><code class="docutils literal notranslate"><span class="pre">Orbitals</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pyfmo.orbitals2.objects.Orbitals.fragments"><code class="docutils literal notranslate"><span class="pre">Orbitals.fragments</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pyfmo.orbitals2.objects.Orbitals.gather_mos"><code class="docutils literal notranslate"><span class="pre">Orbitals.gather_mos()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pyfmo.orbitals2.objects.Orbitals.gather_sfos"><code class="docutils literal notranslate"><span class="pre">Orbitals.gather_sfos()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pyfmo.orbitals2.objects.Orbitals.get_data"><code class="docutils literal notranslate"><span class="pre">Orbitals.get_data()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pyfmo.orbitals2.objects.Orbitals.molecule"><code class="docutils literal notranslate"><span class="pre">Orbitals.molecule</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pyfmo.orbitals2.objects.Orbitals.overlap_matrix"><code class="docutils literal notranslate"><span class="pre">Orbitals.overlap_matrix()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pyfmo.orbitals2.objects.Orbitals.sfo_energy_types"><code class="docutils literal notranslate"><span class="pre">Orbitals.sfo_energy_types</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pyfmo.orbitals2.objects.Orbitals.write_excel"><code class="docutils literal notranslate"><span class="pre">Orbitals.write_excel()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pyfmo.orbitals2.objects.Orbitals.write_excel2"><code class="docutils literal notranslate"><span class="pre">Orbitals.write_excel2()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pyfmo.orbitals2.objects.SFO"><code class="docutils literal notranslate"><span class="pre">SFO</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pyfmo.orbitals2.objects.SFO.coefficient"><code class="docutils literal notranslate"><span class="pre">SFO.coefficient()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pyfmo.orbitals2.objects.SFO.fock"><code class="docutils literal notranslate"><span class="pre">SFO.fock()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pyfmo.orbitals2.objects.SFO.make_name"><code class="docutils literal notranslate"><span class="pre">SFO.make_name()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pyfmo.orbitals2.objects.SFO.mulliken_contribution"><code class="docutils literal notranslate"><span class="pre">SFO.mulliken_contribution()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pyfmo.orbitals2.objects.SFO.overlap"><code class="docutils literal notranslate"><span class="pre">SFO.overlap()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pyfmo.orbitals2.objects.SFOs"><code class="docutils literal notranslate"><span class="pre">SFOs</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pyfmo.orbitals2.objects.SFOs.energy_types"><code class="docutils literal notranslate"><span class="pre">SFOs.energy_types</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pyfmo.orbitals2.objects.SFOs.fragments"><code class="docutils literal notranslate"><span class="pre">SFOs.fragments</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pyfmo.orbitals2.objects.SFOs.get_fragment_sfos"><code class="docutils literal notranslate"><span class="pre">SFOs.get_fragment_sfos()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-pyfmo.orbitals2">Module contents</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div class="tocsection sourcelink">
+    <a href="../_sources/api/pyfmo.orbitals2.rst.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=e353d410970836974a52"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+  <p class="copyright">
+    
+      © Copyright 2025, TheoCheM VU Amsterdam.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.3.7.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item"><p class="theme-version">
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.13.3.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

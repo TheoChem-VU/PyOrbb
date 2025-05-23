@@ -1,0 +1,30 @@
+#!/bin/sh
+
+"$ADFBIN/adf" <<eor
+    Atoms
+    1 N       0.000000000000       0.000000000000      -0.815297000000    
+    2 H       0.477057000000      -0.826287000000      -1.184317000000    
+    3 H      -0.954115000000       0.000000000000      -1.184317000000    
+    4 H       0.477057000000       0.826287000000      -1.184317000000    
+    End
+    Basis
+        Type TZ2P
+        Core None
+        CreateOutput None
+    End
+    GUIBonds
+        1 1 4 1.0
+        2 1 2 1.0
+    End
+    NoPrint LOGFILE
+    ALLOW  FRACTIONAL
+    XC
+        GGA BLYP
+    End
+    Title NH3 fragment
+    Relativistic Scalar ZORA
+    NumericalQuality VeryGood
+
+eor
+
+

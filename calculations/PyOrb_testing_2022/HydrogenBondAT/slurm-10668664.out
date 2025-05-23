@@ -1,0 +1,34 @@
+== Starting run at Fri Mar 21 09:26:41 CET 2025
+== Job ID: 10668664
+== Node list: tcn386
+== Submit dir. : /gpfs/home5/sbeutick84/PyOrb_calcs/AT_basepair/FA
+== Scratch dir. : /scratch-local/sbeutick84.10668664
+
+Currently Loaded Modules:
+  1) 2023                             8) Tcl/8.6.13-GCCcore-12.3.0
+  2) GCCcore/12.3.0                   9) SQLite/3.42.0-GCCcore-12.3.0
+  3) zlib/1.2.13-GCCcore-12.3.0      10) XZ/5.4.2-GCCcore-12.3.0
+  4) binutils/2.40-GCCcore-12.3.0    11) libffi/3.4.4-GCCcore-12.3.0
+  5) bzip2/1.0.8-GCCcore-12.3.0      12) OpenSSL/3
+  6) ncurses/6.4-GCCcore-12.3.0      13) Python/3.11.3-GCCcore-12.3.0
+  7) libreadline/8.2-GCCcore-12.3.0  14) AMS/2023.104-intelmpi
+
+ 
+
+NORMAL TERMINATION
+NORMAL TERMINATION
+NORMAL TERMINATION
+
+JOB STATISTICS
+==============
+Job ID: 10668664
+Cluster: snellius
+User/Group: sbeutick84/sbeutick84
+State: COMPLETED (exit code 0)
+Nodes: 1
+Cores per node: 32
+CPU Utilized: 02:05:22
+CPU Efficiency: 77.32% of 02:42:08 core-walltime
+Job Wall-clock time: 00:05:04
+Memory Utilized: 19.78 GB (estimated maximum)
+Memory Efficiency: 35.32% of 56.00 GB (1.75 GB/core)

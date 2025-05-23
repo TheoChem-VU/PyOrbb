@@ -1,0 +1,35 @@
+#!/bin/sh
+
+"$ADFBIN/adf" <<eor
+    Atoms
+    1 C       2.645320000000       2.913587000000       0.088943000000    
+    2 C       3.696497000000       2.022919000000       0.228348000000    
+    3 H       2.413163000000       3.611832000000       0.891617000000    
+    4 H       2.305859000000       3.209255000000      -0.900564000000    
+    5 H       4.290078000000       2.019654000000       1.141232000000    
+    6 H       4.188822000000       1.614846000000      -0.650751000000    
+    End
+    Basis
+        Type TZ2P
+        Core None
+        CreateOutput None
+    End
+    GUIBonds
+        1 1 4 1.0
+        2 1 3 1.0
+        3 1 2 1.5
+        4 2 6 1.0
+        5 2 5 1.0
+    End
+    NoPrint LOGFILE
+    ALLOW  FRACTIONAL
+    XC
+        GGA BLYP
+    End
+    Title Dienophile fragment
+    Relativistic Scalar ZORA
+    NumericalQuality VeryGood
+
+eor
+
+

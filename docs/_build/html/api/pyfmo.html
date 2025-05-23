@@ -1,0 +1,565 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>pyfmo package &#8212; PyOrbb v0.1.0 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=e353d410970836974a52" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=e353d410970836974a52" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=e353d410970836974a52" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=e353d410970836974a52" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=a746c00c" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=e353d410970836974a52" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52" />
+
+    <script src="../_static/documentation_options.js?v=58152727"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'api/pyfmo';</script>
+    <link rel="icon" href="https://avatars.githubusercontent.com/u/119413491"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="pyfmo.analysis package" href="pyfmo.analysis.html" />
+    <link rel="prev" title="pyfmo" href="modules.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+<div class="bd-header__inner bd-page-width">
+  <label class="sidebar-toggle primary-toggle" for="__primary">
+    <span class="fa-solid fa-bars"></span>
+  </label>
+  
+  <div class="navbar-header-items__start">
+    
+      <div class="navbar-item"><!-- _templates/logo.html -->
+<style>
+    .myDiv {
+      color: #323232;
+      font-size: 30px;
+      font-weight: 400;
+      line-height: : 33px;
+      text-decoration: none;
+    }
+</style>
+<div class="myDiv">
+    <a href="./index.html">
+        <img src="https://avatars.githubusercontent.com/u/119413491?s=60&v=4">
+        PyOrbb
+    </a>
+</div></div>
+    
+  </div>
+  
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+  </button>
+`);
+</script>
+        </div>
+      
+      
+        <div class="navbar-item"><!-- _templates/star.html -->
+<a href=https://github.com/TheoChem-VU><i class="fa-brands fa-github"></i> TheoCheM</a></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+  </button>
+`);
+</script>
+    </div>
+  
+
+  
+    <label class="sidebar-toggle secondary-toggle" for="__secondary">
+      <span class="fa-solid fa-outdent"></span>
+    </label>
+  
+</div>
+
+    </nav>
+  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item"><!-- _templates/star.html -->
+<a href=https://github.com/TheoChem-VU><i class="fa-brands fa-github"></i> TheoCheM</a></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item"><nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active has-children"><a class="current reference internal" href="#">pyfmo package</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="pyfmo.analysis.html">pyfmo.analysis package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyfmo.orbitals2.html">pyfmo.orbitals2 package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyfmo.plotting.html">pyfmo.plotting package</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+
+
+<nav aria-label="Breadcrumbs">
+  <ul class="bd-breadcrumbs" role="navigation" aria-label="Breadcrumb">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="modules.html" class="nav-link">pyfmo</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page">pyfmo package</li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  <section id="pyfmo-package">
+<h1>pyfmo package<a class="headerlink" href="#pyfmo-package" title="Link to this heading">#</a></h1>
+<section id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Link to this heading">#</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="pyfmo.analysis.html">pyfmo.analysis package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="pyfmo.analysis.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyfmo.analysis.html#module-pyfmo.analysis.closed_interactions">pyfmo.analysis.closed_interactions module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="pyfmo.analysis.html#pyfmo.analysis.closed_interactions.Mixing"><code class="docutils literal notranslate"><span class="pre">Mixing</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="pyfmo.analysis.html#pyfmo.analysis.closed_interactions.Mixing.draw_diagram"><code class="docutils literal notranslate"><span class="pre">Mixing.draw_diagram()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyfmo.analysis.html#pyfmo.analysis.closed_interactions.Mixing.draw_mixing"><code class="docutils literal notranslate"><span class="pre">Mixing.draw_mixing()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyfmo.analysis.html#pyfmo.analysis.closed_interactions.Mixing.nocc"><code class="docutils literal notranslate"><span class="pre">Mixing.nocc</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyfmo.analysis.html#pyfmo.analysis.closed_interactions.Mixing.spin"><code class="docutils literal notranslate"><span class="pre">Mixing.spin</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyfmo.analysis.html#pyfmo.analysis.closed_interactions.Mixing.symmetry"><code class="docutils literal notranslate"><span class="pre">Mixing.symmetry</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="pyfmo.analysis.html#pyfmo.analysis.closed_interactions.Mixing2"><code class="docutils literal notranslate"><span class="pre">Mixing2</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="pyfmo.analysis.html#pyfmo.analysis.closed_interactions.Mixing2.type"><code class="docutils literal notranslate"><span class="pre">Mixing2.type</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="pyfmo.analysis.html#pyfmo.analysis.closed_interactions.Mixing3"><code class="docutils literal notranslate"><span class="pre">Mixing3</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="pyfmo.analysis.html#pyfmo.analysis.closed_interactions.Mixing3.type"><code class="docutils literal notranslate"><span class="pre">Mixing3.type</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="pyfmo.analysis.html#pyfmo.analysis.closed_interactions.get_three_mixing"><code class="docutils literal notranslate"><span class="pre">get_three_mixing()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyfmo.analysis.html#pyfmo.analysis.closed_interactions.get_two_mixing"><code class="docutils literal notranslate"><span class="pre">get_two_mixing()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyfmo.analysis.html#pyfmo.analysis.closed_interactions.offset_grid"><code class="docutils literal notranslate"><span class="pre">offset_grid()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyfmo.analysis.html#pyfmo.analysis.closed_interactions.orbint_mat"><code class="docutils literal notranslate"><span class="pre">orbint_mat()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyfmo.analysis.html#pyfmo.analysis.closed_interactions.overlap_mat"><code class="docutils literal notranslate"><span class="pre">overlap_mat()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyfmo.analysis.html#pyfmo.analysis.closed_interactions.select_mos"><code class="docutils literal notranslate"><span class="pre">select_mos()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyfmo.analysis.html#pyfmo.analysis.closed_interactions.select_orbs"><code class="docutils literal notranslate"><span class="pre">select_orbs()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyfmo.analysis.html#pyfmo.analysis.closed_interactions.select_sfos"><code class="docutils literal notranslate"><span class="pre">select_sfos()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="pyfmo.analysis.html#module-pyfmo.analysis.mixing">pyfmo.analysis.mixing module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="pyfmo.analysis.html#pyfmo.analysis.mixing.Mixer"><code class="docutils literal notranslate"><span class="pre">Mixer</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="pyfmo.analysis.html#pyfmo.analysis.mixing.Mixer.orbital_interactions"><code class="docutils literal notranslate"><span class="pre">Mixer.orbital_interactions()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyfmo.analysis.html#pyfmo.analysis.mixing.Mixer.pauli_repulsions"><code class="docutils literal notranslate"><span class="pre">Mixer.pauli_repulsions()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="pyfmo.analysis.html#pyfmo.analysis.mixing.Mixing"><code class="docutils literal notranslate"><span class="pre">Mixing</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="pyfmo.analysis.html#pyfmo.analysis.mixing.Mixing.draw_diagram"><code class="docutils literal notranslate"><span class="pre">Mixing.draw_diagram()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyfmo.analysis.html#pyfmo.analysis.mixing.Mixing.draw_sfos"><code class="docutils literal notranslate"><span class="pre">Mixing.draw_sfos()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyfmo.analysis.html#pyfmo.analysis.mixing.Mixing.find_closed_interactions"><code class="docutils literal notranslate"><span class="pre">Mixing.find_closed_interactions()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyfmo.analysis.html#pyfmo.analysis.mixing.Mixing.fits"><code class="docutils literal notranslate"><span class="pre">Mixing.fits()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyfmo.analysis.html#pyfmo.analysis.mixing.Mixing.fragments"><code class="docutils literal notranslate"><span class="pre">Mixing.fragments</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyfmo.analysis.html#pyfmo.analysis.mixing.Mixing.irrep"><code class="docutils literal notranslate"><span class="pre">Mixing.irrep</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyfmo.analysis.html#pyfmo.analysis.mixing.Mixing.lowest_contribution"><code class="docutils literal notranslate"><span class="pre">Mixing.lowest_contribution</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyfmo.analysis.html#pyfmo.analysis.mixing.Mixing.nelectrons"><code class="docutils literal notranslate"><span class="pre">Mixing.nelectrons()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyfmo.analysis.html#pyfmo.analysis.mixing.Mixing.sanitize"><code class="docutils literal notranslate"><span class="pre">Mixing.sanitize()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyfmo.analysis.html#pyfmo.analysis.mixing.Mixing.screenshot_sfos"><code class="docutils literal notranslate"><span class="pre">Mixing.screenshot_sfos()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyfmo.analysis.html#pyfmo.analysis.mixing.Mixing.spin"><code class="docutils literal notranslate"><span class="pre">Mixing.spin</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyfmo.analysis.html#pyfmo.analysis.mixing.Mixing.split"><code class="docutils literal notranslate"><span class="pre">Mixing.split()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyfmo.analysis.html#pyfmo.analysis.mixing.Mixing.xiaobo_check"><code class="docutils literal notranslate"><span class="pre">Mixing.xiaobo_check()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyfmo.analysis.html#pyfmo.analysis.mixing.Mixing.xiaobo_value"><code class="docutils literal notranslate"><span class="pre">Mixing.xiaobo_value()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="pyfmo.analysis.html#pyfmo.analysis.mixing.argNmax"><code class="docutils literal notranslate"><span class="pre">argNmax()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyfmo.analysis.html#pyfmo.analysis.mixing.oi2"><code class="docutils literal notranslate"><span class="pre">oi2()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyfmo.analysis.html#pyfmo.analysis.mixing.overlap_mat"><code class="docutils literal notranslate"><span class="pre">overlap_mat()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyfmo.analysis.html#pyfmo.analysis.mixing.pauli2"><code class="docutils literal notranslate"><span class="pre">pauli2()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyfmo.analysis.html#pyfmo.analysis.mixing.track_mixing"><code class="docutils literal notranslate"><span class="pre">track_mixing()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="pyfmo.analysis.html#module-pyfmo.analysis">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="pyfmo.orbitals2.html">pyfmo.orbitals2 package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="pyfmo.orbitals2.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyfmo.orbitals2.html#module-pyfmo.orbitals2.adf">pyfmo.orbitals2.adf module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyfmo.orbitals2.html#module-pyfmo.orbitals2.objects">pyfmo.orbitals2.objects module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="pyfmo.orbitals2.html#pyfmo.orbitals2.objects.MO"><code class="docutils literal notranslate"><span class="pre">MO</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyfmo.orbitals2.html#pyfmo.orbitals2.objects.MOs"><code class="docutils literal notranslate"><span class="pre">MOs</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyfmo.orbitals2.html#pyfmo.orbitals2.objects.Orbital"><code class="docutils literal notranslate"><span class="pre">Orbital</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="pyfmo.orbitals2.html#pyfmo.orbitals2.objects.Orbital.cube_file"><code class="docutils literal notranslate"><span class="pre">Orbital.cube_file()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyfmo.orbitals2.html#pyfmo.orbitals2.objects.Orbital.degeneracy"><code class="docutils literal notranslate"><span class="pre">Orbital.degeneracy</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyfmo.orbitals2.html#pyfmo.orbitals2.objects.Orbital.degeneracy_index"><code class="docutils literal notranslate"><span class="pre">Orbital.degeneracy_index</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyfmo.orbitals2.html#pyfmo.orbitals2.objects.Orbital.degenerate"><code class="docutils literal notranslate"><span class="pre">Orbital.degenerate</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyfmo.orbitals2.html#pyfmo.orbitals2.objects.Orbital.degenerate_orbitals"><code class="docutils literal notranslate"><span class="pre">Orbital.degenerate_orbitals</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyfmo.orbitals2.html#pyfmo.orbitals2.objects.Orbital.doubly_occupied"><code class="docutils literal notranslate"><span class="pre">Orbital.doubly_occupied</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyfmo.orbitals2.html#pyfmo.orbitals2.objects.Orbital.draw"><code class="docutils literal notranslate"><span class="pre">Orbital.draw()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyfmo.orbitals2.html#pyfmo.orbitals2.objects.Orbital.irrep_relative_name"><code class="docutils literal notranslate"><span class="pre">Orbital.irrep_relative_name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyfmo.orbitals2.html#pyfmo.orbitals2.objects.Orbital.relative_name"><code class="docutils literal notranslate"><span class="pre">Orbital.relative_name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyfmo.orbitals2.html#pyfmo.orbitals2.objects.Orbital.singly_occupied"><code class="docutils literal notranslate"><span class="pre">Orbital.singly_occupied</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyfmo.orbitals2.html#pyfmo.orbitals2.objects.Orbital.spin_total_occupation"><code class="docutils literal notranslate"><span class="pre">Orbital.spin_total_occupation</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyfmo.orbitals2.html#pyfmo.orbitals2.objects.Orbital.unoccupied"><code class="docutils literal notranslate"><span class="pre">Orbital.unoccupied</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="pyfmo.orbitals2.html#pyfmo.orbitals2.objects.OrbitalSelector"><code class="docutils literal notranslate"><span class="pre">OrbitalSelector</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="pyfmo.orbitals2.html#pyfmo.orbitals2.objects.OrbitalSelector.decode_key"><code class="docutils literal notranslate"><span class="pre">OrbitalSelector.decode_key()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyfmo.orbitals2.html#pyfmo.orbitals2.objects.OrbitalSelector.filter"><code class="docutils literal notranslate"><span class="pre">OrbitalSelector.filter()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyfmo.orbitals2.html#pyfmo.orbitals2.objects.OrbitalSelector.get"><code class="docutils literal notranslate"><span class="pre">OrbitalSelector.get()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyfmo.orbitals2.html#pyfmo.orbitals2.objects.OrbitalSelector.spins"><code class="docutils literal notranslate"><span class="pre">OrbitalSelector.spins</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyfmo.orbitals2.html#pyfmo.orbitals2.objects.OrbitalSelector.unrestricted"><code class="docutils literal notranslate"><span class="pre">OrbitalSelector.unrestricted</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="pyfmo.orbitals2.html#pyfmo.orbitals2.objects.Orbitals"><code class="docutils literal notranslate"><span class="pre">Orbitals</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="pyfmo.orbitals2.html#pyfmo.orbitals2.objects.Orbitals.fragments"><code class="docutils literal notranslate"><span class="pre">Orbitals.fragments</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyfmo.orbitals2.html#pyfmo.orbitals2.objects.Orbitals.gather_mos"><code class="docutils literal notranslate"><span class="pre">Orbitals.gather_mos()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyfmo.orbitals2.html#pyfmo.orbitals2.objects.Orbitals.gather_sfos"><code class="docutils literal notranslate"><span class="pre">Orbitals.gather_sfos()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyfmo.orbitals2.html#pyfmo.orbitals2.objects.Orbitals.get_data"><code class="docutils literal notranslate"><span class="pre">Orbitals.get_data()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyfmo.orbitals2.html#pyfmo.orbitals2.objects.Orbitals.molecule"><code class="docutils literal notranslate"><span class="pre">Orbitals.molecule</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyfmo.orbitals2.html#pyfmo.orbitals2.objects.Orbitals.overlap_matrix"><code class="docutils literal notranslate"><span class="pre">Orbitals.overlap_matrix()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyfmo.orbitals2.html#pyfmo.orbitals2.objects.Orbitals.sfo_energy_types"><code class="docutils literal notranslate"><span class="pre">Orbitals.sfo_energy_types</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyfmo.orbitals2.html#pyfmo.orbitals2.objects.Orbitals.write_excel"><code class="docutils literal notranslate"><span class="pre">Orbitals.write_excel()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyfmo.orbitals2.html#pyfmo.orbitals2.objects.Orbitals.write_excel2"><code class="docutils literal notranslate"><span class="pre">Orbitals.write_excel2()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="pyfmo.orbitals2.html#pyfmo.orbitals2.objects.SFO"><code class="docutils literal notranslate"><span class="pre">SFO</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="pyfmo.orbitals2.html#pyfmo.orbitals2.objects.SFO.coefficient"><code class="docutils literal notranslate"><span class="pre">SFO.coefficient()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyfmo.orbitals2.html#pyfmo.orbitals2.objects.SFO.fock"><code class="docutils literal notranslate"><span class="pre">SFO.fock()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyfmo.orbitals2.html#pyfmo.orbitals2.objects.SFO.make_name"><code class="docutils literal notranslate"><span class="pre">SFO.make_name()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyfmo.orbitals2.html#pyfmo.orbitals2.objects.SFO.mulliken_contribution"><code class="docutils literal notranslate"><span class="pre">SFO.mulliken_contribution()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyfmo.orbitals2.html#pyfmo.orbitals2.objects.SFO.overlap"><code class="docutils literal notranslate"><span class="pre">SFO.overlap()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="pyfmo.orbitals2.html#pyfmo.orbitals2.objects.SFOs"><code class="docutils literal notranslate"><span class="pre">SFOs</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="pyfmo.orbitals2.html#pyfmo.orbitals2.objects.SFOs.energy_types"><code class="docutils literal notranslate"><span class="pre">SFOs.energy_types</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyfmo.orbitals2.html#pyfmo.orbitals2.objects.SFOs.fragments"><code class="docutils literal notranslate"><span class="pre">SFOs.fragments</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyfmo.orbitals2.html#pyfmo.orbitals2.objects.SFOs.get_fragment_sfos"><code class="docutils literal notranslate"><span class="pre">SFOs.get_fragment_sfos()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="pyfmo.orbitals2.html#module-pyfmo.orbitals2">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="pyfmo.plotting.html">pyfmo.plotting package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="pyfmo.plotting.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyfmo.plotting.html#module-pyfmo.plotting.orbital_diagram">pyfmo.plotting.orbital_diagram module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="pyfmo.plotting.html#pyfmo.plotting.orbital_diagram.draw_interaction"><code class="docutils literal notranslate"><span class="pre">draw_interaction()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="pyfmo.plotting.html#module-pyfmo.plotting">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">#</a></h2>
+</section>
+<section id="module-pyfmo.write_excel2">
+<span id="pyfmo-write-excel2-module"></span><h2>pyfmo.write_excel2 module<a class="headerlink" href="#module-pyfmo.write_excel2" title="Link to this heading">#</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="pyfmo.write_excel2.contribution_mat">
+<span class="sig-name descname"><span class="pre">contribution_mat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">orbs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sfos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mos</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyfmo/write_excel2.html#contribution_mat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfmo.write_excel2.contribution_mat" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyfmo.write_excel2.energy_gap_mat">
+<span class="sig-name descname"><span class="pre">energy_gap_mat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sfos1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sfos2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyfmo/write_excel2.html#energy_gap_mat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfmo.write_excel2.energy_gap_mat" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyfmo.write_excel2.fock_mat">
+<span class="sig-name descname"><span class="pre">fock_mat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sfos1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sfos2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyfmo/write_excel2.html#fock_mat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfmo.write_excel2.fock_mat" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyfmo.write_excel2.get_molecules">
+<span class="sig-name descname"><span class="pre">get_molecules</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">reader</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyfmo/write_excel2.html#get_molecules"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfmo.write_excel2.get_molecules" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyfmo.write_excel2.orbint_mat">
+<span class="sig-name descname"><span class="pre">orbint_mat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sfos1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sfos2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyfmo/write_excel2.html#orbint_mat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfmo.write_excel2.orbint_mat" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyfmo.write_excel2.overlap_mat">
+<span class="sig-name descname"><span class="pre">overlap_mat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sfos1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sfos2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyfmo/write_excel2.html#overlap_mat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfmo.write_excel2.overlap_mat" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyfmo.write_excel2.to_excel">
+<span class="sig-name descname"><span class="pre">to_excel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">orbs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'pyfmo.xlsx'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sfo_energy_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'energy'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyfmo/write_excel2.html#to_excel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfmo.write_excel2.to_excel" title="Link to this definition">#</a></dt>
+<dd><p>Write data about sfos1 and sfos2 to a nicely formatted excel file.
+Currently writes overlap matrices, square of overlap matrices, energy gap matrices and orbital interaction matrices.
+Both restricted and unrestricted sfos are supported.</p>
+</dd></dl>
+
+</section>
+<section id="module-pyfmo">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-pyfmo" title="Link to this heading">#</a></h2>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+                <footer class="bd-footer-article">
+                  
+<div class="footer-article-items footer-article__inner">
+  
+    <div class="footer-article-item"><!-- Previous / next buttons -->
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="modules.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">pyfmo</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="pyfmo.analysis.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">pyfmo.analysis package</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div></div>
+  
+</div>
+
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#subpackages">Subpackages</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#submodules">Submodules</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-pyfmo.write_excel2">pyfmo.write_excel2 module</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pyfmo.write_excel2.contribution_mat"><code class="docutils literal notranslate"><span class="pre">contribution_mat()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pyfmo.write_excel2.energy_gap_mat"><code class="docutils literal notranslate"><span class="pre">energy_gap_mat()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pyfmo.write_excel2.fock_mat"><code class="docutils literal notranslate"><span class="pre">fock_mat()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pyfmo.write_excel2.get_molecules"><code class="docutils literal notranslate"><span class="pre">get_molecules()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pyfmo.write_excel2.orbint_mat"><code class="docutils literal notranslate"><span class="pre">orbint_mat()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pyfmo.write_excel2.overlap_mat"><code class="docutils literal notranslate"><span class="pre">overlap_mat()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pyfmo.write_excel2.to_excel"><code class="docutils literal notranslate"><span class="pre">to_excel()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-pyfmo">Module contents</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div class="tocsection sourcelink">
+    <a href="../_sources/api/pyfmo.rst.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=e353d410970836974a52"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+  <p class="copyright">
+    
+      © Copyright 2025, TheoCheM VU Amsterdam.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.3.7.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item"><p class="theme-version">
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.13.3.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

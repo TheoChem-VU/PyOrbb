@@ -1,0 +1,41 @@
+#!/bin/sh
+
+"$AMSBIN/ams" << eor
+
+Task SinglePoint
+System
+    Atoms
+        C 0.0 0.0 0.157354 region=Me adf.f=Me
+        Cl 0.0 0.0 -1.652026 region=Cl adf.f=Cl
+        H -0.51946757 -0.89974422 0.498224 region=Me adf.f=Me
+        H 1.03893513 0.0 0.498224 region=Me adf.f=Me
+        H -0.51946757 0.89974422 0.498224 region=Me adf.f=Me
+    End
+    BondOrders
+         1 2 1.0
+         1 3 1.0
+         1 4 1.0
+         1 5 1.0
+    End
+End
+
+Engine ADF
+    Basis
+        Type TZ2P
+        Core None
+    End
+    Fragments
+        Cl ${SCM_ROOT}/Users/yumanhordijk/PhD/Programs/TheoCheM/PyFMO/calculations/PyOrb_testing_2022/HeterolyticMeCl/normal/MeCl.Cl.results/adf.rkf
+        Me ${SCM_ROOT}/Users/yumanhordijk/PhD/Programs/TheoCheM/PyFMO/calculations/PyOrb_testing_2022/HeterolyticMeCl/normal/MeCl.Me.results/adf.rkf
+    End
+    Print SFOSITEENERGIES
+    XC
+        GGA OLYP
+    End
+    Symmetry C(3V)
+    NumericalQuality Good
+EndEngine
+eor
+
+# dependency: /Users/yumanhordijk/PhD/Programs/TheoCheM/PyFMO/calculations/PyOrb_testing_2022/HeterolyticMeCl/normal/MeCl.Cl -
+# dependency: /Users/yumanhordijk/PhD/Programs/TheoCheM/PyFMO/calculations/PyOrb_testing_2022/HeterolyticMeCl/normal/MeCl.Me -

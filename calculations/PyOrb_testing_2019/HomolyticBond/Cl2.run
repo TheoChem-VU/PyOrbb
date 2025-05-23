@@ -1,0 +1,36 @@
+#!/bin/sh
+
+# dependency: /Users/yumanhordijk/PhD/TheoCheM_stack/calculations/PyOrb_testing_2019/HomolyticBond/Cl2.Cl1 Cl2.Cl1.t21 Cl1.t21
+# dependency: /Users/yumanhordijk/PhD/TheoCheM_stack/calculations/PyOrb_testing_2019/HomolyticBond/Cl2.Cl2 Cl2.Cl2.t21 Cl2.t21
+"$ADFBIN/adf" <<eor
+:: # dependency: /Users/yumanhordijk/PhD/TheoCheM_stack/calculations/PyOrb_testing_2019/HomolyticBond/Cl2.Cl1 Cl2.Cl1.t21 Cl1.t21
+:: # dependency: /Users/yumanhordijk/PhD/TheoCheM_stack/calculations/PyOrb_testing_2019/HomolyticBond/Cl2.Cl2 Cl2.Cl2.t21 Cl2.t21
+    Atoms
+    1 Cl       0.000000000000       0.000000000000       1.024485000000  f=Cl2 b=Cl2 
+    2 Cl       0.000000000000       0.000000000000      -1.024485000000  f=Cl1 b=Cl1 
+    End
+    Basis
+        Type TZ2P
+        Core None
+        CreateOutput None
+    End
+    Fragments
+        Cl1 Cl1.t21 
+        Cl2 Cl2.t21 
+    end
+    GUIBonds
+        1 1 2 1.0
+    End
+    NoPrint LOGFILE
+    XC
+        GGA BLYP
+    End
+    Relativistic Scalar ZORA
+    Unrestricted Yes
+    Charge 0
+    NumericalQuality VeryGood
+    UnrestrictedFragments Yes
+
+eor
+
+

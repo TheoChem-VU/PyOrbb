@@ -1,0 +1,9 @@
+$AMSBIN/densf << eor
+ADFFile /Users/yumanhordijk/PhD/Programs/TheoCheM/PyFMO/calculations/PyOrb_testing_2022/ChemicalBond/frag.results/adf.rkf
+GRID medium
+END
+Orbitals SCF
+    A 12
+END
+CUBOUTPUT /Users/yumanhordijk/PhD/Programs/TheoCheM/PyFMO/calculations/PyOrb_testing_2022/ChemicalBond/frag.results/medium
+eor

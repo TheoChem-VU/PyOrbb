@@ -1,0 +1,206 @@
+<May22-2025> <22:17:37>  AMS 2025.102  RunTime: May22-2025 22:17:37  ShM Nodes: 1  Procs: 1
+<May22-2025> <22:17:37>  Iteration 1
+<May22-2025> <22:17:37>  current energy                              -33.52489305 Hartree
+<May22-2025> <22:17:37>  energy change                     -33.52489305     0.00007000    F
+<May22-2025> <22:17:37>  constrained gradient max            0.07069307     0.00100000    F
+<May22-2025> <22:17:37>  constrained gradient rms            0.02831841     0.00066667    F
+<May22-2025> <22:17:37>  gradient max                        0.07069307
+<May22-2025> <22:17:37>  gradient rms                        0.02831841
+<May22-2025> <22:17:37>  cart. step max                      0.19524835     0.01000000    F
+<May22-2025> <22:17:37>  cart. step rms                      0.10916568     0.00666667    F
+<May22-2025> <22:17:37>  Iteration 2
+<May22-2025> <22:17:37>  current energy                              -33.53998941 Hartree
+<May22-2025> <22:17:37>  energy change                      -0.01509635     0.00007000    F
+<May22-2025> <22:17:37>  constrained gradient max            0.05148083     0.00100000    F
+<May22-2025> <22:17:37>  constrained gradient rms            0.02224663     0.00066667    F
+<May22-2025> <22:17:37>  gradient max                        0.05148083
+<May22-2025> <22:17:37>  gradient rms                        0.02224663
+<May22-2025> <22:17:37>  cart. step max                      0.00454695     0.01000000    T
+<May22-2025> <22:17:37>  cart. step rms                      0.00242579     0.00666667    T
+<May22-2025> <22:17:37>  Iteration 3
+<May22-2025> <22:17:37>  current energy                              -33.54102441 Hartree
+<May22-2025> <22:17:37>  energy change                      -0.00103501     0.00007000    F
+<May22-2025> <22:17:37>  constrained gradient max            0.05035094     0.00100000    F
+<May22-2025> <22:17:37>  constrained gradient rms            0.02083484     0.00066667    F
+<May22-2025> <22:17:37>  gradient max                        0.04564420
+<May22-2025> <22:17:37>  gradient rms                        0.02035764
+<May22-2025> <22:17:37>  cart. step max                      0.08616821     0.01000000    F
+<May22-2025> <22:17:37>  cart. step rms                      0.04790229     0.00666667    F
+<May22-2025> <22:17:37>  Iteration 4
+<May22-2025> <22:17:37>  current energy                              -33.54498844 Hartree
+<May22-2025> <22:17:37>  energy change                      -0.00396403     0.00007000    F
+<May22-2025> <22:17:37>  constrained gradient max            0.03125427     0.00100000    F
+<May22-2025> <22:17:37>  constrained gradient rms            0.01399191     0.00066667    F
+<May22-2025> <22:17:37>  gradient max                        0.03125439
+<May22-2025> <22:17:37>  gradient rms                        0.01399188
+<May22-2025> <22:17:37>  cart. step max                      0.00440747     0.01000000    T
+<May22-2025> <22:17:37>  cart. step rms                      0.00231060     0.00666667    T
+<May22-2025> <22:17:37>  Iteration 5
+<May22-2025> <22:17:37>  current energy                              -33.54557501 Hartree
+<May22-2025> <22:17:37>  energy change                      -0.00058657     0.00007000    F
+<May22-2025> <22:17:37>  constrained gradient max            6.34542651     0.00100000    F
+<May22-2025> <22:17:37>  constrained gradient rms            1.74454046     0.00066667    F
+<May22-2025> <22:17:37>  gradient max                        0.02781944
+<May22-2025> <22:17:37>  gradient rms                        0.01245921
+<May22-2025> <22:17:37>  cart. step max                      0.00533025     0.01000000    T
+<May22-2025> <22:17:37>  cart. step rms                      0.00273977     0.00666667    T
+<May22-2025> <22:17:37>  Iteration 6
+<May22-2025> <22:17:37>  current energy                              -33.54614137 Hartree
+<May22-2025> <22:17:37>  energy change                      -0.00056636     0.00007000    F
+<May22-2025> <22:17:37>  constrained gradient max            0.02495928     0.00100000    F
+<May22-2025> <22:17:37>  constrained gradient rms            0.01095444     0.00066667    F
+<May22-2025> <22:17:37>  gradient max                        0.02481557
+<May22-2025> <22:17:37>  gradient rms                        0.01096336
+<May22-2025> <22:17:37>  cart. step max                      0.00464660     0.01000000    T
+<May22-2025> <22:17:37>  cart. step rms                      0.00241583     0.00666667    T
+<May22-2025> <22:17:37>  Iteration 7
+<May22-2025> <22:17:37>  current energy                              -33.54661504 Hartree
+<May22-2025> <22:17:37>  energy change                      -0.00047367     0.00007000    F
+<May22-2025> <22:17:37>  constrained gradient max            0.02160022     0.00100000    F
+<May22-2025> <22:17:37>  constrained gradient rms            0.00947957     0.00066667    F
+<May22-2025> <22:17:37>  gradient max                        0.02099666
+<May22-2025> <22:17:37>  gradient rms                        0.00944941
+<May22-2025> <22:17:37>  cart. step max                      0.01189532     0.01000000    F
+<May22-2025> <22:17:37>  cart. step rms                      0.00519261     0.00666667    T
+<May22-2025> <22:17:37>  Iteration 8
+<May22-2025> <22:17:37>  current energy                              -33.54724930 Hartree
+<May22-2025> <22:17:37>  energy change                      -0.00063426     0.00007000    F
+<May22-2025> <22:17:37>  constrained gradient max            0.01652505     0.00100000    F
+<May22-2025> <22:17:37>  constrained gradient rms            0.00754745     0.00066667    F
+<May22-2025> <22:17:37>  gradient max                        0.01640101
+<May22-2025> <22:17:37>  gradient rms                        0.00756148
+<May22-2025> <22:17:37>  cart. step max                      0.05256101     0.01000000    F
+<May22-2025> <22:17:37>  cart. step rms                      0.02673175     0.00666667    F
+<May22-2025> <22:17:37>  Iteration 9
+<May22-2025> <22:17:37>  current energy                              -33.54706255 Hartree
+<May22-2025> <22:17:37>  energy change                       0.00018675     0.00007000    F
+<May22-2025> <22:17:37>  constrained gradient max            0.01915768     0.00100000    F
+<May22-2025> <22:17:37>  constrained gradient rms            0.00863138     0.00066667    F
+<May22-2025> <22:17:37>  gradient max                        0.01915710
+<May22-2025> <22:17:37>  gradient rms                        0.00850156
+<May22-2025> <22:17:37>  cart. step max                      0.02641665     0.01000000    F
+<May22-2025> <22:17:37>  cart. step rms                      0.01071929     0.00666667    F
+<May22-2025> <22:17:37>  Iteration 10
+<May22-2025> <22:17:37>  current energy                              -33.54813350 Hartree
+<May22-2025> <22:17:37>  energy change                      -0.00107095     0.00007000    F
+<May22-2025> <22:17:37>  constrained gradient max            0.00770142     0.00100000    F
+<May22-2025> <22:17:37>  constrained gradient rms            0.00376620     0.00066667    F
+<May22-2025> <22:17:37>  gradient max                        0.00770142
+<May22-2025> <22:17:37>  gradient rms                        0.00376620
+<May22-2025> <22:17:37>  cart. step max                      0.02504797     0.01000000    F
+<May22-2025> <22:17:37>  cart. step rms                      0.00990244     0.00666667    F
+<May22-2025> <22:17:37>  Iteration 11
+<May22-2025> <22:17:37>  current energy                              -33.54842863 Hartree
+<May22-2025> <22:17:37>  energy change                      -0.00029513     0.00007000    F
+<May22-2025> <22:17:37>  constrained gradient max            0.00456493     0.00100000    F
+<May22-2025> <22:17:37>  constrained gradient rms            0.00162242     0.00066667    F
+<May22-2025> <22:17:37>  gradient max                        0.00456493
+<May22-2025> <22:17:37>  gradient rms                        0.00162242
+<May22-2025> <22:17:37>  cart. step max                      0.00221800     0.01000000    T
+<May22-2025> <22:17:37>  cart. step rms                      0.00108419     0.00666667    T
+<May22-2025> <22:17:37>  Iteration 12
+<May22-2025> <22:17:37>  current energy                              -33.54844272 Hartree
+<May22-2025> <22:17:37>  energy change                      -0.00001410     0.00007000    T
+<May22-2025> <22:17:37>  constrained gradient max            0.00345853     0.00100000    F
+<May22-2025> <22:17:37>  constrained gradient rms            0.00119704     0.00066667    F
+<May22-2025> <22:17:37>  gradient max                        0.00345853
+<May22-2025> <22:17:37>  gradient rms                        0.00119704
+<May22-2025> <22:17:37>  cart. step max                      0.00851519     0.01000000    T
+<May22-2025> <22:17:37>  cart. step rms                      0.00406840     0.00666667    T
+<May22-2025> <22:17:37>  Iteration 13
+<May22-2025> <22:17:37>  current energy                              -33.54846018 Hartree
+<May22-2025> <22:17:37>  energy change                      -0.00001746     0.00007000    T
+<May22-2025> <22:17:37>  constrained gradient max            0.00406489     0.00100000    F
+<May22-2025> <22:17:37>  constrained gradient rms            0.00139165     0.00066667    F
+<May22-2025> <22:17:37>  gradient max                        0.00124946
+<May22-2025> <22:17:37>  gradient rms                        0.00051135
+<May22-2025> <22:17:37>  cart. step max                      0.06189193     0.01000000    F
+<May22-2025> <22:17:37>  cart. step rms                      0.02777296     0.00666667    F
+<May22-2025> <22:17:37>  Iteration 14
+<May22-2025> <22:17:37>  current energy                              -33.54699064 Hartree
+<May22-2025> <22:17:37>  energy change                       0.00146954     0.00007000    F
+<May22-2025> <22:17:37>  constrained gradient max            0.01612051     0.00100000    F
+<May22-2025> <22:17:37>  constrained gradient rms            0.00828125     0.00066667    F
+<May22-2025> <22:17:37>  gradient max                        0.01710054
+<May22-2025> <22:17:37>  gradient rms                        0.00747158
+<May22-2025> <22:17:37>  cart. step max                      0.06457220     0.01000000    F
+<May22-2025> <22:17:37>  cart. step rms                      0.02883010     0.00666667    F
+<May22-2025> <22:17:37>  Iteration 15
+<May22-2025> <22:17:37>  current energy                              -33.54842369 Hartree
+<May22-2025> <22:17:37>  energy change                      -0.00143305     0.00007000    F
+<May22-2025> <22:17:37>  constrained gradient max            0.00712733     0.00100000    F
+<May22-2025> <22:17:37>  constrained gradient rms            0.00285772     0.00066667    F
+<May22-2025> <22:17:37>  gradient max                        0.00381784
+<May22-2025> <22:17:37>  gradient rms                        0.00146594
+<May22-2025> <22:17:37>  cart. step max                      0.00655198     0.01000000    T
+<May22-2025> <22:17:37>  cart. step rms                      0.00344430     0.00666667    T
+<May22-2025> <22:17:37>  Iteration 16
+<May22-2025> <22:17:37>  current energy                              -33.54845484 Hartree
+<May22-2025> <22:17:37>  energy change                      -0.00003115     0.00007000    T
+<May22-2025> <22:17:37>  constrained gradient max            0.00414914     0.00100000    F
+<May22-2025> <22:17:37>  constrained gradient rms            0.00147482     0.00066667    F
+<May22-2025> <22:17:37>  gradient max                        0.00108093
+<May22-2025> <22:17:37>  gradient rms                        0.00047577
+<May22-2025> <22:17:37>  cart. step max                      0.01197565     0.01000000    F
+<May22-2025> <22:17:37>  cart. step rms                      0.00505622     0.00666667    T
+<May22-2025> <22:17:37>  Iteration 17
+<May22-2025> <22:17:37>  current energy                              -33.54840432 Hartree
+<May22-2025> <22:17:37>  energy change                       0.00005052     0.00007000    T
+<May22-2025> <22:17:37>  constrained gradient max            0.00416224     0.00100000    F
+<May22-2025> <22:17:37>  constrained gradient rms            0.00211829     0.00066667    F
+<May22-2025> <22:17:37>  gradient max                        0.00301806
+<May22-2025> <22:17:37>  gradient rms                        0.00134927
+<May22-2025> <22:17:37>  cart. step max                      0.01591188     0.01000000    F
+<May22-2025> <22:17:37>  cart. step rms                      0.00775647     0.00666667    F
+<May22-2025> <22:17:37>  Iteration 18
+<May22-2025> <22:17:37>  current energy                              -33.54843193 Hartree
+<May22-2025> <22:17:37>  energy change                      -0.00002761     0.00007000    T
+<May22-2025> <22:17:37>  constrained gradient max            0.00721010     0.00100000    F
+<May22-2025> <22:17:37>  constrained gradient rms            0.00294165     0.00066667    F
+<May22-2025> <22:17:37>  gradient max                        0.00328189
+<May22-2025> <22:17:37>  gradient rms                        0.00134044
+<May22-2025> <22:17:37>  cart. step max                      0.01668551     0.01000000    F
+<May22-2025> <22:17:37>  cart. step rms                      0.00742986     0.00666667    F
+<May22-2025> <22:17:37>  Iteration 19
+<May22-2025> <22:17:37>  current energy                              -33.54840386 Hartree
+<May22-2025> <22:17:37>  energy change                       0.00002807     0.00007000    T
+<May22-2025> <22:17:37>  constrained gradient max            0.00611252     0.00100000    F
+<May22-2025> <22:17:37>  constrained gradient rms            0.00249492     0.00066667    F
+<May22-2025> <22:17:37>  gradient max                        0.00328805
+<May22-2025> <22:17:37>  gradient rms                        0.00158337
+<May22-2025> <22:17:37>  cart. step max                      0.01187108     0.01000000    F
+<May22-2025> <22:17:37>  cart. step rms                      0.00476509     0.00666667    T
+<May22-2025> <22:17:37>  Iteration 20
+<May22-2025> <22:17:37>  current energy                              -33.54845141 Hartree
+<May22-2025> <22:17:37>  energy change                      -0.00004756     0.00007000    T
+<May22-2025> <22:17:37>  constrained gradient max            0.00141109     0.00100000    F
+<May22-2025> <22:17:37>  constrained gradient rms            0.00061488     0.00066667    T
+<May22-2025> <22:17:37>  gradient max                        0.00117964
+<May22-2025> <22:17:37>  gradient rms                        0.00055428
+<May22-2025> <22:17:37>  cart. step max                      0.01357429     0.01000000    F
+<May22-2025> <22:17:37>  cart. step rms                      0.00494750     0.00666667    T
+<May22-2025> <22:17:37>  Iteration 21
+<May22-2025> <22:17:37>  current energy                              -33.54843389 Hartree
+<May22-2025> <22:17:37>  energy change                       0.00001753     0.00007000    T
+<May22-2025> <22:17:37>  constrained gradient max            0.00310344     0.00100000    F
+<May22-2025> <22:17:37>  constrained gradient rms            0.00157696     0.00066667    F
+<May22-2025> <22:17:37>  gradient max                        0.00227118
+<May22-2025> <22:17:37>  gradient rms                        0.00104471
+<May22-2025> <22:17:37>  cart. step max                      0.00874757     0.01000000    T
+<May22-2025> <22:17:37>  cart. step rms                      0.00392079     0.00666667    T
+<May22-2025> <22:17:37>  Iteration 22
+<May22-2025> <22:17:37>  current energy                              -33.54846395 Hartree
+<May22-2025> <22:17:37>  energy change                      -0.00003006     0.00007000    T
+<May22-2025> <22:17:37>  constrained gradient max            0.00052442     0.00100000    T
+<May22-2025> <22:17:37>  constrained gradient rms            0.00028260     0.00066667    T
+<May22-2025> <22:17:37>  gradient max                        0.00052442
+<May22-2025> <22:17:37>  gradient rms                        0.00028260
+<May22-2025> <22:17:37>  cart. step max                      0.00670092     0.01000000    T
+<May22-2025> <22:17:37>  cart. step rms                      0.00231723     0.00666667    T
+<May22-2025> <22:17:37>  Geometry optimization converged
+<May22-2025> <22:17:37>  DFTB: SCC cycle
+<May22-2025> <22:17:37>  cyc=  1 err=8.0E-10 method=1 nvec= 1 mix=0.075 e=    0.0000
+<May22-2025> <22:17:37>  SCC cycle converged!
+<May22-2025> <22:17:37>  ERROR: kfOpenFile: Attempt to open nonexistent file /Users/yumanhordijk/PhD/Programs/TheoCheM/PyFMO/calculations/PyOrb_testing_2022/HomolyticEthaneMethyl/Methyl.C.results/dftb.rkf
+ERROR: kfOpenFile: Attempt to open nonexistent file /Users/yumanhordijk/PhD/Programs/TheoCheM/PyFMO/calculations/PyOrb_testing_2022/HomolyticEthaneMethyl/Methyl.C.results/dftb.rkf
+STOP ERROR DETECTED

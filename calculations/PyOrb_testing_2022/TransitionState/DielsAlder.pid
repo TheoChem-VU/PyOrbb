@@ -1,5 +1,5 @@
 # status: ready
-# pid: 19175
+# pid: 99479
 # hostname: localhost
 # username: 
 # jobscript: 
@@ -11,7 +11,6 @@
 # error: 0
 # warning: 0
 # runcmd: sh "$job" "NSCM=$options ; export NSCM"
-# plamscmd: local:*,1
 # batch: yes
 # options: 
 # killcmd: killall $pid
@@ -26,11 +25,13 @@
 # paused: 0
 # remoteprefix: 
 # jobtype: .adf
-# mtime: 1674823946
+# mtime: 1747844171
 # cloudinit: 
 # cloudid: 
 # copyback: 
 # privatesshkeypath: 
 # comments: 
-# dependency: start /Users/yumanhordijk/PhD/TheoCheM_stack/calculations/PyOrb_testing/TransitionState/DielsAlder.Dienophile.job
-# dependency: start /Users/yumanhordijk/PhD/TheoCheM_stack/calculations/PyOrb_testing/TransitionState/DielsAlder.Diene.job
+# plamscmd: local:*,1
+# dependency: start /Users/yumanhordijk/PhD/Programs/TheoCheM/PyFMO/calculations/PyOrb_testing_2022/TransitionState/DielsAlder.Diene.job
+# dependency: start /Users/yumanhordijk/PhD/Programs/TheoCheM/PyFMO/calculations/PyOrb_testing_2022/TransitionState/DielsAlder.Dienophile.job
+# updatecomments: no

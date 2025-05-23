@@ -26,6 +26,7 @@ System
 End
 
 Engine ADF
+print sfositeenergies
     Basis
         Type TZ2P
         Core None
@@ -34,7 +35,6 @@ Engine ADF
         NH3 ${SCM_ROOT}/Users/yumanhordijk/PhD/Programs/TheoCheM/PyFMO/calculations/PyOrb_testing_2022/DonorAcceptor/NH3BH3.NH3.results/adf.rkf
         BH3 ${SCM_ROOT}/Users/yumanhordijk/PhD/Programs/TheoCheM/PyFMO/calculations/PyOrb_testing_2022/DonorAcceptor/NH3BH3.BH3.results/adf.rkf
     End
-    
     XC
         GGA OLYP
     End

@@ -1,0 +1,51 @@
+#!/bin/sh
+
+# dependency: /Users/yumanhordijk/PhD/Programs/TheoCheM/PyFMO/calculations/PyOrb_testing_2022/Alkyl/C1/EDA.Me EDA.Me.results/adf.rkf Me.rkf
+# dependency: /Users/yumanhordijk/PhD/Programs/TheoCheM/PyFMO/calculations/PyOrb_testing_2022/Alkyl/C1/EDA.Alkyl EDA.Alkyl.results/adf.rkf Alkyl.rkf
+
+"$AMSBIN/ams" << eor
+
+Task SinglePoint
+System
+    Atoms
+        C -6.073512875309858 -0.9455443427518875 -2.347812529456586e-09 region=Me adf.f=Me
+        C -4.568430125973023 -0.696037295139729 5.34363964975844e-09 region=Alkyl adf.f=Alkyl
+        H -6.593558231470983 -0.1338746091921496 0.5114121618044196 region=Me adf.f=Me
+        H -6.303825837160665 -1.881605696284631 0.5114121687961733 region=Me adf.f=Me
+        H -6.448692031970288 -1.00774015656747 -1.022824329852592 region=Me adf.f=Me
+        H -4.338117168008891 0.2400240613965368 -0.5114121635383075 region=Alkyl adf.f=Alkyl
+        H -4.048384770426423 -1.507707021651267 -0.5114121710505785 region=Alkyl adf.f=Alkyl
+        H -4.19325096612287 -0.6338414833753038 1.022824330845067 region=Alkyl adf.f=Alkyl
+    End
+    BondOrders
+         1 2 1.0
+         1 3 1.0
+         1 4 1.0
+         1 5 1.0
+         2 6 1.0
+         2 7 1.0
+         2 8 1.0
+    End
+End
+
+Engine ADF
+    Basis
+        Type TZ2P
+        Core None
+    End
+    SpinPolarization 0.0
+    Fragments
+        Me Me.rkf 
+        Alkyl Alkyl.rkf 
+    End
+    
+    XC
+        GGA BLYP
+    End
+    Symmetry NOSYM
+    Unrestricted Yes
+    NumericalQuality VeryGood
+    UnrestrictedFragments Yes
+EndEngine
+eor
+

@@ -1,0 +1,51 @@
+#!/bin/sh
+
+# dependency: /Users/yumanhordijk/PhD/TheoCheM_stack/calculations/PyOrb_testing_2019/CoordinationBondFeCO4CO/FeCO4CO.CO FeCO4CO.CO.t21 CO.t21
+# dependency: /Users/yumanhordijk/PhD/TheoCheM_stack/calculations/PyOrb_testing_2019/CoordinationBondFeCO4CO/FeCO4CO.FeCO4 FeCO4CO.FeCO4.t21 FeCO4.t21
+"$ADFBIN/adf" <<eor
+:: # dependency: /Users/yumanhordijk/PhD/TheoCheM_stack/calculations/PyOrb_testing_2019/CoordinationBondFeCO4CO/FeCO4CO.CO FeCO4CO.CO.t21 CO.t21
+:: # dependency: /Users/yumanhordijk/PhD/TheoCheM_stack/calculations/PyOrb_testing_2019/CoordinationBondFeCO4CO/FeCO4CO.FeCO4 FeCO4CO.FeCO4.t21 FeCO4.t21
+    Atoms
+    1 O      -0.030933000000       0.173098000000      -2.906776000000  f=CO b=CO 
+    2 C      -0.022738000000       0.125460000000      -1.754801000000  f=CO b=CO 
+    3 Fe      -0.010158000000       0.052195000000       0.012724000000  f=FeCO4 b=FeCO4 
+    4 O      -2.932253000000       0.050321000000       0.033974000000  f=FeCO4 b=FeCO4 
+    5 C      -1.781978000000       0.051149000000       0.025521000000  f=FeCO4 b=FeCO4 
+    6 O      -0.000246000000       2.519915000000       1.577453000000  f=FeCO4 b=FeCO4 
+    7 O       2.911951000000       0.052501000000      -0.007313000000  f=FeCO4 b=FeCO4 
+    8 O       0.000182000000      -2.536505000000       1.368079000000  f=FeCO4 b=FeCO4 
+    9 C      -0.003861000000      -1.514965000000       0.833458000000  f=FeCO4 b=FeCO4 
+    10 C       1.761672000000       0.052473000000       0.000415000000  f=FeCO4 b=FeCO4 
+    11 C      -0.004125000000       1.546377000000       0.959736000000  f=FeCO4 b=FeCO4 
+    End
+    Basis
+        Type TZ2P
+        Core None
+        CreateOutput None
+    End
+    Fragments
+        CO CO.t21 
+        FeCO4 FeCO4.t21 
+    end
+    GUIBonds
+        1 1 2 2.0
+        2 2 3 2.0
+        3 3 11 2.0
+        4 3 9 2.0
+        5 3 5 2.0
+        6 3 10 2.0
+        7 4 5 2.0
+        8 6 11 2.0
+        9 7 10 2.0
+        10 8 9 2.0
+    End
+    NoPrint LOGFILE
+    XC
+        GGA BLYP
+    End
+    Relativistic Scalar ZORA
+    NumericalQuality VeryGood
+
+eor
+
+

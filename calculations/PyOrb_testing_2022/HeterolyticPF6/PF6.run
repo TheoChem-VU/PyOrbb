@@ -1,0 +1,43 @@
+#!/bin/sh
+
+"$AMSBIN/ams" << eor
+
+Task SinglePoint
+System
+    Atoms
+        P 0.0 0.0 0.0 region=P adf.f=P
+        F 0.0 0.0 -1.60893684 region=F5 adf.f=F5
+        F 0.0 0.0 1.60893684 region=F5 adf.f=F5
+        F 0.78730624 1.36365442 0.0 region=F5 adf.f=F5
+        F 0.78730624 -1.36365442 0.0 region=F5 adf.f=F5
+        F -1.57461249 0.0 0.0 region=F5 adf.f=F5
+    End
+    BondOrders
+         1 2 1.0
+         1 3 1.0
+         1 4 1.0
+         1 5 1.0
+         1 6 1.0
+    End
+End
+
+Engine ADF
+    Basis
+        Type TZ2P
+        Core None
+    End
+    Fragments
+        P ${SCM_ROOT}/Users/yumanhordijk/PhD/Programs/TheoCheM/PyFMO/calculations/PyOrb_testing_2022/HeterolyticPF6/PF6.P.results/adf.rkf
+        F5 ${SCM_ROOT}/Users/yumanhordijk/PhD/Programs/TheoCheM/PyFMO/calculations/PyOrb_testing_2022/HeterolyticPF6/PF6.F5.results/adf.rkf
+    End
+    Print SFOSITEENERGIES
+    XC
+        GGA OLYP
+    End
+    Symmetry NOSYM
+    NumericalQuality Good
+EndEngine
+eor
+
+# dependency: /Users/yumanhordijk/PhD/Programs/TheoCheM/PyFMO/calculations/PyOrb_testing_2022/HeterolyticPF6/PF6.F5 -
+# dependency: /Users/yumanhordijk/PhD/Programs/TheoCheM/PyFMO/calculations/PyOrb_testing_2022/HeterolyticPF6/PF6.P -

@@ -1,8 +1,5 @@
 #!/bin/sh
 
-# dependency: /Users/yumanhordijk/PhD/TheoCheM_stack/calculations/PyOrb_testing/TransitionState/DielsAlder.Dienophile DielsAlder.Dienophile.results/adf.rkf Dienophile.rkf
-# dependency: /Users/yumanhordijk/PhD/TheoCheM_stack/calculations/PyOrb_testing/TransitionState/DielsAlder.Diene DielsAlder.Diene.results/adf.rkf Diene.rkf
-
 "$AMSBIN/ams" << eor
 
 Task SinglePoint
@@ -44,19 +41,22 @@ System
 End
 
 Engine ADF
+print sfositeenergies
     Basis
         Type TZ2P
         Core None
     End
     Fragments
-        Dienophile Dienophile.rkf 
-        Diene Diene.rkf 
+        Dienophile ${SCM_ROOT}/Users/yumanhordijk/PhD/Programs/TheoCheM/PyFMO/calculations/PyOrb_testing_2022/TransitionState/DielsAlder.Dienophile.results/adf.rkf
+        Diene ${SCM_ROOT}/Users/yumanhordijk/PhD/Programs/TheoCheM/PyFMO/calculations/PyOrb_testing_2022/TransitionState/DielsAlder.Diene.results/adf.rkf
     End
-    
     XC
         GGA BLYP
     End
     NumericalQuality VeryGood
+
 EndEngine
 eor
 
+# dependency: /Users/yumanhordijk/PhD/Programs/TheoCheM/PyFMO/calculations/PyOrb_testing_2022/TransitionState/DielsAlder.Diene -
+# dependency: /Users/yumanhordijk/PhD/Programs/TheoCheM/PyFMO/calculations/PyOrb_testing_2022/TransitionState/DielsAlder.Dienophile -

@@ -1,0 +1,34 @@
+#!/bin/sh
+
+"$AMSBIN/ams" << eor
+
+Task SinglePoint
+System
+    Atoms
+        F 0.0 0.0 -1.60893684 region=F5
+        F 0.0 0.0 1.60893684 region=F5
+        F 0.78730624 1.36365442 0.0 region=F5
+        F 0.78730624 -1.36365442 0.0 region=F5
+        F -1.57461249 0.0 0.0 region=F5
+    End
+    Symmetrize Yes
+    Charge -5
+End
+Symmetry
+    SymmetrizeTolerance 1.0e-7
+End
+
+Engine ADF
+    Basis
+        Type TZ2P
+        Core None
+    End
+    XC
+        GGA OLYP
+    End
+    Title F5 fragment
+    Symmetry NOSYM
+    NumericalQuality Good
+EndEngine
+eor
+

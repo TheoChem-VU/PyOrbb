@@ -1,0 +1,35 @@
+#!/bin/sh
+
+"$AMSBIN/ams" << eor
+
+Task SinglePoint
+System
+    Atoms
+        H -0.58141449 -1.00703944 1.13683264 region=Acceptor
+        B -0.0 0.0 0.83670033 region=Acceptor
+        H -0.58141449 1.00703944 1.13683264 region=Acceptor
+        H 1.16282899 0.0 1.13683264 region=Acceptor
+    End
+    Symmetrize Yes
+    BondOrders
+         2 1 1.0
+         2 3 1.0
+         2 4 1.0
+    End
+End
+Symmetry
+    SymmetrizeTolerance 1.0e-7
+End
+
+Engine ADF
+    Basis
+        Type TZ2P
+        Core None
+    End
+    XC
+        GGA BLYP
+    End
+    Title Acceptor fragment
+EndEngine
+eor
+

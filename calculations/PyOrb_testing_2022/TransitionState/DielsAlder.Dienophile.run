@@ -30,7 +30,6 @@ Engine ADF
         Type TZ2P
         Core None
     End
-    ALLOW  FRACTIONAL
     XC
         GGA BLYP
     End

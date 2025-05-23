@@ -1,0 +1,35 @@
+#!/bin/sh
+
+"$AMSBIN/ams" << eor
+
+Task SinglePoint
+System
+    Atoms
+        H 1.7206005 1.68178323 0.88324146 region=Water_B
+        H 1.46201979 0.49778614 -0.06684584 region=Water_B
+        O 1.3058409 1.45366652 0.05170258 region=Water_B
+    End
+    Symmetrize Yes
+    BondOrders
+         3 1 0.8878645300865173
+         3 2 0.8192466497421265
+    End
+End
+Symmetry
+    SymmetrizeTolerance 1.0e-7
+End
+
+Engine ADF
+    Basis
+        Type TZ2P
+        Core None
+    End
+    XC
+        GGA BLYP
+        DISPERSION GRIMME3 BJDAMP
+    End
+    Title Water_B fragment
+    NumericalQuality Good
+EndEngine
+eor
+

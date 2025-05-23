@@ -1,0 +1,26 @@
+#!/bin/sh
+
+"$ADFBIN/adf" <<eor
+    Atoms
+    1 Cl       0.081289010000       0.786941950000       0.000000000000    
+    End
+    Basis
+        Type TZ2P
+        Core None
+        CreateOutput None
+    End
+    GUIBonds
+    End
+    NoPrint LOGFILE
+    ALLOW  FRACTIONAL
+    XC
+        GGA BLYP
+    End
+    Title Cl fragment
+    Relativistic Scalar ZORA
+    Charge -1
+    NumericalQuality VeryGood
+
+eor
+
+

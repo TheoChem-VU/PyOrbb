@@ -1,0 +1,9 @@
+$AMSBIN/densf << eor
+ADFFile /Users/yumanhordijk/PhD/Programs/TheoCheM/PyFMO/calculations/PyOrb_testing_2022/DonorAcceptor/NH3BH3.results/adf.rkf
+GRID medium
+END
+Orbitals SFO
+    A1 3
+END
+CUBOUTPUT /Users/yumanhordijk/PhD/Programs/TheoCheM/PyFMO/calculations/PyOrb_testing_2022/DonorAcceptor/NH3BH3.results/medium
+eor

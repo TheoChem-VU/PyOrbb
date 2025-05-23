@@ -1,0 +1,45 @@
+#!/bin/sh
+
+"$AMSBIN/ams" << eor
+
+Task SinglePoint
+System
+    Atoms
+        C -4.203656812316602 -0.08672768369477787 0.0 region=Urea_C
+        O -2.983188265547747 -0.06387262687727795 0.0 region=Urea_C
+        N -4.959330302876678 1.042494107371616 0.0 region=Urea_C
+        N -4.91657765030947 -1.243421000943736 0.0 region=Urea_C
+        H -4.478035607844369 1.920690360490927 0.0 region=Urea_C
+        H -5.959132712294183 1.017628605099506 0.0 region=Urea_C
+        H -5.916611568613177 -1.255946344384455 0.0 region=Urea_C
+        H -4.402817382494765 -2.103028302749023 0.0 region=Urea_C
+    End
+    Symmetrize Yes
+    BondOrders
+         1 2 1.530351042747498
+         1 3 1.175705671310425
+         1 4 1.175690412521362
+         3 5 0.9128689169883728
+         3 6 0.9231882691383362
+         4 7 0.9231873154640198
+         4 8 0.9128769040107727
+    End
+End
+Symmetry
+    SymmetrizeTolerance 1.0e-7
+End
+
+Engine ADF
+    Basis
+        Type TZ2P
+        Core None
+    End
+    XC
+        GGA BLYP
+        DISPERSION GRIMME3 BJDAMP
+    End
+    Title Urea_C fragment
+    NumericalQuality Good
+EndEngine
+eor
+

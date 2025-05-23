@@ -11,8 +11,6 @@
     5   Yumans-MacBook-Pro.local                  0          5         -1
     6   Yumans-MacBook-Pro.local                  0          6         -1
     7   Yumans-MacBook-Pro.local                  0          7         -1
-    8   Yumans-MacBook-Pro.local                  0          8         -1
-    9   Yumans-MacBook-Pro.local                  0          9         -1
  ==============================================================================
 
 
@@ -21,9 +19,9 @@ May use up to 15625MB of RAM as shared memory on node 0
  *******************************************************************************
  *                                                                             *
  *  --------------------------------                                           *
- *   Amsterdam Modeling Suite (AMS)              2022.103                      *
+ *   Amsterdam Modeling Suite (AMS)              2025.102                      *
  *  --------------------------------                                           *
- *                                               r104886 2022-06-17            *
+ *                                               r250425 2025-04-25 08373ef5   *
  *                                                                             *
  *                                                                             *
  *                              =================                              *
@@ -41,36 +39,37 @@ May use up to 15625MB of RAM as shared memory on node 0
  *   The terms and conditions of the End User License Agreement apply to       *
  *   the use of AMS, https://www.scm.com/license-terms/                        *
  *                                                                             *
- **********************  x86_64_darwin_intel / openmpi  ************************
+ ************************  arm64_darwin_gnu / openmpi  *************************
  
- Licensed to: Prof Visscher, Prof Bickelhaupt, Prof Fonseca Guerra / Vrije Universiteit, Theoretische Chemie / Amsterdam / NETHERLANDS 2022-12-13 09:59:29
+ Licensed to: Prof Visscher, Prof Bickelhaupt, Prof Fonseca Guerra / Vrije Universiteit, Theoretische Chemie / Amsterdam / NETHERLANDS 2025-05-08 15:31:51
  SCM User ID: u21794
   
- AMS 2022.103  RunTime: Jan27-2023 14:02:45  ShM Nodes: 1  Procs: 10
+ AMS 2025.102  RunTime: May21-2025 18:14:19  ShM Nodes: 1  Procs: 8
 
  AMS jobname: ams
- AMS jobid  : 1549628581
+ AMS jobid  : 1126700624
 
- Start   directory: /Users/yumanhordijk/PhD/TheoCheM_stack/calculations/PyOrb_testing/TransitionState/tmp.yumanhordijk.19175.0.noindex/
- Results directory: /Users/yumanhordijk/PhD/TheoCheM_stack/calculations/PyOrb_testing/TransitionState/DielsAlder.results/
- Scratch directory: /tmp/amstmp_ams_kid0.1549628581/
-
-
- Communication costs MPI_COMM_WORLD:      2.244 usec per message,   0.0273 usec per 8-byte item
- Communication costs for intra-node:      3.170 usec per message,   0.0383 usec per 8-byte item
-
- RNG seed: 661522592 -492292523 -127170284 -546731921 -1358517875 -795763617 1258052800 -756933046
+ Start   directory: /Users/yumanhordijk/PhD/Programs/TheoCheM/PyFMO/calculations/PyOrb_testing_2022/TransitionState/tmp.yumanhordijk.99479.0.noindex/
+ Results directory: /Users/yumanhordijk/PhD/Programs/TheoCheM/PyFMO/calculations/PyOrb_testing_2022/TransitionState/DielsAlder.results/
+ Scratch directory: /tmp/amstmp_ams_kid0.1126700624/
 
 
+ Communication costs MPI_COMM_WORLD:     -2.005 usec per message,   0.0747 usec per 8-byte item
+ Communication costs for intra-node:      4.106 usec per message,   0.1079 usec per 8-byte item
 
-                     *************************************************************************
-                     *  ADF 2022.103  RunTime: Jan27-2023 14:02:47  ShM Nodes: 1  Procs: 10  *
-                     *************************************************************************
+ RNG seed: 1396762496 397854617 -973914566 482427703 974962474 232603702 -1827726095 -573724950
+
+
+
+                      ************************************************************************
+                      *  ADF 2025.102  RunTime: May21-2025 18:14:21  ShM Nodes: 1  Procs: 8  *
+                      ************************************************************************
   
+
        ****************************
        * SINGLE POINT CALCULATION *
        ****************************
- 
+
 --------
 Geometry
 --------
@@ -93,22 +92,23 @@ Atoms
      14      H     2.03890800    -0.93032400    -1.00275400       region=Diene adf.f=Diene
      15      H     3.73689900    -0.69087700     0.75549400       region=Diene adf.f=Diene
      16      H     2.63714600     0.43012700     1.70720200       region=Diene adf.f=Diene
- 
+
 Total System Charge             0.00000
 Bonding info available!
- 
- 
+
+
 ----------------
 ADF Engine Input
 ----------------
  
+ print sfositeenergies
  Basis
  Type TZ2P
  Core None
  End
  Fragments
- Dienophile Dienophile.rkf
- Diene Diene.rkf
+ Dienophile /Users/yumanhordijk/PhD/Programs/TheoCheM/PyFMO/calculations/PyOrb_testing_2022/TransitionState/DielsAlder.Dienophile.results/adf.rkf
+ Diene /Users/yumanhordijk/PhD/Programs/TheoCheM/PyFMO/calculations/PyOrb_testing_2022/TransitionState/DielsAlder.Diene.results/adf.rkf
  End
  XC
  GGA BLYP
@@ -153,12 +153,12 @@ ADF Engine Input
  Fragment File(s)
  ----------------
  Dienophile:
-         file : Dienophile.rkf
-         jobid: 14423804
+         file : /Users/yumanhordijk/PhD/Programs/TheoCheM/PyFMO/calculations/PyOrb_testing_2022/TransitionState/DielsAlder.Dienophile.results/adf.rkf
+         jobid: 1099395791
          title: *** adf ***
  Diene:
-         file : Diene.rkf
-         jobid: 1852722389
+         file : /Users/yumanhordijk/PhD/Programs/TheoCheM/PyFMO/calculations/PyOrb_testing_2022/TransitionState/DielsAlder.Diene.results/adf.rkf
+         jobid: 1638523740
          title: *** adf ***
 
 
@@ -199,16 +199,16 @@ ADF Engine Input
                                                          4  H            2.3059    3.2093   -0.9006
                                                          5  H            4.2901    2.0197    1.1412
                                                          6  H            4.1888    1.6148   -0.6508
-    2  Diene                                            11  H            0.1958    0.6339   -1.2422
+    2  Diene                                             7  C            0.8101    0.7025   -0.3418
+                                                         8  C            0.6787    1.8139    0.4691
+                                                         9  C            1.8784   -0.2041   -0.2030
+                                                        10  C            2.8627   -0.0403    0.7533
+                                                        11  H            0.1958    0.6339   -1.2422
                                                         12  H           -0.0897    2.5573    0.2581
                                                         13  H            1.0297    1.7950    1.4980
                                                         14  H            2.0389   -0.9303   -1.0028
                                                         15  H            3.7369   -0.6909    0.7555
                                                         16  H            2.6371    0.4301    1.7072
-                                                         7  C            0.8101    0.7025   -0.3418
-                                                         8  C            0.6787    1.8139    0.4691
-                                                         9  C            1.8784   -0.2041   -0.2030
-                                                        10  C            2.8627   -0.0403    0.7533
 
 
  Interatomic Distance Matrix (Angstrom)
@@ -266,7 +266,6 @@ ADF Engine Input
  similar to the occupied MOs in a "reference" cycle ("KeepOrbitals").
  The reference cycle is always the PREVIOUS cycle: it will evolve with
  the SCF procedure.
-1
  ***************************************************************************************************
 
 
@@ -301,7 +300,7 @@ ADF Engine Input
      1)     2.64532   2.91359   0.08894      2.64532   2.91359   0.08894       1   2.64532   2.91359   0.08894
      2)     3.69650   2.02292   0.22835      3.69650   2.02292   0.22835       2   3.69650   2.02292   0.22835
      3)     2.41316   3.61183   0.89162      2.41316   3.61183   0.89162       3   2.41316   3.61183   0.89162
-     4)     2.30586   3.20926  -0.90056      2.30586   3.20926  -0.90056       4   2.30586   3.20926  -0.90056
+     4)     2.30586   3.20925  -0.90056      2.30586   3.20925  -0.90056       4   2.30586   3.20925  -0.90056
      5)     4.29008   2.01965   1.14123      4.29008   2.01965   1.14123       5   4.29008   2.01965   1.14123
      6)     4.18882   1.61485  -0.65075      4.18882   1.61485  -0.65075       6   4.18882   1.61485  -0.65075
 
@@ -320,16 +319,16 @@ ADF Engine Input
 
                   Master (on file)          After Computed Tranformation               As specified on Input
            ----------------------------     ----------------------------     ---------------------------------
-     1)     0.19580   0.63391  -1.24221      0.19580   0.63391  -1.24221      11   0.19580   0.63391  -1.24221
-     2)    -0.08966   2.55731   0.25808     -0.08966   2.55731   0.25808      12  -0.08966   2.55731   0.25808
-     3)     1.02971   1.79503   1.49800      1.02971   1.79503   1.49800      13   1.02971   1.79503   1.49800
-     4)     2.03891  -0.93032  -1.00275      2.03891  -0.93032  -1.00275      14   2.03891  -0.93032  -1.00275
-     5)     3.73690  -0.69088   0.75549      3.73690  -0.69088   0.75549      15   3.73690  -0.69088   0.75549
-     6)     2.63715   0.43013   1.70720      2.63715   0.43013   1.70720      16   2.63715   0.43013   1.70720
-     7)     0.81010   0.70246  -0.34180      0.81010   0.70246  -0.34180       7   0.81010   0.70246  -0.34180
-     8)     0.67866   1.81394   0.46912      0.67866   1.81394   0.46912       8   0.67866   1.81394   0.46912
-     9)     1.87838  -0.20414  -0.20296      1.87838  -0.20414  -0.20296       9   1.87838  -0.20414  -0.20296
-    10)     2.86272  -0.04026   0.75325      2.86272  -0.04026   0.75325      10   2.86272  -0.04026   0.75325
+     1)     0.81010   0.70246  -0.34180      0.81010   0.70246  -0.34180       7   0.81010   0.70246  -0.34180
+     2)     0.67866   1.81394   0.46912      0.67866   1.81394   0.46912       8   0.67866   1.81394   0.46912
+     3)     1.87838  -0.20414  -0.20296      1.87838  -0.20414  -0.20296       9   1.87838  -0.20414  -0.20296
+     4)     2.86272  -0.04026   0.75325      2.86272  -0.04026   0.75325      10   2.86272  -0.04026   0.75325
+     5)     0.19580   0.63391  -1.24221      0.19580   0.63391  -1.24221      11   0.19580   0.63391  -1.24221
+     6)    -0.08966   2.55731   0.25808     -0.08966   2.55731   0.25808      12  -0.08966   2.55731   0.25808
+     7)     1.02971   1.79503   1.49800      1.02971   1.79503   1.49800      13   1.02971   1.79503   1.49800
+     8)     2.03891  -0.93032  -1.00275      2.03891  -0.93032  -1.00275      14   2.03891  -0.93032  -1.00275
+     9)     3.73690  -0.69088   0.75549      3.73690  -0.69088   0.75549      15   3.73690  -0.69088   0.75549
+    10)     2.63715   0.43013   1.70720      2.63715   0.43013   1.70720      16   2.63715   0.43013   1.70720
 
 
 
@@ -371,24 +370,24 @@ ADF Engine Input
      81    82    83    84    85    86    87    88    89    90
      91    92    93    94    95    96    97    98    99   100
     101   102   103   104   105   106   107   108   109   110
-    111   112   113   114   115   116   117   118   119   120
-    121   122   123   124   125   126   127   128   129   130
+    111   112   113   114   117   120   115   118   121   116
+    119   122   123   124   125   126   127   128   129   130
     131   132   133   134   135   136   137   138   139   140
-    141   142   143   144   145   146   147   148   149   150
-    151   152   153   154   155   156   157   158   159   160
+    141   142   143   144   147   150   145   148   151   146
+    149   152   153   154   155   156   157   158   159   160
     161   162   163   164   165   166   167   168   169   170
-    171   172   173   174   175   176   177   178   179   180
-    181   182   183   184   185   186   189   192   187   190
-    193   188   191   194   195   196   197   198   199   200
-    201   202   203   204   205   206   207   208   209   210
-    211   212   213   214   215   216   219   222   217   220
-    223   218   221   224   225   226   227   228   229   230
+    171   172   173   174   177   180   175   178   181   176
+    179   182   183   184   185   186   187   188   189   190
+    191   192   193   194   195   196   197   198   199   200
+    201   202   203   204   207   210   205   208   211   206
+    209   212   213   214   215   216   217   218   219   220
+    221   222   223   224   225   226   227   228   229   230
     231   232   233   234   235   236   237   238   239   240
-    241   242   243   244   245   246   249   252   247   250
-    253   248   251   254   255   256   257   258   259   260
+    241   242   243   244   245   246   247   248   249   250
+    251   252   253   254   255   256   257   258   259   260
     261   262   263   264   265   266   267   268   269   270
-    271   272   273   274   275   276   279   282   277   280
-    283   278   281   284   285   286   287   288   289   290
+    271   272   273   274   275   276   277   278   279   280
+    281   282   283   284   285   286   287   288   289   290
     291   292   293   294   295   296   297   298   299   300
 
     SFO  (index         Fragment          Generating    Expansion in Fragment Orbitals
@@ -961,18 +960,7 @@ ADF Engine Input
    2 P    1.250000
    3 D    2.500000
 
- Atom Type    3  (H)
- ==============
-
- Valence Basis Sets:   5
- -----------------------
-   1 S    0.690000
-   1 S    0.920000
-   1 S    1.580000
-   2 P    1.250000
-   3 D    2.500000
-
- Atom Type    4  (C)
+ Atom Type    3  (C)
  ==============
 
  Valence Basis Sets:  10
@@ -987,6 +975,17 @@ ADF Engine Input
    2 P    2.940000
    3 D    2.200000
    4 F    3.300000
+
+ Atom Type    4  (H)
+ ==============
+
+ Valence Basis Sets:   5
+ -----------------------
+   1 S    0.690000
+   1 S    0.920000
+   1 S    1.580000
+   2 P    1.250000
+   3 D    2.500000
 
 
  BAS: List of all Elementary Cartesian Basis Functions
@@ -1057,59 +1056,58 @@ ADF Engine Input
             0  1  1  0     2.500     71   83   95  107
             0  0  2  0     2.500     72   84   96  108
 
- H                                    7    8    9   10   11   12
+ C                                    7    8    9   10
                                   ---------------------------------------------------------------------------
-            0  0  0  0     0.690    109  121  133  145  157  169
-            0  0  0  0     0.920    110  122  134  146  158  170
-            0  0  0  0     1.580    111  123  135  147  159  171
-            1  0  0  0     1.250    112  124  136  148  160  172
-            0  1  0  0     1.250    113  125  137  149  161  173
-            0  0  1  0     1.250    114  126  138  150  162  174
-            2  0  0  0     2.500    115  127  139  151  163  175
-            1  1  0  0     2.500    116  128  140  152  164  176
-            1  0  1  0     2.500    117  129  141  153  165  177
-            0  2  0  0     2.500    118  130  142  154  166  178
-            0  1  1  0     2.500    119  131  143  155  167  179
-            0  0  2  0     2.500    120  132  144  156  168  180
+            0  0  0  0     7.680    109  139  169  199
+            0  0  0  0     5.000    110  140  170  200
+            0  0  0  1     1.280    111  141  171  201
+            0  0  0  1     2.100    112  142  172  202
+            0  0  0  1     4.600    113  143  173  203
+            1  0  0  0     0.820    114  144  174  204
+            0  1  0  0     0.820    115  145  175  205
+            0  0  1  0     0.820    116  146  176  206
+            1  0  0  0     1.480    117  147  177  207
+            0  1  0  0     1.480    118  148  178  208
+            0  0  1  0     1.480    119  149  179  209
+            1  0  0  0     2.940    120  150  180  210
+            0  1  0  0     2.940    121  151  181  211
+            0  0  1  0     2.940    122  152  182  212
+            2  0  0  0     2.200    123  153  183  213
+            1  1  0  0     2.200    124  154  184  214
+            1  0  1  0     2.200    125  155  185  215
+            0  2  0  0     2.200    126  156  186  216
+            0  1  1  0     2.200    127  157  187  217
+            0  0  2  0     2.200    128  158  188  218
+            3  0  0  0     3.300    129  159  189  219
+            2  1  0  0     3.300    130  160  190  220
+            2  0  1  0     3.300    131  161  191  221
+            1  2  0  0     3.300    132  162  192  222
+            1  1  1  0     3.300    133  163  193  223
+            1  0  2  0     3.300    134  164  194  224
+            0  3  0  0     3.300    135  165  195  225
+            0  2  1  0     3.300    136  166  196  226
+            0  1  2  0     3.300    137  167  197  227
+            0  0  3  0     3.300    138  168  198  228
 
- C                                   13   14   15   16
+ H                                   11   12   13   14   15   16
                                   ---------------------------------------------------------------------------
-            0  0  0  0     7.680    181  211  241  271
-            0  0  0  0     5.000    182  212  242  272
-            0  0  0  1     1.280    183  213  243  273
-            0  0  0  1     2.100    184  214  244  274
-            0  0  0  1     4.600    185  215  245  275
-            1  0  0  0     0.820    186  216  246  276
-            0  1  0  0     0.820    187  217  247  277
-            0  0  1  0     0.820    188  218  248  278
-            1  0  0  0     1.480    189  219  249  279
-            0  1  0  0     1.480    190  220  250  280
-            0  0  1  0     1.480    191  221  251  281
-            1  0  0  0     2.940    192  222  252  282
-            0  1  0  0     2.940    193  223  253  283
-            0  0  1  0     2.940    194  224  254  284
-            2  0  0  0     2.200    195  225  255  285
-            1  1  0  0     2.200    196  226  256  286
-            1  0  1  0     2.200    197  227  257  287
-            0  2  0  0     2.200    198  228  258  288
-            0  1  1  0     2.200    199  229  259  289
-            0  0  2  0     2.200    200  230  260  290
-            3  0  0  0     3.300    201  231  261  291
-            2  1  0  0     3.300    202  232  262  292
-            2  0  1  0     3.300    203  233  263  293
-            1  2  0  0     3.300    204  234  264  294
-            1  1  1  0     3.300    205  235  265  295
-            1  0  2  0     3.300    206  236  266  296
-            0  3  0  0     3.300    207  237  267  297
-            0  2  1  0     3.300    208  238  268  298
-            0  1  2  0     3.300    209  239  269  299
-            0  0  3  0     3.300    210  240  270  300
+            0  0  0  0     0.690    229  241  253  265  277  289
+            0  0  0  0     0.920    230  242  254  266  278  290
+            0  0  0  0     1.580    231  243  255  267  279  291
+            1  0  0  0     1.250    232  244  256  268  280  292
+            0  1  0  0     1.250    233  245  257  269  281  293
+            0  0  1  0     1.250    234  246  258  270  282  294
+            2  0  0  0     2.500    235  247  259  271  283  295
+            1  1  0  0     2.500    236  248  260  272  284  296
+            1  0  1  0     2.500    237  249  261  273  285  297
+            0  2  0  0     2.500    238  250  262  274  286  298
+            0  1  1  0     2.500    239  251  263  275  287  299
+            0  0  2  0     2.500    240  252  264  276  288  300
 
  Total number of charge fitting functions (nprimf)      1004
  Total number of Cartesian basis functions (naos)        300
  Total number of Cartesian core functions  (ncos)          0
 
-1
  ***************************************************************************************************
 
 
@@ -1125,7 +1123,7 @@ ADF Engine Input
  P A R A L L E L I Z A T I O N  and  V E C T O R I Z A T I O N
  =============================================================
   
- Nr of parallel processes:                               10
+ Nr of parallel processes:                                8
  Maximum vector length in NumInt loops:                 128
 
 
@@ -1171,7 +1169,6 @@ ADF Engine Input
  Cut-offs for Coulomb potential and fitted density:0.1000000000E-11
  Cut-off criterion for Coulomb multipole terms:    0.1000000000E-11
  Progressive Convergence parameter:                 0.000000000    
-1
  ***************************************************************************************************
 
 
@@ -1181,7 +1178,7 @@ ADF Engine Input
                                             ***************************
   
 
- Number of elements of the density matrix on this node (used, total):      4860     45150
+ Number of elements of the density matrix on this node (used, total):      5811     45150
 
 
 
@@ -1225,7 +1222,7 @@ ADF Engine Input
  Initial density matrix is calculated as sum of fragments
 
  CYCLE    1
- SCF Error: norm([F,P])=      0.694956745868, max([F,P])=      0.298964274434
+ SCF Error: norm([F,P])=      0.694956745868, max([F,P])=      0.298964274871
  orbitals (Q,E):
  ---------------
  A :14...33          ( 2.00    -0.4094)  ( 2.00    -0.3747)  ( 2.00    -0.3566)  ( 2.00    -0.3489)
@@ -1236,7 +1233,7 @@ ADF Engine Input
 
  CYCLE    2
    MIX coefficients:  0.8000  0.2000
- SCF Error: norm([F,P])=      0.113726194802, max([F,P])=      0.027680451284
+ SCF Error: norm([F,P])=      0.113726194803, max([F,P])=      0.027680451284
  orbitals (Q,E):
  ---------------
  A :14...24          ( 2.00    -0.4113)  ( 2.00    -0.3768)  ( 2.00    -0.3589)  ( 2.00    -0.3529)
@@ -1256,9 +1253,9 @@ ADF Engine Input
 
  CYCLE    4
   SDIIS (wt  0.000):  0.6081 -0.2908  0.6827
- A-DIIS (wt  1.000):  0.0000  0.7160  0.2840
-  DIIS coefficients:  0.0000  0.7160  0.2840
- SCF Error: norm([F,P])=      0.082854233605, max([F,P])=      0.021173274369
+ A-DIIS (wt  1.000): -0.0000  0.7160  0.2840
+  DIIS coefficients: -0.0000  0.7160  0.2840
+ SCF Error: norm([F,P])=      0.082854233606, max([F,P])=      0.021173274369
  orbitals (Q,E):
  ---------------
  A :14...24          ( 2.00    -0.4124)  ( 2.00    -0.3797)  ( 2.00    -0.3596)  ( 2.00    -0.3577)
@@ -1269,7 +1266,7 @@ ADF Engine Input
   SDIIS (wt  0.991): -0.4547  0.8147 -0.2941  0.9341
  A-DIIS (wt  0.009):  0.0000  0.0000  0.0000  1.0000
   DIIS coefficients: -0.4504  0.8070 -0.2913  0.9347
- SCF Error: norm([F,P])=      0.014984908777, max([F,P])=      0.001930603992
+ SCF Error: norm([F,P])=      0.014984908784, max([F,P])=      0.001930603994
  orbitals (Q,E):
  ---------------
  A :14...24          ( 2.00    -0.4121)  ( 2.00    -0.3787)  ( 2.00    -0.3595)  ( 2.00    -0.3566)
@@ -1319,7 +1316,7 @@ ADF Engine Input
  CYCLE   10
   SDIIS (wt  1.000): -0.0000  0.0000 -0.0000  0.0005  0.0115  0.0300  0.1207  0.5224  0.3148
   DIIS coefficients: -0.0000  0.0000 -0.0000  0.0005  0.0115  0.0300  0.1207  0.5224  0.3148
- SCF Error: norm([F,P])=      0.000036172513, max([F,P])=      0.000012886070
+ SCF Error: norm([F,P])=      0.000036172513, max([F,P])=      0.000012886071
  orbitals (Q,E):
  ---------------
  A :14...24          ( 2.00    -0.4122)  ( 2.00    -0.3789)  ( 2.00    -0.3597)  ( 2.00    -0.3566)
@@ -1349,7 +1346,6 @@ ADF Engine Input
  SCF CONVERGED
 
  CYCLE   13
-1
  ***************************************************************************************************
 
 
@@ -1359,6 +1355,290 @@ ADF Engine Input
                                                 *******************
   
  *** Using FIT density in Focky
+ Total Number of SFOs in this calculation   266
+ Number of AOs in this calculation   300
+
+
+
+ Site Energies SFO
+ =================
+
+ The Site energy of a SFO is defined here as the diagonal Fock matrix element
+ of the Fock matrix in SFO representation, divided by the diagonal overlap matrix
+ element of the overlap matrix in the SFO representation.
+ In general, a SFO may be a linear combination of several Fragment Orbitals on the same,
+ or on symmetry-related Fragments. Only the first 'member' of such a combination is
+ specified here. A full definition of all SFOs is given in an earlier part of the output.
+
+     SFO           Occ     first member          E(eV)  Site Energy(eV)  Fragment
+ ---------------------------------------------------------------------------------
+     1 A           2.00     1 A                -270.019       -269.822     1 Dienophile
+     2 A           2.00     2 A                -270.007       -269.810     2 Dienophile
+     3 A           2.00     3 A                 -18.438        -18.329     3 Dienophile
+     4 A           2.00     4 A                 -14.232        -14.053     4 Dienophile
+     5 A           2.00     5 A                 -11.253        -11.075     5 Dienophile
+     6 A           2.00     6 A                 -10.009         -9.832     6 Dienophile
+     7 A           2.00     7 A                  -8.591         -8.387     7 Dienophile
+     8 A           2.00     8 A                  -6.450         -7.203     8 Dienophile
+     9 A           0.00     9 A                  -1.474         -2.928     9 Dienophile
+    10 A           0.00    10 A                   0.194         -1.375    10 Dienophile
+    11 A           0.00    11 A                   0.877         -0.256    11 Dienophile
+    12 A           0.00    12 A                   0.902          0.739    12 Dienophile
+    13 A           0.00    13 A                   2.628          2.511    13 Dienophile
+    14 A           0.00    14 A                   4.034          2.866    14 Dienophile
+    15 A           0.00    15 A                   4.337         -2.100    15 Dienophile
+    16 A           0.00    16 A                   5.140          4.361    16 Dienophile
+    17 A           0.00    17 A                   5.598          4.093    17 Dienophile
+    18 A           0.00    18 A                   6.439          5.393    18 Dienophile
+    19 A           0.00    19 A                   7.369          3.886    19 Dienophile
+    20 A           0.00    20 A                   8.238          5.985    20 Dienophile
+    21 A           0.00    21 A                   9.579          8.940    21 Dienophile
+    22 A           0.00    22 A                  11.157         10.298    22 Dienophile
+    23 A           0.00    23 A                  11.931         11.962    23 Dienophile
+    24 A           0.00    24 A                  12.488         11.424    24 Dienophile
+    25 A           0.00    25 A                  12.941         12.486    25 Dienophile
+    26 A           0.00    26 A                  15.540         14.649    26 Dienophile
+    27 A           0.00    27 A                  18.461         17.130    27 Dienophile
+    28 A           0.00    28 A                  20.151         19.830    28 Dienophile
+    29 A           0.00    29 A                  23.242         20.973    29 Dienophile
+    30 A           0.00    30 A                  23.915         22.949    30 Dienophile
+    31 A           0.00    31 A                  24.484         23.478    31 Dienophile
+    32 A           0.00    32 A                  25.262         24.007    32 Dienophile
+    33 A           0.00    33 A                  26.892         26.855    33 Dienophile
+    34 A           0.00    34 A                  28.101         26.359    34 Dienophile
+    35 A           0.00    35 A                  28.883         29.008    35 Dienophile
+    36 A           0.00    36 A                  30.445         30.498    36 Dienophile
+    37 A           0.00    37 A                  37.013         36.282    37 Dienophile
+    38 A           0.00    38 A                  38.217         38.368    38 Dienophile
+    39 A           0.00    39 A                  38.666         38.595    39 Dienophile
+    40 A           0.00    40 A                  40.042         40.100    40 Dienophile
+    41 A           0.00    41 A                  40.343         40.433    41 Dienophile
+    42 A           0.00    42 A                  49.308         49.399    42 Dienophile
+    43 A           0.00    43 A                  50.554         50.647    43 Dienophile
+    44 A           0.00    44 A                  51.538         51.612    44 Dienophile
+    45 A           0.00    45 A                  51.892         51.860    45 Dienophile
+    46 A           0.00    46 A                  54.754         54.909    46 Dienophile
+    47 A           0.00    47 A                  55.400         55.078    47 Dienophile
+    48 A           0.00    48 A                  57.780         57.370    48 Dienophile
+    49 A           0.00    49 A                  60.875         60.792    49 Dienophile
+    50 A           0.00    50 A                  62.206         62.329    50 Dienophile
+    51 A           0.00    51 A                  67.531         67.496    51 Dienophile
+    52 A           0.00    52 A                  67.679         67.734    52 Dienophile
+    53 A           0.00    53 A                  70.754         70.861    53 Dienophile
+    54 A           0.00    54 A                  71.777         71.230    54 Dienophile
+    55 A           0.00    55 A                  73.489         73.702    55 Dienophile
+    56 A           0.00    56 A                  75.268         75.261    56 Dienophile
+    57 A           0.00    57 A                  75.468         75.605    57 Dienophile
+    58 A           0.00    58 A                  77.282         77.352    58 Dienophile
+    59 A           0.00    59 A                  79.144         78.777    59 Dienophile
+    60 A           0.00    60 A                  81.249         81.488    60 Dienophile
+    61 A           0.00    61 A                  86.542         86.611    61 Dienophile
+    62 A           0.00    62 A                  88.516         88.364    62 Dienophile
+    63 A           0.00    63 A                  88.743         88.190    63 Dienophile
+    64 A           0.00    64 A                  88.972         89.181    64 Dienophile
+    65 A           0.00    65 A                  95.037         95.205    65 Dienophile
+    66 A           0.00    66 A                  95.692         95.814    66 Dienophile
+    67 A           0.00    67 A                 100.763        100.957    67 Dienophile
+    68 A           0.00    68 A                 103.530        103.724    68 Dienophile
+    69 A           0.00    69 A                 103.619        103.773    69 Dienophile
+    70 A           0.00    70 A                 106.778        106.957    70 Dienophile
+    71 A           0.00    71 A                 110.555        110.720    71 Dienophile
+    72 A           0.00    72 A                 119.656        119.789    72 Dienophile
+    73 A           0.00    73 A                 123.227        123.459    73 Dienophile
+    74 A           0.00    74 A                 123.359        123.508    74 Dienophile
+    75 A           0.00    75 A                 125.125        125.339    75 Dienophile
+    76 A           0.00    76 A                 126.854        127.012    76 Dienophile
+    77 A           0.00    77 A                 130.778        130.998    77 Dienophile
+    78 A           0.00    78 A                 141.623        141.765    78 Dienophile
+    79 A           0.00    79 A                 142.183        142.416    79 Dienophile
+    80 A           0.00    80 A                 144.010        144.192    80 Dienophile
+    81 A           0.00    81 A                 144.911        145.129    81 Dienophile
+    82 A           0.00    82 A                 154.700        154.565    82 Dienophile
+    83 A           0.00    83 A                 161.148        161.286    83 Dienophile
+    84 A           0.00    84 A                 164.637        164.542    84 Dienophile
+    85 A           0.00    85 A                 168.917        169.154    85 Dienophile
+    86 A           0.00    86 A                 169.812        169.983    86 Dienophile
+    87 A           0.00    87 A                 170.672        170.770    87 Dienophile
+    88 A           0.00    88 A                 175.710        175.851    88 Dienophile
+    89 A           0.00    89 A                 188.820        189.024    89 Dienophile
+    90 A           0.00    90 A                 189.070        189.136    90 Dienophile
+    91 A           0.00    91 A                 200.078        200.344    91 Dienophile
+    92 A           0.00    92 A                 203.967        204.069    92 Dienophile
+    93 A           0.00    93 A                 220.542        220.720    93 Dienophile
+    94 A           0.00    94 A                 258.961        259.161    94 Dienophile
+    95 A           0.00    95 A                1434.314       1438.544    95 Dienophile
+    96 A           0.00    96 A                1558.494       1563.287    96 Dienophile
+    97 A           2.00     1 A                -270.066       -269.712     1 Diene     
+    98 A           2.00     2 A                -270.056       -269.702     2 Diene     
+    99 A           2.00     3 A                -269.792       -269.933     3 Diene     
+   100 A           2.00     4 A                -269.792       -269.933     4 Diene     
+   101 A           2.00     5 A                 -19.937        -19.692     5 Diene     
+   102 A           2.00     6 A                 -17.493        -17.445     6 Diene     
+   103 A           2.00     7 A                 -15.375        -15.194     7 Diene     
+   104 A           2.00     8 A                 -12.782        -12.641     8 Diene     
+   105 A           2.00     9 A                 -12.015        -11.839     9 Diene     
+   106 A           2.00    10 A                 -10.623        -10.488    10 Diene     
+   107 A           2.00    11 A                  -9.735         -9.688    11 Diene     
+   108 A           2.00    12 A                  -8.714         -8.529    12 Diene     
+   109 A           2.00    13 A                  -8.635         -8.471    13 Diene     
+   110 A           2.00    14 A                  -7.855         -7.925    14 Diene     
+   111 A           2.00    15 A                  -5.254         -5.626    15 Diene     
+   112 A           0.00    16 A                  -2.521         -3.574    16 Diene     
+   113 A           0.00    17 A                   0.085         -0.397    17 Diene     
+   114 A           0.00    18 A                   0.367         -0.366    18 Diene     
+   115 A           0.00    19 A                   0.653          0.538    19 Diene     
+   116 A           0.00    20 A                   0.755          0.315    20 Diene     
+   117 A           0.00    21 A                   1.773          1.595    21 Diene     
+   118 A           0.00    22 A                   1.774          1.737    22 Diene     
+   119 A           0.00    23 A                   3.275          2.923    23 Diene     
+   120 A           0.00    24 A                   3.754          1.278    24 Diene     
+   121 A           0.00    25 A                   4.254          2.941    25 Diene     
+   122 A           0.00    26 A                   4.761          4.103    26 Diene     
+   123 A           0.00    27 A                   5.395          5.309    27 Diene     
+   124 A           0.00    28 A                   5.656          5.515    28 Diene     
+   125 A           0.00    29 A                   5.671          3.430    29 Diene     
+   126 A           0.00    30 A                   6.302          6.207    30 Diene     
+   127 A           0.00    31 A                   6.982          2.387    31 Diene     
+   128 A           0.00    32 A                   7.386          6.423    32 Diene     
+   129 A           0.00    33 A                   8.437          8.375    33 Diene     
+   130 A           0.00    34 A                   8.760          8.836    34 Diene     
+   131 A           0.00    35 A                   8.955          8.733    35 Diene     
+   132 A           0.00    36 A                   9.362          8.607    36 Diene     
+   133 A           0.00    37 A                   9.410          8.183    37 Diene     
+   134 A           0.00    38 A                  10.863         10.334    38 Diene     
+   135 A           0.00    39 A                  10.926         10.544    39 Diene     
+   136 A           0.00    40 A                  11.439         11.291    40 Diene     
+   137 A           0.00    41 A                  13.888         14.036    41 Diene     
+   138 A           0.00    42 A                  14.509         14.435    42 Diene     
+   139 A           0.00    43 A                  14.645         14.254    43 Diene     
+   140 A           0.00    44 A                  15.322         14.552    44 Diene     
+   141 A           0.00    45 A                  16.956         16.805    45 Diene     
+   142 A           0.00    46 A                  17.922         17.052    46 Diene     
+   143 A           0.00    47 A                  19.766         19.075    47 Diene     
+   144 A           0.00    48 A                  20.010         19.121    48 Diene     
+   145 A           0.00    49 A                  20.457         19.292    49 Diene     
+   146 A           0.00    50 A                  22.140         22.148    50 Diene     
+   147 A           0.00    51 A                  22.897         20.618    51 Diene     
+   148 A           0.00    52 A                  23.552         23.486    52 Diene     
+   149 A           0.00    53 A                  23.782         23.275    53 Diene     
+   150 A           0.00    54 A                  24.229         23.782    54 Diene     
+   151 A           0.00    55 A                  27.068         26.664    55 Diene     
+   152 A           0.00    56 A                  27.617         27.398    56 Diene     
+   153 A           0.00    57 A                  27.957         27.503    57 Diene     
+   154 A           0.00    58 A                  28.441         28.497    58 Diene     
+   155 A           0.00    59 A                  28.691         28.342    59 Diene     
+   156 A           0.00    60 A                  30.200         29.477    60 Diene     
+   157 A           0.00    61 A                  30.791         30.747    61 Diene     
+   158 A           0.00    62 A                  32.856         32.387    62 Diene     
+   159 A           0.00    63 A                  33.152         32.683    63 Diene     
+   160 A           0.00    64 A                  35.454         35.387    64 Diene     
+   161 A           0.00    65 A                  35.548         35.613    65 Diene     
+   162 A           0.00    66 A                  37.283         37.381    66 Diene     
+   163 A           0.00    67 A                  38.719         38.652    67 Diene     
+   164 A           0.00    68 A                  39.107         39.183    68 Diene     
+   165 A           0.00    69 A                  39.724         39.814    69 Diene     
+   166 A           0.00    70 A                  43.245         43.375    70 Diene     
+   167 A           0.00    71 A                  43.310         43.286    71 Diene     
+   168 A           0.00    72 A                  45.303         45.247    72 Diene     
+   169 A           0.00    73 A                  45.956         46.105    73 Diene     
+   170 A           0.00    74 A                  49.223         49.375    74 Diene     
+   171 A           0.00    75 A                  50.301         50.253    75 Diene     
+   172 A           0.00    76 A                  50.581         50.675    76 Diene     
+   173 A           0.00    77 A                  52.338         52.486    77 Diene     
+   174 A           0.00    78 A                  52.626         52.757    78 Diene     
+   175 A           0.00    79 A                  54.294         54.277    79 Diene     
+   176 A           0.00    80 A                  54.663         54.762    80 Diene     
+   177 A           0.00    81 A                  55.715         55.862    81 Diene     
+   178 A           0.00    82 A                  59.390         59.442    82 Diene     
+   179 A           0.00    83 A                  59.643         59.616    83 Diene     
+   180 A           0.00    84 A                  61.551         61.591    84 Diene     
+   181 A           0.00    85 A                  63.970         63.535    85 Diene     
+   182 A           0.00    86 A                  64.570         64.531    86 Diene     
+   183 A           0.00    87 A                  64.783         64.923    87 Diene     
+   184 A           0.00    88 A                  64.968         64.687    88 Diene     
+   185 A           0.00    89 A                  66.664         66.479    89 Diene     
+   186 A           0.00    90 A                  67.019         67.207    90 Diene     
+   187 A           0.00    91 A                  69.639         69.773    91 Diene     
+   188 A           0.00    92 A                  70.279         70.396    92 Diene     
+   189 A           0.00    93 A                  71.212         71.302    93 Diene     
+   190 A           0.00    94 A                  73.463         73.664    94 Diene     
+   191 A           0.00    95 A                  74.514         74.590    95 Diene     
+   192 A           0.00    96 A                  75.522         75.466    96 Diene     
+   193 A           0.00    97 A                  76.076         76.082    97 Diene     
+   194 A           0.00    98 A                  77.229         77.235    98 Diene     
+   195 A           0.00    99 A                  77.269         77.066    99 Diene     
+   196 A           0.00   100 A                  78.834         78.912   100 Diene     
+   197 A           0.00   101 A                  78.971         78.860   101 Diene     
+   198 A           0.00   102 A                  81.500         81.588   102 Diene     
+   199 A           0.00   103 A                  82.000         82.143   103 Diene     
+   200 A           0.00   104 A                  82.805         82.389   104 Diene     
+   201 A           0.00   105 A                  84.864         84.725   105 Diene     
+   202 A           0.00   106 A                  87.138         86.870   106 Diene     
+   203 A           0.00   107 A                  87.334         87.329   107 Diene     
+   204 A           0.00   108 A                  88.446         88.613   108 Diene     
+   205 A           0.00   109 A                  89.642         89.509   109 Diene     
+   206 A           0.00   110 A                  90.959         91.174   110 Diene     
+   207 A           0.00   111 A                  92.810         93.093   111 Diene     
+   208 A           0.00   112 A                  93.865         93.968   112 Diene     
+   209 A           0.00   113 A                  93.985         94.103   113 Diene     
+   210 A           0.00   114 A                  96.219         96.259   114 Diene     
+   211 A           0.00   115 A                  98.429         98.441   115 Diene     
+   212 A           0.00   116 A                  99.427         99.530   116 Diene     
+   213 A           0.00   117 A                  99.873        100.052   117 Diene     
+   214 A           0.00   118 A                 103.328        103.341   118 Diene     
+   215 A           0.00   119 A                 103.409        103.361   119 Diene     
+   216 A           0.00   120 A                 106.957        107.107   120 Diene     
+   217 A           0.00   121 A                 107.712        107.865   121 Diene     
+   218 A           0.00   122 A                 110.505        110.689   122 Diene     
+   219 A           0.00   123 A                 111.606        111.781   123 Diene     
+   220 A           0.00   124 A                 114.765        114.980   124 Diene     
+   221 A           0.00   125 A                 116.398        116.613   125 Diene     
+   222 A           0.00   126 A                 116.642        116.868   126 Diene     
+   223 A           0.00   127 A                 118.432        118.574   127 Diene     
+   224 A           0.00   128 A                 121.295        121.530   128 Diene     
+   225 A           0.00   129 A                 122.088        122.300   129 Diene     
+   226 A           0.00   130 A                 123.629        123.736   130 Diene     
+   227 A           0.00   131 A                 125.913        126.084   131 Diene     
+   228 A           0.00   132 A                 129.384        129.555   132 Diene     
+   229 A           0.00   133 A                 130.579        130.804   133 Diene     
+   230 A           0.00   134 A                 131.870        132.013   134 Diene     
+   231 A           0.00   135 A                 133.441        133.546   135 Diene     
+   232 A           0.00   136 A                 136.763        136.888   136 Diene     
+   233 A           0.00   137 A                 138.174        138.335   137 Diene     
+   234 A           0.00   138 A                 142.351        142.414   138 Diene     
+   235 A           0.00   139 A                 144.161        144.379   139 Diene     
+   236 A           0.00   140 A                 146.615        146.744   140 Diene     
+   237 A           0.00   141 A                 147.472        147.701   141 Diene     
+   238 A           0.00   142 A                 155.223        155.362   142 Diene     
+   239 A           0.00   143 A                 156.370        156.571   143 Diene     
+   240 A           0.00   144 A                 158.598        158.689   144 Diene     
+   241 A           0.00   145 A                 160.170        160.237   145 Diene     
+   242 A           0.00   146 A                 163.552        163.647   146 Diene     
+   243 A           0.00   147 A                 165.233        165.600   147 Diene     
+   244 A           0.00   148 A                 165.932        165.987   148 Diene     
+   245 A           0.00   149 A                 169.160        169.166   149 Diene     
+   246 A           0.00   150 A                 169.423        169.616   150 Diene     
+   247 A           0.00   151 A                 169.768        169.985   151 Diene     
+   248 A           0.00   152 A                 171.808        172.007   152 Diene     
+   249 A           0.00   153 A                 175.607        175.777   153 Diene     
+   250 A           0.00   154 A                 179.221        179.283   154 Diene     
+   251 A           0.00   155 A                 182.145        182.298   155 Diene     
+   252 A           0.00   156 A                 183.584        183.801   156 Diene     
+   253 A           0.00   157 A                 191.799        191.924   157 Diene     
+   254 A           0.00   158 A                 194.544        194.568   158 Diene     
+   255 A           0.00   159 A                 198.307        198.582   159 Diene     
+   256 A           0.00   160 A                 204.871        204.887   160 Diene     
+   257 A           0.00   161 A                 207.765        208.007   161 Diene     
+   258 A           0.00   162 A                 212.119        212.289   162 Diene     
+   259 A           0.00   163 A                 221.868        222.086   163 Diene     
+   260 A           0.00   164 A                 240.815        241.044   164 Diene     
+   261 A           0.00   165 A                 252.094        252.303   165 Diene     
+   262 A           0.00   166 A                 274.738        275.041   166 Diene     
+   263 A           0.00   167 A                1440.916       1445.134   167 Diene     
+   264 A           0.00   168 A                1541.052       1545.637   168 Diene     
+   265 A           0.00   169 A                1554.265       1559.042   169 Diene     
+   266 A           0.00   170 A                1623.389       1628.573   170 Diene     
+  
   SDIIS (wt  1.000):  0.0000  0.0000  0.0002  0.0007  0.0037  0.0220  0.0295  0.1438  0.3425  0.4577
   DIIS coefficients:  0.0000  0.0000  0.0002  0.0007  0.0037  0.0220  0.0295  0.1438  0.3425  0.4577
  SCF Error: norm([F,P])=      0.000000754005, max([F,P])=      0.000000225172
@@ -1368,29 +1648,29 @@ ADF Engine Input
                         Occup              E (au)              E (eV)       Diff (eV) with prev. cycle
                         -----      --------------------        ------       --------------------------
  A
-              14        2.000     -0.41224659164824E+00       -11.218              -1.87E-07
-              15        2.000     -0.37885547177332E+00       -10.309              -7.92E-08
-              16        2.000     -0.35968389712123E+00        -9.787              -1.51E-07
-              17        2.000     -0.35659499584711E+00        -9.703              -2.01E-08
-              18        2.000     -0.32000413573120E+00        -8.708              -2.70E-07
-              19        2.000     -0.31144591919356E+00        -8.475              -2.18E-07
-              20        2.000     -0.30210916094888E+00        -8.221              -1.66E-07
-              21        2.000     -0.29736184296062E+00        -8.092              -1.67E-07
-              22        2.000     -0.20288059182021E+00        -5.521              -1.22E-07
-              23        2.000     -0.20155357673223E+00        -5.485              -1.68E-07
-              24        0.000     -0.53175659179770E-01        -1.447
-              25        0.000     -0.25451741792978E-01        -0.693
-              26        0.000      0.11878301243876E-02         0.032
-              27        0.000      0.10302197583276E-01         0.280
-              28        0.000      0.20800723751857E-01         0.566
-              29        0.000      0.38925085571544E-01         1.059
-              30        0.000      0.50151250839458E-01         1.365
-              31        0.000      0.50255300396536E-01         1.368
-              32        0.000      0.60965768697350E-01         1.659
-              33        0.000      0.62213993221915E-01         1.693
+              14        2.000     -0.41224659164838E+00       -11.218              -1.87E-07
+              15        2.000     -0.37885547177366E+00       -10.309              -7.92E-08
+              16        2.000     -0.35968389712170E+00        -9.787              -1.51E-07
+              17        2.000     -0.35659499584722E+00        -9.703              -2.01E-08
+              18        2.000     -0.32000413573147E+00        -8.708              -2.70E-07
+              19        2.000     -0.31144591919364E+00        -8.475              -2.18E-07
+              20        2.000     -0.30210916094885E+00        -8.221              -1.66E-07
+              21        2.000     -0.29736184296088E+00        -8.092              -1.67E-07
+              22        2.000     -0.20288059182046E+00        -5.521              -1.22E-07
+              23        2.000     -0.20155357673179E+00        -5.485              -1.68E-07
+              24        0.000     -0.53175659179811E-01        -1.447
+              25        0.000     -0.25451741793309E-01        -0.693
+              26        0.000      0.11878301225420E-02         0.032
+              27        0.000      0.10302197583435E-01         0.280
+              28        0.000      0.20800723746802E-01         0.566
+              29        0.000      0.38925085569401E-01         1.059
+              30        0.000      0.50151250837079E-01         1.365
+              31        0.000      0.50255300396177E-01         1.368
+              32        0.000      0.60965768694420E-01         1.659
+              33        0.000      0.62213993221084E-01         1.693
   
- HOMO :       23 A                -0.20155357673223E+00
- LUMO :       24 A                -0.53175659179770E-01
+ HOMO :       23 A                -0.20155357673179E+00
+ LUMO :       24 A                -0.53175659179811E-01
   
 
 
@@ -1478,18 +1758,6 @@ ADF Engine Input
                 0.0013  0.0085
  6 H            0.1818  0.5824  0.3264  0.0211  0.0291  0.0314 -0.0019  0.0007  0.0014 -0.0032
                 0.0012  0.0076
- 11 H           0.2233  0.5853  0.3218  0.0255  0.0185  0.0302  0.0005  0.0007  0.0014 -0.0062
-                0.0012  0.0079
- 12 H           0.2266  0.5894  0.3195  0.0288  0.0268  0.0238  0.0042  0.0013  0.0011  0.0038
-                0.0010 -0.0057
- 13 H           0.1890  0.5645  0.3298  0.0318  0.0259  0.0307 -0.0041  0.0005  0.0018 -0.0065
-                0.0019  0.0127
- 14 H           0.2233  0.5853  0.3218  0.0186  0.0273  0.0283 -0.0059  0.0009  0.0010  0.0032
-                0.0013  0.0049
- 15 H           0.2267  0.5895  0.3195  0.0294  0.0274  0.0225  0.0074  0.0014  0.0013  0.0012
-                0.0008 -0.0065
- 16 H           0.1891  0.5644  0.3298  0.0271  0.0334  0.0279 -0.0055  0.0008  0.0017 -0.0024
-                0.0016  0.0101
  7 C            0.5067  1.4800  0.2481  0.8619 -0.0312 -0.0277 -0.0469 -0.0775  0.7398  0.7277
                 0.7647  0.1842  0.1904  0.1898  0.0042  0.0133  0.0108  0.0161  0.0114  0.0050
                -0.0009 -0.0001  0.0002  0.0024  0.0010 -0.0000  0.0024  0.0023 -0.0006 -0.0015
@@ -1502,6 +1770,18 @@ ADF Engine Input
  10 C           0.5068  1.4800  0.1985  0.8830 -0.0333 -0.1377  0.0169 -0.1203  0.7665  0.6828
                 0.7673  0.1960  0.1626  0.1996  0.0104  0.0100  0.0085 -0.0056  0.0069  0.0134
                 0.0010  0.0022  0.0013 -0.0010  0.0006  0.0009 -0.0029 -0.0022  0.0016  0.0018
+ 11 H           0.2233  0.5853  0.3218  0.0255  0.0185  0.0302  0.0005  0.0007  0.0014 -0.0062
+                0.0012  0.0079
+ 12 H           0.2266  0.5894  0.3195  0.0288  0.0268  0.0238  0.0042  0.0013  0.0011  0.0038
+                0.0010 -0.0057
+ 13 H           0.1890  0.5645  0.3298  0.0318  0.0259  0.0307 -0.0041  0.0005  0.0018 -0.0065
+                0.0019  0.0127
+ 14 H           0.2233  0.5853  0.3218  0.0186  0.0273  0.0283 -0.0059  0.0009  0.0010  0.0032
+                0.0013  0.0049
+ 15 H           0.2267  0.5895  0.3195  0.0294  0.0274  0.0225  0.0074  0.0014  0.0013  0.0012
+                0.0008 -0.0065
+ 16 H           0.1891  0.5644  0.3298  0.0271  0.0334  0.0279 -0.0055  0.0008  0.0017 -0.0024
+                0.0016  0.0101
 
  Gross Charges per Atom (Z minus electrons)
  ==========================================
@@ -1557,10 +1837,13 @@ ADF Engine Input
  chemical type are grouped together. This may not be the order in which you listed them
  in the input file!
 
+  Fragment                       Charge
+ ------------------------------------------
     1  Dienophile               -0.0101
     2  Diene                     0.0101
 
- Sum of these charges (accuracy NumInt/Tails) =           0.00000932
+ Sum of these charges =          0.00000932
+ (accuracy NumInt/Tails)
 
 
 
@@ -1582,10 +1865,9 @@ ADF Engine Input
     c) the SCF density
     d) the Voronoi Deformation Density (VDD): the difference SCF-Initial for the complete atomic cell
 
-
   Atom                Initial                    OrthFrag                   SCF
              Sphere RestCell NetTotal   Sphere RestCell NetTotal   Sphere RestCell NetTotal      VDD
- -----       ------------------------   ------------------------   ------------------------    -----
+ -------     ------------------------   ------------------------   ------------------------    -----
     1 C      -2.179   -2.840    0.981   -2.184   -2.853    0.963   -2.179   -2.840    0.981   -0.001
     2 C      -2.179   -2.839    0.983   -2.184   -2.852    0.964   -2.179   -2.839    0.982   -0.001
     3 H      -0.116   -1.362   -0.478   -0.117   -1.358   -0.474   -0.116   -1.369   -0.485   -0.007
@@ -1712,11 +1994,11 @@ ADF Engine Input
             Q (a.u.)             Dipole moment (Debye)                                          Quadrupole moment (a.u.)
                                  x         y         z              xx        xy        xz        yy        yz        zz
 ------------------------------------------------------------------------------------------------------------------------
-MDC-m         0.0000       -0.0560   -0.0332    0.2008         -0.1011    1.0442   -0.5184    0.1842   -0.7604   -0.0831
-MDC-d         0.0000        0.2627    0.3171    0.0362          0.6609    1.6656   -0.3235    0.3370   -0.4147   -0.9979
+MDC-m        -0.0000       -0.0560   -0.0332    0.2008         -0.1011    1.0442   -0.5184    0.1842   -0.7604   -0.0831
+MDC-d        -0.0000        0.2627    0.3171    0.0362          0.6609    1.6656   -0.3235    0.3370   -0.4147   -0.9979
 MDC-q        -0.0000        0.2627    0.3171    0.0362         -0.2366   -0.2145    0.3452   -1.3081    0.4165    1.5448
- 
-Fit.Dens.     0.0000        0.2627    0.3171    0.0362         -0.2366   -1.3817    1.0647   -1.3081    1.2120    1.5448
+
+Fit.Dens.    -0.0000        0.2627    0.3171    0.0362         -0.2366   -1.3817    1.0647   -1.3081    1.2120    1.5448
 
 
 
@@ -1765,7 +2047,6 @@ Fit.Dens.     0.0000        0.2627    0.3171    0.0362         -0.2366   -1.3817
   
  Max L-expansion:                        min:  10 max:  11
  Nr. of radial interpolation points:     min: 130 max: 160
-1
 
 
 
@@ -1800,52 +2081,52 @@ on the meaning of the various terms.
                                       --------------------     -----------       ----------      -----------
 
 Pauli Repulsion
-  Kinetic (Delta T^0):                   0.611957956030823         16.6522           384.01          1606.70
-  Delta V^Pauli Coulomb:                -0.343238372412651         -9.3400          -215.39          -901.17
-  Delta V^Pauli LDA-XC:                 -0.146234302095197         -3.9792           -91.76          -383.94
-  Delta V^Pauli GGA-Exchange:            0.035587537923627          0.9684            22.33            93.44
-  Delta V^Pauli GGA-Correlation:        -0.020974532953736         -0.5707           -13.16           -55.07
+  Kinetic (Delta T^0):                   0.611957956032428         16.6522           384.01          1606.70
+  Delta V^Pauli Coulomb:                -0.343238372413227         -9.3400          -215.39          -901.17
+  Delta V^Pauli LDA-XC:                 -0.146234302095526         -3.9792           -91.76          -383.94
+  Delta V^Pauli GGA-Exchange:            0.035587537923648          0.9684            22.33            93.44
+  Delta V^Pauli GGA-Correlation:        -0.020974532953759         -0.5707           -13.16           -55.07
                                       --------------------     -----------       ----------      -----------
-  Total Pauli Repulsion:                 0.137098286492866          3.7306            86.03           359.95
+  Total Pauli Repulsion:                 0.137098286493565          3.7306            86.03           359.95
  (Total Pauli Repulsion =
   Delta E^Pauli in BB paper)
 
 Steric Interaction
-  Pauli Repulsion (Delta E^Pauli):       0.137098286492866          3.7306            86.03           359.95
-  Electrostatic Interaction:            -0.062052940954850         -1.6885           -38.94          -162.92
+  Pauli Repulsion (Delta E^Pauli):       0.137098286493565          3.7306            86.03           359.95
+  Electrostatic Interaction:            -0.062052940959717         -1.6885           -38.94          -162.92
  (Electrostatic Interaction =
   Delta V_elstat in the BB paper)
                                       --------------------     -----------       ----------      -----------
-  Total Steric Interaction:              0.075045345538016          2.0421            47.09           197.03
+  Total Steric Interaction:              0.075045345533848          2.0421            47.09           197.03
  (Total Steric Interaction =
   Delta E^0 in the BB paper)
 
 Orbital Interactions
-  A:                                    -0.074175107107606         -2.0184           -46.55          -194.75
+  A:                                    -0.074175107108200         -2.0184           -46.55          -194.75
                                       --------------------     -----------       ----------      -----------
-  Total Orbital Interactions:           -0.074175107107606         -2.0184           -46.55          -194.75
+  Total Orbital Interactions:           -0.074175107108200         -2.0184           -46.55          -194.75
 
 Alternative Decomposition Orb.Int.
-  Kinetic:                              -0.461767371406738        -12.5653          -289.76         -1212.37
-  Coulomb:                               0.325935731112026          8.8692           204.53           855.74
-  XC:                                    0.061656533187107          1.6778            38.69           161.88
+  Kinetic:                              -0.461767371406324        -12.5653          -289.76         -1212.37
+  Coulomb:                               0.325935731110165          8.8692           204.53           855.74
+  XC:                                    0.061656533187959          1.6778            38.69           161.88
                                       --------------------     -----------       ----------      -----------
-  Total Orbital Interactions:           -0.074175107107606         -2.0184           -46.55          -194.75
+  Total Orbital Interactions:           -0.074175107108200         -2.0184           -46.55          -194.75
 
-  Residu (E=Steric+OrbInt+Res):         -0.000000009273915         -0.0000            -0.00            -0.00
+  Residu (E=Steric+OrbInt+Res):         -0.000000009273936         -0.0000            -0.00            -0.00
 
-Total Bonding Energy:                    0.000870229156496          0.0237             0.55             2.28
+Total Bonding Energy:                    0.000870229151712          0.0237             0.55             2.28
 
 
 Summary of Bonding Energy (energy terms are taken from the energy decomposition above)
 ======================================================================================
 
-  Electrostatic Energy:                 -0.062052940954850         -1.6885           -38.94          -162.92
-  Kinetic Energy:                        0.150190584624084          4.0869            94.25           394.33
-  Coulomb (Steric+OrbInt) Energy:       -0.017302650574540         -0.4708           -10.86           -45.43
-  XC Energy:                            -0.069964763938199         -1.9038           -43.90          -183.69
+  Electrostatic Energy:                 -0.062052940959717         -1.6885           -38.94          -162.92
+  Kinetic Energy:                        0.150190584626104          4.0869            94.25           394.33
+  Coulomb (Steric+OrbInt) Energy:       -0.017302650576998         -0.4708           -10.86           -45.43
+  XC Energy:                            -0.069964763937677         -1.9038           -43.90          -183.69
                                       --------------------     -----------       ----------      -----------
-  Total Bonding Energy:                  0.000870229156496          0.0237             0.55             2.28
+  Total Bonding Energy:                  0.000870229151712          0.0237             0.55             2.28
 
 
 Correction terms (incorporated in energies above; only for test purposes):
@@ -1872,13 +2153,12 @@ The energy terms below are (parts of) the Total Energy of the fragments from whi
  is built.
 
 Exchange and Correlation
-  Exchange LDA:                        -31.028247263912991       -844.3216        -19470.52        -81464.65
-  Exchange GGA:                         -3.544314096107587        -96.4457         -2224.09         -9305.60
+  Exchange LDA:                        -31.028247263913997       -844.3216        -19470.52        -81464.65
+  Exchange GGA:                         -3.544314096107597        -96.4457         -2224.09         -9305.60
   Correlation LDA:                       0.000000000000000          0.0000             0.00             0.00
-  Correlation GGA:                      -1.460339496429476        -39.7379          -916.38         -3834.12
+  Correlation GGA:                      -1.460339496429395        -39.7379          -916.38         -3834.12
                                       --------------------     -----------       ----------      -----------
-  Total XC:                            -36.032900856450055       -980.5051        -22610.99        -94604.37
-1
+  Total XC:                            -36.032900856450993       -980.5051        -22610.99        -94604.37
 
 
 
@@ -1952,8 +2232,8 @@ Exchange and Correlation
 
 
 
- List of all MOs, ordered by energy, with the most significant SFO gross populations
- ===================================================================================
+ List of selected MOs, ordered by energy, with the most significant SFO gross populations
+ ========================================================================================
 
  Each percentage contribution in the table below corres ponds to the indicated SFO.
  In general, a SFO may be a linear combination of several Fragment Orbitals on the same,
@@ -2147,8 +2427,195 @@ Dipole moment vector    (Debye):     0.26262663    0.31722001    0.03622644
               magnitude (Debye):     0.41341703
 
 
+-----------------------
+Molecular orbitals info
+-----------------------
+n orbitals:              266
+n spin:                    1
+
+Note: only printing virtual orbitals with
+      energy smaller than HOMO + 100. eV
+
+HOMO (eV):              -5.4846
+LUMO (eV):              -1.4470
+HOMO-LUMO gap (eV):      4.0376
+
+   Index   Energy (eV)    Occupation
+     172       93.8919         0.000       
+     171       93.4021         0.000       
+     170       93.0031         0.000       
+     169       91.8257         0.000       
+     168       90.5265         0.000       
+     167       89.7834         0.000       
+     166       89.1690         0.000       
+     165       88.4708         0.000       
+     164       88.3761         0.000       
+     163       86.7804         0.000       
+     162       85.8974         0.000       
+     161       83.9402         0.000       
+     160       82.9776         0.000       
+     159       82.7732         0.000       
+     158       81.4835         0.000       
+     157       81.1415         0.000       
+     156       80.4397         0.000       
+     155       78.5798         0.000       
+     154       78.1624         0.000       
+     153       78.0549         0.000       
+     152       77.0660         0.000       
+     151       76.8685         0.000       
+     150       76.0928         0.000       
+     149       75.5567         0.000       
+     148       74.8673         0.000       
+     147       74.7607         0.000       
+     146       74.3736         0.000       
+     145       73.8271         0.000       
+     144       72.1602         0.000       
+     143       71.5712         0.000       
+     142       71.0021         0.000       
+     141       70.7260         0.000       
+     140       69.7056         0.000       
+     139       68.8697         0.000       
+     138       67.4824         0.000       
+     137       67.1789         0.000       
+     136       67.0600         0.000       
+     135       66.5678         0.000       
+     134       65.5041         0.000       
+     133       64.4426         0.000       
+     132       63.8247         0.000       
+     131       63.4962         0.000       
+     130       62.5777         0.000       
+     129       61.4343         0.000       
+     128       60.4443         0.000       
+     127       59.0933         0.000       
+     126       57.2593         0.000       
+     125       56.6530         0.000       
+     124       56.0737         0.000       
+     123       54.1385         0.000       
+     122       53.6653         0.000       
+     121       53.5758         0.000       
+     120       53.2914         0.000       
+     119       52.5752         0.000       
+     118       52.1952         0.000       
+     117       51.5571         0.000       
+     116       51.2903         0.000       
+     115       49.8999         0.000       
+     114       47.2832         0.000       
+     113       47.1646         0.000       
+     112       45.2908         0.000       
+     111       45.1880         0.000       
+     110       44.0934         0.000       
+     109       44.0683         0.000       
+     108       42.1408         0.000       
+     107       40.9695         0.000       
+     106       40.6983         0.000       
+     105       39.8088         0.000       
+     104       39.6704         0.000       
+     103       39.5316         0.000       
+     102       39.3325         0.000       
+     101       38.1064         0.000       
+     100       38.0171         0.000       
+      99       37.3371         0.000       
+      98       36.1289         0.000       
+      97       35.1039         0.000       
+      96       34.6204         0.000       
+      95       33.1676         0.000       
+      94       32.5338         0.000       
+      93       31.9259         0.000       
+      92       31.8323         0.000       
+      91       31.2742         0.000       
+      90       30.8310         0.000       
+      89       30.2446         0.000       
+      88       29.6826         0.000       
+      87       29.1906         0.000       
+      86       29.1336         0.000       
+      85       28.8432         0.000       
+      84       28.6441         0.000       
+      83       27.6968         0.000       
+      82       27.3109         0.000       
+      81       27.0383         0.000       
+      80       26.1202         0.000       
+      79       25.1253         0.000       
+      78       23.9993         0.000       
+      77       23.9190         0.000       
+      76       23.6604         0.000       
+      75       22.4238         0.000       
+      74       21.8393         0.000       
+      73       21.2012         0.000       
+      72       20.3284         0.000       
+      71       19.6115         0.000       
+      70       19.1281         0.000       
+      69       18.3069         0.000       
+      68       16.7554         0.000       
+      67       16.0947         0.000       
+      66       14.9406         0.000       
+      65       14.4743         0.000       
+      64       14.3670         0.000       
+      63       14.0567         0.000       
+      62       13.3304         0.000       
+      61       13.0940         0.000       
+      60       12.4867         0.000       
+      59       12.3386         0.000       
+      58       11.6727         0.000       
+      57       11.1590         0.000       
+      56       10.7949         0.000       
+      55       10.5715         0.000       
+      54       10.2255         0.000       
+      53        9.9080         0.000       
+      52        9.2396         0.000       
+      51        9.2063         0.000       
+      50        8.9052         0.000       
+      49        8.3405         0.000       
+      48        7.6312         0.000       
+      47        6.7864         0.000       
+      46        6.5340         0.000       
+      45        6.4059         0.000       
+      44        6.1207         0.000       
+      43        5.9280         0.000       
+      42        5.8655         0.000       
+      41        5.7120         0.000       
+      40        5.4047         0.000       
+      39        4.8411         0.000       
+      38        4.3277         0.000       
+      37        4.0417         0.000       
+      36        3.8516         0.000       
+      35        2.9054         0.000       
+      34        2.4096         0.000       
+      33        1.6929         0.000       
+      32        1.6590         0.000       
+      31        1.3675         0.000       
+      30        1.3647         0.000       
+      29        1.0592         0.000       
+      28        0.5660         0.000       
+      27        0.2803         0.000       
+      26        0.0323         0.000       
+      25       -0.6926         0.000       
+      24       -1.4470         0.000 < LUMO
+      23       -5.4846         2.000 < HOMO
+      22       -5.5207         2.000       
+      21       -8.0916         2.000       
+      20       -8.2208         2.000       
+      19       -8.4749         2.000       
+      18       -8.7078         2.000       
+      17       -9.7034         2.000       
+      16       -9.7875         2.000       
+      15      -10.3092         2.000       
+      14      -11.2178         2.000       
+      13      -11.8917         2.000       
+      12      -12.5313         2.000       
+      11      -14.0774         2.000       
+      10      -15.1383         2.000       
+       9      -17.5088         2.000       
+       8      -18.2500         2.000       
+       7      -19.8144         2.000       
+       6     -269.5874         2.000       
+       5     -269.5970         2.000       
+       4     -269.6958         2.000       
+       3     -269.7076         2.000       
+       2     -269.8191         2.000       
+       1     -269.8194         2.000       
+
 AMS application finished. Exiting.
 NORMAL TERMINATION
-     Total cpu time:     174.65
-  Total system time:       2.77
- Total elapsed time:     183.32
+     Total cpu time:      77.42
+  Total system time:       9.10
+ Total elapsed time:     111.90

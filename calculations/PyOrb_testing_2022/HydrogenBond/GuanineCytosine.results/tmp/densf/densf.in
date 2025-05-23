@@ -1,0 +1,9 @@
+$AMSBIN/densf << eor
+ADFFile /Users/yumanhordijk/PhD/Programs/TheoCheM/PyFMO/calculations/PyOrb_testing_2022/HydrogenBond/GuanineCytosine.results/adf.rkf
+GRID medium
+END
+Orbitals SFO
+    AA 220
+END
+CUBOUTPUT /Users/yumanhordijk/PhD/Programs/TheoCheM/PyFMO/calculations/PyOrb_testing_2022/HydrogenBond/GuanineCytosine.results/medium
+eor

@@ -1,0 +1,56 @@
+#!/bin/sh
+
+"$AMSBIN/ams" << eor
+
+Task SinglePoint
+System
+    Atoms
+        O -1.3058409 -1.45366652 0.05170258 region=Water_D adf.f=Water_D
+        O -1.45366652 1.3058409 -0.05170258 region=Water_C adf.f=Water_C
+        O 1.3058409 1.45366652 0.05170258 region=Water_B adf.f=Water_B
+        O 1.45366652 -1.3058409 -0.05170258 region=Water_A adf.f=Water_A
+        H -1.7206005 -1.68178323 0.88324146 region=Water_D adf.f=Water_D
+        H -1.46201979 -0.49778614 -0.06684584 region=Water_D adf.f=Water_D
+        H -1.68178323 1.7206005 -0.88324146 region=Water_C adf.f=Water_C
+        H -0.49778614 1.46201979 0.06684584 region=Water_C adf.f=Water_C
+        H 1.46201979 0.49778614 -0.06684584 region=Water_B adf.f=Water_B
+        H 1.7206005 1.68178323 0.88324146 region=Water_B adf.f=Water_B
+        H 1.68178323 -1.7206005 -0.88324146 region=Water_A adf.f=Water_A
+        H 0.49778614 -1.46201979 0.06684584 region=Water_A adf.f=Water_A
+    End
+    BondOrders
+         1 5 0.8876383900642395
+         1 6 0.8201484084129333
+         2 7 0.8877574801445007
+         2 8 0.8196478486061096
+         3 9 0.8192466497421265
+         3 10 0.8878645300865173
+         4 11 0.8877494335174561
+         4 12 0.8198812007904053
+    End
+End
+
+Engine ADF
+    Basis
+        Type TZ2P
+        Core None
+    End
+    Fragments
+        Water_A ${SCM_ROOT}/Users/yumanhordijk/PhD/Programs/TheoCheM/PyFMO/calculations/PyOrb_testing_2022/Water_Quadruplex/quadruplex.Water_A.results/adf.rkf
+        Water_B ${SCM_ROOT}/Users/yumanhordijk/PhD/Programs/TheoCheM/PyFMO/calculations/PyOrb_testing_2022/Water_Quadruplex/quadruplex.Water_B.results/adf.rkf
+        Water_C ${SCM_ROOT}/Users/yumanhordijk/PhD/Programs/TheoCheM/PyFMO/calculations/PyOrb_testing_2022/Water_Quadruplex/quadruplex.Water_C.results/adf.rkf
+        Water_D ${SCM_ROOT}/Users/yumanhordijk/PhD/Programs/TheoCheM/PyFMO/calculations/PyOrb_testing_2022/Water_Quadruplex/quadruplex.Water_D.results/adf.rkf
+    End
+    
+    XC
+        GGA BLYP
+        DISPERSION GRIMME3 BJDAMP
+    End
+    NumericalQuality Good
+EndEngine
+eor
+
+# dependency: /Users/yumanhordijk/PhD/Programs/TheoCheM/PyFMO/calculations/PyOrb_testing_2022/Water_Quadruplex/quadruplex.Water_A -
+# dependency: /Users/yumanhordijk/PhD/Programs/TheoCheM/PyFMO/calculations/PyOrb_testing_2022/Water_Quadruplex/quadruplex.Water_B -
+# dependency: /Users/yumanhordijk/PhD/Programs/TheoCheM/PyFMO/calculations/PyOrb_testing_2022/Water_Quadruplex/quadruplex.Water_C -
+# dependency: /Users/yumanhordijk/PhD/Programs/TheoCheM/PyFMO/calculations/PyOrb_testing_2022/Water_Quadruplex/quadruplex.Water_D -

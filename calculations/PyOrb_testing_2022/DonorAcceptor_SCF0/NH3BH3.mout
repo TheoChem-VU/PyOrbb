@@ -1,0 +1,44 @@
+<May22-2025> <11:57:30>  AMS 2025.102  RunTime: May22-2025 11:57:30  ShM Nodes: 1  Procs: 1
+<May22-2025> <11:57:30>  Iteration 1
+<May22-2025> <11:57:30>  current energy                               -7.46754889 Hartree
+<May22-2025> <11:57:30>  energy change                      -7.46754889     0.00008000    F
+<May22-2025> <11:57:30>  constrained gradient max            0.02913944     0.00100000    F
+<May22-2025> <11:57:30>  constrained gradient rms            0.01063448     0.00066667    F
+<May22-2025> <11:57:30>  gradient max                        0.02913944
+<May22-2025> <11:57:30>  gradient rms                        0.01063448
+<May22-2025> <11:57:30>  cart. step max                      0.00824723     0.01000000    T
+<May22-2025> <11:57:30>  cart. step rms                      0.00449295     0.00666667    T
+<May22-2025> <11:57:30>  Iteration 2
+<May22-2025> <11:57:30>  current energy                               -7.46804877 Hartree
+<May22-2025> <11:57:30>  energy change                      -0.00049988     0.00008000    F
+<May22-2025> <11:57:30>  constrained gradient max            0.01603865     0.00100000    F
+<May22-2025> <11:57:30>  constrained gradient rms            0.00514765     0.00066667    F
+<May22-2025> <11:57:30>  gradient max                        0.01603865
+<May22-2025> <11:57:30>  gradient rms                        0.00514765
+<May22-2025> <11:57:30>  cart. step max                      0.00485307     0.01000000    T
+<May22-2025> <11:57:30>  cart. step rms                      0.00271773     0.00666667    T
+<May22-2025> <11:57:30>  Iteration 3
+<May22-2025> <11:57:30>  current energy                               -7.46817440 Hartree
+<May22-2025> <11:57:30>  energy change                      -0.00012563     0.00008000    F
+<May22-2025> <11:57:30>  constrained gradient max            0.00329421     0.00100000    F
+<May22-2025> <11:57:30>  constrained gradient rms            0.00100051     0.00066667    F
+<May22-2025> <11:57:30>  gradient max                        0.00329421
+<May22-2025> <11:57:30>  gradient rms                        0.00100051
+<May22-2025> <11:57:30>  cart. step max                      0.00115279     0.01000000    T
+<May22-2025> <11:57:30>  cart. step rms                      0.00042221     0.00666667    T
+<May22-2025> <11:57:30>  Iteration 4
+<May22-2025> <11:57:30>  current energy                               -7.46818053 Hartree
+<May22-2025> <11:57:30>  energy change                      -0.00000613     0.00008000    T
+<May22-2025> <11:57:30>  constrained gradient max            0.00073220     0.00100000    T
+<May22-2025> <11:57:30>  constrained gradient rms            0.00030710     0.00066667    T
+<May22-2025> <11:57:30>  gradient max                        0.00073220
+<May22-2025> <11:57:30>  gradient rms                        0.00030710
+<May22-2025> <11:57:30>  cart. step max                      0.00049041     0.01000000    T
+<May22-2025> <11:57:30>  cart. step rms                      0.00025899     0.00666667    T
+<May22-2025> <11:57:30>  Geometry optimization converged
+<May22-2025> <11:57:30>  DFTB: SCC cycle
+<May22-2025> <11:57:30>  cyc=  1 err=1.3E-09 method=1 nvec= 1 mix=0.075 e=    0.0000
+<May22-2025> <11:57:30>  SCC cycle converged!
+<May22-2025> <11:57:30>  ERROR: kfOpenFile: Attempt to open nonexistent file /Users/yumanhordijk/PhD/Programs/TheoCheM/PyFMO/calculations/PyOrb_testing_2022/DonorAcceptor_SCF0/NH3BH3.NH3.results/dftb.rkf
+ERROR: kfOpenFile: Attempt to open nonexistent file /Users/yumanhordijk/PhD/Programs/TheoCheM/PyFMO/calculations/PyOrb_testing_2022/DonorAcceptor_SCF0/NH3BH3.NH3.results/dftb.rkf
+STOP ERROR DETECTED

@@ -1,0 +1,30 @@
+#!/bin/sh
+
+"$AMSBIN/ams" << eor
+
+Task SinglePoint
+System
+    Atoms
+        C 0.0 -0.0 0.3007575 region=C
+    End
+    Symmetrize Yes
+End
+Symmetry
+    SymmetrizeTolerance 1.0e-7
+End
+
+Engine ADF
+    Basis
+        Type TZ2P
+        Core None
+    End
+    SpinPolarization 4
+    XC
+        GGA OLYP
+    End
+    Title C fragment
+    Unrestricted Yes
+    NumericalQuality Good
+EndEngine
+eor
+

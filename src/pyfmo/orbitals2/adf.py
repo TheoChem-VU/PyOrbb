@@ -218,6 +218,12 @@ def _read_data(reader, SCF0_reader=None, output=None):
 
         return out
 
+    # def _determine_spinpol(reader):
+    #     for symlabel in reader.read('Symmetry', 'symlab').split():
+    #         print(symlabel)
+
+    # _determine_spinpol(reader)
+
     with timer.timer('Orbitals.get_data.read_molecules'):
         ret.SFOs.fragment_molecules = _get_molecules(reader)
 

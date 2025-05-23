@@ -1,0 +1,36 @@
+#!/bin/sh
+
+"$AMSBIN/ams" << eor
+
+Task SinglePoint
+System
+    Atoms
+        Na 0.0 0.0 -1.425 region=Na adf.f=Na
+        Cl 0.0 0.0 1.425 region=Cl adf.f=Cl
+    End
+    BondOrders
+         2 1 1.0
+    End
+End
+
+Engine ADF
+    Basis
+        Type QZ4P
+        Core None
+    End
+    Fragments
+        Cl ${SCM_ROOT}/Users/yumanhordijk/PhD/Programs/TheoCheM/PyFMO/calculations/PyOrb_testing_2022/HeterolyticBond/complex/NaCl.Cl.results/adf.rkf
+        Na ${SCM_ROOT}/Users/yumanhordijk/PhD/Programs/TheoCheM/PyFMO/calculations/PyOrb_testing_2022/HeterolyticBond/complex/NaCl.Na.results/adf.rkf
+    End
+    
+    Print SFOSITEENERGIES
+    XC
+        GGA BLYP
+    End
+    Symmetry C(LIN)
+    NumericalQuality VeryGood
+EndEngine
+eor
+
+# dependency: /Users/yumanhordijk/PhD/Programs/TheoCheM/PyFMO/calculations/PyOrb_testing_2022/HeterolyticBond/complex/NaCl.Cl -
+# dependency: /Users/yumanhordijk/PhD/Programs/TheoCheM/PyFMO/calculations/PyOrb_testing_2022/HeterolyticBond/complex/NaCl.Na -

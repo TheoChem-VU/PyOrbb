@@ -11,8 +11,6 @@
     5   Yumans-MacBook-Pro.local                  0          5         -1
     6   Yumans-MacBook-Pro.local                  0          6         -1
     7   Yumans-MacBook-Pro.local                  0          7         -1
-    8   Yumans-MacBook-Pro.local                  0          8         -1
-    9   Yumans-MacBook-Pro.local                  0          9         -1
  ==============================================================================
 
 
@@ -21,9 +19,9 @@ May use up to 15625MB of RAM as shared memory on node 0
  *******************************************************************************
  *                                                                             *
  *  --------------------------------                                           *
- *   Amsterdam Modeling Suite (AMS)              2022.103                      *
+ *   Amsterdam Modeling Suite (AMS)              2025.102                      *
  *  --------------------------------                                           *
- *                                               r104886 2022-06-17            *
+ *                                               r250425 2025-04-25 08373ef5   *
  *                                                                             *
  *                                                                             *
  *                              =================                              *
@@ -41,38 +39,39 @@ May use up to 15625MB of RAM as shared memory on node 0
  *   The terms and conditions of the End User License Agreement apply to       *
  *   the use of AMS, https://www.scm.com/license-terms/                        *
  *                                                                             *
- **********************  x86_64_darwin_intel / openmpi  ************************
+ ************************  arm64_darwin_gnu / openmpi  *************************
  
- Licensed to: Prof Visscher, Prof Bickelhaupt, Prof Fonseca Guerra / Vrije Universiteit, Theoretische Chemie / Amsterdam / NETHERLANDS 2022-12-13 09:59:29
+ Licensed to: Prof Visscher, Prof Bickelhaupt, Prof Fonseca Guerra / Vrije Universiteit, Theoretische Chemie / Amsterdam / NETHERLANDS 2025-05-08 15:31:51
  SCM User ID: u21794
   
- AMS 2022.103  RunTime: Jan27-2023 14:00:22  ShM Nodes: 1  Procs: 10
+ AMS 2025.102  RunTime: May21-2025 18:14:01  ShM Nodes: 1  Procs: 8
 
  AMS jobname: ams
- AMS jobid  : 14423804
+ AMS jobid  : 1099395791
 
- Start   directory: /Users/yumanhordijk/PhD/TheoCheM_stack/calculations/PyOrb_testing/TransitionState/tmp.yumanhordijk.19187.0.noindex/
- Results directory: /Users/yumanhordijk/PhD/TheoCheM_stack/calculations/PyOrb_testing/TransitionState/DielsAlder.Dienophile.results/
- Scratch directory: /tmp/amstmp_ams_kid0.14423804/
-
-
- Communication costs MPI_COMM_WORLD:      2.438 usec per message,   0.0253 usec per 8-byte item
- Communication costs for intra-node:      2.288 usec per message,   0.0386 usec per 8-byte item
-
- RNG seed: 40723216 -1898204386 -1704906410 683169766 523270410 -47213762 -1917961788 1960011001
+ Start   directory: /Users/yumanhordijk/PhD/Programs/TheoCheM/PyFMO/calculations/PyOrb_testing_2022/TransitionState/tmp.yumanhordijk.99703.0.noindex/
+ Results directory: /Users/yumanhordijk/PhD/Programs/TheoCheM/PyFMO/calculations/PyOrb_testing_2022/TransitionState/DielsAlder.Dienophile.results/
+ Scratch directory: /tmp/amstmp_ams_kid0.1099395791/
 
 
+ Communication costs MPI_COMM_WORLD:      3.511 usec per message,   0.0299 usec per 8-byte item
+ Communication costs for intra-node:      0.562 usec per message,   0.0355 usec per 8-byte item
 
-                     *************************************************************************
-                     *  ADF 2022.103  RunTime: Jan27-2023 14:00:24  ShM Nodes: 1  Procs: 10  *
-                     *************************************************************************
+ RNG seed: 1862333995 -432370175 1404398946 988580129 1759877526 547441260 311069251 -138188744
+
+
+
+                      ************************************************************************
+                      *  ADF 2025.102  RunTime: May21-2025 18:14:02  ShM Nodes: 1  Procs: 8  *
+                      ************************************************************************
   
  Geometry symmetrized to: C1
  Geometry reoriented with symmetry: NOSYM
+
        ****************************
        * SINGLE POINT CALCULATION *
        ****************************
- 
+
 --------
 Geometry
 --------
@@ -85,11 +84,11 @@ Atoms
       4      H     2.30585900     3.20925500    -0.90056400       region=Dienophile
       5      H     4.29007800     2.01965400     1.14123200       region=Dienophile
       6      H     4.18882200     1.61484600    -0.65075100       region=Dienophile
- 
+
 Total System Charge             0.00000
 Bonding info available!
- 
- 
+
+
 ----------------
 ADF Engine Input
 ----------------
@@ -98,7 +97,6 @@ ADF Engine Input
  Type TZ2P
  Core None
  End
- ALLOW  FRACTIONAL
  XC
  GGA BLYP
  End
@@ -143,11 +141,11 @@ ADF Engine Input
  Fragment File(s)
  ----------------
  C:
-         file : /Users/yumanhordijk/PhD/TheoCheM_stack/calculations/PyOrb_testing/TransitionState/DielsAlder.Dienophile.results/t21.6D319778.C
+         file : /Users/yumanhordijk/PhD/Programs/TheoCheM/PyFMO/calculations/PyOrb_testing_2022/TransitionState/DielsAlder.Dienophile.results/t21.6DE66336.C
          jobid: 0
          title: Carbon (TZ2P)
  H:
-         file : /Users/yumanhordijk/PhD/TheoCheM_stack/calculations/PyOrb_testing/TransitionState/DielsAlder.Dienophile.results/t21.77463436.H
+         file : /Users/yumanhordijk/PhD/Programs/TheoCheM/PyFMO/calculations/PyOrb_testing_2022/TransitionState/DielsAlder.Dienophile.results/t21.4D18820.H
          jobid: 0
          title: Hydrogen (TZ2P)
 
@@ -220,7 +218,6 @@ ADF Engine Input
  similar to the occupied MOs in a "reference" cycle ("KeepOrbitals").
  The reference cycle is always the PREVIOUS cycle: it will evolve with
  the SCF procedure.
-1
  ***************************************************************************************************
 
 
@@ -574,7 +571,6 @@ ADF Engine Input
  Total number of Cartesian basis functions (naos)        108
  Total number of Cartesian core functions  (ncos)          0
 
-1
  ***************************************************************************************************
 
 
@@ -590,7 +586,7 @@ ADF Engine Input
  P A R A L L E L I Z A T I O N  and  V E C T O R I Z A T I O N
  =============================================================
   
- Nr of parallel processes:                               10
+ Nr of parallel processes:                                8
  Maximum vector length in NumInt loops:                 128
 
 
@@ -636,7 +632,6 @@ ADF Engine Input
  Cut-offs for Coulomb potential and fitted density:0.1000000000E-11
  Cut-off criterion for Coulomb multipole terms:    0.1000000000E-11
  Progressive Convergence parameter:                 0.000000000    
-1
  ***************************************************************************************************
 
 
@@ -646,7 +641,7 @@ ADF Engine Input
                                             ***************************
   
 
- Number of elements of the density matrix on this node (used, total):       687      5886
+ Number of elements of the density matrix on this node (used, total):       825      5886
 
 
 
@@ -690,7 +685,7 @@ ADF Engine Input
  Initial density matrix is calculated as sum of fragments
 
  CYCLE    1
- SCF Error: norm([F,P])=      3.164997428128, max([F,P])=      0.972697914900
+ SCF Error: norm([F,P])=      3.164997428121, max([F,P])=      0.972697914896
  orbitals (Q,E):
  ---------------
  A :1...18           ( 2.00   -10.1836)  ( 2.00   -10.1832)  ( 2.00    -0.8755)  ( 2.00    -0.6942)
@@ -703,7 +698,7 @@ ADF Engine Input
   SDIIS (wt  0.000):  0.0736  0.9264
  A-DIIS (wt  1.000):  0.7832  0.2168
   DIIS coefficients:  0.7832  0.2168
- SCF Error: norm([F,P])=      0.684270398654, max([F,P])=      0.176516992034
+ SCF Error: norm([F,P])=      0.684270398653, max([F,P])=      0.176516992033
  orbitals (Q,E):
  ---------------
  A :1...9            ( 2.00   -10.0508)  ( 2.00   -10.0504)  ( 2.00    -0.7901)  ( 2.00    -0.6275)
@@ -714,7 +709,7 @@ ADF Engine Input
   SDIIS (wt  0.000):  0.0109 -0.9674  1.9566
  A-DIIS (wt  1.000):  0.6871  0.0000  0.3129
   DIIS coefficients:  0.6871  0.0000  0.3129
- SCF Error: norm([F,P])=      0.357098111929, max([F,P])=      0.084920887344
+ SCF Error: norm([F,P])=      0.357098111925, max([F,P])=      0.084920887343
  orbitals (Q,E):
  ---------------
  A :1...9            ( 2.00   -10.0443)  ( 2.00   -10.0439)  ( 2.00    -0.7800)  ( 2.00    -0.6160)
@@ -725,7 +720,7 @@ ADF Engine Input
   SDIIS (wt  0.171): -0.8802 -1.1198  3.0000
  A-DIIS (wt  0.829):  0.0000  0.0000  1.0000
   DIIS coefficients: -0.1506 -0.1915  1.3421
- SCF Error: norm([F,P])=      0.339308592499, max([F,P])=      0.083065261130
+ SCF Error: norm([F,P])=      0.339308592494, max([F,P])=      0.083065261129
  orbitals (Q,E):
  ---------------
  A :1...9            ( 2.00    -9.7747)  ( 2.00    -9.7743)  ( 2.00    -0.5993)  ( 2.00    -0.4654)
@@ -736,7 +731,7 @@ ADF Engine Input
   SDIIS (wt  0.000): -0.1485 -2.0000  2.8112  0.3373
  A-DIIS (wt  1.000):  0.0000  0.0000  0.5794  0.4206
   DIIS coefficients:  0.0000  0.0000  0.5794  0.4206
- SCF Error: norm([F,P])=      0.421957969070, max([F,P])=      0.115908986186
+ SCF Error: norm([F,P])=      0.421957969056, max([F,P])=      0.115908986183
  orbitals (Q,E):
  ---------------
  A :1...9            ( 2.00    -9.9144)  ( 2.00    -9.9139)  ( 2.00    -0.6725)  ( 2.00    -0.5166)
@@ -747,7 +742,7 @@ ADF Engine Input
   SDIIS (wt  0.972):  0.1012  1.6987 -2.0000 -0.0794  1.2795
  A-DIIS (wt  0.028):  0.0000  0.0000  0.0000  0.0000  1.0000
   DIIS coefficients:  0.0983  1.6507 -1.9435 -0.0771  1.2716
- SCF Error: norm([F,P])=      0.025530284663, max([F,P])=      0.003796079240
+ SCF Error: norm([F,P])=      0.025530284660, max([F,P])=      0.003796079240
  orbitals (Q,E):
  ---------------
  A :1...9            ( 2.00    -9.9231)  ( 2.00    -9.9227)  ( 2.00    -0.6773)  ( 2.00    -0.5233)
@@ -777,7 +772,7 @@ ADF Engine Input
  CYCLE    9
   SDIIS (wt  1.000):  0.0005  0.0050 -0.0058 -0.0007  0.0112  0.0369  0.2172  0.7357
   DIIS coefficients:  0.0005  0.0050 -0.0058 -0.0007  0.0112  0.0369  0.2172  0.7357
- SCF Error: norm([F,P])=      0.000166079865, max([F,P])=      0.000054110418
+ SCF Error: norm([F,P])=      0.000166079861, max([F,P])=      0.000054110415
  orbitals (Q,E):
  ---------------
  A :1...9            ( 2.00    -9.9230)  ( 2.00    -9.9226)  ( 2.00    -0.6776)  ( 2.00    -0.5230)
@@ -787,7 +782,7 @@ ADF Engine Input
  CYCLE   10
   SDIIS (wt  1.000):  0.0003  0.0028 -0.0038 -0.0004  0.0009  0.0051  0.0990  0.6035  0.2925
   DIIS coefficients:  0.0003  0.0028 -0.0038 -0.0004  0.0009  0.0051  0.0990  0.6035  0.2925
- SCF Error: norm([F,P])=      0.000227574029, max([F,P])=      0.000105827843
+ SCF Error: norm([F,P])=      0.000227574023, max([F,P])=      0.000105827840
  orbitals (Q,E):
  ---------------
  A :1...9            ( 2.00    -9.9230)  ( 2.00    -9.9226)  ( 2.00    -0.6776)  ( 2.00    -0.5230)
@@ -817,7 +812,6 @@ ADF Engine Input
  SCF CONVERGED
 
  CYCLE   13
-1
  ***************************************************************************************************
 
 
@@ -836,27 +830,27 @@ ADF Engine Input
                         Occup              E (au)              E (eV)       Diff (eV) with prev. cycle
                         -----      --------------------        ------       --------------------------
  A
-               1        2.000     -0.99230005318983E+01      -270.019              -4.56E-08
-               2        2.000     -0.99225696777848E+01      -270.007              -4.56E-08
-               3        2.000     -0.67757409991428E+00       -18.438              -2.77E-08
-               4        2.000     -0.52302612391086E+00       -14.232              -1.58E-08
-               5        2.000     -0.41352706532608E+00       -11.253              -3.06E-08
-               6        2.000     -0.36783256364603E+00       -10.009              -6.69E-09
-               7        2.000     -0.31571513271433E+00        -8.591              -1.92E-08
-               8        2.000     -0.23703572218294E+00        -6.450              -3.27E-08
-               9        0.000     -0.54168460161558E-01        -1.474
-              10        0.000      0.71210589722635E-02         0.194
-              11        0.000      0.32219330310230E-01         0.877
-              12        0.000      0.33135365970058E-01         0.902
-              13        0.000      0.96590138759336E-01         2.628
-              14        0.000      0.14824433640713E+00         4.034
-              15        0.000      0.15940006021011E+00         4.337
-              16        0.000      0.18890408344133E+00         5.140
-              17        0.000      0.20572720791858E+00         5.598
-              18        0.000      0.23661676334562E+00         6.439
+               1        2.000     -0.99230005318953E+01      -270.019              -4.56E-08
+               2        2.000     -0.99225696777841E+01      -270.007              -4.56E-08
+               3        2.000     -0.67757409991459E+00       -18.438              -2.77E-08
+               4        2.000     -0.52302612391097E+00       -14.232              -1.58E-08
+               5        2.000     -0.41352706532601E+00       -11.253              -3.06E-08
+               6        2.000     -0.36783256364638E+00       -10.009              -6.69E-09
+               7        2.000     -0.31571513271447E+00        -8.591              -1.92E-08
+               8        2.000     -0.23703572218283E+00        -6.450              -3.27E-08
+               9        0.000     -0.54168460161655E-01        -1.474
+              10        0.000      0.71210589722287E-02         0.194
+              11        0.000      0.32219330310566E-01         0.877
+              12        0.000      0.33135365970356E-01         0.902
+              13        0.000      0.96590138758904E-01         2.628
+              14        0.000      0.14824433640777E+00         4.034
+              15        0.000      0.15940006021097E+00         4.337
+              16        0.000      0.18890408344129E+00         5.140
+              17        0.000      0.20572720791949E+00         5.598
+              18        0.000      0.23661676334568E+00         6.439
   
- HOMO :        8 A                -0.23703572218294E+00
- LUMO :        9 A                -0.54168460161558E-01
+ HOMO :        8 A                -0.23703572218283E+00
+ LUMO :        9 A                -0.54168460161655E-01
   
 
 
@@ -928,7 +922,7 @@ ADF Engine Input
  Gross Charges per Atom (Z minus electrons)
  ==========================================
              0.3537    0.3539   -0.1764   -0.1774   -0.1764   -0.1775
- Net Total:  0.00000000
+ Net Total: -0.00000000
 
 
  Atom-Atom Population Matrix (off-diagonal elements not doubled)
@@ -955,6 +949,8 @@ ADF Engine Input
  chemical type are grouped together. This may not be the order in which you listed them
  in the input file!
 
+  Fragment                       Charge
+ ------------------------------------------
     1  C                        -0.0801
     2  C                        -0.0801
     3  H                         0.0400
@@ -962,7 +958,8 @@ ADF Engine Input
     5  H                         0.0400
     6  H                         0.0401
 
- Sum of these charges (accuracy NumInt/Tails) =           0.00000276
+ Sum of these charges =          0.00000276
+ (accuracy NumInt/Tails)
 
 
 
@@ -984,10 +981,9 @@ ADF Engine Input
     c) the SCF density
     d) the Voronoi Deformation Density (VDD): the difference SCF-Initial for the complete atomic cell
 
-
   Atom                Initial                    OrthFrag                   SCF
              Sphere RestCell NetTotal   Sphere RestCell NetTotal   Sphere RestCell NetTotal      VDD
- -----       ------------------------   ------------------------   ------------------------    -----
+ -------     ------------------------   ------------------------   ------------------------    -----
     1 C      -2.155   -2.817    1.028   -2.273   -2.958    0.769   -2.179   -2.859    0.962   -0.066
     2 C      -2.155   -2.815    1.030   -2.273   -2.957    0.770   -2.179   -2.858    0.963   -0.067
     3 H      -0.080   -1.433   -0.513   -0.102   -1.281   -0.383   -0.116   -1.365   -0.480    0.033
@@ -1087,7 +1083,7 @@ ADF Engine Input
 MDC-m        -0.0000       -0.1562   -0.1772    0.0464         -0.3896   -0.3983   -0.0300   -0.0863   -0.0483    0.4759
 MDC-d        -0.0000        0.3369    0.3803   -0.1066          0.8438    0.8520    0.0378    0.1810    0.0874   -1.0249
 MDC-q        -0.0000        0.0595    0.0422   -0.2577          0.3519    0.0028   -0.7681   -0.2285   -0.7135   -0.1234
- 
+
 Fit.Dens.    -0.0000        0.3369    0.3803   -0.1066          0.5741    1.3462   -0.0612   -0.0849    0.0604   -0.4892
 
 
@@ -1111,7 +1107,6 @@ Fit.Dens.    -0.0000        0.3369    0.3803   -0.1066          0.5741    1.3462
       0.57405147     0.74442631     0.11525736    -0.08482874     0.28456335    -0.48922274
 
  This molecular quadrupole moment is calculated with analytic integration
-1
 
 
 
@@ -1146,52 +1141,52 @@ on the meaning of the various terms.
                                       --------------------     -----------       ----------      -----------
 
 Pauli Repulsion
-  Kinetic (Delta T^0):                   8.635309544700108        234.9787          5418.74         22672.00
-  Delta V^Pauli Coulomb:                -3.821449485229901       -103.9869         -2398.00        -10033.21
-  Delta V^Pauli LDA-XC:                 -1.059678734176284        -28.8353          -664.96         -2782.19
-  Delta V^Pauli GGA-Exchange:            0.048792069213183          1.3277            30.62           128.10
-  Delta V^Pauli GGA-Correlation:        -0.079827711326531         -2.1722           -50.09          -209.59
+  Kinetic (Delta T^0):                   8.635309544701499        234.9787          5418.74         22672.00
+  Delta V^Pauli Coulomb:                -3.821449485230451       -103.9869         -2398.00        -10033.21
+  Delta V^Pauli LDA-XC:                 -1.059678734176396        -28.8353          -664.96         -2782.19
+  Delta V^Pauli GGA-Exchange:            0.048792069213177          1.3277            30.62           128.10
+  Delta V^Pauli GGA-Correlation:        -0.079827711326537         -2.1722           -50.09          -209.59
                                       --------------------     -----------       ----------      -----------
-  Total Pauli Repulsion:                 3.723145683180576        101.3119          2336.31          9775.12
+  Total Pauli Repulsion:                 3.723145683181292        101.3119          2336.31          9775.12
  (Total Pauli Repulsion =
   Delta E^Pauli in BB paper)
 
 Steric Interaction
-  Pauli Repulsion (Delta E^Pauli):       3.723145683180576        101.3119          2336.31          9775.12
-  Electrostatic Interaction:            -0.603539475502888        -16.4231          -378.73         -1584.59
+  Pauli Repulsion (Delta E^Pauli):       3.723145683181292        101.3119          2336.31          9775.12
+  Electrostatic Interaction:            -0.603539475502884        -16.4231          -378.73         -1584.59
  (Electrostatic Interaction =
   Delta V_elstat in the BB paper)
                                       --------------------     -----------       ----------      -----------
-  Total Steric Interaction:              3.119606207677688         84.8888          1957.58          8190.52
+  Total Steric Interaction:              3.119606207678409         84.8888          1957.58          8190.52
  (Total Steric Interaction =
   Delta E^0 in the BB paper)
 
 Orbital Interactions
-  A:                                    -4.238169721983559       -115.3265         -2659.49        -11127.31
+  A:                                    -4.238169721984231       -115.3265         -2659.49        -11127.31
                                       --------------------     -----------       ----------      -----------
-  Total Orbital Interactions:           -4.238169721983559       -115.3265         -2659.49        -11127.31
+  Total Orbital Interactions:           -4.238169721984231       -115.3265         -2659.49        -11127.31
 
 Alternative Decomposition Orb.Int.
-  Kinetic:                              -7.662045920174310       -208.4949         -4808.01        -20116.70
-  Coulomb:                               3.269817159590565         88.9763          2051.84          8584.90
-  XC:                                    0.154059038600185          4.1922            96.67           404.48
+  Kinetic:                              -7.662045920184123       -208.4949         -4808.01        -20116.70
+  Coulomb:                               3.269817159599659         88.9763          2051.84          8584.90
+  XC:                                    0.154059038600234          4.1922            96.67           404.48
                                       --------------------     -----------       ----------      -----------
-  Total Orbital Interactions:           -4.238169721983559       -115.3265         -2659.49        -11127.31
+  Total Orbital Interactions:           -4.238169721984230       -115.3265         -2659.49        -11127.31
 
-  Residu (E=Steric+OrbInt+Res):         -0.000000182488701         -0.0000            -0.00            -0.00
+  Residu (E=Steric+OrbInt+Res):         -0.000000182488710         -0.0000            -0.00            -0.00
 
-Total Bonding Energy:                   -1.118563696794572        -30.4377          -701.91         -2936.79
+Total Bonding Energy:                   -1.118563696794532        -30.4377          -701.91         -2936.79
 
 
 Summary of Bonding Energy (energy terms are taken from the energy decomposition above)
 ======================================================================================
 
-  Electrostatic Energy:                 -0.603539475502888        -16.4231          -378.73         -1584.59
-  Kinetic Energy:                        0.973263624525798         26.4839           610.73          2555.30
-  Coulomb (Steric+OrbInt) Energy:       -0.551632508128037        -15.0107          -346.15         -1448.31
-  XC Energy:                            -0.936655337689447        -25.4877          -587.76         -2459.19
+  Electrostatic Energy:                 -0.603539475502884        -16.4231          -378.73         -1584.59
+  Kinetic Energy:                        0.973263624517377         26.4839           610.73          2555.30
+  Coulomb (Steric+OrbInt) Energy:       -0.551632508119502        -15.0107          -346.15         -1448.31
+  XC Energy:                            -0.936655337689522        -25.4877          -587.76         -2459.19
                                       --------------------     -----------       ----------      -----------
-  Total Bonding Energy:                 -1.118563696794573        -30.4377          -701.91         -2936.79
+  Total Bonding Energy:                 -1.118563696794532        -30.4377          -701.91         -2936.79
 
 
 Correction terms (incorporated in energies above; only for test purposes):
@@ -1218,13 +1213,12 @@ The energy terms below are (parts of) the Total Energy of the fragments from whi
  is built.
 
 Exchange and Correlation
-  Exchange LDA:                         -9.558195360121232       -260.0917         -5997.86        -25095.04
-  Exchange GGA:                         -1.325019967049323        -36.0556          -831.46         -3478.84
+  Exchange LDA:                         -9.558195360121275       -260.0917         -5997.86        -25095.04
+  Exchange GGA:                         -1.325019967049326        -36.0556          -831.46         -3478.84
   Correlation LDA:                       0.000000000000000          0.0000             0.00             0.00
-  Correlation GGA:                      -0.405354188687235        -11.0302          -254.36         -1064.26
+  Correlation GGA:                      -0.405354188687237        -11.0302          -254.36         -1064.26
                                       --------------------     -----------       ----------      -----------
-  Total XC:                            -11.288569515857791       -307.1776         -7083.69        -29638.14
-1
+  Total XC:                            -11.288569515857837       -307.1776         -7083.69        -29638.14
 
 
 
@@ -1292,8 +1286,8 @@ Exchange and Correlation
 
 
 
- List of all MOs, ordered by energy, with the most significant SFO gross populations
- ===================================================================================
+ List of selected MOs, ordered by energy, with the most significant SFO gross populations
+ ========================================================================================
 
  Each percentage contribution in the table below corres ponds to the indicated SFO.
  In general, a SFO may be a linear combination of several Fragment Orbitals on the same,
@@ -1485,8 +1479,87 @@ Dipole moment vector    (Debye):     0.33691244    0.38035594   -0.10656751
               magnitude (Debye):     0.51916979
 
 
+-----------------------
+Molecular orbitals info
+-----------------------
+n orbitals:               96
+n spin:                    1
+
+Note: only printing virtual orbitals with
+      energy smaller than HOMO + 100. eV
+
+HOMO (eV):              -6.4501
+LUMO (eV):              -1.4740
+HOMO-LUMO gap (eV):      4.9761
+
+   Index   Energy (eV)    Occupation
+      64       88.9721         0.000       
+      63       88.7433         0.000       
+      62       88.5162         0.000       
+      61       86.5420         0.000       
+      60       81.2489         0.000       
+      59       79.1437         0.000       
+      58       77.2817         0.000       
+      57       75.4675         0.000       
+      56       75.2678         0.000       
+      55       73.4889         0.000       
+      54       71.7766         0.000       
+      53       70.7537         0.000       
+      52       67.6790         0.000       
+      51       67.5308         0.000       
+      50       62.2062         0.000       
+      49       60.8749         0.000       
+      48       57.7797         0.000       
+      47       55.4004         0.000       
+      46       54.7541         0.000       
+      45       51.8916         0.000       
+      44       51.5379         0.000       
+      43       50.5536         0.000       
+      42       49.3078         0.000       
+      41       40.3428         0.000       
+      40       40.0417         0.000       
+      39       38.6665         0.000       
+      38       38.2168         0.000       
+      37       37.0134         0.000       
+      36       30.4449         0.000       
+      35       28.8825         0.000       
+      34       28.1012         0.000       
+      33       26.8919         0.000       
+      32       25.2620         0.000       
+      31       24.4843         0.000       
+      30       23.9149         0.000       
+      29       23.2416         0.000       
+      28       20.1511         0.000       
+      27       18.4606         0.000       
+      26       15.5401         0.000       
+      25       12.9407         0.000       
+      24       12.4878         0.000       
+      23       11.9307         0.000       
+      22       11.1569         0.000       
+      21        9.5795         0.000       
+      20        8.2383         0.000       
+      19        7.3693         0.000       
+      18        6.4387         0.000       
+      17        5.5981         0.000       
+      16        5.1403         0.000       
+      15        4.3375         0.000       
+      14        4.0339         0.000       
+      13        2.6284         0.000       
+      12        0.9017         0.000       
+      11        0.8767         0.000       
+      10        0.1938         0.000       
+       9       -1.4740         0.000 < LUMO
+       8       -6.4501         2.000 < HOMO
+       7       -8.5910         2.000       
+       6      -10.0092         2.000       
+       5      -11.2526         2.000       
+       4      -14.2323         2.000       
+       3      -18.4377         2.000       
+       2     -270.0069         2.000       
+       1     -270.0186         2.000       
+
 AMS application finished. Exiting.
 NORMAL TERMINATION
-     Total cpu time:      43.93
-  Total system time:       4.54
- Total elapsed time:      51.41
+     Total cpu time:      11.72
+  Total system time:       1.53
+ Total elapsed time:      17.71

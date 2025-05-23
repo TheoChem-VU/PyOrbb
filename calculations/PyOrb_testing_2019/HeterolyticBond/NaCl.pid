@@ -1,0 +1,36 @@
+# status: ready
+# pid: 44058
+# hostname: localhost
+# username: 
+# jobscript: 
+# prolog: 
+# epilog: 
+# jobdir: $HOME/jobs
+# fakejob: 0
+# comparewithtarget: ok
+# error: 0
+# warning: 0
+# runcmd: sh "$job" "NSCM=$options ; export NSCM"
+# batch: yes
+# options: 
+# killcmd: killall $pid
+# jobstatuscmd: ps -e | grep -w $pid | grep -v grep
+# sysstatuscmd: uptime
+# pidfile: no
+# label: Sequential
+# logfile: logfile
+# backup: 
+# whenready: 
+# scmjobid: 1674823300158-23873
+# paused: 0
+# remoteprefix: 
+# jobtype: .adf
+# mtime: 1675420884
+# cloudinit: 
+# cloudid: 
+# copyback: 
+# privatesshkeypath: 
+# plamscmd: local:*,1
+# comments: 
+# dependency: start /Users/yumanhordijk/PhD/TheoCheM_stack/calculations/PyOrb_testing_2019/HeterolyticBond/NaCl.Cl.job
+# dependency: start /Users/yumanhordijk/PhD/TheoCheM_stack/calculations/PyOrb_testing_2019/HeterolyticBond/NaCl.Na.job

@@ -1,0 +1,31 @@
+#!/bin/sh
+
+"$AMSBIN/ams" << eor
+
+Task SinglePoint
+System
+    Atoms
+        Cl 0.0 0.0 1.425 region=Cl
+    End
+    Symmetrize Yes
+    Charge -1
+End
+Symmetry
+    SymmetrizeTolerance 1.0e-7
+End
+
+Engine ADF
+    Basis
+        Type QZ4P
+        Core None
+    End
+    ALLOW  FRACTIONAL
+    XC
+        GGA BLYP
+    End
+    Title Cl fragment
+    Symmetry ATOM
+    NumericalQuality VeryGood
+EndEngine
+eor
+

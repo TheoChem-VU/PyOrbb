@@ -1,0 +1,49 @@
+#!/bin/sh
+
+# dependency: /Users/yumanhordijk/PhD/TheoCheM_stack/PyFMO/test/fixtures/Me_Me/frag.left frag.left.results/adf.rkf left.rkf
+# dependency: /Users/yumanhordijk/PhD/TheoCheM_stack/PyFMO/test/fixtures/Me_Me/frag.right frag.right.results/adf.rkf right.rkf
+
+"$AMSBIN/ams" << eor
+
+Task SinglePoint
+System
+    Atoms
+        C 0.0 0.0 -0.76281188 region=left adf.f=left
+        C 0.0 0.0 0.76281188 region=right adf.f=right
+        H -1.02282433 0.0 1.14311139 region=right adf.f=right
+        H 0.51141216 0.88579185 1.14311139 region=right adf.f=right
+        H 0.51141216 -0.88579185 1.14311139 region=right adf.f=right
+        H -0.51141216 -0.88579185 -1.14311139 region=left adf.f=left
+        H 1.02282433 0.0 -1.14311139 region=left adf.f=left
+        H -0.51141216 0.88579185 -1.14311139 region=left adf.f=left
+    End
+    BondOrders
+         1 2 1.0
+         1 6 1.0
+         1 7 1.0
+         1 8 1.0
+         2 3 1.0
+         2 4 1.0
+         2 5 1.0
+    End
+End
+
+Engine ADF
+    Basis
+        Type TZ2P
+        Core None
+    End
+    SpinPolarization 0.0
+    Fragments
+        left left.rkf 
+        right right.rkf 
+    End
+    
+    XC
+        GGA BLYP
+    End
+    Unrestricted Yes
+    UnrestrictedFragments Yes
+EndEngine
+eor
+

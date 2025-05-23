@@ -1,0 +1,10 @@
+cd /Users/yumanhordijk/PhD/TheoCheM_stack/PyFMO/test/fixtures/NH3BH3
+"$AMSBIN/densf" << eor
+ADFFile adf.rkf
+GRID medium
+END
+Orbitals SFO
+    A 64
+END
+CUBOUTPUT 64
+eor

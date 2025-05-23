@@ -1,0 +1,303 @@
+#!/bin/sh
+
+#======
+ready() 
+#======
+{
+
+if test ! -z "$SCM_RESULTDIR" -a ! -z "$JOBNAME"
+then
+
+#  special case to make sure results from chained jobs are copied back, sub jobs have path in JOBNAME
+   AAA=`dirname "$JOBNAME"`
+   JOBNAME=`basename "$JOBNAME"`
+   if [ "$AAA" != "." ]; then
+      SCM_RESULTDIR=$SCM_RESULTDIR/$AAA
+   fi
+
+    # -------------------------------------------
+    # copy any files produced to result directory
+    # -------------------------------------------
+
+    for n in 13 21 41 10 11 15
+    do
+        cp -f -p "TAPE$n" "$SCM_RESULTDIR/$JOBNAME.t$n" 2>/dev/null
+        rm -f "TAPE$n"
+    done
+
+    cp -f -p RUNKF "$SCM_RESULTDIR/$JOBNAME.runkf" 2>/dev/null
+    cp -f -p COSKF "$SCM_RESULTDIR/$JOBNAME.coskf" 2>/dev/null
+    cp -f -p CRSKF "$SCM_RESULTDIR/$JOBNAME.crskf" 2>/dev/null
+    cp -f -p QUILDKF "$SCM_RESULTDIR/$JOBNAME.qkf" 2>/dev/null
+    cp -f -p quildjob.qkf "$SCM_RESULTDIR/$JOBNAME.qkf" 2>/dev/null
+    rm -f  QUILDKF quildjob.qkf COSKF CRSKF RUNKF
+
+    if test ! -d "$SCM_RESULTDIR/$JOBNAME.results"
+    then
+        mkdir "$SCM_RESULTDIR/$JOBNAME.results"
+    fi
+    if test -d "$SCM_RESULTDIR/$JOBNAME.results"
+    then
+        for n in 13 21 41 10 11 15
+        do
+            cp -f -p "TAPE$n" "$SCM_RESULTDIR/$JOBNAME.t$n" 2>/dev/null
+            rm -f "TAPE$n"
+        done
+        touch thisfileshouldbeignored
+        cp -rf -p * "$SCM_RESULTDIR/$JOBNAME.results"
+    else
+        echo Problem copying result files to \"$SCM_RESULTDIR/$JOBNAME.results\"
+    fi
+
+    for f in "$SCM_RESULTDIR/$JOBNAME.results"/* thisfiledoesnotexist
+    do
+        if test -L "$f"; then
+            rm -f "$f"
+        fi
+    done
+    rm -f "$SCM_RESULTDIR/$JOBNAME.results"/thisfileshouldbeignored
+
+    if test -z "$1"
+    then
+        echo "Job $JOBNAME has finished" >> "$SCM_RESULTDIR/$JOBNAME.logfile"
+    else
+        echo "Job $JOBNAME: $1" >> "$SCM_RESULTDIR/$JOBNAME.logfile"
+    fi
+    cd "$OWD" 2>/dev/null
+    rm -rf "$SCM_JOBDIR"
+    if test -z "$SCM_NOREADY"; then
+        echo "# status: ready" >> "$SCM_RESULTDIR/$JOBNAME.pid"
+#       densf runs from AMSview remove the line above, for that reason an extra NOP line is needed
+        DUMMY=blurb
+    fi
+fi
+}
+
+
+#-----------------------------------------
+# keep track of original working directory
+#-----------------------------------------
+
+OWD="`pwd`"
+export OWD
+
+# -------------------------------------------------
+# insert prolog command as defined in AMSjobs queue
+# -------------------------------------------------
+
+# <<PROLOG>>
+
+# ---------------------------------------------------
+# execute arguments (possibly to set environment etc)
+# ---------------------------------------------------
+
+if test ! -z "$1"
+then
+    if test "$1" != "export NSCM=" -a "$1" != "NSCM= ; export NSCM"; then
+       eval $1
+    fi
+fi
+
+# ---------------
+# name of the job
+# ---------------
+
+JOBNAME=`basename "$0" .job`
+export JOBNAME
+
+# -----------------------------------------------------------------------------------
+# on a batch system, the start.cmd will replace the next line to set JOBNAME properly
+# since the batch system may make a copy of the job script
+# -----------------------------------------------------------------------------------
+
+JOBNAME="frag.f1"
+export JOBNAME
+
+
+# -------------------------------------------------
+# determine DIRN: full path of the script directory
+# -------------------------------------------------
+
+DN="`dirname "$0"`"
+case "$DN" in
+/*)
+DIRN="$DN"
+;;
+?:*)
+DIRN="$DN"
+;;
+*)
+DIRN="`pwd`/$DN"
+;;
+esac
+
+# --------------------------------------------------------------------------------
+# on a batch system, the start.cmd will replace the next line to set DIRN properly
+# since the batch system may make a copy of the job script
+# --------------------------------------------------------------------------------
+
+# <<FULL PATH OF SCRIPT DIRECTORY DIRN>>
+
+# ------------------------------------------------------------------------------------
+# set SCM_RESULTDIR to DIRN, so results end up in the full path as required by ADFJOBS
+# ------------------------------------------------------------------------------------
+
+SCM_RESULTDIR="$DIRN"
+export SCM_RESULTDIR
+
+#----------------------------
+# for AMS, set AMS_RESULTSDIR
+#----------------------------
+
+AMS_RESULTSDIR="$SCM_RESULTDIR/$JOBNAME.results"
+export AMS_RESULTSDIR
+rm -rf "$AMS_RESULTSDIR"
+mkdir -p "$AMS_RESULTSDIR"
+unset AMS_SWITCH_LOGFILE_AND_STDOUT
+
+# ----------------------------------
+# pass the location of the info file
+# ----------------------------------
+
+SCM_INFOFILE="$SCM_RESULTDIR/$JOBNAME.info"
+export SCM_INFOFILE
+
+# ---------------------------------
+# update the status in the pid file
+# ---------------------------------
+
+echo "# pid: $$" >> "$SCM_RESULTDIR/$JOBNAME.pid"
+echo "# status: running" >> "$SCM_RESULTDIR/$JOBNAME.pid"
+
+
+# ---------------
+# prepare logfile
+# ---------------
+
+if test -s "$SCM_RESULTDIR/$JOBNAME.logfile"
+then
+    cp "$SCM_RESULTDIR/$JOBNAME.logfile" "$SCM_RESULTDIR/$JOBNAME.logfile~"
+fi
+cat /dev/null > "$SCM_RESULTDIR/$JOBNAME.logfile"
+
+SCM_LOGFILE="$SCM_RESULTDIR/$JOBNAME.logfile"
+export SCM_LOGFILE
+
+
+
+
+
+# ------------------------------------------------------------------
+# within SCM_RESULTDIR, make a new empty directory just for this job
+# ------------------------------------------------------------------
+
+XX=0
+SCM_JOBDIR="$SCM_RESULTDIR/tmp.$USER.$$.$XX.noindex"
+while test -d "$SCM_JOBDIR" 
+do
+   XX=`expr $XX + 1`
+   SCM_JOBDIR="$SCM_RESULTDIR/tmp.$USER.$$.$XX.noindex"
+done
+export SCM_JOBDIR
+mkdir "$SCM_JOBDIR"
+echo "# jobdir: localhost:$SCM_JOBDIR" >> "$SCM_INFOFILE"
+
+if test ! -d "$SCM_JOBDIR"
+then
+    echo "Could not create temporary directory $SCM_JOBDIR" >> "$SCM_RESULTDIR/$JOBNAME.logfile"
+    echo "# status: killed" >> "$SCM_RESULTDIR/$JOBNAME.pid"
+    exit
+fi
+
+# -----------------------------------------------------
+# nodeinfo may be needed, and keep backup of old output
+# -----------------------------------------------------
+
+if test -f nodeinfo 
+then
+    cp nodeinfo "$SCM_JOBDIR/nodeinfo"
+fi
+cd "$SCM_JOBDIR"
+
+if test -s "$SCM_RESULTDIR/$JOBNAME.out"
+then
+    mv "$SCM_RESULTDIR/$JOBNAME.out" "$SCM_RESULTDIR/$JOBNAME.out~"
+fi
+
+
+
+# -------------------------------------------------------
+# on normal or abnormal exits, clean up and update status
+# -------------------------------------------------------
+
+trap "ready \"abnormal exit (signal 1)\"; exit"  1 
+trap "ready \"abnormal exit (signal 2)\"; exit"  2 
+trap "ready \"abnormal exit (signal 3)\"; exit"  3
+trap "ready \"abnormal exit (signal 15)\"; exit" 15
+
+# -------------------------------------
+# define easy vars for output and error
+# -------------------------------------
+
+SCM_OUT="$SCM_RESULTDIR/$JOBNAME.out"
+export SCM_OUT
+SCM_ERR="$SCM_RESULTDIR/$JOBNAME.err"
+export SCM_ERR
+
+
+# ----------------------
+# execute the run script
+# ----------------------
+
+cat << \EORTHEJOB > job
+#!/bin/sh
+
+"$AMSBIN/ams" << eor
+
+Task SinglePoint
+System
+    Atoms
+        H -0.7402235634820663 1.025488270723212 0.2859175253172902 region=f1
+        H -0.3138180990057604 0.1985437949578362 -1.242338323818714 region=f1
+        C -1.026590979842762 0.2269889622583761 -0.4092582222668527 region=f1
+        Cl -2.618694112609753 0.6043288994328224 -1.057657934209044 region=f1
+    End
+    Symmetrize Yes
+    BondOrders
+         3 1 0.9498414397239685
+         3 2 0.9498414397239685
+         3 4 0.9337189793586731
+    End
+End
+Symmetry
+    SymmetrizeTolerance 1.0e-7
+End
+
+Engine ADF
+    Basis
+        Type TZ2P
+        Core None
+    End
+    SpinPolarization 1
+    XC
+        GGA OLYP
+    End
+    Title f1 fragment
+    Symmetry NOSYM
+    Unrestricted Yes
+    NumericalQuality VeryGood
+EndEngine
+eor
+
+
+
+EORTHEJOB
+
+chmod u+x job
+./job >>"$SCM_RESULTDIR/$JOBNAME.out" 2>> "$SCM_RESULTDIR/$JOBNAME.err"
+rm job
+
+# <<EPILOG>>
+
+ready
+

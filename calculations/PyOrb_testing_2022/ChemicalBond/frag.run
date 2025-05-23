@@ -1,0 +1,49 @@
+#!/bin/sh
+
+"$AMSBIN/ams" << eor
+
+Task SinglePoint
+System
+    Atoms
+        O -1.960309893426391 -1.823188078677619 0.4395785297988936 region=f2 adf.f=f2
+        C -1.019471106878567 -1.102214163932769 0.311964690595074 region=f2 adf.f=f2
+        C -1.026590979842762 0.2269889622583761 -0.4092582222668527 region=f1 adf.f=f1
+        Cl -2.618694112609753 0.6043288994328224 -1.057657934209044 region=f1 adf.f=f1
+        H -0.01269800109378443 -1.34044404650563 0.7217759401344434 region=f2 adf.f=f2
+        H -0.3138180990057604 0.1985437949578362 -1.242338323818714 region=f1 adf.f=f1
+        H -0.7402235634820663 1.025488270723212 0.2859175253172902 region=f1 adf.f=f1
+    End
+    BondOrders
+         1 2 1.890755414962769
+         2 3 0.9849361777305603
+         2 5 0.9355065822601318
+         3 4 0.9337189793586731
+         3 6 0.9498414397239685
+         3 7 0.9498414397239685
+    End
+End
+
+Engine ADF
+    Basis
+        Type TZ2P
+        Core None
+    End
+    SpinPolarization 0
+    Fragments
+        f2 ${SCM_ROOT}/Users/yumanhordijk/PhD/Programs/TheoCheM/PyFMO/calculations/PyOrb_testing_2022/ChemicalBond/frag.f2.results/adf.rkf
+        f1 ${SCM_ROOT}/Users/yumanhordijk/PhD/Programs/TheoCheM/PyFMO/calculations/PyOrb_testing_2022/ChemicalBond/frag.f1.results/adf.rkf
+    End
+    
+    Print SFOSITEENERGIES
+    XC
+        GGA OLYP
+    End
+    Symmetry NOSYM
+    Unrestricted Yes
+    NumericalQuality VeryGood
+    UnrestrictedFragments Yes
+EndEngine
+eor
+
+# dependency: /Users/yumanhordijk/PhD/Programs/TheoCheM/PyFMO/calculations/PyOrb_testing_2022/ChemicalBond/frag.f1 -
+# dependency: /Users/yumanhordijk/PhD/Programs/TheoCheM/PyFMO/calculations/PyOrb_testing_2022/ChemicalBond/frag.f2 -

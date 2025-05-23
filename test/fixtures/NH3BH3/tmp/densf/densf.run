@@ -1,0 +1,5 @@
+#!/bin/sh
+
+
+
+sh /Users/yumanhordijk/PhD/TheoCheM_stack/PyFMO/test/fixtures/NH3BH3/tmp/densf/densf.in

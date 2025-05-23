@@ -1,0 +1,45 @@
+#!/bin/sh
+
+# dependency: /Users/yumanhordijk/PhD/TheoCheM_stack/PyFMO/test/fixtures/NH3BH3_symm/NH3BH3_symm.Donor NH3BH3_symm.Donor.results/adf.rkf Donor.rkf
+# dependency: /Users/yumanhordijk/PhD/TheoCheM_stack/PyFMO/test/fixtures/NH3BH3_symm/NH3BH3_symm.Acceptor NH3BH3_symm.Acceptor.results/adf.rkf Acceptor.rkf
+
+"$AMSBIN/ams" << eor
+
+Task SinglePoint
+System
+    Atoms
+        N -0.0 0.0 -0.814917 region=Donor adf.f=Donor
+        B -0.0 0.0 0.83670033 region=Acceptor adf.f=Acceptor
+        H 0.47606708 -0.8245723700000001 -1.14409375 region=Donor adf.f=Donor
+        H 0.47606708 0.8245723700000001 -1.14409375 region=Donor adf.f=Donor
+        H -0.58141449 -1.00703944 1.13683264 region=Acceptor adf.f=Acceptor
+        H -0.58141449 1.00703944 1.13683264 region=Acceptor adf.f=Acceptor
+        H 1.16282899 0.0 1.13683264 region=Acceptor adf.f=Acceptor
+        H -0.95213416 0.0 -1.14409375 region=Donor adf.f=Donor
+    End
+    BondOrders
+         1 3 1.0
+         1 4 1.0
+         1 8 1.0
+         2 5 1.0
+         2 6 1.0
+         2 7 1.0
+    End
+End
+
+Engine ADF
+    Basis
+        Type TZ2P
+        Core None
+    End
+    Fragments
+        Donor Donor.rkf 
+        Acceptor Acceptor.rkf 
+    End
+    
+    XC
+        GGA BLYP
+    End
+EndEngine
+eor
+

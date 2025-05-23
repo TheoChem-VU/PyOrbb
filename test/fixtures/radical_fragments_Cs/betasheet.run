@@ -1,0 +1,65 @@
+#!/bin/sh
+
+# dependency: /Users/yumanhordijk/PhD/TheoCheM_stack/PyFMO/test/fixtures/radical_fragments_Cs/betasheet.left betasheet.left.results/adf.rkf left.rkf
+# dependency: /Users/yumanhordijk/PhD/TheoCheM_stack/PyFMO/test/fixtures/radical_fragments_Cs/betasheet.right betasheet.right.results/adf.rkf right.rkf
+
+"$AMSBIN/ams" << eor
+
+Task SinglePoint
+System
+    Atoms
+        C -3.22658264 0.24137624 0.0 region=right adf.f=right
+        N -1.96959927 -0.27632622 0.0 region=right adf.f=right
+        C -0.78241091 0.55676974 0.0 region=right adf.f=right
+        H -0.76766007 1.21337503 -0.88202722 region=right adf.f=right
+        H -4.00646241 -0.54932662 0.0 region=right adf.f=right
+        O -3.48876914 1.44239715 0.0 region=right adf.f=right
+        H -0.76766007 1.21337503 0.88202722 region=right adf.f=right
+        H -1.80012415 -1.28093884 0.0 region=right adf.f=right
+        C 0.45591372 -0.35534185 0.0 region=left adf.f=left
+        N 1.64972303 0.2982665 0.0 region=left adf.f=left
+        C 2.92542527 -0.42065198 0.0 region=left adf.f=left
+        O 0.36526417 -1.58613512 0.0 region=left adf.f=left
+        H 3.00940445 -1.05845681 -0.88711101 region=left adf.f=left
+        H 3.00940445 -1.05845681 0.88711101 region=left adf.f=left
+        H 1.65543907 1.31098166 0.0 region=left adf.f=left
+        H 3.73869444 0.30909289 0.0 region=left adf.f=left
+    End
+    BondOrders
+         1 2 1.0
+         1 5 1.0
+         1 6 2.0
+         2 3 1.0
+         2 8 1.0
+         3 4 1.0
+         3 7 1.0
+         3 9 1.0
+         9 10 1.0
+         9 12 2.0
+         10 11 1.0
+         10 15 1.0
+         11 13 1.0
+         11 14 1.0
+         11 16 1.0
+    End
+End
+
+Engine ADF
+    Basis
+        Type TZ2P
+        Core None
+    End
+    SpinPolarization 0.0
+    Fragments
+        left left.rkf 
+        right right.rkf 
+    End
+    
+    XC
+        GGA BLYP
+    End
+    Unrestricted Yes
+    UnrestrictedFragments Yes
+EndEngine
+eor
+

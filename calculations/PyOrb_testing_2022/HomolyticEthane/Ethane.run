@@ -1,0 +1,50 @@
+#!/bin/sh
+
+"$AMSBIN/ams" << eor
+
+Task SinglePoint
+System
+    Atoms
+        C 0.0 0.0 0.76576 region=Left adf.f=Left
+        C 0.0 0.0 -0.76576 region=Right adf.f=Right
+        H -0.51193035 0.88668938 1.16677 region=Left adf.f=Left
+        H 1.02386071 0.0 1.16677 region=Left adf.f=Left
+        H -0.51193035 -0.88668938 1.16677 region=Left adf.f=Left
+        H 0.51193035 0.88668938 -1.16677 region=Right adf.f=Right
+        H -1.02386071 0.0 -1.16677 region=Right adf.f=Right
+        H 0.51193035 -0.88668938 -1.16677 region=Right adf.f=Right
+    End
+    BondOrders
+         1 2 1.0
+         1 3 1.0
+         1 4 1.0
+         1 5 1.0
+         2 6 1.0
+         2 7 1.0
+         2 8 1.0
+    End
+End
+
+Engine ADF
+    Basis
+        Type TZ2P
+        Core None
+    End
+    SpinPolarization 0.0
+    Fragments
+        Left ${SCM_ROOT}/Users/yumanhordijk/PhD/Programs/TheoCheM/PyFMO/calculations/PyOrb_testing_2022/HomolyticEthane/Ethane.Left.results/adf.rkf
+        Right ${SCM_ROOT}/Users/yumanhordijk/PhD/Programs/TheoCheM/PyFMO/calculations/PyOrb_testing_2022/HomolyticEthane/Ethane.Right.results/adf.rkf
+    End
+    Print SFOSITEENERGIES
+    XC
+        GGA OLYP
+    End
+    Symmetry C(3V)
+    Unrestricted Yes
+    NumericalQuality Good
+    UnrestrictedFragments Yes
+EndEngine
+eor
+
+# dependency: /Users/yumanhordijk/PhD/Programs/TheoCheM/PyFMO/calculations/PyOrb_testing_2022/HomolyticEthane/Ethane.Left -
+# dependency: /Users/yumanhordijk/PhD/Programs/TheoCheM/PyFMO/calculations/PyOrb_testing_2022/HomolyticEthane/Ethane.Right -

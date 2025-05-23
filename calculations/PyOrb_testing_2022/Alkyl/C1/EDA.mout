@@ -1,0 +1,440 @@
+Job /Users/yumanhordijk/PhD/Programs/TheoCheM/PyFMO/calculations/PyOrb_testing_2022/Alkyl/C1/EDA.Me is still running, waiting ...
+Job /Users/yumanhordijk/PhD/Programs/TheoCheM/PyFMO/calculations/PyOrb_testing_2022/Alkyl/C1/EDA.Alkyl is still running, waiting ...
+Job /Users/yumanhordijk/PhD/Programs/TheoCheM/PyFMO/calculations/PyOrb_testing_2022/Alkyl/C1/EDA.Alkyl is still running, waiting ...
+
+ *******************************************************************************
+ *                                                                             *
+ *  --------------------------------                                           *
+ *   Amsterdam Modeling Suite (AMS)              2023.104                      *
+ *  --------------------------------                                           *
+ *                                               r115785 2023-10-06            *
+ *                                                                             *
+ *                                                                             *
+ *                              =================                              *
+ *                              |               |                              *
+ *                              |     A M S     |                              *
+ *                              |               |                              *
+ *                              =================                              *
+ *                                                                             *
+ *                                                                             *
+ *   Online information and documentation:  https://www.scm.com/support/       *
+ *   E-mail:  support@scm.com   info@scm.com                                   *
+ *                                                                             *
+ *   Scientific publications using AMS results must be properly referenced     *
+ *   See the User Manuals (or the web site) for recommended citations          *
+ *   The terms and conditions of the End User License Agreement apply to       *
+ *   the use of AMS, https://www.scm.com/license-terms/                        *
+ *                                                                             *
+ ************************  arm64_darwin_gnu / openmpi  *************************
+ 
+ Licensed to: Prof Visscher, Prof Bickelhaupt, Prof Fonseca Guerra / Vrije Universiteit, Theoretische Chemie / Amsterdam / NETHERLANDS 2024-02-02 11:14:22
+ SCM User ID: u21794
+  
+ AMS 2023.104  RunTime: Jul12-2024 19:27:18  ShM Nodes: 1  Procs: 1
+
+ AMS jobname: ams
+ AMS jobid  : 1117718659
+
+ Start   directory: /private/var/folders/ty/k5wgg0gj1qg6jt8ywh9fq5mw0000gn/T/yumanhordijk/
+ Results directory: /private/var/folders/ty/k5wgg0gj1qg6jt8ywh9fq5mw0000gn/T/yumanhordijk/ams.results/
+ Scratch directory: /tmp/amstmp_ams_kid0.1117718659/
+
+ RNG seed: 1557317422 -1581973942 -311319052 261774656 1959720178 -1107286113 -1740899085 -1524747398
+
+       ***************************
+       *  GEOMETRY OPTIMIZATION  *
+       ***************************
+
+Optimization Method                    Quasi Newton
+Optimization Coordinates               Delocalized Coordinates
+Optimize lattice                       F
+
+ ------------------------------------------------------
+ Convergence criteria (Hartree,Angstrom)
+ ------------------------------------------------------
+ Maximum gradient               0.001000000000
+ Maximum rms gradient           0.000666666667
+ Maximum step allowed           0.010000000000
+ Maximum rms step allowed       0.006666666667
+ Maximum energy change allowe   0.000110000000
+ Maximum stress energy allowe   0.000500000000
+
+Initial model Hessian                  Automatic Hessian
+
+------------------------------------
+Quasi-Newton Optimizer Parameters
+------------------------------------
+Hessian Update Method                  BFGS
+Maximum number of steps                  250
+First GDIIS cycle                          0
+Maximum GDIIS vectors                      0
+Trust radius (bohr)                        0.200000
+Trust radius varies                        T
+Constraints converged at all steps         T
+Use projector                              T
+
+ Rigid motions settings for: old optimizer
+ Atomic rotations (x,y,z):     T T T
+ Atomic translations (x,y,z):  T T T
+ Tolerance:                    9.9999999999999995E-007
+
+--------
+Geometry
+--------
+Formula: C3H8
+Atoms
+  Index Symbol   x (angstrom)   y (angstrom)   z (angstrom)
+      1      C    -6.07351288    -0.94554434    -0.00000000       region=Me
+      2      C    -4.56843013    -0.69603730     0.00000001       region=Alkyl
+      3      H    -6.59355823    -0.13387461     0.51141216       region=Me
+      4      H    -6.30382584    -1.88160570     0.51141217       region=Me
+      5      H    -6.44869203    -1.00774016    -1.02282433       region=Me
+      6      C    -4.24340258     0.62497272    -0.72172683       region=Alkyl
+      7      H    -4.04838477    -1.50770702    -0.51141217       region=Alkyl
+      8      H    -4.19325097    -0.63384148     1.02282433       region=Alkyl
+      9      H    -3.30546979     1.01455148    -0.35442522
+     10      H    -5.02937444     1.34120537    -0.53289084
+     11      H    -4.16742212     0.44558394    -1.78401052
+
+Total System Charge             0.00000
+Bonding info available!
+
+
+-------------------------
+DFTB Engine configuration
+-------------------------
+DFTB Resources dir                     /Applications/AMS2023.104.app/Contents/Resources/amshome/atomicdata/DFTB/GFN1-xTB
+
+SCC convergence enabled.
+Maximum SCC cycles                       500
+SCC charge convergence                   0.000000010000
+SCC Multi Stepper from                 DFTB/default2023.inc
+Spin polarization                      F
+Orbital-dependent SCC                  T
+Orbital fill strategy                  Fermi
+Fermi temperature (kelvin)                     300.0000
+  ... kT (Hartree)                               0.0010
+Use of symmetry                        T
+Radial function extrapolation method   Auto
+
+ Settings for Grimme D3 dispersion correction
+
+      damping                        BJ
+      s6                          1.000
+      s8                          2.400
+      a1                          0.630
+      a2                          5.000
+
+ Other (technical) parameters
+
+      alpha                      14.000
+      version                         4
+
+
+---------------------
+Periodic DFTB options
+---------------------
+ kpoints config
+ grid method with params
+Assume insulator                       F
+Ewald tolerance                    1.00E-10
+Ewald range factor                  2.00
+
+ BZStruct config
+ ---------------
+ Enabled        T
+ Automatic      T
+ CalcFatBands   T
+ useSymmetry    T
+ deltaK          0.10000000000000001     
+
+ Using automatic Hessian for delocalized coordinates.
+
+----------------------------------------------------------------------
+Geometry Convergence after Step   1       (Hartree/Angstrom,Angstrom)
+----------------------------------------------------------------------
+current energy                              -10.66387745 Hartree
+energy change                     -10.66387745     0.00011000    F
+constrained gradient max            0.02081228     0.00100000    F
+constrained gradient rms            0.00659447     0.00066667    F
+gradient max                        0.02081228
+gradient rms                        0.00659447
+cart. step max                      0.04468730     0.01000000    F
+cart. step rms                      0.01942317     0.00666667    F
+
+
+--------
+Geometry
+--------
+Formula: C3H8
+Atoms
+  Index Symbol   x (angstrom)   y (angstrom)   z (angstrom)
+      1      C    -6.07874105    -0.95935194    -0.00183428       region=Me
+      2      C    -4.57728102    -0.68298703     0.00359182       region=Alkyl
+      3      H    -6.61569352    -0.15686361     0.50594314       region=Me
+      4      H    -6.29495554    -1.89812749     0.51043792       region=Me
+      5      H    -6.44884019    -1.03077770    -1.02575482       region=Me
+      6      C    -4.23432297     0.63139640    -0.72317697       region=Alkyl
+      7      H    -4.05528488    -1.50759362    -0.48893820       region=Alkyl
+      8      H    -4.21932965    -0.62686291     1.03521081       region=Alkyl
+      9      H    -3.26776330     0.99872339    -0.38901530
+     10      H    -4.98760597     1.38589267    -0.51132014
+     11      H    -4.19550569     0.46651473    -1.79678523
+
+Total System Charge             0.00000
+Bonding info available!
+
+
+ dE(predicted):    -0.52041E-03, dE(actual):    -0.72539E-03, Trust radius:    0.400000, all in a.u.
+
+----------------------------------------------------------------------
+Geometry Convergence after Step   2       (Hartree/Angstrom,Angstrom)
+----------------------------------------------------------------------
+current energy                              -10.66460284 Hartree
+energy change                      -0.00072539     0.00011000    F
+constrained gradient max            0.01276891     0.00100000    F
+constrained gradient rms            0.00346610     0.00066667    F
+gradient max                        0.01276891
+gradient rms                        0.00346610
+cart. step max                      0.07587238     0.01000000    F
+cart. step rms                      0.02851013     0.00666667    F
+
+
+--------
+Geometry
+--------
+Formula: C3H8
+Atoms
+  Index Symbol   x (angstrom)   y (angstrom)   z (angstrom)
+      1      C    -6.07863256    -0.96804330    -0.01378377       region=Me
+      2      C    -4.58027881    -0.67104596     0.01466543       region=Alkyl
+      3      H    -6.63748050    -0.17209310     0.48054942       region=Me
+      4      H    -6.28433487    -1.90660409     0.50177390       region=Me
+      5      H    -6.43312818    -1.05305474    -1.04226037       region=Me
+      6      C    -4.23359366     0.63073623    -0.71939564       region=Alkyl
+      7      H    -4.04564061    -1.50629244    -0.45152521       region=Alkyl
+      8      H    -4.24768810    -0.60824267     1.05701958       region=Alkyl
+      9      H    -3.22710484     0.96106073    -0.45088224
+     10      H    -4.93606357     1.42646513    -0.45517411
+     11      H    -4.27137806     0.48707711    -1.80262824
+
+Total System Charge             0.00000
+Bonding info available!
+
+
+ dE(predicted):    -0.33727E-03, dE(actual):    -0.47544E-03, Trust radius:    0.400000, all in a.u.
+
+----------------------------------------------------------------------
+Geometry Convergence after Step   3       (Hartree/Angstrom,Angstrom)
+----------------------------------------------------------------------
+current energy                              -10.66507828 Hartree
+energy change                      -0.00047544     0.00011000    F
+constrained gradient max            0.00321119     0.00100000    F
+constrained gradient rms            0.00126116     0.00066667    F
+gradient max                        0.00321119
+gradient rms                        0.00126116
+cart. step max                      0.10264277     0.01000000    F
+cart. step rms                      0.03580884     0.00666667    F
+
+
+--------
+Geometry
+--------
+Formula: C3H8
+Atoms
+  Index Symbol   x (angstrom)   y (angstrom)   z (angstrom)
+      1      C    -6.07637611    -0.97652163    -0.03058952       region=Me
+      2      C    -4.58185609    -0.65893843     0.02939365       region=Alkyl
+      3      H    -6.65806047    -0.18398691     0.44249694       region=Me
+      4      H    -6.27837656    -1.91264639     0.49019394       region=Me
+      5      H    -6.40687538    -1.07704955    -1.06564786       region=Me
+      6      C    -4.23556738     0.62824026    -0.71287452       region=Alkyl
+      7      H    -4.02581865    -1.49776757    -0.40794233       region=Alkyl
+      8      H    -4.27694138    -0.57761957     1.08027281       region=Alkyl
+      9      H    -3.19162638     0.90768628    -0.53216966
+     10      H    -4.86980454     1.45934904    -0.38089366
+     11      H    -4.37402083     0.50921737    -1.79388103
+
+Total System Charge             0.00000
+Bonding info available!
+
+
+ dE(predicted):    -0.24699E-03, dE(actual):    -0.33038E-03, Trust radius:    0.800000, all in a.u.
+
+----------------------------------------------------------------------
+Geometry Convergence after Step   4       (Hartree/Angstrom,Angstrom)
+----------------------------------------------------------------------
+current energy                              -10.66540866 Hartree
+energy change                      -0.00033038     0.00011000    F
+constrained gradient max            0.00987116     0.00100000    F
+constrained gradient rms            0.00304064     0.00066667    F
+gradient max                        0.00987116
+gradient rms                        0.00304064
+cart. step max                      0.08748834     0.01000000    F
+cart. step rms                      0.02991593     0.00666667    F
+
+
+--------
+Geometry
+--------
+Formula: C3H8
+Atoms
+  Index Symbol   x (angstrom)   y (angstrom)   z (angstrom)
+      1      C    -6.07272135    -0.98255510    -0.04513975       region=Me
+      2      C    -4.58193125    -0.65166161     0.04213371       region=Alkyl
+      3      H    -6.66953254    -0.18887478     0.40677490       region=Me
+      4      H    -6.27875121    -1.91468579     0.48131192       region=Me
+      5      H    -6.38011722    -1.09593080    -1.08591929       region=Me
+      6      C    -4.23875218     0.62713112    -0.70746389       region=Alkyl
+      7      H    -4.00603867    -1.48762875    -0.37397703       region=Alkyl
+      8      H    -4.29823488    -0.54983649     1.09682913       region=Alkyl
+      9      H    -3.17482518     0.86095623    -0.60153921
+     10      H    -4.81291012     1.47572837    -0.31966676
+     11      H    -4.46150917     0.52732051    -1.77498496
+
+Total System Charge             0.00000
+Bonding info available!
+
+
+ dE(predicted):    -0.14376E-03, dE(actual):    -0.18327E-03, Trust radius:    0.800000, all in a.u.
+
+----------------------------------------------------------------------
+Geometry Convergence after Step   5       (Hartree/Angstrom,Angstrom)
+----------------------------------------------------------------------
+current energy                              -10.66559193 Hartree
+energy change                      -0.00018327     0.00011000    F
+constrained gradient max            0.01143525     0.00100000    F
+constrained gradient rms            0.00310383     0.00066667    F
+gradient max                        0.01143525
+gradient rms                        0.00310383
+cart. step max                      0.02735340     0.01000000    F
+cart. step rms                      0.00926344     0.00666667    F
+
+
+--------
+Geometry
+--------
+Formula: C3H8
+Atoms
+  Index Symbol   x (angstrom)   y (angstrom)   z (angstrom)
+      1      C    -6.07071292    -0.98396748    -0.04969924       region=Me
+      2      C    -4.58117180    -0.65186458     0.04610407       region=Alkyl
+      3      H    -6.66960049    -0.18645517     0.39268454       region=Me
+      4      H    -6.28278440    -1.91278082     0.48059620       region=Me
+      5      H    -6.36943138    -1.10297237    -1.09233089       region=Me
+      6      C    -4.24022891     0.62868210    -0.70633707       region=Alkyl
+      7      H    -3.99832588    -1.48349951    -0.36600006       region=Alkyl
+      8      H    -4.30259047    -0.54120743     1.10013385       region=Alkyl
+      9      H    -3.17405266     0.84675506    -0.62177488
+     10      H    -4.79756226     1.47552131    -0.29964278
+     11      H    -4.48886257     0.53175180    -1.76537497
+
+Total System Charge             0.00000
+Bonding info available!
+
+
+ dE(predicted):    -0.54615E-04, dE(actual):    -0.70765E-04, Trust radius:    0.800000, all in a.u.
+
+----------------------------------------------------------------------
+Geometry Convergence after Step   6       (Hartree/Angstrom,Angstrom)
+----------------------------------------------------------------------
+current energy                              -10.66566269 Hartree
+energy change                      -0.00007077     0.00011000    T
+constrained gradient max            0.00546414     0.00100000    F
+constrained gradient rms            0.00143192     0.00066667    F
+gradient max                        0.00546414
+gradient rms                        0.00143192
+cart. step max                      0.00367650     0.01000000    T
+cart. step rms                      0.00162091     0.00666667    T
+
+
+--------
+Geometry
+--------
+Formula: C3H8
+Atoms
+  Index Symbol   x (angstrom)   y (angstrom)   z (angstrom)
+      1      C    -6.07024401    -0.98406509    -0.04988557       region=Me
+      2      C    -4.58093920    -0.65348109     0.04608048       region=Alkyl
+      3      H    -6.66806429    -0.18379974     0.38900804       region=Me
+      4      H    -6.28518324    -1.91055826     0.48346916       region=Me
+      5      H    -6.36786971    -1.10641807    -1.09244507       region=Me
+      6      C    -4.24027147     0.63075489    -0.70674981       region=Alkyl
+      7      H    -3.99763660    -1.48292429    -0.36797700       region=Alkyl
+      8      H    -4.30154008    -0.54170502     1.09918505       region=Alkyl
+      9      H    -3.17503917     0.84628812    -0.62135623
+     10      H    -4.79833920     1.47370383    -0.29701975
+     11      H    -4.49019679     0.53216762    -1.76395055
+
+Total System Charge             0.00000
+Bonding info available!
+
+
+ dE(predicted):    -0.12592E-04, dE(actual):    -0.14156E-04, Trust radius:    0.800000, all in a.u.
+
+---------------------------------------------------------
+Geometry Convergence after Step   7       ** CONVERGED **
+---------------------------------------------------------
+current energy                              -10.66567685 Hartree
+energy change                      -0.00001416     0.00011000    T
+constrained gradient max            0.00087243     0.00100000    T
+constrained gradient rms            0.00028786     0.00066667    T
+gradient max                        0.00087243
+gradient rms                        0.00028786
+cart. step max                      0.00273339     0.01000000    T
+cart. step rms                      0.00085133     0.00666667    T
+
+Geometry optimization converged
+
+Optimized geometry:
+
+--------
+Geometry
+--------
+Formula: C3H8
+Atoms
+  Index Symbol   x (angstrom)   y (angstrom)   z (angstrom)
+      1      C    -6.07024401    -0.98406509    -0.04988557       region=Me
+      2      C    -4.58093920    -0.65348109     0.04608048       region=Alkyl
+      3      H    -6.66806429    -0.18379974     0.38900804       region=Me
+      4      H    -6.28518324    -1.91055826     0.48346916       region=Me
+      5      H    -6.36786971    -1.10641807    -1.09244507       region=Me
+      6      C    -4.24027147     0.63075489    -0.70674981       region=Alkyl
+      7      H    -3.99763660    -1.48292429    -0.36797700       region=Alkyl
+      8      H    -4.30154008    -0.54170502     1.09918505       region=Alkyl
+      9      H    -3.17503917     0.84628812    -0.62135623
+     10      H    -4.79833920     1.47370383    -0.29701975
+     11      H    -4.49019679     0.53216762    -1.76395055
+
+Total System Charge             0.00000
+Bonding info available!
+
+Performing a single point calculation on the final geometry ...
+
+Estimated upper bound for memory consumption:    0.071 MiB
+
+Number of basis functions:           28
+cyc=  1 err=1.0E-08 method=1 nvec= 1 mix=0.075 e=    0.0000
+ Evaluation was successful
+  (KFERR) kfOpenFile: Attempt to open nonexistent file /tmp/amstmp_ams_kid0.1117718659/Me.rkf
+ iu:   1   cursec/var:   NONE                             % NONE                             in /private/var/folders/ty/k5wgg0gj1qg6jt8ywh9fq5mw0000gn/T/yumanhordijk/ams.results/ams.rkf
+ iu:   2   cursec/var:   SCCLogger                        % unabortedIterations              in /private/var/folders/ty/k5wgg0gj1qg6jt8ywh9fq5mw0000gn/T/yumanhordijk/ams.results/GO1_GOStep7.rkf
+ iu:   3   cursec/var:   SCCLogger                        % unabortedIterations              in /private/var/folders/ty/k5wgg0gj1qg6jt8ywh9fq5mw0000gn/T/yumanhordijk/ams.results/dftb.rkf
+
+ ============
+ Timer stack:
+ ------------
+  1720805238.84  AMS
+  1720805239.26  DFTBEngine%Solve
+  1720805239.26  GroundState
+  1720805239.28  fragment analysis
+  1720805239.28  kfopflpp Me.rkf
+ ============
+
+kfOpenFile: Attempt to open nonexistent file /tmp/amstmp_ams_kid0.1117718659/Me.rkf
+ WARNING: Nr of shared arrays in use at the end:            2
+ Names of the Shared Arrays that have not been deleted
+ gamma
+ KSpaceIntegratorModule:occupations
+ERROR: kfOpenFile: Attempt to open nonexistent file /tmp/amstmp_ams_kid0.1117718659/Me.rkf
+STOP ERROR DETECTED
