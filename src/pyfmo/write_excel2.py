@@ -16,7 +16,7 @@ def overlap_mat(sfos1, sfos2):
         ret.append([])
         for sfo2 in ensure_list(sfos2):
             ret[-1].append((sfo1 @ sfo2))
-    return np.array(ret).squeeze()
+    return np.atleast_2d(np.array(ret).squeeze())
 
 
 def fock_mat(sfos1, sfos2):
@@ -25,7 +25,7 @@ def fock_mat(sfos1, sfos2):
         ret.append([])
         for sfo2 in ensure_list(sfos2):
             ret[-1].append(sfo1.fock(sfo2))
-    return np.array(ret).squeeze()
+    return np.atleast_2d(np.array(ret).squeeze())
 
 
 def energy_gap_mat(sfos1, sfos2):
@@ -34,7 +34,7 @@ def energy_gap_mat(sfos1, sfos2):
         ret.append([])
         for sfo2 in ensure_list(sfos2):
             ret[-1].append(abs(sfo1.energy - sfo2.energy))
-    return np.array(ret).squeeze()
+    return np.atleast_2d(np.array(ret).squeeze())
 
 
 def orbint_mat(sfos1, sfos2):
@@ -46,7 +46,7 @@ def orbint_mat(sfos1, sfos2):
                 ret[-1].append(np.NaN)
             else:
                 ret[-1].append((sfo1 @ sfo2)**2/abs(sfo1.energy - sfo2.energy))
-    return np.array(ret).squeeze()
+    return np.atleast_2d(np.array(ret).squeeze())
 
 
 def contribution_mat(orbs, sfos, mos):
