@@ -1,5 +1,8 @@
 __pycache__
 .DS_Store
 *.egg-info
-/dist
+dist
 .idea
+docs/_build
+docs/api
+calculations/
