@@ -16,11 +16,6 @@ class Mixer:
 
     def _prepare(self):
         C = self.orbs.data.matrices.mulliken_contribution.total
-        # C = C[C>0.2]
-        # C = C[C<0.8]
-        # C = C.flatten()
-        # plt.hist(C, bins='sqrt')
-        # plt.show()
         self.sfos = {}
         self.sfos_occ = {}
         self.sfos_vir = {}
@@ -37,7 +32,6 @@ class Mixer:
             self.sfos_energy[frag] = np.array([getattr(sfo, self.energy_type) for sfo in self.sfos[frag]]).reshape(-1, 1)
 
         self.mos = list(self.orbs.mos)
-        # self.mos = list(sorted(self.mos, key=lambda mo: mo.energy))
         self.mo_occ = np.array([mo.occupied for mo in self.mos])
 
         self.S_oi = {}
@@ -401,8 +395,56 @@ class Mixing:
                 ret.append([*two_mixing.sfos, *two_mixing.mos])
         return ret
 
-    def _add_extra_virtual_mo(self):
-        max_contr = 0
+    def _add_extra_orbital(self, orbitals, occupied, nelec=2, add_MO=True):
+        max_contr = -1
+        max_contr_orb = None
+        max_contr_orb1 = None
+        max_contr_orb2 = None
+
+        for orbital in orbitals:
+            if orbital.occupied != occupied:
+                continue
+            if orbital in self.mos or orbital in self.sfos:
+                continue
+            if orbital.occupation > nelec:
+                continue
+
+            if add_MO:
+                contr = np.array([sfo.mulliken_contribution(orbital) for sfo in self.sfos])
+                orb1 = self.sfos[argNmax(contr, 0)]
+                orb2 = self.sfos[argNmax(contr, 1)]
+                c1, c2 = contr[argNmax(contr, 0)], contr[argNmax(contr, 1)]
+            else:
+                contr = np.array([orbital.mulliken_contribution(mo) for mo in self.mos])
+                orb1 = self.mos[argNmax(contr, 0)]
+                orb2 = self.mos[argNmax(contr, 1)]
+                c1, c2 = contr[argNmax(contr, 0)], contr[argNmax(contr, 1)]
+
+            contr1 = np.clip(c1, 0, 1)
+            contr2 = np.clip(c2, 0, 1)
+
+            if contr1 * contr2 > max_contr:
+                max_contr = contr1 * contr2
+                max_contr_orb = orbital
+                max_contr_orb1 = orb1
+                max_contr_orb2 = orb2
+
+        if add_MO:
+            self.mos.append(max_contr_orb)
+            self.connections.append([max_contr_orb1, max_contr_orb])
+            self.connections.append([max_contr_orb2, max_contr_orb])
+            self.connection_colors[max_contr_orb1, max_contr_orb] = 'purple'
+            self.connection_colors[max_contr_orb2, max_contr_orb] = 'purple'
+        else:
+            self.sfos.append(max_contr_orb)
+            self.connections.append([max_contr_orb, max_contr_orb1])
+            self.connections.append([max_contr_orb, max_contr_orb2])
+            self.connection_colors[max_contr_orb, max_contr_orb1] = 'purple'
+            self.connection_colors[max_contr_orb, max_contr_orb2] = 'purple'
+
+
+    def _add_extra_virtual_mo(self, nelec=2):
+        max_contr = -1
         max_contr_mo = None
         max_contr_sfo1 = None
         max_contr_sfo2 = None
@@ -411,6 +453,9 @@ class Mixing:
                 continue
             if mo in self.mos:
                 continue
+            if mo.occupation > nelec:
+                continue
+
             contr = np.array([sfo.mulliken_contribution(mo) for sfo in self.sfos])
             sfo1 = self.sfos[argNmax(contr, 0)]
             sfo2 = self.sfos[argNmax(contr, 1)]
@@ -429,9 +474,42 @@ class Mixing:
         self.connection_colors[max_contr_sfo1, max_contr_mo] = 'purple'
         self.connection_colors[max_contr_sfo2, max_contr_mo] = 'purple'
 
+    def _add_extra_occupied_mo(self, nelec=2):
+        max_contr = -1
+        max_contr_mo = None
+        max_contr_sfo1 = None
+        max_contr_sfo2 = None
+        for mo in self.orbs.mos:
+            if not mo.occupied:
+                continue
+            if mo in self.mos:
+                continue
 
-    def _add_extra_virtual_sfo(self):
-        max_contr = 0
+            print(mo, mo.occupation, nelec, mo.occupation > nelec)
+            if mo.occupation > nelec:
+                continue
+            print('hello')
+
+            contr = np.array([sfo.mulliken_contribution(mo) for sfo in self.sfos])
+            sfo1 = self.sfos[argNmax(contr, 0)]
+            sfo2 = self.sfos[argNmax(contr, 1)]
+            contr1 = np.clip(sfo1.mulliken_contribution(mo), 0, 1)
+            contr2 = np.clip(sfo2.mulliken_contribution(mo), 0, 1)
+            # print(mo, contr1 * contr2, max_contr, contr1 * contr2 > max_contr)
+            if contr1 * contr2 > max_contr:
+                max_contr = contr1 * contr2
+                max_contr_mo = mo
+                max_contr_sfo1 = sfo1
+                max_contr_sfo2 = sfo2
+        # print(max_contr_mo)
+        self.mos.append(max_contr_mo)
+        self.connections.append([max_contr_sfo1, max_contr_mo])
+        self.connections.append([max_contr_sfo2, max_contr_mo])
+        self.connection_colors[max_contr_sfo1, max_contr_mo] = 'purple'
+        self.connection_colors[max_contr_sfo2, max_contr_mo] = 'purple'
+
+    def _add_extra_virtual_sfo(self, nelec=2):
+        max_contr = -1
         max_contr_sfo = None
         max_contr_mo1 = None
         max_contr_mo2 = None
@@ -440,6 +518,8 @@ class Mixing:
             if sfo.occupied:
                 continue
             if sfo in self.sfos:
+                continue
+            if sfo.occupation > nelec:
                 continue
 
             contr = np.array([sfo.mulliken_contribution(mo) for mo in virt_mos])
@@ -460,8 +540,8 @@ class Mixing:
         self.connection_colors[max_contr_sfo, max_contr_mo1] = 'purple'
         self.connection_colors[max_contr_sfo, max_contr_mo2] = 'purple'
 
-    def _add_extra_occupied_sfo(self):
-        max_contr = 0
+    def _add_extra_occupied_sfo(self, nelec=2):
+        max_contr = -1
         max_contr_sfo = None
         max_contr_mo1 = None
         max_contr_mo2 = None
@@ -470,6 +550,8 @@ class Mixing:
             if not sfo.occupied:
                 continue
             if sfo in self.sfos:
+                continue
+            if sfo.occupation > nelec:
                 continue
 
             contr = np.array([sfo.mulliken_contribution(mo) for mo in occ_mos])
@@ -492,33 +574,63 @@ class Mixing:
 
 
     def sanitize(self):
+        def excess_elec():
+            nsfos_elec = sum([sfo.occupation for sfo in mix.sfos])
+            nmos_elec = sum([mo.occupation for mo in mix.mos])
+            return int(nsfos_elec - nmos_elec)
+
+        def excess_virt():
+            nsfos_virt = len([sfo for sfo in mix.sfos if sfo.occupation == 0])
+            nmos_virt = len([mo for mo in mix.mos if mo.occupation == 0])
+            return nsfos_virt - nmos_virt
+
+        def excess_half():
+            nsfos_half = len([sfo for sfo in mix.sfos if sfo.occupation == 1])
+            nmos_half = len([mo for mo in mix.mos if mo.occupation == 1])
+            return nsfos_half - nmos_half
+
+        def excess_occ():
+            nsfos_occ = len([sfo for sfo in mix.sfos if sfo.occupation == 2])
+            nmos_occ = len([mo for mo in mix.mos if mo.occupation == 2])
+            return nsfos_occ - nmos_occ
+
         sub_mixes = self.split()
         for mix in sub_mixes:
-            nsfos_virt = len([sfo for sfo in mix.sfos if not sfo.occupied])
-            nmos_virt = len([mo for mo in mix.mos if not mo.occupied])
-            excess_virt = nsfos_virt - nmos_virt
-            if excess_virt > 0:
-                for i in range(excess_virt):
+            print('ello')
+            print(excess_elec(), excess_virt(), excess_half(), excess_occ())
+
+            if excess_virt() + excess_half() + excess_occ() == 0:
+                continue
+            
+            # check the number of SFOs and MOs
+            if excess_virt() > 0:
+                for i in range(excess_virt()):
                     try:
-                        self._add_extra_virtual_mo()
+                        self._add_extra_orbital(self.orbs.mos, add_MO=True, occupied=False)
                     except Exception:
                         pass
-            elif excess_virt < 0:
-                for i in range(-excess_virt):
+            elif excess_virt() < 0:
+                for i in range(-excess_virt()):
                     try:
-                        self._add_extra_virtual_sfo()
+                        self._add_extra_orbital(self.orbs.sfos, add_MO=False, occupied=False)
                     except Exception:
                         pass
 
-            nsfos_occ = len([sfo for sfo in mix.sfos if sfo.occupied])
-            nmos_occ = len([mo for mo in mix.mos if mo.occupied])
-            excess_occ = nsfos_occ - nmos_occ
-            if excess_occ < 0:
-                for i in range(-excess_occ):
+            if excess_occ() > 0:
+                for i in range(excess_occ()):
                     try:
-                        self._add_extra_occupied_sfo()
+                        self._add_extra_orbital(self.orbs.mos, add_MO=True, occupied=True)
                     except Exception:
                         pass
+
+            if excess_occ() < 0:
+                for i in range(-excess_occ()):
+                    try:
+                        self._add_extra_orbital(self.orbs.sfos, add_MO=False, occupied=True)
+                    except Exception:
+                        pass
+
+            print(excess_elec(), excess_virt(), excess_half(), excess_occ())
 
 
 def overlap_mat(sfos1, sfos2):
