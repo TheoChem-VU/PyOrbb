@@ -1,9 +1,0 @@
-$AMSBIN/densf << eor
-ADFFile /Users/yumanhordijk/PhD/Programs/TheoCheM/PyFMO/calculations/PyOrb_testing_2022/HeterolyticBond/complex/NaCl.results/adf.rkf
-GRID medium
-END
-Orbitals SFO
-    SIGMA 11
-END
-CUBOUTPUT /Users/yumanhordijk/PhD/Programs/TheoCheM/PyFMO/calculations/PyOrb_testing_2022/HeterolyticBond/complex/NaCl.results/medium
-eor
