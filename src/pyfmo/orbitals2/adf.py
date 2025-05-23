@@ -227,7 +227,6 @@ def _read_data(reader, SCF0_reader=None, output=None):
         ret.SFOs.fragment_types = np.atleast_1d(reader.read('SFOs', 'fragtype').split())
         ret.SFOs.fragment_index = np.atleast_1d(reader.read('SFOs', 'fragment'))
 
-
         ret.SFOs.fragorb = np.atleast_1d(reader.read('SFOs', 'fragorb'))
         ret.SFOs.subspecies = np.atleast_1d(reader.read('SFOs', 'subspecies').split())
         ret.SFOs.subspecies_fixed = []
@@ -273,11 +272,6 @@ def _read_data(reader, SCF0_reader=None, output=None):
         ret.SFOs.energy.total = _compose_vector(ret.SFOs.energy, ret.calc_info.sfo_spins)
         ret.SFOs.occupation.total = _compose_vector(ret.SFOs.occupation, ret.calc_info.sfo_spins)
         ret.SFOs.order.total = np.argsort(ret.SFOs.energy.total)
-
-        ###
-        # for frag_idx, energy in zip(ret.SFOs.fragment_index, ret.SFOs.energy.total):
-        #     print(frag_idx, energy) 
-        ###
 
         for spin in ret.calc_info.sfo_spins:
             if spin == 'AB':
