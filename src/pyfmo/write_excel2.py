@@ -167,14 +167,14 @@ def to_excel(orbs, out_file: str = 'pyfmo.xlsx', sfo_energy_type: str = 'energy'
 
         if orbs.data.calc_info.used_regions:
             if all(isinstance(orbx, pyfmo.orbitals2.objects.SFO) for orbx in orbsx):
-                frag_name = list(set(orbx.fragment for orbx in orbsx))[0]
+                frag_name = list(set(orbx.fragment_unique for orbx in orbsx))[0]
                 labelx = f'{frag_name} ({formula.molecule(mols[frag_name])})'
             else:
                 labelx = 'MO'
             worksheet.merge_range(1, 3, 1, 3 + len(orbsx), labelx, bold_centered_fmt)
 
             if all(isinstance(orby, pyfmo.orbitals2.objects.SFO) for orby in orbsy):
-                frag_name = list(set(orby.fragment for orby in orbsy))[0]
+                frag_name = list(set(orby.fragment_unique for orby in orbsy))[0]
                 labely = f'{frag_name} ({formula.molecule(mols[frag_name])})'
             else:
                 labely = 'MO'
@@ -519,6 +519,8 @@ def to_excel(orbs, out_file: str = 'pyfmo.xlsx', sfo_energy_type: str = 'energy'
         else:
             _sfos1 = [sfo for sfo in sfos1_spin[spin] if sfo.occupation > 0]
             _sfos2 = [sfo for sfo in sfos2_spin[spin] if sfo.occupation > 0]
+            if len(_sfos1) == 0 or len(_sfos2) == 0:
+                continue
             make_matrix_sheet(name, title, _sfos1, _sfos2, overlap_mat(_sfos1, _sfos2)**2, number_format=float_fmt, tab_color='FF6666')
 
     for spin in orbs.sfos.spins:
