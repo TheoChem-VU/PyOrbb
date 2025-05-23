@@ -1,9 +1,17 @@
 import matplotlib.pyplot as plt
-# from matplotlib import animation
 import numpy as np
+import pyfmo
 
 
-def draw_interaction(sfos, mos, connections, title=None, energy_type='energy', connection_colors={}, ax=None, ylim=None):
+def draw_interaction(sfos, mos, connections, 
+        title=None, 
+        energy_type='energy', 
+        connection_colors={}, 
+        ax=None, 
+        ylim=None, 
+        draw_mo_labels=False,
+        draw_sfo_labels=True,
+        alpha_range=(0.1, 1)):
     arrow_length        = .3 / 4.8280888207
     arrow_thickness     = .35
     arrow_width         = .005
@@ -14,7 +22,15 @@ def draw_interaction(sfos, mos, connections, title=None, energy_type='energy', c
 
     level_width = .08
     level_thickness = 3
-    degenerate_threshold = .08
+    if draw_mo_labels:
+        degenerate_mo_threshold = .08
+    else:
+        degenerate_mo_threshold = .008
+
+    if draw_sfo_labels:
+        degenerate_sfo_threshold = .08
+    else:
+        degenerate_sfo_threshold = .008
 
     if ax is None:
         ax = plt.gca()
@@ -62,9 +78,14 @@ def draw_interaction(sfos, mos, connections, title=None, energy_type='energy', c
                 if orb in sfos:
                     E1, E2 = getattr(orb, energy_type), getattr(other_orb, energy_type)
 
-                if abs(E1 - E2) < (degenerate_threshold * energy_span):
-                    degenerates[-1].append(other_orb)
+                if isinstance(orb, pyfmo.orbitals2.objects.MO):
+                    if abs(E1 - E2) < (degenerate_mo_threshold * energy_span):
+                        degenerates[-1].append(other_orb)
+                else:
+                    if abs(E1 - E2) < (degenerate_sfo_threshold * energy_span):
+                        degenerates[-1].append(other_orb)
 
+        degenerates = [list(sorted(deg, key=lambda orb: orb.energy)) for deg in degenerates]
         for orb in sep_orbs_:
             orb_degenerate = [deg for deg in degenerates if orb in deg][0]
             deg_idx = orb_degenerate.index(orb) + 1
@@ -75,7 +96,6 @@ def draw_interaction(sfos, mos, connections, title=None, energy_type='energy', c
     for orb in poss:
         if orb not in sfos:
             continue
-
         if orb.fragment_unique in xtick_label:
             continue
 
@@ -99,17 +119,28 @@ def draw_interaction(sfos, mos, connections, title=None, energy_type='energy', c
             'A': r' $\alpha$',
             'B': r' $\beta$'
         }.get(orb.spin, '')
+
+        if isinstance(orb, pyfmo.orbitals2.objects.MO):
+            orb_name = f'{orb.name}{spin_part}'
+        else:
+            if orb.spin == 'AB':
+                orb_name = orb.name
+            else:
+                orb_name = f'{orb.name[:-2]}{spin_part}'
+
         is_MO = orb in mos
         ax.plot([poss[orb]-level_width/2, poss[orb]+level_width/2], [E, E], c='k', linewidth=level_thickness, gid=f'{"MO" if is_MO else "SFO"}_{orb}')
-        ax.text(poss[orb],
-                 E - arrow_length / 1.8 * energy_span,
-                 # f'({orb.relative_name.replace("OMO", "").replace("UMO", "")})',
-                 f'{orb.name}' + spin_part,
-                 ha='center',
-                 va='top',
-                 size=8,
-                 gid=f'{"TEXTMO" if is_MO else "TEXTSFO"}_{orb}',
-                 fontname='monospace')
+
+        if (is_MO and draw_mo_labels) or (not is_MO and draw_sfo_labels):
+            ax.text(poss[orb],
+                     E - arrow_length / 1.8 * energy_span,
+                     # f'({orb.relative_name.replace("OMO", "").replace("UMO", "")})',
+                     orb_name,
+                     ha='center',
+                     va='top',
+                     size=8,
+                     gid=f'{"TEXTMO" if is_MO else "TEXTSFO"}_{orb}',
+                     fontname='monospace')
 
         if not orb.occupied:
             continue
@@ -159,7 +190,8 @@ def draw_interaction(sfos, mos, connections, title=None, energy_type='energy', c
             pmo  += level_width/2
 
         c = connection_colors.get((sfo, mo), 'k')
-        ax.plot([psfo, pmo], [getattr(sfo, energy_type), mo.energy], c=c, linewidth=1, alpha=np.clip(sfo.mulliken_contribution(mo), 0., 1), gid=f'MIX_{sfo} -> {mo}', zorder=-10)
+        ax.plot([psfo, pmo], [getattr(sfo, energy_type), mo.energy], c=c, linewidth=1, alpha=np.clip(sfo.mulliken_contribution(mo), *alpha_range), gid=f'MIX_{sfo} -> {mo}', zorder=-10)
 
     # ax.fill_betweenx(ax.get_ylim(), 0, 1, alpha=.05, facecolor='k')
           
+
