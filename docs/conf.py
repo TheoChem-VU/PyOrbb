@@ -9,8 +9,8 @@ import git
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
-project = 'PyFMO'
-copyright = '2023, TheoCheM VU Amsterdam'
+project = 'PyOrbb'
+copyright = '2025, TheoCheM VU Amsterdam'
 author = 'TheoCheM VU Amsterdam'
 
 # get release information
@@ -70,6 +70,7 @@ add_module_names = False
 
 # custom variables
 rst_epilog = f"""
+.. |ProjectName| replace:: {project}
 .. |ProjectVersion| replace:: {release}
 .. |cm-1| replace:: :math:`\\text{{cm}}^{-1}`
 .. |kcal/mol| replace:: :math:`\\text{{kcal mol}}^{-1}`
