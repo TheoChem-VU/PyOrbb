@@ -1,134 +1,11 @@
 import pyfmo
 from scm import plams
-from tcutility import timer, cache
+from tcutility import timer, cache, ensure_list
 import os
 import numpy as np
+from collections.abc import Container
+from typing_extensions import deprecated
 
-
-class OrbitalSelector:
-    def __init__(self, orbitals, parent):
-        self.orbitals = orbitals
-        self.parent = parent
-
-    def __getitem__(self, key):
-        if isinstance(key, int):
-            return [orb for orb in self.orbitals if orb.index == key]
-        if isinstance(key, str):
-            return self.get(**self.decode_key(key))
-
-    def decode_key(self, key):
-        '''
-        Keys are given in the following format:
-
-            {fragname}[:{fragment_index}]({orbname}[ {symmetry}])[_{spin}]
-
-        Where [:fragment_index] is optional
-        '''
-        decoded = {
-            'index': None,
-            'fragment': None,
-            'fragment_index': None,
-            'orbname': None,
-            'spin': None,
-            'symmetry': None,
-        }
-
-        if isinstance(key, int):
-            decoded['index'] = key
-            return decoded
-
-        # get spin from the key
-        decoded['orbname'] = key
-        for spin_part in ['_A', '_B', '_AB']:
-            if key.endswith(spin_part):
-                decoded['spin'] = spin_part[1:]
-                decoded['orbname'] = key[:-len(spin_part)]
-
-        # split key into fragment name and orbname 
-        if '(' in decoded['orbname']:
-            decoded['fragment'], decoded['orbname'] = decoded['orbname'].split('(')
-            decoded['orbname'] = decoded['orbname'].strip(')')
-
-        if ' ' in decoded['orbname']:
-            decoded['orbname'], decoded['symmetry'] = decoded['orbname'].split()
-
-        # extract fragment index from fragment name if present
-        if decoded['fragment'] is not None and ':' in decoded['fragment']:
-            decoded['fragment'], decoded['fragment_index'] = decoded['fragment'].split(':')
-            decoded['fragment_index'] = int(decoded['fragment_index'])
-        print(decoded)
-        return decoded
-
-    def get(self, symmetry=None, spin=None, fragment=None, fragment_index=None, orbname=None, **kwargs):
-        orbs = self.orbitals
-        # print([orb.subspecies for orb in orbs])
-        if symmetry:
-            if self.parent.data.calc_info.used_regions:
-                orbs = [orb for orb in orbs if orb.symmetry == symmetry]
-            else:
-                orbs = [orb for orb in orbs if orb.subspecies == symmetry]
-        if spin:
-            orbs = [orb for orb in orbs if orb.spin == spin]
-        if fragment:
-            orbs = [orb for orb in orbs if orb.fragment_unique == fragment or orb.fragment == fragment]
-        if fragment_index:
-            orbs = [orb for orb in orbs if orb.fragment_index == fragment_index]
-        if orbname:
-            orbs = [orb for orb in orbs if orb.name == orbname or orb.relative_name == orbname]
-
-        if len(orbs) == 0:
-            return None
-        if len(orbs) == 1:
-            return orbs[0]
-        return orbs
-
-    def __len__(self):
-        return len(self.orbitals)
-
-    def __iter__(self):
-        # return iter(sorted(self.orbitals, key=lambda orb: orb.energy))
-        return iter(self.orbitals)
-
-    @property
-    def spins(self):
-        return {orb.spin for orb in self.orbitals}
-
-    @property
-    def unrestricted(self):
-        return all(orb.spin in ['A', 'B'] for orb in self.orbitals)
-
-
-class SFOs(OrbitalSelector):
-    @property
-    def fragments(self):
-        frags = []
-        for sfo in self.orbitals:
-            if sfo.fragment_unique not in frags:
-                frags.append(sfo.fragment_unique)
-        return frags
-
-    def get_fragment_sfos(self, fragment):
-        return [sfo for sfo in self.orbitals if sfo.fragment_unique == fragment]
-        # return list(sorted([sfo for sfo in self.orbitals if sfo.fragment_unique == fragment], key=lambda sfo: sfo.energy))
-
-    @property
-    def energy_types(self):
-        ret = []
-        if len(self.orbitals) > 0:
-            orb = self.orbitals[0]
-            if orb.energy is not np.nan:
-                ret.append('energy')
-            if orb.site_energy is not np.nan:
-                ret.append('site_energy')
-            if orb.site_energy_SCF0 is not np.nan:
-                print(orb.site_energy_SCF0)
-                ret.append('site_energy_SCF0')
-
-        return ret
-
-
-class MOs(OrbitalSelector):
-    ...
 
 
 class Orbital:
@@ -238,7 +115,7 @@ class Orbital:
         # we only generate one, so we simply return the first element
         return grid.from_cub_file(job.output_cub_paths[0])
 
-    def draw(self, gridsize: str = 'medium', isovalue: float = 0.03, overwrite: bool = False):
+    def draw(self, gridsize: str = 'medium', isovalue: float = 0.03, overwrite: bool = False, screen=None, transform=None):
         '''
         Generate and draw a cube-file for this SFO object.
 
@@ -254,16 +131,28 @@ class Orbital:
         # generate a cube-file or load an existing one
         cub = self.cube_file(gridsize=gridsize, overwrite=overwrite)
 
-        # and draw it with a specified isovalue
-        with tcviewer.Screen() as scr:
-            with scr.add_molscene() as scene:
-            # scr.draw_cub(cub, isovalue, material=tcviewer.materials.orbital_shiny)            
-                c1, c2 = ([1, 0, 0], [0, 0, 1]) if self.occupied else ([1, .5, 0], [0, 1, 1])
-                scene.draw_molecule(self.molecule)
-                scene.draw_isosurface(cub, -0.03, c1)
-                scene.draw_isosurface(cub,  0.03, c2)
+        if screen is None:
+            scr = tcviewer.Screen()
+            scr.__enter__()
+            scr.window.show()
+        else:
+            scr = screen
 
-            return scr
+        # and draw it with a specified isovalue
+        with scr.add_molscene() as scene:
+            c1, c2 = ([1, 0, 0], [0, 0, 1]) if self.occupied else ([1, .5, 0], [0, 1, 1])
+            if transform is not None:
+                scene.transform = transform.to_vtkTransform()
+
+            scene.draw_molecule(self.molecule)
+            scene.draw_isosurface(cub, -0.03, c1)
+            scene.draw_isosurface(cub,  0.03, c2)
+            # scene.draw_axes()
+
+        if screen is None:
+            scr.exec()
+
+        return scr
 
     @property
     def degeneracy_index(self):
@@ -438,7 +327,6 @@ class Orbitals:
 
                 data = {
                     'index': sfo_idx + 1,
-                    # 'name': f'{self.data.SFOs.ifo[sfo_idx]}{self.data.SFOs.subspecies[sfo_idx]}',
                     'name': self.data.SFOs.adf_names[sfo_spin][sfo_idx],
                     'subspecies': self.data.SFOs.subspecies[sfo_idx],
                     'symmetry': self.data.SFOs.symlabel[sfo_idx],
@@ -534,14 +422,358 @@ class Orbitals:
         return self.sfos.energy_types
 
 
-# if __name__ == '__main__':
-#     orbs = Orbitals('/Users/yumanhordijk/PhD/Programs/TheoCheM/PyFMO/calculations/PyOrb_testing_2022/DonorAcceptor/NH3BH3.results/adf.rkf')
+class OrbitalSelector:
+    '''
+    Class used to select MOs or SFOs. 
+    It is responsible for decoding selection keys and filtering orbitals based on the selection key.
 
-#     for sfo in orbs.sfos:
-#         print(sfo.fragment_unique)
+    Args:
+        orbitals: a list of SFOs or MOs that will be managed by this class.
+        parent: the parent ``Orbitals`` object.
+    '''
+    def __init__(self, orbitals: Container[Orbital], parent: Orbitals):
+        self.orbitals = orbitals
+        self.parent = parent
 
-#     print(orbs.data.mos.kinetic_energy)
+    def __getitem__(self, key: int or str) -> list[Orbital] or Orbital:
+        return self.get(key)
 
-#     for mo in orbs.mos:
-#         print(mo, mo.kinetic_energy)
-#     orbs.write_excel2()
+    def get(self, key: int or str) -> list[Orbital] or Orbital:
+        '''
+        Get ``Orbital`` objects based on the given key.
+
+        Args:
+            key: a string describing the orbital to be selected or the integer index of the orbital.
+
+        Returns:
+            A list of ``Orbital`` objects that match the given key.
+            If there is only one return a single ``Orbital`` object.
+
+        Examples:
+            Select the HOMO of the NH3 fragment.
+
+            .. code-block::
+
+                >>> SFOs.get('NH3(HOMO)')
+                NH3(3A1)
+                >>> SFOs['NH3(HOMO)']
+                NH3(3A1)
+
+
+        .. seealso::
+
+            :func:`~OrbitalSelector.filter` and :func:`~OrbitalSelector.decode_key`.
+
+        .. note::
+
+            The ``__getitem__`` method of this class redirects to this method, 
+            allowing you to use indexing notation to obtain orbitals.
+        '''
+        return self.filter(**self.decode_key(key))
+
+    def decode_key(self, key: str) -> dict:
+        '''
+        Decode a key into the relevant parts.
+        Keys are given in the following format:
+
+            {fragname}[:{fragment_index}]({orbname}[_{spin}][ {symmetry}])
+
+        Where [:fragment_index], [_{spin}], and [ {symmetry}] are optional.
+
+        If an SFO is desired you must begin the key with the fragment name
+        and put the rest of the key within parentheses.
+
+        Returns:
+            A dictionary containing ``index``,  ``fragment``,
+            ``fragment_index``, ``orbname``, ``spin``, ``symmetry``.
+
+        Examples:
+            Decode a key specifying an MO.
+
+            .. code-block::
+
+                >>> MOs.decode_key('4A1')
+                {'orbname': '4A1'}
+            
+            One can also use relative naming. Also specify alpha spin.
+            .. code-block::
+
+                >>> MOs.decode_key('HOMO-2_A')
+                {'orbname': 'HOMO-2', 'spin': 'A'}
+
+            Decode a key for an SFO specifying the fragment, orbname and spin.
+            .. code-block::
+
+                >>> SFOs.decode_key('NH3(1E1:1_B)')
+                {'fragment': 'NH3', 'orbname': '1E1:1_B'}
+    
+            If multiple fragments have the same name (e.g. in a non-fragment analysis with atomic fragments)
+            we can specify the fragment index with the colon.
+            .. code-block::
+
+                >>> SFOs.decode_key('C:4(1P:x)')
+                {'fragment': 'C', 'fragment_index': 4, 'orbname': '1P:x'}
+        '''
+        decoded = {
+            'index': None,
+            'fragment': None,
+            'fragment_index': None,
+            'orbname': None,
+            'spin': None,
+            'symmetry': None,
+        }
+
+        # if a single integer is given return only the index
+        if isinstance(key, int):
+            decoded['index'] = key
+            return decoded
+
+        # get spin from the key
+        decoded['orbname'] = key
+        for spin_part in ['_A', '_B', '_AB']:
+            # extract both spin and orbname here
+            if key.endswith(spin_part):
+                decoded['spin'] = spin_part[1:]
+                decoded['orbname'] = key[:-len(spin_part)]
+
+        # split orbname into fragment name and orbname 
+        if '(' in decoded['orbname']:
+            decoded['fragment'], decoded['orbname'] = decoded['orbname'].split('(')
+            decoded['orbname'] = decoded['orbname'].strip(')')
+
+        # split off the symmetry of the orbital
+        if ' ' in decoded['orbname']:
+            decoded['orbname'], decoded['symmetry'] = decoded['orbname'].split()
+
+        # extract fragment index from fragment name if present
+        if decoded['fragment'] is not None and ':' in decoded['fragment']:
+            decoded['fragment'], decoded['fragment_index'] = decoded['fragment'].split(':')
+            decoded['fragment_index'] = int(decoded['fragment_index'])
+        
+        return {k: v for k, v in decoded.items() if v is not None}
+
+
+    def filter(self, 
+            index: int or Container[int] = None, 
+            symmetry: str or Container[str] = None, 
+            spin: str or Container[str] = None, 
+            fragment: str or Container[str] = None, 
+            fragment_index: int or Container[str]= None, 
+            orbname: str or Container[str]= None) -> Orbital or list[Orbital]:
+        '''
+        filter ``Orbital`` objects that match the given parameters.
+        If any of the arguments is given as a ``Container`` we check for membership.
+
+        Arguments:
+            index: the index of the orbital.
+            symmetry: the symmetry label of the orbital.
+            spin: the spin label of the orbital, should be one of [``A``, ``B``, ``AB``].
+            fragment: the fragment name of the SFO.
+            fragment_index: the index of the fragment of the SFO.
+            orbname: the name of the orbital. Can be either the proper name or a relative name, e.g. ``SOMO`` or ``LUMO+5``.
+        
+        Returns:
+            The ``Orbital`` objects that match the provided arguments.
+            If there is only one ``Orbital`` object selected, return only that one.
+            Otherwise return a ``list`` of ``Orbital`` objects.
+            Returns ``None`` if no matching ``Orbital`` objects were found.
+
+        Examples:
+            Select all SFOs of a given fragment.
+
+            .. code-block::
+
+                >>> SFOs.filter(fragment='NH3')
+                [NH3(1A1), NH3(2A1), NH3(3A1), ...]
+
+            Select all SFOs from the A2 irrep of the BH3 fragment.
+
+            .. code-block::
+
+                >>> SFOs.filter(symmetry='A2', fragment='BH3')
+                [BH3(1A2), BH3(2A2), BH3(3A2), BH3(4A2)]
+
+            Select all MOs that are named '1E1:1' or '1E1:2'.
+
+            .. code-block::
+
+                >>> MOs.filter(orbname=('1E1:1', '1E1:2'))
+                [1E1:1, 1E1:2]
+
+            Select the HOMO of the NH3 fragment.
+
+            .. code-block::
+
+                >>> SFOs.filter(orbname='HOMO', fragment='NH3')
+                NH3(3A1)
+
+            Get 1P orbitals for all carbons
+
+            .. code-block::
+
+                >>> SFOs.filter(orbname=('1P:x', '1P:y', '1P:z'), fragment='C')
+                [C:1(1P:x), C:1(1P:y), C:1(1P:z), C:2(1P:x), C:2(1P:y), C:2(1P:z), C:3(1P:x), C:3(1P:y), C:3(1P:z), C:4(1P:x), C:4(1P:y), C:4(1P:z)]
+        
+            Get 1P orbitals for the second carbon
+
+            .. code-block::
+
+                >>> SFOs.filter(orbname=('1P:x', '1P:y', '1P:z'), fragment='C:2')
+                [C:2(1P:x), C:2(1P:y), C:2(1P:z)]
+                >>> SFOs.filter(orbname=('1P:x', '1P:y', '1P:z'), fragment='C', fragment_index=2)
+                [C:2(1P:x), C:2(1P:y), C:2(1P:z)]
+        '''
+        orbs = self.orbitals
+        # filter down the orbitals in this object
+        if index:
+            orbs = [orb for orb in orbs if orb.index in ensure_list(index)]
+
+        if symmetry:
+            if self.parent.data.calc_info.used_regions:
+                orbs = [orb for orb in orbs if orb.symmetry in ensure_list(symmetry)]
+            else:
+                orbs = [orb for orb in orbs if orb.subspecies in ensure_list(symmetry)]
+
+        if spin:
+            orbs = [orb for orb in orbs if orb.spin in ensure_list(spin)]
+
+        # we match based on either fragment or fragment_unique
+        # this ensures that if we select for instance "C(1P:x)" we match ALL carbons
+        # if we match "C:1(1P:x)" we match only the first carbon
+        if fragment:
+            orbs = [orb for orb in orbs if orb.fragment_unique in ensure_list(fragment) or orb.fragment in ensure_list(fragment)]
+
+        if fragment_index:
+            orbs = [orb for orb in orbs if orb.fragment_index in ensure_list(fragment_index)]
+
+        # orbname can be either the proper name or the relative name
+        if orbname:
+            orbs = [orb for orb in orbs if orb.name in ensure_list(orbname) or orb.relative_name in ensure_list(orbname)]
+
+        # return None if nothing was found
+        if len(orbs) == 0:
+            return None
+
+        # squeeze the list if only one element exists
+        if len(orbs) == 1:
+            return orbs[0]
+
+        return orbs
+
+    def __len__(self):
+        return len(self.orbitals)
+
+    def __iter__(self):
+        return iter(self.orbitals)
+
+    @property
+    def spins(self) -> list[str]:
+        '''
+        The spin species that are present in the given orbitals.
+        '''
+        return list(sorted({orb.spin for orb in self.orbitals}))
+
+    @property
+    def unrestricted(self) -> bool:
+        '''
+        Whether the calculation was performed in an unrestricted manner.
+        '''
+        return all(orb.spin in ['A', 'B'] for orb in self.orbitals)
+
+
+class SFOs(OrbitalSelector):
+    @property
+    def fragments(self) -> list[str]:
+        '''
+        Return a list of fragment names found in the orbitals.
+        '''
+        frags = []
+        for sfo in self.orbitals:
+            if sfo.fragment_unique not in frags:
+                frags.append(sfo.fragment_unique)
+        return frags
+
+    @deprecated('SFOs.get_fragment_sfos is deprecated. Please us the SFOs.filter(fragment=...) method.')
+    def get_fragment_sfos(self, fragment: str)-> list[SFO]:
+        '''
+        Return all SFOs that belong to a given fragment.
+
+        Args:
+            fragment: the fragment or unique fragment name.
+
+        Examples:
+            # return all SFOs that belong to a carbon atom
+            >>> sfos = orbs.sfos.get_fragment_sfos('C') 
+            # return all SFOs that belong to carbon C:1
+            >>> sfos = orbs.sfos.get_fragment_sfos('C:1')
+            # return all SFOs that belong to a named fragment
+            >>> sfos = orbs.sfos.get_fragment_sfos('Donor')
+        '''
+        return [sfo for sfo in self.orbitals if sfo.fragment_unique == fragment or sfo.fragment == fragment]
+
+    @property
+    def energy_types(self):
+        ret = []
+        if len(self.orbitals) > 0:
+            orb = self.orbitals[0]
+            if orb.energy is not np.nan:
+                ret.append('energy')
+            if orb.site_energy is not np.nan:
+                ret.append('site_energy')
+            if orb.site_energy_SCF0 is not np.nan:
+                print(orb.site_energy_SCF0)
+                ret.append('site_energy_SCF0')
+
+        return ret
+
+
+class MOs(OrbitalSelector):
+    ...
+
+
+
+if __name__ == '__main__':
+    orbs = Orbitals('/Users/yumanhordijk/PhD/Programs/TheoCheM/PyFMO/calculations/PyOrb_testing_2022/DonorAcceptor/NH3BH3.results/adf.rkf')
+
+    # for sfo in orbs.sfos:
+    #     print(sfo.fragment_unique)
+
+    # print(orbs.data.mos.kinetic_energy)
+
+    # for mo in orbs.mos:
+    #     print(mo, mo.kinetic_energy)
+    # orbs.write_excel2()
+
+    sfos = orbs.sfos.filter(symmetry='A2', fragment='BH3')
+    print(sfos)
+    sfos = orbs.sfos.filter(fragment='NH3')
+    print(sfos)
+    sfos = orbs.sfos.get_fragment_sfos('NH3')
+    print(sfos)
+    sfos = orbs.mos.filter(orbname=('1E1:1', '1E1:2'))
+    print(sfos)
+    sfos = orbs.sfos.filter(orbname='HOMO', fragment='NH3')
+    print(sfos)
+
+    mo = orbs.sfos.get('NH3(HOMO)')
+    print(mo)
+
+    mo = orbs.sfos['NH3(HOMO)']
+    print(mo)
+
+    mo = orbs.sfos['NH3']
+    print(mo)
+
+    dk = orbs.mos.decode_key('HOMO-2_A')
+    print(dk)
+
+
+    dk = orbs.sfos.decode_key('NH3(1E1:1_B)')
+    print(dk)
+
+
+    dk = orbs.sfos.decode_key('C:4(1P:x)')
+    print(dk)
+
+    orbs = Orbitals('/Users/yumanhordijk/PhD/Programs/TheoCheM/PyFMO/calculations/PyOrb_testing_2022/TransitionState/DielsAlder.Diene.results/adf.rkf')
+    print(orbs.sfos.filter(orbname=('1P:x', '1P:y', '1P:z'), fragment='C', fragment_index=2))
