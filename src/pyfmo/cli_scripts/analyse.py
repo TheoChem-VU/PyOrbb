@@ -9,7 +9,6 @@ from matplotlib.backend_tools import Cursors
 from matplotlib import animation
 import numpy as np
 import os
-import tcviewer
 
 
 font_path = os.path.split(__file__)[0] + '/ibm_plex_mono/IBMPlexMono-Regular.ttf'  # Your font path goes here
@@ -401,6 +400,8 @@ def main(args: argparse.Namespace):
     global screen
     screen = None
     def on_click(event):
+        import tcviewer
+
         global screen
         artists = plt.gca().get_children()
         artists = sorted(artists, key=lambda artist: artist.zorder)
