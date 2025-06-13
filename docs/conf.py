@@ -42,6 +42,7 @@ extensions = [
     # 'sphinx.ext.autosummary',
     "sphinx_autodoc_typehints",
     "sphinx_click",
+    "sphinx_design",
 ]
 
 templates_path = ['_templates']
