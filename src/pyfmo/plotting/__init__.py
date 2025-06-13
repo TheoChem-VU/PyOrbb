@@ -1,1 +1,1 @@
-from . import orbital_diagram  # noqa
+from . import orbital_diagram, simple_orbital_diagram  # noqa
