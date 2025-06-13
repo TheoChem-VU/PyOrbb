@@ -75,9 +75,8 @@ add_module_names = False
 rst_epilog = f"""
 .. |ProjectName| replace:: {project}
 .. |ProjectVersion| replace:: {release}
-.. |cm-1| replace:: :math:`\\text{{cm}}^{-1}`
+.. |eV| replace:: :math:`\\text{{eV}}`
 .. |kcal/mol| replace:: :math:`\\text{{kcal mol}}^{{-1}}`
-.. |km/mol| replace:: :math:`\\text{{km mol}}^{-1}`
 .. |Orbitals| replace:: :class:`~pyfmo.orbitals.objects.Orbitals`
 .. |Orbital| replace:: :class:`~pyfmo.orbitals.objects.Orbital`
 .. |MOs| replace:: :class:`~pyfmo.orbitals.objects.MOs`
