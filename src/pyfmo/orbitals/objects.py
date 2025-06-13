@@ -263,6 +263,26 @@ class MO(Orbital):
             return f'{self.name}'
         return f'{self.name}_{self.spin}'
 
+    def fragment_character(self, fragment: str) -> float:
+        '''
+        Calculate the total contribution of |SFO| objects from a specific fragment to this |MO|.
+        The sum of all fragment characters should be ``1`` for each |MO|.
+
+        Args:
+            fragment: the fragment to calculate the character for.
+
+        Example:
+
+            .. code-block:: python
+
+                >>> MO.fragment_character('NH3')
+                0.469475215528633
+                >>> MO.fragment_character('BH3')
+                0.530524784471364
+        '''
+        sfos = self.parent.parent.sfos.filter(fragment=fragment)
+        return sum(sfo.mulliken_contribution(self) for sfo in sfos)
+
 
 class SFO(Orbital):
     '''
