@@ -57,34 +57,6 @@ def _contribution_mat(orbs, sfos, mos):
     return C
 
 
-def _detect_nan_rects(arr):
-    rects = []
-    arr = np.isnan(arr)
-    for j, row in enumerate(arr):
-        for i, x in enumerate(row):
-            if not x:
-                continue
-
-            for rect in rects:
-                is_below = (rect[0] <= j <= (rect[2] + 1)) and (rect[1] <= i <= rect[3])
-                is_besides = rect[2] == j and (rect[3] + 1) == i
-                if not(is_below or is_besides):
-                    continue
-
-                if is_below:
-                    rect[2] = j
-                    break
-
-                elif is_besides:
-                    rect[3] = i
-                    break
-
-            else:
-                rects.append([j, i, j, i])
-
-    return rects
-
-
 def _get_molecules(reader):
     used_regions = reader.read('Geometry', 'nr of fragments') != reader.read('Geometry', 'nr of atoms')
     fragment_indices = np.atleast_1d(reader.read('Geometry', 'fragment and atomtype index'))
@@ -118,7 +90,6 @@ def _get_molecules(reader):
             ret[name].add_atom(plams.Atom(symbol=atom.symbol, coords=atom.coords))
 
     return ret
-
 
 
 def to_excel(orbs: pyfmo.Orbitals, out_file: str = 'pyfmo.xlsx', sfo_energy_type: str = 'energy'):
@@ -205,6 +176,7 @@ def to_excel(orbs: pyfmo.Orbitals, out_file: str = 'pyfmo.xlsx', sfo_energy_type
         for i, row in enumerate(values.T):
             for j, x in enumerate(row):
                 if np.isnan(x):
+                    worksheet.write(3+i, 3+j, 0)
                     continue
 
                 worksheet.write(3+i, 3+j, x, number_format)
@@ -214,14 +186,7 @@ def to_excel(orbs: pyfmo.Orbitals, out_file: str = 'pyfmo.xlsx', sfo_energy_type
                 elif number_format is pctg_fmt:
                     column_widths[i] = max(column_widths[i], character.text_width(f'{x: .1%}%', font_size=11))
 
-        # now we detect squares of NaN in the values matrix and group them together
-        squares = _detect_nan_rects(values.T)
-        for square in squares:
-            if square[2] == len(orbsx) - 1 and square[3] == len(orbsy) - 1:
-                worksheet.merge_range(square[0] + 3, square[1] + 3, square[2] + 3, square[3] + 3, '', white_bg_top_left_border_fmt)
-            else:
-                worksheet.merge_range(square[0] + 3, square[1] + 3, square[2] + 3, square[3] + 3, '', white_bg_all_border_fmt)
-
+        worksheet.hide_zero()
         # set the color scale so that the matrix is more readable
         if conditional_format is None:
             conditional_format = {
@@ -327,8 +292,10 @@ def to_excel(orbs: pyfmo.Orbitals, out_file: str = 'pyfmo.xlsx', sfo_energy_type
                 column_widths[j] = max(column_widths[j], character.text_width(val))
 
         for i, width in enumerate(column_widths, start=1):
-            sheet.set_column_pixels(i, i, width)
+            sheet.set_column_pixels(i, i, width + 20)
+
         sheet.freeze_panes('A4')
+        sheet.autofilter(2, 1, 1+len(rows), len(header))
 
 
     # we will write some basic info about the calcualtion in the first sheet
@@ -444,6 +411,9 @@ def to_excel(orbs: pyfmo.Orbitals, out_file: str = 'pyfmo.xlsx', sfo_energy_type
             has_kinetic = True
             rows[-1].append(mo.kinetic_energy)
 
+        for fragment in orbs.fragments:
+            rows[-1].append(mo.fragment_character(fragment))
+
     headers = [
         'Index', 
         'Name', 
@@ -456,6 +426,9 @@ def to_excel(orbs: pyfmo.Orbitals, out_file: str = 'pyfmo.xlsx', sfo_energy_type
 
     if has_kinetic:
         headers.append('Kinetic Energy (eV)')
+
+    for fragment in orbs.fragments:
+        headers.append(f'{fragment} Character')
 
     make_table_sheet('MOs', 'Molecular Orbitals', rows, headers, tab_color='D6D1CD')
 
@@ -497,13 +470,25 @@ def to_excel(orbs: pyfmo.Orbitals, out_file: str = 'pyfmo.xlsx', sfo_energy_type
     spin_names = {'A': '𝛼', 'B': '𝛽'}
     # we add a new sheet for each spin species
     for spin in orbs.sfos.spins:
+        cnd_fmt = {
+            'type': '3_color_scale',
+            'min_color': '63be7b',
+            'mid_color': 'white',
+            'max_color': '63be7b',
+            'min_value': -1,
+            'mid_value': 0,
+            'max_value': 1,
+            'min_type': 'num',
+            'mid_type': 'num',
+            'max_type': 'num',
+        }
         # add the data we want
         name = f"S {spin_names[spin]}" if spin != 'AB' else "S"
         title = f"Overlaps (spin {spin_names[spin]})" if spin != 'AB' else "Overlaps"
         if not orbs.data.calc_info.used_regions:
-            make_matrix_sheet(name, title, sfos_spin[spin], sfos_spin[spin], _overlap_mat(sfos_spin[spin], sfos_spin[spin]), number_format=float_fmt, tab_color='FF6666')
+            make_matrix_sheet(name, title, sfos_spin[spin], sfos_spin[spin], _overlap_mat(sfos_spin[spin], sfos_spin[spin]), number_format=float_fmt, tab_color='FF6666', conditional_format=cnd_fmt)
         else:
-            make_matrix_sheet(name, title, sfos1_spin[spin], sfos2_spin[spin], _overlap_mat(sfos1_spin[spin], sfos2_spin[spin]), number_format=float_fmt, tab_color='FF6666')
+            make_matrix_sheet(name, title, sfos1_spin[spin], sfos2_spin[spin], _overlap_mat(sfos1_spin[spin], sfos2_spin[spin]), number_format=float_fmt, tab_color='FF6666', conditional_format=cnd_fmt)
 
     for spin in orbs.sfos.spins:
         name = f"S² {spin_names[spin]}" if spin != 'AB' else "S²"
