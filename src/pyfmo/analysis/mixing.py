@@ -10,6 +10,7 @@ import networkx as nx
 
 class Mixer:
     def __init__(self, orbs, energy_type='energy'):
+    def __init__(self, orbs: pyfmo.Orbitals, energy_type: str = 'energy'):
         self.orbs = orbs
         self.energy_type = energy_type
         self._prepare()

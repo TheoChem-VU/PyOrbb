@@ -1,14 +1,18 @@
 import pyfmo
 from scm import plams
-from tcutility import timer, cache, ensure_list
+from tcutility import cache, ensure_list
 import os
 import numpy as np
 from collections.abc import Container
 from typing_extensions import deprecated
-
+import math
 
 
 class Orbital:
+    '''
+    Main class holding orbital information for |MO| and |SFO| objects.
+    This class is used to obtain information about the orbital, generate cube-files, and visualize orbitals.
+    '''
     def __init__(self, data, parent):
         self.data = data
         for key, value in data.items():
@@ -20,8 +24,10 @@ class Orbital:
 
     @property
     @cache.cache
-    @timer.timer
-    def relative_name(self):
+    def relative_name(self) -> str:
+        '''
+        The relative name of the orbital. E.g. HOMO or HOMO-1
+        '''
         orbitals = [orb for orb in self.parent.orbitals if orb.spin == self.spin and orb.spin_total_occupation == self.spin_total_occupation]
         if hasattr(self, 'fragment_unique'):
             orbitals = [orb for orb in orbitals if orb.fragment_unique == self.fragment_unique]
@@ -45,8 +51,11 @@ class Orbital:
 
     @property
     @cache.cache
-    @timer.timer
-    def irrep_relative_name(self):
+    def irrep_relative_name(self) -> str:
+        '''
+        The relative name of the orbital in its irreducible representation. 
+        E.g. the overall HOMO-2 could be the HOMO of its irreducible representation.
+        '''
         orbitals = [orb for orb in self.parent.orbitals if orb.spin == self.spin and orb.spin_total_occupation == self.spin_total_occupation and orb.symmetry == self.symmetry]
         if hasattr(self, 'fragment_unique'):
             orbitals = [orb for orb in orbitals if orb.fragment_unique == self.fragment_unique]
@@ -69,21 +78,38 @@ class Orbital:
             return f'LUMO+{order}' if order > 0 else 'LUMO'
 
     @property
-    def doubly_occupied(self):
+    @cache.cache
+    def doubly_occupied(self) -> bool:
+        '''
+        Whether the orbital is doubly occupied.
+        '''
         return self.spin_total_occupation == 2
 
     @property
-    def singly_occupied(self):
+    @cache.cache
+    def singly_occupied(self) -> bool:
+        '''
+        Whether the orbital is singly occupied.
+        '''
         return self.spin_total_occupation == 1
 
     @property
-    def unoccupied(self):
+    @cache.cache
+    def unoccupied(self) -> bool:
+        '''
+        Whether the orbital is unoccupied.
+        '''
         return self.spin_total_occupation == 0
 
     @property
     @cache.cache
-    @timer.timer
-    def spin_total_occupation(self):
+    def spin_total_occupation(self) -> int:
+        '''
+        The occupation of this orbital plus its spin counterpart if it exists.
+
+        E.g. if orbital ``5A_A`` has an occupation of 1 and orbitals ``5A_B``has an 
+        occupation of 0 then both orbitals will have the ``spin_total_occupation`` set to ``1``.
+        '''
         matching_orbs = [orb for orb in self.parent.orbitals if orb.name == self.name]
         if hasattr(self, 'fragment_unique'):
             matching_orbs = [orb for orb in matching_orbs if orb.fragment_unique == self.fragment_unique]
@@ -92,10 +118,11 @@ class Orbital:
 
     def cube_file(self, gridsize: str = 'medium', overwrite: bool = False):
         '''
-        Generate a cube-file for this SFO with a certain grid-size.
+        Generate a cube-file for this |Orbital| with a certain grid-size.
 
         Args:
             gridsize: the size of the grid to generate the cube-file with.
+            overwrite: whether to overwrite the previous calculation if found.
         '''
         from tcutility.job.adf import DensfJob
         from tcintegral import grid
@@ -115,16 +142,20 @@ class Orbital:
         # we only generate one, so we simply return the first element
         return grid.from_cub_file(job.output_cub_paths[0])
 
-    def draw(self, gridsize: str = 'medium', isovalue: float = 0.03, overwrite: bool = False, screen=None, transform=None):
+    def draw(self, gridsize: str = 'medium', isovalue: float = 0.03, overwrite: bool = False, screen: "tcviewer.screen.Screen" = None, transform: "tcutility.geometry.Transform" = None):
         '''
-        Generate and draw a cube-file for this SFO object.
+        Generate and draw a cube-file for this |Orbital| object.
 
         Args:
             gridsize: the size of the grid to generate the cube-file with.
-            isovalue: the value with which to generate the isosurface of this SFO.
+            isovalue: the value with which to generate the isosurface of this |Orbital|.
+            overwrite: whether to overwrite the previous calculation if found.
+            screen: the ``tcviewer.screen.Screen`` object to use to draw this orbital. 
+                If not given we start a new screen.
+            transform: the geometrical transformation to use with this orbital.
 
         .. seealso::
-            :meth:`SFO.cube_file` to generate and return a cube-file for this SFO.
+            :meth:`Orbital.cube_file` to generate and return a cube-file for this |Orbital|.
         '''
         import tcviewer
 
@@ -155,25 +186,78 @@ class Orbital:
         return scr
 
     @property
-    def degeneracy_index(self):
+    @cache.cache
+    def degeneracy_index(self) -> int:
+        '''
+        The index of this |Orbital| among its degenerate |Orbital| objects.
+        '''
         return self.degenerate_orbitals.index(self)
 
     @property
-    def degenerate(self):
+    @cache.cache
+    def degenerate(self) -> bool:
+        '''
+        Whether the |Orbital| is degenerate.
+        '''
         return self.degeneracy > 1
 
     @property
-    def degeneracy(self):
+    @cache.cache
+    def degeneracy(self) -> int:
+        '''
+        The number of |Orbital| objects that are degenerate with this one.
+        '''
         return len(self.degenerate_orbitals)
 
     @property
     @cache.cache
-    @timer.timer
-    def degenerate_orbitals(self):
-        return [orb for orb in self.parent.orbitals if orb.energy == self.energy]
+    def degenerate_orbitals(self) -> list["Orbital"]:
+        '''
+        |Orbital| objects that are very close in energy to this |Orbital|.
+        '''
+        return [orb for orb in self.parent.orbitals if math.isclose(orb.energy, self.energy, rel_tol=1e-8)]
 
 
 class MO(Orbital):
+    '''
+    Class holding data specifically for molecular orbitals.
+
+    Each |MO| holds the following data:
+
+    .. list-table:: 
+        :header-rows: 1
+
+        * - Variable
+          - Type
+          - Description
+        * - ``index``
+          - ``int``
+          - The index of this |MO| in the overal |MOs|.
+        * - ``name``
+          - ``str``
+          - The regular name of this |MO| as it would show up in ADFLevels.
+        * - ``symmetry``
+          - ``str``
+          - The irreducible representation this |MO| belongs to.
+        * - ``symmetry_index``
+          - ``int``
+          - The index of this |MO| in the overal |MOs| that belong to the same irreducible representation.
+        * - ``spin``
+          - ``str``
+          - The spin of this |MO|, either ``'A'``, ``'B'`` or ``'AB'``
+        * - ``energy``
+          - ``float``
+          - The energy of the |MO| in |kcal/mol|.
+        * - ``kinetic_energy``
+          - ``float``
+          - The kinetic energy of the |MO| in |kcal/mol| if it could be read from the calculation.
+        * - ``occupation``
+          - ``int``
+          - The occupation number of this |MO|. Either ``0``, ``1`` or ``2``.
+        * - ``occupied``
+          - ``bool``
+          - Whether the |MO| has electrons in it.
+    '''
     def __str__(self):
         if self.spin == 'AB':
             return f'{self.name}'
@@ -181,25 +265,101 @@ class MO(Orbital):
 
 
 class SFO(Orbital):
-    def __str__(self): 
-        if self.spin == 'AB':
-            return f'{self.fragment_unique}({self.name})'
-        return f'{self.fragment_unique}({self.name})_{self.spin}'
+    '''
+    Class holding data specifically for symmetry-adapted fragment orbitals.
 
-    def overlap(self, other):
+    Each |SFO| holds the following data:
+
+    .. list-table:: 
+        :header-rows: 1
+
+        * - Variable
+          - Type
+          - Description
+        * - ``index``
+          - ``int``
+          - The index of this |SFO| in the overal |SFOs|.
+        * - ``name``
+          - ``str``
+          - The regular name of this |SFO| as it would show up in ADFLevels.
+        * - ``symmetry``
+          - ``str``
+          - The irreducible representation this |SFO| belongs to.
+        * - ``symmetry_index``
+          - ``int``
+          - The index of this |SFO| in the overal |SFOs| that belong to the same irreducible representation.
+        * - ``fragment``
+          - ``str``
+          - The name of the fragment the |SFO| belongs to.
+        * - ``fragment_unique``
+          - ``str``
+          - If fragments do not have unique names (i.e. with atomic fragments) this name will be unique for the atom.
+        * - ``fragment_index``
+          - ``int``
+          - The index of the |SFO| within the |SFOs| of the same fragment.
+        * - ``spin``
+          - ``str``
+          - The spin of this |SFO|, either ``'A'``, ``'B'`` or ``'AB'``
+        * - ``energy``
+          - ``float``
+          - The energy of the |SFO| in |kcal/mol|.
+        * - ``site_energy``
+          - ``float``
+          - The diagonal element of the Fock matrix belonging to the |SFO| in |kcal/mol| if it could be read from the calculation.
+        * - ``site_energy_SCF0``
+          - ``float``
+          - The diagonal element of the Fock matrix after 0 SCF cycles belonging to the |SFO| in |kcal/mol| if it could be read from the calculation.
+        * - ``occupation``
+          - ``int``
+          - The occupation number of this |SFO|. Either ``0``, ``1`` or ``2``.
+        * - ``occupied``
+          - ``bool``
+          - Whether the |SFO| has electrons in it.
+        * - ``gross_population``
+          - ``float``
+          - The gross Mulliken population of this |SFO|.
+        * - ``gross_spin``
+          - ``float``
+          - The gross Mulliken spin population of this |SFO|.
+        * - ``molecule``
+          - :class:`plams.Molecule`
+          - The molecule object containing the atoms belonging to the fragment of this |SFO|.
+    '''
+    def __str__(self): 
+        return self.make_name()
+
+    def overlap(self, other: "SFO") -> float:
+        '''
+        Get the overlap between this |SFO| and another |SFO|.
+
+        Args:
+            other: the orbital to get the overlap with.
+
+        .. note::
+
+            The matmul operation ``@`` redirects to this method.
+        '''
         assert isinstance(other, SFO)
 
+        # these conditions apply due to orthonormality
         if self.spin != other.spin:
             return 0
 
         if self.symmetry != other.symmetry:
             return 0
 
+        # access the right overlap matrix and return the right value
         S = self.parent.parent.data.matrices.overlap[self.symmetry][self.spin]
         return S[other.symmetry_index][self.symmetry_index]
 
 
-    def fock(self, other):
+    def fock(self, other: "SFO") -> float:
+        '''
+        Get the Fock matrix element between this |SFO| and another |SFO|.
+
+        Args:
+            other: the orbital to get the Fock matrix element with.
+        '''
         assert isinstance(other, SFO)
 
         if self.spin != other.spin:
@@ -212,7 +372,13 @@ class SFO(Orbital):
         return F[other.symmetry_index][self.symmetry_index]
 
 
-    def mulliken_contribution(self, other):
+    def mulliken_contribution(self, other: "MO") -> float:
+        '''
+        Get the mulliken contribution of this |SFO| into an |MO|.
+
+        Args:
+            other: the orbital to get the Mulliken contribution with.
+        '''
         assert isinstance(other, MO)
 
         if self.spin != other.spin and other.spin != 'AB':
@@ -225,7 +391,13 @@ class SFO(Orbital):
         return c[other.symmetry_index][self.symmetry_index]
 
 
-    def coefficient(self, other):
+    def coefficient(self, other: "MO") -> float:
+        '''
+        Get the coefficient of this |SFO| into an |MO|.
+
+        Args:
+            other: the orbital to get the coefficient with.
+        '''
         assert isinstance(other, MO)
 
         if self.spin != other.spin and other.spin != 'AB' and self.spin != 'AB':
@@ -238,11 +410,44 @@ class SFO(Orbital):
         return c[other.symmetry_index][self.symmetry_index]
 
 
-    def __matmul__(self, other):
+    def __matmul__(self, other: "SFO") -> float:
+        '''
+        Short-hand notation for getting the overlap with another |SFO|.
+        '''
         return self.overlap(other)
 
 
-    def make_name(self, spin=True, frag_name=False, relative_name=False, index_name=False):
+    def make_name(self, spin: bool = True, frag_name: bool = True, relative_name: bool = False) -> str:
+        '''
+        Generate a name for this |SFO| with several options to modify it.
+
+        Args:
+            spin: whether to include spin in the name. It will be appended to the end as ``_{spin}``.
+            frag_name: whether to include the fragment's unique name in the name as ``{fragment_unique}(...)``.
+            relative_name: whether to use the relative name instead of the regular name.
+
+        Examples:
+            Generate the regular name of this |SFO|. This is the default name when printing the object.
+
+            .. code-block:: python
+
+                >>> sfo.make_name()
+                'NH3(4A1)'
+            
+            One can also use relative naming.
+
+            .. code-block:: python
+
+                >>> sfo.make_name(relative_name=True)
+                'NH3(LUMO)'
+
+            One can also only get the name of the orbital by disabling the fragment name.
+
+            .. code-block:: python
+
+                >>> sfo.make_name(frag_name=False)
+                '4A1'
+        '''
         name = ''
 
         if frag_name:
@@ -250,8 +455,6 @@ class SFO(Orbital):
 
         if relative_name:
             name += self.relative_name
-        elif index_name:
-            name += str(self.index) + self.symmetry
         else:
             name += self.name
 
@@ -266,27 +469,21 @@ class SFO(Orbital):
 
 class Orbitals:
     '''
-    Container class that stores information about both MO's and SFO's.
+    Container class that stores information about both |MOs| and |SFOs|.
+    |Orbitals| can also be given the paths to ``adf.rkf`` files from 
+    related calculations to obtain more information. For example, the 
+    path to a calculation with the number of SCF cycles set to 0 populates 
+    the ``site_energy_SCF0`` properties of the SFOs.
+
+    Args:
+        path: the path to an ``adf.rkf`` file containing information about the system of interest.
+        path_SCF0: the path to an ``adf.rkf`` file containing information about a calculation with 0 SCF cycles.
+            This argument is required to populate the ``SFO.site_energy_scf0`` property
+        path_fragments: dictionary containing fragment name as the key and path to its ``adf.rkf`` as the value.
+        path_output: the path to an ``.out`` file generated by ADF. 
+            This is required to read the kinetic energies for the MOs.
     '''
-    def __init__(self, path: str, path_SCF0: str = None, path_fragments: dict[str] = None, moleculename: str = None, path_output: str = None):
-        r'''
-        Two kind of readers are constucted.
-        1. path provides the path to a fully converged Fragment analyses calculation with a full SCF. From this, all 
-            information regarding the fragment analysis is extracted. This includes the SFO energies of the fully isolated 
-            fragments and, if available, the site energies or Fock matrix. From this can return the site energies (diagonal 
-            of the Fock matrix).
-
-            The energies taken from this file are the SFO energies of the fully isolated fragments and the site energies 
-            (diagonal of the Fock matrix) of the fully relaxed complex.
-
-        2. The path_SCF0 is the pathway to the fragment analysis where SCF is set to zero (SCF=0). This is necessary for 
-            reading the site energies (diagonal of the Fock matrix) to obtain the corrected energies of the SFOs. No other 
-            information is read from this file.
-
-            The energies extracted from this file are the site energies (diagonal of the Fock matrix) of the two fragments 
-            in the field of the second respective fragment. This correction is often considered superior to the SFO energies 
-            for the fully isolated fragments.
-        '''
+    def __init__(self, path: str, path_SCF0: str = None, path_fragments: dict[str] = None, path_output: str = None):
         self.reader = plams.KFReader(path)
         self.kfpath = os.path.abspath(path)
         self.SCF0_kfpath = path_SCF0
@@ -299,17 +496,15 @@ class Orbitals:
             self.fragment_orbs = {}
 
         self.output = os.path.abspath(path_output) if path_output else None
-        with timer.timer('Orbitals.get_data'):
-            self.get_data()
-        with timer.timer('Orbitals.gather_sfos'):
-            self.gather_sfos()
-        with timer.timer('Orbitals.gather_mos'):
-            self.gather_mos()
 
-    def get_data(self):
-        self.data = pyfmo.orbitals2.adf._read_data(self.reader, SCF0_reader=self.SCF0_reader, output=self.output)
+        self._get_data()
+        self._gather_sfos()
+        self._gather_mos()
 
-    def gather_sfos(self):
+    def _get_data(self):
+        self.data = pyfmo.orbitals.adf.read_data(self.reader, SCF0_reader=self.SCF0_reader, output=self.output)
+
+    def _gather_sfos(self):
         self.sfos = SFOs([], self)
         sfo_mo_spin_match = self.data.calc_info.unrestricted_mos == self.data.calc_info.unrestricted_sfos
         for sfo_idx in range(self.data.SFOs.number):
@@ -331,7 +526,6 @@ class Orbitals:
                     'subspecies': self.data.SFOs.subspecies[sfo_idx],
                     'symmetry': self.data.SFOs.symlabel[sfo_idx],
                     'symmetry_index': self.data.SFOs.symmetry_index[sfo_idx],
-                    'index_in_symlabel': self.data.SFOs.symmetry_index[sfo_idx], # rmove this later
                     'fragment': self.data.calc_info.fragments[self.data.SFOs.fragment_index[sfo_idx] - 1].split(':')[0],
                     'fragment_unique': self.data.SFOs.fragment_unique.total[sfo_idx],
                     'fragment_index': self.data.SFOs.fragment_index[sfo_idx],
@@ -355,7 +549,7 @@ class Orbitals:
                 sfo = SFO(data, self.sfos)
                 self.sfos.orbitals.append(sfo)
 
-    def gather_mos(self):
+    def _gather_mos(self):
         self.mos = MOs([], self)
         for moi in range(self.data.SFOs.number):
             for spin_idx, mo_spin in enumerate(self.data.calc_info.mo_spins):
@@ -372,7 +566,6 @@ class Orbitals:
                     'name': f'{symm_idx+1}{symlabel}',
                     'symmetry': symlabel,
                     'symmetry_index': self.data.MOs.symmetry_index[moi],
-                    'index_in_symlabel': self.data.MOs.symmetry_index[moi], # rmove this later
                     'spin': mo_spin,
                     'energy': self.data.MOs.energy[symlabel][mo_spin][symm_idx] * 27.2114079527,
                     'occupation': occ,
@@ -394,28 +587,12 @@ class Orbitals:
     def fragments(self):
         return self.sfos.fragments
 
-    def write_excel(self, out_file: str = 'pyfmo.xlsx'):
+    def write_excel(self, out_file: str = None):
         from pyfmo import write_excel
-        
-        write_excel.to_excel(self, out_file)
-
-    def write_excel2(self, out_file: str = None):
-        from pyfmo import write_excel2
 
         if out_file is None:
             out_file = os.path.join(os.path.dirname(self.kfpath), 'pyfmo2.xlsx')
-        write_excel2.to_excel(self, out_file)
-
-    def _get_mask(self, objs):
-        if isinstance(objs[0], MO):
-            return np.array([ref in objs for ref in self.mos.orbitals])
-        return np.array([ref in objs for ref in self.sfos.orbitals])
-
-    def overlap_matrix(self, sfos1, sfos2):
-        mask1 = self._get_mask(sfos1)
-        mask2 = self._get_mask(sfos2)
-        Stotal = self.data.matrices.overlap.total
-        return Stotal[:, mask1][mask2, :]
+        write_excel.to_excel(self, out_file)
 
     @property
     def sfo_energy_types(self):
@@ -424,12 +601,12 @@ class Orbitals:
 
 class OrbitalSelector:
     '''
-    Class used to select MOs or SFOs. 
+    Class used to select |MOs| or |SFOs|. 
     It is responsible for decoding selection keys and filtering orbitals based on the selection key.
 
     Args:
-        orbitals: a list of SFOs or MOs that will be managed by this class.
-        parent: the parent ``Orbitals`` object.
+        orbitals: a list of |SFOs| or |MOs| that will be managed by this class.
+        parent: the parent |Orbitals| object.
     '''
     def __init__(self, orbitals: Container[Orbital], parent: Orbitals):
         self.orbitals = orbitals
@@ -440,25 +617,33 @@ class OrbitalSelector:
 
     def get(self, key: int or str) -> list[Orbital] or Orbital:
         '''
-        Get ``Orbital`` objects based on the given key.
+        Get |Orbital| objects based on the given key.
 
         Args:
             key: a string describing the orbital to be selected or the integer index of the orbital.
 
         Returns:
-            A list of ``Orbital`` objects that match the given key.
-            If there is only one return a single ``Orbital`` object.
+            A list of |Orbital| objects that match the given key.
+            If there is only one return a single |Orbital| object.
 
         Examples:
             Select the HOMO of the NH3 fragment.
 
-            .. code-block::
+            .. code-block:: python
 
                 >>> SFOs.get('NH3(HOMO)')
                 NH3(3A1)
                 >>> SFOs['NH3(HOMO)']
                 NH3(3A1)
 
+            Select a specific |MO|.
+
+            .. code-block:: python
+
+                >>> MOs.get('6A1')
+                6A1
+                >>> MOs['6A1']
+                6A1
 
         .. seealso::
 
@@ -490,26 +675,29 @@ class OrbitalSelector:
         Examples:
             Decode a key specifying an MO.
 
-            .. code-block::
+            .. code-block:: python
 
                 >>> MOs.decode_key('4A1')
                 {'orbname': '4A1'}
             
             One can also use relative naming. Also specify alpha spin.
-            .. code-block::
+
+            .. code-block:: python
 
                 >>> MOs.decode_key('HOMO-2_A')
                 {'orbname': 'HOMO-2', 'spin': 'A'}
 
             Decode a key for an SFO specifying the fragment, orbname and spin.
-            .. code-block::
+
+            .. code-block:: python
 
                 >>> SFOs.decode_key('NH3(1E1:1_B)')
                 {'fragment': 'NH3', 'orbname': '1E1:1_B'}
     
             If multiple fragments have the same name (e.g. in a non-fragment analysis with atomic fragments)
             we can specify the fragment index with the colon.
-            .. code-block::
+
+            .. code-block:: python
 
                 >>> SFOs.decode_key('C:4(1P:x)')
                 {'fragment': 'C', 'fragment_index': 4, 'orbname': '1P:x'}
@@ -561,7 +749,7 @@ class OrbitalSelector:
             fragment_index: int or Container[str]= None, 
             orbname: str or Container[str]= None) -> Orbital or list[Orbital]:
         '''
-        filter ``Orbital`` objects that match the given parameters.
+        filter |Orbital| objects that match the given parameters.
         If any of the arguments is given as a ``Container`` we check for membership.
 
         Arguments:
@@ -573,50 +761,50 @@ class OrbitalSelector:
             orbname: the name of the orbital. Can be either the proper name or a relative name, e.g. ``SOMO`` or ``LUMO+5``.
         
         Returns:
-            The ``Orbital`` objects that match the provided arguments.
-            If there is only one ``Orbital`` object selected, return only that one.
-            Otherwise return a ``list`` of ``Orbital`` objects.
-            Returns ``None`` if no matching ``Orbital`` objects were found.
+            The |Orbital| objects that match the provided arguments.
+            If there is only one |Orbital| object selected, return only that one.
+            Otherwise return a ``list`` of |Orbital| objects.
+            Returns ``None`` if no matching |Orbital| objects were found.
 
         Examples:
             Select all SFOs of a given fragment.
 
-            .. code-block::
+            .. code-block:: python
 
                 >>> SFOs.filter(fragment='NH3')
                 [NH3(1A1), NH3(2A1), NH3(3A1), ...]
 
             Select all SFOs from the A2 irrep of the BH3 fragment.
 
-            .. code-block::
+            .. code-block:: python
 
                 >>> SFOs.filter(symmetry='A2', fragment='BH3')
                 [BH3(1A2), BH3(2A2), BH3(3A2), BH3(4A2)]
 
             Select all MOs that are named '1E1:1' or '1E1:2'.
 
-            .. code-block::
+            .. code-block:: python
 
                 >>> MOs.filter(orbname=('1E1:1', '1E1:2'))
                 [1E1:1, 1E1:2]
 
             Select the HOMO of the NH3 fragment.
 
-            .. code-block::
+            .. code-block:: python
 
                 >>> SFOs.filter(orbname='HOMO', fragment='NH3')
                 NH3(3A1)
 
             Get 1P orbitals for all carbons
 
-            .. code-block::
+            .. code-block:: python
 
                 >>> SFOs.filter(orbname=('1P:x', '1P:y', '1P:z'), fragment='C')
                 [C:1(1P:x), C:1(1P:y), C:1(1P:z), C:2(1P:x), C:2(1P:y), C:2(1P:z), C:3(1P:x), C:3(1P:y), C:3(1P:z), C:4(1P:x), C:4(1P:y), C:4(1P:z)]
         
             Get 1P orbitals for the second carbon
 
-            .. code-block::
+            .. code-block:: python
 
                 >>> SFOs.filter(orbname=('1P:x', '1P:y', '1P:z'), fragment='C:2')
                 [C:2(1P:x), C:2(1P:y), C:2(1P:z)]
@@ -682,6 +870,9 @@ class OrbitalSelector:
 
 
 class SFOs(OrbitalSelector):
+    '''
+    Object storing all |SFO| objects for the given calculation.
+    '''
     @property
     def fragments(self) -> list[str]:
         '''
@@ -693,26 +884,14 @@ class SFOs(OrbitalSelector):
                 frags.append(sfo.fragment_unique)
         return frags
 
-    @deprecated('SFOs.get_fragment_sfos is deprecated. Please us the SFOs.filter(fragment=...) method.')
-    def get_fragment_sfos(self, fragment: str)-> list[SFO]:
-        '''
-        Return all SFOs that belong to a given fragment.
-
-        Args:
-            fragment: the fragment or unique fragment name.
-
-        Examples:
-            # return all SFOs that belong to a carbon atom
-            >>> sfos = orbs.sfos.get_fragment_sfos('C') 
-            # return all SFOs that belong to carbon C:1
-            >>> sfos = orbs.sfos.get_fragment_sfos('C:1')
-            # return all SFOs that belong to a named fragment
-            >>> sfos = orbs.sfos.get_fragment_sfos('Donor')
-        '''
-        return [sfo for sfo in self.orbitals if sfo.fragment_unique == fragment or sfo.fragment == fragment]
-
     @property
-    def energy_types(self):
+    def energy_types(self) -> list[str]:
+        '''
+        Object storing all |SFO| objects for the |Orbitals| objects.
+
+        Returns:
+            A list potentially containing ``energy``, ``site_energy`` and ``site_energy_SCF0``.
+        '''
         ret = []
         if len(self.orbitals) > 0:
             orb = self.orbitals[0]
@@ -721,13 +900,15 @@ class SFOs(OrbitalSelector):
             if orb.site_energy is not np.nan:
                 ret.append('site_energy')
             if orb.site_energy_SCF0 is not np.nan:
-                print(orb.site_energy_SCF0)
                 ret.append('site_energy_SCF0')
 
         return ret
 
 
 class MOs(OrbitalSelector):
+    '''
+    Object storing all |MO| objects for the |Orbitals| objects.
+    '''
     ...
 
 

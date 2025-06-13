@@ -28,13 +28,12 @@ def create_subparser(parent_parser: argparse.ArgumentParser):
 
 
 def main(args: argparse.Namespace):
-    orbs = pyfmo.orbitals2.objects.Orbitals(args.rkf)
+    orbs = pyfmo.Orbitals(args.rkf)
 
     mixers = {etype: pyfmo.analysis.mixing.Mixer(orbs, energy_type=etype) for etype in orbs.sfo_energy_types}
 
     oi_mixes = {etype: mixer.orbital_interactions(N=20) for etype, mixer in mixers.items()}
     pauli_mixes = {etype: mixer.pauli_repulsions(N=20) for etype, mixer in mixers.items()}
-
     def update(arg=None):
         draw_diagram(
             ax=main_ax,
