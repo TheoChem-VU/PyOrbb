@@ -9,8 +9,6 @@
 **PyOrbb** is an orbital interaction analysis tool and Python library enabling non-expert users to perform expert-level Kohn-Sham MO analyses. This is the documentation website for the Python library provided by PyOrbb.
 
 
-
-
 .. grid:: 3
     :gutter: 3
 
@@ -58,32 +56,3 @@
          :align: center
 
       See a number of interesting examples showcasing the usage of the PyOrbb Python API.
-
-
-.. API
-.. ===
-
-.. .. toctree::
-..    :maxdepth: 4
-
-..    pyfmo
-
-.. .. toctree::
-..    :maxdepth: 3
-..    :caption: Main modules
-
-
-.. .. toctree::
-..    :maxdepth: 4
-..    :caption: Full API
-
-..    api/modules
-
-
-
-.. Indices and tables
-.. ==================
-
-.. * :ref:`genindex`
-.. * :ref:`modindex`
-.. * :ref:`search`
