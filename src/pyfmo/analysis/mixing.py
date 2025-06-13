@@ -9,7 +9,12 @@ import networkx as nx
 
 
 class Mixer:
-    def __init__(self, orbs, energy_type='energy'):
+    '''
+    The main class responsible for generating 2-mixing situations.
+
+    Args:
+        orbs: 
+    '''
     def __init__(self, orbs: pyfmo.Orbitals, energy_type: str = 'energy'):
         self.orbs = orbs
         self.energy_type = energy_type
@@ -200,13 +205,16 @@ class Mixing:
         s += f', nelectrons={self.nelectrons()})'
         return s
 
-    def draw_diagram(self, ax=None, ylim=None):
+    def draw_diagram(self, ax=None, ylim=None, simple=False):
         if self.strength is not None:
             title = rf'$\Delta E^{{({self.nelectrons()})}}_{{ij}} \approx {self.strength:5.1f}$ kcal/mol (${self.fraction:5.1%}$% of total)'
         else:
             title = None
 
-        pyfmo.plotting.orbital_diagram.draw_interaction(self.sfos, self.mos, self.connections, None, energy_type=self.energy_type, connection_colors=self.connection_colors, ax=ax, ylim=ylim)
+        if simple:
+            pyfmo.plotting.simple_orbital_diagram.draw_interaction(self.sfos, self.mos, self.connections, None, energy_type=self.energy_type, connection_colors=self.connection_colors, ax=ax, ylim=ylim)
+        else:
+            pyfmo.plotting.orbital_diagram.draw_interaction(self.sfos, self.mos, self.connections, None, energy_type=self.energy_type, connection_colors=self.connection_colors, ax=ax, ylim=ylim)
 
     def draw_sfos(self, overlap=False, screen=None):
         import tcviewer
@@ -310,7 +318,6 @@ class Mixing:
         if not any(mo in other.mos for mo in self.mos):
             return False
         return True
-
 
     def xiaobo_value(self):
         if all(sfo.occupied for sfo in self.sfos):
@@ -486,10 +493,8 @@ class Mixing:
             if mo in self.mos:
                 continue
 
-            print(mo, mo.occupation, nelec, mo.occupation > nelec)
             if mo.occupation > nelec:
                 continue
-            print('hello')
 
             contr = np.array([sfo.mulliken_contribution(mo) for sfo in self.sfos])
             sfo1 = self.sfos[argNmax(contr, 0)]
@@ -597,9 +602,6 @@ class Mixing:
 
         sub_mixes = self.split()
         for mix in sub_mixes:
-            print('ello')
-            print(excess_elec(), excess_virt(), excess_half(), excess_occ())
-
             if excess_virt() + excess_half() + excess_occ() == 0:
                 continue
             
@@ -630,8 +632,6 @@ class Mixing:
                         self._add_extra_orbital(self.orbs.sfos, add_MO=False, occupied=True)
                     except Exception:
                         pass
-
-            print(excess_elec(), excess_virt(), excess_half(), excess_occ())
 
 
 def overlap_mat(sfos1, sfos2):
@@ -809,44 +809,6 @@ def oi2(orbs, index=0, irrep=None):
         connections=[(best_sfo1, best_mo), (best_sfo2, best_mo), (best_sfo1, best_other_mo), (best_sfo2, best_other_mo)])
 
 
-
-# if __name__ == '__main__':
-#     orbs = pyfmo.orbitals2.objects.Orbitals('../../../calculations/PyOrb_testing_2022/HydrogenBond/GuanineCytosine.results/adf.rkf')
-    
-#     C = orbs.data.matrices.mulliken_contribution.total
-#     vals, vecs = np.linalg.eig(C.T)
-#     print(vecs)
-#     plt.imshow(vecs.real)
-#     plt.show()
-#     sfo1 = orbs.sfos['Cytosine(24AA)']
-#     sfo2 = orbs.sfos['Guanine(33AA)']
-
-#     losses = []
-#     for mo in orbs.mos:
-#         loss = sfo1.mulliken_contribution(mo)
-#         losses.append(loss)
-
-#     gains = []
-#     for i, mo in enumerate(orbs.mos):
-#         gain = sfo2.mulliken_contribution(mo) * losses[i]
-#         if gain > 1e-5:
-#             print(mo, round(gain, 5))
-#         gains.append(gain)
-
-#     losses = np.array(losses)
-#     gains = np.array(gains)
-#     print(losses @ gains)
-
-#     print(sum(losses))
-#     print(sum(gains))
-#     # plt.plot(losses)
-#     # plt.plot(gains)
-#     plt.plot(gains)
-#     plt.show()
-
-
-
-# # exit()
 if __name__ == '__main__':
     import networkx as nx
     import tcviewer
@@ -896,169 +858,3 @@ if __name__ == '__main__':
     plt.imshow(stab * occ_virt_mask)
     plt.show()
 
-
-    # frag1_orbs = pyfmo.orbitals2.objects.Orbitals('/Users/yumanhordijk/PhD/Programs/TheoCheM/PyFMO/calculations/PyOrb_testing_2022/DonorAcceptor/NH3BH3.NH3.results/adf.rkf')
-    # frag2_orbs = pyfmo.orbitals2.objects.Orbitals('/Users/yumanhordijk/PhD/Programs/TheoCheM/PyFMO/calculations/PyOrb_testing_2022/DonorAcceptor/NH3BH3.BH3.results/adf.rkf')
-    # mo = orbs.mos['8A1']
-    # print(mo)
-    # contr = np.array([sfo.mulliken_contribution(mo) for sfo in orbs.sfos])
-    # energ = np.array([sfo.energy for sfo in orbs.sfos])
-
-    # print(mo.energy)
-    # print(sum(contr * energ))
-    # print(mo.energy - sum(contr * energ))
-
-    # mo = orbs.mos['5A1']
-    # print(mo)
-    # contr = np.array([sfo.mulliken_contribution(mo) for sfo in orbs.sfos])
-    # energ = np.array([sfo.energy for sfo in orbs.sfos])
-
-    # print(mo.energy)
-    # print(sum(contr * energ))
-    # print(mo.energy - sum(contr * energ))
-#     # mix = oi2(orbs)
-#     # # mix = pauli2(orbs, sfo1=orbs.sfos['Guanine(24AA)'], sfo2=orbs.sfos['Cytosine(23AA)'])
-#     # mix += pauli2(orbs)
-#     # mix.draw_diagram()
-#     # plt.title('New way')
-#     # # plt.show()
-#     # # exit()
-
-
-#     # # main_mix = None
-#     # main_G = nx.Graph()
-#     # with tcviewer.Screen() as scr:
-#     #     mixer = Mixer(orbs)
-#     #     mixes = mixer.orbital_interactions(N=2)
-
-#     #     for mix in mixes:
-#     #         if main_mix is None:
-#     #             main_mix = mix
-#     #             continue
-#     #         main_mix += mix
-#     #         continue
-#     #         print(mix)
-#     #         # plt.figure()
-#     #         # mix.draw_diagram()
-#     #         # plt.show()
-#     #         mix.draw_sfos(screen=scr)
-
-#     #         # for sfo in mix.sfos:
-#     #         #     main_G.add_node(sfo)
-#     #         # for mo in mix.mos:
-#     #         #     main_G.add_node(mo)
-
-#     #         for sfo in mix.sfos:
-#     #             main_G.add_node(sfo, pos=(orbs.fragments.index(sfo.fragment_unique) * 2 - 1, sfo.energy), type='sfo')
-#     #             for mo in mix.mos:
-#     #                 main_G.add_node(mo, pos=(0, mo.energy), type='mo')
-#     #                 main_G.add_edge(sfo, mo)
-
-#     #     mixes = mixer.pauli_repulsions(N=2)
-#     #     for mix in mixes:
-#     #         print(mix)
-#     #         main_mix += mix
-#     #         continue
-#     #         # plt.figure()
-#     #         # mix.draw_diagram()
-#     #         # plt.show()
-#     #         mix.draw_sfos(screen=scr)
-
-#     #         # for sfo in mix.sfos:
-#     #         #     main_G.add_node(sfo)
-#     #         # for mo in mix.mos:
-#     #         #     main_G.add_node(mo)
-
-#     #         for sfo in mix.sfos:
-#     #             main_G.add_node(sfo, pos=(orbs.fragments.index(sfo.fragment_unique) * 2 - 1, sfo.energy), type='sfo')
-#     #             for mo in mix.mos:
-#     #                 main_G.add_node(mo, pos=(0, mo.energy), type='mo')
-#     #                 main_G.add_edge(sfo, mo)
-#     # main_mix.draw_diagram()
-#     # plt.show()
-#     # components = [main_G.subgraph(H) for H in nx.connected_components(main_G)]
-#     # for component in components:
-#     #     nodes = component.nodes(data='type')
-#     #     sfos = [node[0] for node in nodes if node[1] == 'sfo']
-#     #     mos = [node[0] for node in nodes if node[1] == 'mo']
-#     #     print(sfos, mos)
-#     #     pyfmo.plotting.orbital_diagram.draw_interaction(sfos, mos, it.product(sfos, mos), orbs, energy_type='energy')
-#     #     plt.show()
-#     from matplotlib.widgets import Slider, CheckButtons
-#     from matplotlib.gridspec import GridSpec
-
-
-#     mixer = Mixer(orbs, energy_type='energy')
-
-#     def draw_diagram(arg):
-#         plt.cla()
-#         plt.title('Old way')
-#         mix = Mixing(orbs)
-#         if oi_b.get_status()[0]:
-#             for mix_ in mixer.orbital_interactions(N=10):
-#                 # print(mix_, mix_.nelectrons())
-#                 if mix_.xiaobo_check(oi_s.val):
-#                     mix += mix_
-
-#         if pauli_b.get_status()[0]:
-#             for mix_ in mixer.pauli_repulsions(N=1):
-#                 if mix_.xiaobo_check(pauli_s.val):
-#                     mix += mix_
-#         mix.draw_diagram()
-#         plt.gcf().canvas.draw_idle()
-
-#     # plt.subplots()
-#     # mix = mixer.orbital_interactions(N=1)[0]
-#     # mix += mixer.pauli_repulsions(N=1)[0]
-#     # mixes.extend()
-#     # plt.figure()
-
-#     gs = GridSpec(nrows=4, ncols=2, height_ratios=[1, .05, .05, .05], width_ratios=[.1, .7])
-
-#     oi_bax = plt.gcf().add_subplot(gs[2, 0])
-#     pauli_bax = plt.gcf().add_subplot(gs[3, 0])
-
-#     oi_bax.axis('off')
-#     pauli_bax.axis('off')
-
-#     oi_sax = plt.gcf().add_subplot(gs[2, 1])
-#     pauli_sax = plt.gcf().add_subplot(gs[3, 1])
-
-#     oi_b = CheckButtons(oi_bax, labels=['Show'], actives=[True])
-#     pauli_b = CheckButtons(pauli_bax, labels=['Show'], actives=[True])
-    
-#     oi_s = Slider(oi_sax, 'OI', 0.001, mixer.orbital_interactions(N=1)[0].lowest_contribution, valinit=.025, facecolor='g')
-#     pauli_s = Slider(pauli_sax, 'Pauli', 0.001, mixer.pauli_repulsions(N=1)[0].lowest_contribution, valinit=0.2, facecolor='r')
-    
-#     oi_b.on_clicked(draw_diagram)
-#     pauli_b.on_clicked(draw_diagram)
-
-#     oi_s.on_changed(draw_diagram)
-#     pauli_s.on_changed(draw_diagram)
-
-#     plt.gcf().add_subplot(gs[0, :])
-#     draw_diagram(mixer)
-
-#     # plt.tight_layout()
-#     plt.show()
-
-#     exit()
-#     # combined_mixes = [Mixing(orbs)]
-#     # for mix in mixes:
-#     #     print(mix)
-#         # for cmix in combined_mixes:
-#             # print(mix)
-#             # if cmix.fits(mix):
-#     #         if True:
-#     #             cmix += mix
-#     #             break
-#     #         else:
-#     #             combined_mixes.append(mix)
-
-#     # print(combined_mixes)
-#     # for cmix in combined_mixes:
-#     #     # cmix.screenshot_sfos(outdir='/Users/yumanhordijk/PhD/Programs/TheoCheM/PyFMO/calculations/PyOrb_testing_2022/ChemicalBond/frag.results/orbs')
-#     #     # cmix.draw_sfos()
-#     #     # plt.figure()
-#     #     cmix.draw_diagram()
-#     # plt.show()
