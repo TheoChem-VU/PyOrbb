@@ -40,6 +40,8 @@ extensions = [
     'sphinx.ext.napoleon',
     'sphinx.ext.viewcode',
     # 'sphinx.ext.autosummary',
+    "sphinx_autodoc_typehints",
+    "sphinx_click",
 ]
 
 templates_path = ['_templates']
