@@ -4,7 +4,6 @@ __pycache__
 dist
 .idea
 docs/_build
-docs/api
 calculations/
 Method_checks/
 presentations/
