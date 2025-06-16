@@ -370,7 +370,7 @@ class SFO(Orbital):
 
         # access the right overlap matrix and return the right value
         S = self.parent.parent.data.matrices.overlap[self.symmetry][self.spin]
-        return S[other.symmetry_index][self.symmetry_index]
+        return S[other.symmetry_index-1][self.symmetry_index-1]
 
 
     def fock(self, other: "SFO") -> float:
@@ -389,7 +389,7 @@ class SFO(Orbital):
             return 0
 
         F = self.parent.parent.data.matrices.fock[self.symmetry][self.spin]
-        return F[other.symmetry_index][self.symmetry_index]
+        return F[other.symmetry_index-1][self.symmetry_index-1]
 
 
     def mulliken_contribution(self, other: "MO") -> float:
@@ -408,7 +408,7 @@ class SFO(Orbital):
             return 0
 
         c = self.parent.parent.data.matrices.mulliken_contribution[self.symmetry][other.spin]
-        return c[other.symmetry_index][self.symmetry_index]
+        return c[other.symmetry_index-1][self.symmetry_index-1]
 
 
     def coefficient(self, other: "MO") -> float:
@@ -427,7 +427,7 @@ class SFO(Orbital):
             return 0
 
         c = self.parent.parent.data.matrices.coefficients[self.symmetry][other.spin]
-        return c[other.symmetry_index][self.symmetry_index]
+        return c[other.symmetry_index-1][self.symmetry_index-1]
 
 
     def __matmul__(self, other: "SFO") -> float:
@@ -540,12 +540,13 @@ class Orbitals:
                     gross_pop = self.data.SFOs.gross_population[sfo_spin][sfo_idx]
                     gross_spin = 0
 
+                symlabel = self.data.SFOs.symlabel[sfo_idx]
                 data = {
-                    'index': sfo_idx + 1,
+                    'index': sfo_idx + 1 + self.data.MOs.nfrozencores[symlabel],
                     'name': self.data.SFOs.adf_names[sfo_spin][sfo_idx],
                     'subspecies': self.data.SFOs.subspecies[sfo_idx],
-                    'symmetry': self.data.SFOs.symlabel[sfo_idx],
-                    'symmetry_index': self.data.SFOs.symmetry_index[sfo_idx],
+                    'symmetry': symlabel,
+                    'symmetry_index': self.data.SFOs.symmetry_index[sfo_idx] + 1 + self.data.MOs.nfrozencores[symlabel],
                     'fragment': self.data.calc_info.fragments[self.data.SFOs.fragment_index[sfo_idx] - 1].split(':')[0],
                     'fragment_unique': self.data.SFOs.fragment_unique.total[sfo_idx],
                     'fragment_index': self.data.SFOs.fragment_index[sfo_idx],
@@ -571,6 +572,7 @@ class Orbitals:
 
     def _gather_mos(self):
         self.mos = MOs([], self)
+        nfrozen_cores = self.data.MOs.nfrozencores.total
         for moi in range(self.data.SFOs.number):
             for spin_idx, mo_spin in enumerate(self.data.calc_info.mo_spins):
                 symm_idx = self.data.MOs.symmetry_index[moi]
@@ -585,7 +587,7 @@ class Orbitals:
                     'index': moi + 1,
                     'name': f'{symm_idx+1}{symlabel}',
                     'symmetry': symlabel,
-                    'symmetry_index': self.data.MOs.symmetry_index[moi],
+                    'symmetry_index': self.data.MOs.symmetry_index[moi] + 1,
                     'spin': mo_spin,
                     'energy': self.data.MOs.energy[symlabel][mo_spin][symm_idx] * 27.2114079527,
                     'occupation': occ,
