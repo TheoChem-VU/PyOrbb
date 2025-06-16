@@ -6,114 +6,151 @@ j = os.path.join
 ## orbital load test -- radicals ##
 
 def test_load_orbitals():
-	pyfmo.orbitals.Orbitals(j(os.path.split(__file__)[0], 'fixtures','RadicalAddition','adf.rkf'))
+	pyfmo.Orbitals(j(os.path.split(__file__)[0], 'fixtures','RadicalAddition','adf.rkf'))
 
 
 def test_energy1():
-	orbs = pyfmo.orbitals.Orbitals(j(os.path.split(__file__)[0], 'fixtures','RadicalAddition','adf.rkf'))
+	orbs = pyfmo.Orbitals(j(os.path.split(__file__)[0], 'fixtures','RadicalAddition','adf.rkf'))
 	assert round(orbs.mos['1A_A'].energy, 2) == -381.81
 
 
 def test_energy2():
-	orbs = pyfmo.orbitals.Orbitals(j(os.path.split(__file__)[0], 'fixtures','RadicalAddition','adf.rkf'))
-	assert round(orbs.mos['SOMO_A'].energy, 2) == -6.23
+	orbs = pyfmo.Orbitals(j(os.path.split(__file__)[0], 'fixtures','RadicalAddition','adf.rkf'))
+	assert round(orbs.mos['SOMO'].energy, 2) == -6.23
 
 
 def test_energy3():
-	orbs = pyfmo.orbitals.Orbitals(j(os.path.split(__file__)[0], 'fixtures','RadicalAddition','adf.rkf'))
-	assert orbs.mos['SOMO_A'] == orbs.mos['13A_A']
+	orbs = pyfmo.Orbitals(j(os.path.split(__file__)[0], 'fixtures','RadicalAddition','adf.rkf'))
+	assert orbs.mos['SOMO'] == orbs.mos['13A_A']
 
 
 def test_energy4():
-	orbs = pyfmo.orbitals.Orbitals(j(os.path.split(__file__)[0], 'fixtures','RadicalAddition','adf.rkf'))
+	orbs = pyfmo.Orbitals(j(os.path.split(__file__)[0], 'fixtures','RadicalAddition','adf.rkf'))
 	assert orbs.mos['SOMO'] == orbs.mos['13A_A']
 
 def test_energy5():
-	orbs = pyfmo.orbitals.Orbitals(j(os.path.split(__file__)[0], 'fixtures','RadicalAddition','adf.rkf'))
+	orbs = pyfmo.Orbitals(j(os.path.split(__file__)[0], 'fixtures','RadicalAddition','adf.rkf'))
 	assert orbs.mos['SUMO'] == orbs.mos['13A_B']
 
 ## symmetry test for E' symmetries ##
 
 def test_symm_orbitals():
-	pyfmo.orbitals.Orbitals(j(os.path.split(__file__)[0], 'fixtures','pentafluorophsophate','FragAnal.adf.rkf'))
+	pyfmo.Orbitals(j(os.path.split(__file__)[0], 'fixtures','pentafluorophsophate','FragAnal.adf.rkf'))
 
 ## test to check degeneracy and number of degenerate orbitals
 
 def test_degeneracy():
-	orbs = pyfmo.orbitals.Orbitals(j(os.path.split(__file__)[0], 'fixtures','pentafluorophsophate','FragAnal.adf.rkf'))
+	orbs = pyfmo.Orbitals(j(os.path.split(__file__)[0], 'fixtures','pentafluorophsophate','FragAnal.adf.rkf'))
 	assert orbs.mos['5EE1:1'].degenerate is True
 
 def test_degeneracy2():
-	orbs = pyfmo.orbitals.Orbitals(j(os.path.split(__file__)[0], 'fixtures','pentafluorophsophate','FragAnal.adf.rkf'))
+	orbs = pyfmo.Orbitals(j(os.path.split(__file__)[0], 'fixtures','pentafluorophsophate','FragAnal.adf.rkf'))
 	assert orbs.mos['1AA2'].degenerate is False
 
 def test_n_degeneracy():
-	orbs = pyfmo.orbitals.Orbitals(j(os.path.split(__file__)[0], 'fixtures','pentafluorophsophate','FragAnal.adf.rkf'))
-	assert orbs.mos['5EE1:1'].n_degenerate == 2
+	orbs = pyfmo.Orbitals(j(os.path.split(__file__)[0], 'fixtures','pentafluorophsophate','FragAnal.adf.rkf'))
+	assert orbs.mos['5EE1:1'].degeneracy == 2
 
 def test_n_degeneracy2():
-	orbs = pyfmo.orbitals.Orbitals(j(os.path.split(__file__)[0], 'fixtures','pentafluorophsophate','FragAnal.adf.rkf'))
-	assert orbs.mos['1AA2'].n_degenerate == 1
+	orbs = pyfmo.Orbitals(j(os.path.split(__file__)[0], 'fixtures','pentafluorophsophate','FragAnal.adf.rkf'))
+	assert orbs.mos['1AA2'].degeneracy == 1
+
+def test_degenerate_orbs():
+	orbs = pyfmo.Orbitals(j(os.path.split(__file__)[0], 'fixtures','pentafluorophsophate','FragAnal.adf.rkf'))
+	assert orbs.mos['5EE1:1'].degenerate_orbitals == [orbs.mos['5EE1:1'], orbs.mos['5EE1:2']]
 
 #test for energies with symmetry labels and relative names in the HOMO-LUMO nomenclature
 def test_symm_energy1():
-	orbs = pyfmo.orbitals.Orbitals(j(os.path.split(__file__)[0], 'fixtures','pentafluorophsophate','FragAnal.adf.rkf'))
+	orbs = pyfmo.Orbitals(j(os.path.split(__file__)[0], 'fixtures','pentafluorophsophate','FragAnal.adf.rkf'))
 	assert round(orbs.mos['2EEE1:2'].energy, 3) == -10.420
 
 def test_symm_energy2():
-	orbs = pyfmo.orbitals.Orbitals(j(os.path.split(__file__)[0], 'fixtures','pentafluorophsophate','FragAnal.adf.rkf'))
+	orbs = pyfmo.Orbitals(j(os.path.split(__file__)[0], 'fixtures','pentafluorophsophate','FragAnal.adf.rkf'))
 	assert round(orbs.mos['LUMO+4'].energy, 3) == 0.465
 ## test in de FMOs 
 def test_LUMO_lowered():
-	orbs = pyfmo.orbitals.Orbitals(j(os.path.split(__file__)[0], 'fixtures','pentafluorophsophate','FragAnal.adf.rkf'))
+	orbs = pyfmo.Orbitals(j(os.path.split(__file__)[0], 'fixtures','pentafluorophsophate','FragAnal.adf.rkf'))
 	assert round(orbs.sfos['2(LUMO)'].energy, 3) == -11.189
 
 def test_FMO_degeneracy():
-	orbs = pyfmo.orbitals.Orbitals(j(os.path.split(__file__)[0], 'fixtures','pentafluorophsophate','FragAnal.adf.rkf'))
+	orbs = pyfmo.Orbitals(j(os.path.split(__file__)[0], 'fixtures','pentafluorophsophate','FragAnal.adf.rkf'))
 	assert orbs.sfos['2(HOMO-1)'].degenerate is True 
 
 def test_FMO_degeneracy2():
-	orbs = pyfmo.orbitals.Orbitals(j(os.path.split(__file__)[0], 'fixtures','pentafluorophsophate','FragAnal.adf.rkf'))
+	orbs = pyfmo.Orbitals(j(os.path.split(__file__)[0], 'fixtures','pentafluorophsophate','FragAnal.adf.rkf'))
 	assert orbs.sfos['1(3S)'].degenerate is False
 
 def test_FMO_n_degeneracy():
-	orbs = pyfmo.orbitals.Orbitals(j(os.path.split(__file__)[0], 'fixtures','pentafluorophsophate','FragAnal.adf.rkf'))
-	assert orbs.sfos['2(HOMO-1)'].n_degenerate == 2
+	orbs = pyfmo.Orbitals(j(os.path.split(__file__)[0], 'fixtures','pentafluorophsophate','FragAnal.adf.rkf'))
+	assert orbs.sfos['2(HOMO-1)'].degeneracy == 2
 
 def test_FMO_n_degeneracy2():
-	orbs = pyfmo.orbitals.Orbitals(j(os.path.split(__file__)[0], 'fixtures','pentafluorophsophate','FragAnal.adf.rkf'))
-	assert orbs.sfos['1(2P:x)'].n_degenerate == 3
-
-
+	orbs = pyfmo.Orbitals(j(os.path.split(__file__)[0], 'fixtures','pentafluorophsophate','FragAnal.adf.rkf'))
+	assert orbs.sfos['1(2P:x)'].degeneracy == 3
 
 def test_SCF_site_energy_1():
 	rkf = j(os.path.split(__file__)[0], 'fixtures','SAOP_DZP', 'complex', 'adf.rkf')
 	path_SCF0 = j(os.path.split(__file__)[0], 'fixtures','SAOP_DZP', 'complex_SCF0', 'adf.rkf')
-	orbs = pyfmo.orbitals.Orbitals(rkf, path_SCF0=path_SCF0)
+	orbs = pyfmo.Orbitals(rkf, path_SCF0=path_SCF0)
 	assert round(orbs.sfos['Na(12A)'].site_energy_SCF0, 4) == 5.1043
 
 def test_SCF_site_energy_2():
 	rkf = j(os.path.split(__file__)[0], 'fixtures','SAOP_DZP', 'complex', 'adf.rkf')
 	path_SCF0 = j(os.path.split(__file__)[0], 'fixtures','SAOP_DZP', 'complex_SCF0', 'adf.rkf')
-	orbs = pyfmo.orbitals.Orbitals(rkf, path_SCF0=path_SCF0)
+	orbs = pyfmo.Orbitals(rkf, path_SCF0=path_SCF0)
 	assert round(orbs.sfos['Cl(9A)'].site_energy, 4) == -9.4931
 
 def test_SCF_site_energy_3():
 	rkf = j(os.path.split(__file__)[0], 'fixtures','SAOP_DZP', 'complex', 'adf.rkf')
 	path_SCF0 = j(os.path.split(__file__)[0], 'fixtures','SAOP_DZP', 'complex_SCF0', 'adf.rkf')
-	orbs = pyfmo.orbitals.Orbitals(rkf, path_SCF0=path_SCF0)
+	orbs = pyfmo.Orbitals(rkf, path_SCF0=path_SCF0)
 	assert orbs.sfos['Na(1A)'].energy != orbs.sfos['Na(1A)'].site_energy and orbs.sfos['Na(1A)'].site_energy != orbs.sfos['Na(1A)'].site_energy_SCF0
 	# assert orbs.sfos['Na(1A)'].energy != orbs.sfos['Na(1A)'].site_energy_SCF0 and orbs.sfos['Na(1A)'].energy != orbs.sfos['Na(1A)'].energy_approximation
 
 def test_Fock_matrix_diagonal():
 	rkf = j(os.path.split(__file__)[0], 'fixtures','FMAT_SFO', 'nh4.adf.rkf')
 	path_SCF0 = j(os.path.split(__file__)[0], 'fixtures','FMAT_SFO', 'nh4.adf.rkf')
-	orbs = pyfmo.orbitals.Orbitals(rkf, path_SCF0=path_SCF0)
+	orbs = pyfmo.Orbitals(rkf, path_SCF0=path_SCF0)
 	assert orbs.sfos['nh3(3A1)'].energy != orbs.sfos['nh3(3A1)'].site_energy_SCF0
 	assert orbs.sfos['nh3(3A1)'].site_energy == orbs.sfos['nh3(3A1)'].site_energy_SCF0
 
+
+def test_froclarge_mulliken_contr():
+	orbs = pyfmo.Orbitals(j(os.path.split(__file__)[0], 'fixtures','frozen_cores','nh3bh3_large.rkf'))
+	c = orbs.sfos['Donor(6A1)'].mulliken_contribution(orbs.mos['12A1'])
+	assert round(c, 4) == 0.9913
+
+
+def test_froclarge_coeff1():
+	orbs = pyfmo.Orbitals(j(os.path.split(__file__)[0], 'fixtures','frozen_cores','nh3bh3_large.rkf'))
+	c = orbs.sfos['Acceptor(5A1)'].coefficient(orbs.mos['9A1'])
+	assert round(c, 4) == 0.9468
+
+
+def test_froclarge_coeff2():
+	orbs = pyfmo.Orbitals(j(os.path.split(__file__)[0], 'fixtures','frozen_cores','nh3bh3_large.rkf'))
+	c = orbs.sfos['Donor(4E1:1)'].coefficient(orbs.mos['8E1:1'])
+	assert round(c, 4) == 0.4137
+
+
+def test_froclarge_coeff3():
+	orbs = pyfmo.Orbitals(j(os.path.split(__file__)[0], 'fixtures','frozen_cores','nh3bh3_large.rkf'))
+	c = orbs.sfos['Donor(4E1:1)'].coefficient(orbs.mos['9A1'])
+	assert c == 0
+
+
+def test_froclarge_grosspop():
+	orbs = pyfmo.Orbitals(j(os.path.split(__file__)[0], 'fixtures','frozen_cores','nh3bh3_large.rkf'))
+	assert round(orbs.sfos['Acceptor(5A1)'].gross_population, 3) == -0.007
+
+def test_lumo_naming():
+	orbs = pyfmo.Orbitals(j(os.path.split(__file__)[0], 'fixtures','frozen_cores','nh3bh3_large.rkf'))
+	assert orbs.sfos['Donor(2E1:1)'] == orbs.sfos['Donor(LUMO+1)']
+	assert orbs.sfos['Donor(2E1:2)'] == orbs.sfos['Donor(LUMO+2)']
+
+
+
 if __name__ == '__main__':
 	import pytest
-	print(j(os.path.split(__file__)[0], 'fixtures','RadicalAddition','adf.rkf'))
 	pytest.main()
 
