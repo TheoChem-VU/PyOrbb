@@ -50,11 +50,21 @@ def _orbint_mat(sfos1, sfos2):
 
 
 def _contribution_mat(orbs, sfos, mos):
-    idx_offset = 0 if mos[0].spin in ['AB', 'A'] else len(mos)
-    sfo_idx = [sfo.index - 1 + idx_offset for sfo in sfos]
-    mo_idx = [mo.index - 1 + idx_offset for mo in mos]
-    C = orbs.data.matrices.mulliken_contribution.total[:, sfo_idx][mo_idx, :]
-    return C
+    ret = []
+    for mo in ensure_list(mos):
+        ret.append([])
+        for sfo in ensure_list(sfos):
+            ret[-1].append(sfo.mulliken_contribution(mo))
+    return np.atleast_2d(np.array(ret).squeeze())
+
+
+def _coefficient_mat(orbs, sfos, mos):
+    ret = []
+    for mo in ensure_list(mos):
+        ret.append([])
+        for sfo in ensure_list(sfos):
+            ret[-1].append(sfo.coefficient(mo))
+    return np.atleast_2d(np.array(ret).squeeze())
 
 
 def _get_molecules(reader):
@@ -339,7 +349,7 @@ def to_excel(orbs: pyfmo.Orbitals, out_file: str = 'pyfmo.xlsx', sfo_energy_type
 
 
     mixer = pyfmo.analysis.mixing.Mixer(orbs, energy_type=sfo_energy_type)
-    mixes = mixer.orbital_interactions(N=100)
+    mixes = mixer.orbital_interactions(N=1)
     # write information about the mixing
     rows = [(str(mix.sfos[0]),
              str(mix.sfos[1]),
@@ -369,7 +379,7 @@ def to_excel(orbs: pyfmo.Orbitals, out_file: str = 'pyfmo.xlsx', sfo_energy_type
                 f'** SFO energy type: {sfo_energy_type}'])
 
     # write information about the mixing
-    mixes = mixer.pauli_repulsions(N=100)
+    mixes = mixer.pauli_repulsions(N=1)
     rows = [(str(mix.sfos[0]),
              str(mix.sfos[1]),
              str(mix.mos[0]),
@@ -540,10 +550,7 @@ def to_excel(orbs: pyfmo.Orbitals, out_file: str = 'pyfmo.xlsx', sfo_energy_type
             name = f"Coeff {fragment_name} {spin_names[spin]}" if spin != 'AB' else f"Coeff {fragment_name}"
             title = f"MO Coefficients from {fragment_name} (spin {spin_names[spin]})" if spin != 'AB' else f"MO Coefficients from {fragment_name}"
             sfos_ = [sfo for sfo in sfos_spin[spin] if sfo.fragment_unique == fragment]
-            idx_offset = 0 if spin in ['A', 'AB'] else len(mos_spin[spin])
-            sfo_idx = [sfo.index - 1 + idx_offset for sfo in sfos_]
-            mo_idx = [mo.index - 1 + idx_offset for mo in mos_spin[spin]]
-            coeff = orbs.data.matrices.coefficients.total[:, sfo_idx][mo_idx, :]
+            coeff = _coefficient_mat(orbs, sfos_, mos_spin[spin])
 
             cnd_fmt = {
                 'type': '3_color_scale',
