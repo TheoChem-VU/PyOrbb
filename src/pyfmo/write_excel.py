@@ -43,7 +43,7 @@ def _orbint_mat(sfos1, sfos2):
         ret.append([])
         for sfo2 in ensure_list(sfos2):
             if sfo1.occupation == sfo2.occupation:
-                ret[-1].append(np.NaN)
+                ret[-1].append(np.nan)
             else:
                 ret[-1].append((sfo1 @ sfo2)**2/abs(sfo1.energy - sfo2.energy))
     return np.atleast_2d(np.array(ret).squeeze())
