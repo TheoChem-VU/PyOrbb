@@ -42,7 +42,7 @@ def draw_interaction(sfos, mos, connections,
         try:
             energy_span = max(energies.values()) - min(energies.values())
             ax.set_ylim(min(energies.values()) - .1 * energy_span, max(energies.values()) + .1 * energy_span, auto=False)
-        except:
+        except ValueError:
             energy_span = 1
             ax.set_ylim(0, 1, auto=False)
     else:
@@ -134,16 +134,9 @@ def draw_interaction(sfos, mos, connections,
         }.get(orb.spin, '')
 
         if isinstance(orb, pyfmo.orbitals.objects.MO):
-            orb_name = f'{orb.name}{spin_part}'
-            color = '#b3b3b3'
             color = 'k'
         else:
-            color = 'k'
             color = '#b3b3b3'
-            if orb.spin == 'AB':
-                orb_name = orb.name
-            else:
-                orb_name = f'{orb.name[:-2]}{spin_part}'
 
         is_MO = orb in mos
         ax.plot(
