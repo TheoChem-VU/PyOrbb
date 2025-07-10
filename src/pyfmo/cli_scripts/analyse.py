@@ -444,4 +444,4 @@ def main(args: argparse.Namespace):
     plt.gcf().canvas.mpl_connect('button_press_event', on_click)
 
     plt.tight_layout()
-    plt.show()
+    plt.show(block=True)
