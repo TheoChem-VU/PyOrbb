@@ -79,6 +79,25 @@ class Orbital:
 
     @property
     @cache.cache
+    def fully_occupied(self) -> bool:
+        '''
+        Whether the orbital is fully occupied.
+        '''
+        if self.spin in ['A', 'B']:
+            return self.singly_occupied
+        if self.spin == 'AB':
+            return self.doubly_occupied
+
+    @property
+    @cache.cache
+    def partially_occupied(self) -> bool:
+        '''
+        Whether the orbital is not empty and not fully occupied.
+        '''
+        return not self.unoccupied and not self.fully_occupied
+
+    @property
+    @cache.cache
     def doubly_occupied(self) -> bool:
         '''
         Whether the orbital is doubly occupied.

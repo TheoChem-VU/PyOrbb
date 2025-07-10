@@ -589,18 +589,18 @@ class Mixing:
             return int(nsfos_elec - nmos_elec)
 
         def excess_virt():
-            nsfos_virt = len([sfo for sfo in mix.sfos if sfo.occupation == 0])
-            nmos_virt = len([mo for mo in mix.mos if mo.occupation == 0])
+            nsfos_virt = len([sfo for sfo in mix.sfos if sfo.unoccupied])
+            nmos_virt = len([mo for mo in mix.mos if mo.unoccupied])
             return nsfos_virt - nmos_virt
 
         def excess_half():
-            nsfos_half = len([sfo for sfo in mix.sfos if sfo.occupation == 1])
-            nmos_half = len([mo for mo in mix.mos if mo.occupation == 1])
+            nsfos_half = len([sfo for sfo in mix.sfos if sfo.partially_occupied])
+            nmos_half = len([mo for mo in mix.mos if mo.partially_occupied])
             return nsfos_half - nmos_half
 
         def excess_occ():
-            nsfos_occ = len([sfo for sfo in mix.sfos if sfo.occupation == 2])
-            nmos_occ = len([mo for mo in mix.mos if mo.occupation == 2])
+            nsfos_occ = len([sfo for sfo in mix.sfos if sfo.fully_occupied])
+            nmos_occ = len([mo for mo in mix.mos if mo.fully_occupied])
             return nsfos_occ - nmos_occ
 
         sub_mixes = self.split()
