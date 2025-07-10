@@ -12,7 +12,16 @@
 .. grid:: 3
     :gutter: 3
 
-    .. grid-item-card:: :ref:`Publication`
+    .. grid-item-card:: Installation
+      :link: installation.html
+
+      .. image:: _static/images/installation.png
+         :width: 150px
+         :align: center
+
+      Installation guide for PyOrbb.
+
+    .. grid-item-card:: Publication
       :link: https://aces.onlinelibrary.wiley.com/doi/pdfdirect/10.1002/asia.202001127
 
       .. image:: _static/images/publication.png
@@ -21,7 +30,7 @@
 
       Read the accompanying PyOrbb publication.
 
-    .. grid-item-card:: :ref:`Command-line Tools`
+    .. grid-item-card:: Command-line Tools
       :link: api/cli.html
 
       .. image:: _static/images/command_line.png
@@ -30,7 +39,7 @@
 
       An overview of the main command-line tools provided by PyOrbb.
 
-    .. grid-item-card:: :ref:`Basic Usage`
+    .. grid-item-card:: Basic Usage
       :link: api/basic_usage.html
 
       .. image:: _static/images/basic_usage.png
@@ -39,7 +48,7 @@
 
       Get a quick overview of the basic functionalities of the PyOrbb Python API.
 
-    .. grid-item-card:: :ref:`Full API`
+    .. grid-item-card:: Full API
       :link: api/modules.html
 
       .. image:: _static/images/api.png
@@ -48,11 +57,11 @@
 
       The full Python API of PyOrbb can be found here.
 
-    .. grid-item-card:: :ref:`Examples`
-      :link: api/examples.html
+    .. grid-item-card:: Examples
+      :link: examples/index.html
 
       .. image:: _static/images/examples.png
          :width: 150px
          :align: center
 
-      See a number of interesting examples showcasing the usage of the PyOrbb Python API.
+      Interesting examples showcasing the usage of the PyOrbb Python API.
