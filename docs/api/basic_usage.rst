@@ -98,4 +98,10 @@ Or to obtain the coefficient of an |SFO| into an |MO|.
 Advanced Examples
 -----------------
 
-For more advanced examples please see the `advanced examples <examples.html>`_ section of this site.
+For more advanced examples please see the `advanced examples <../examples/index.html>`_ section of this site.
+
+.. toctree::
+
+   ../examples/pi_orbitals
+   ../examples/tracking
+   ../examples/excitations
