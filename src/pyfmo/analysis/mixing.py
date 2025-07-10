@@ -191,6 +191,9 @@ class Mixing:
             self.connections = list(it.product(self.sfos, self.mos))
         if connection_colors is None:
             self.connection_colors = {conn: 'k' for conn in self.connections}
+        if isinstance(connection_colors, str):
+            self.connection_colors = {conn: connection_colors for conn in self.connections}
+
         self.two_mixings = [[self]]
 
     def __str__(self):
