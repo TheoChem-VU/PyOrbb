@@ -231,10 +231,10 @@ def read_data(reader: plams.KFReader, SCF0_reader: plams.KFReader = None, output
             except ValueError:
                 is_float = False
 
-            if not is_float and not part in ['(equivalent', 'subspecies)', '----']:
+            if not is_float and part not in ['(equivalent', 'subspecies)', '----']:
                 Ekin[part] = []
                 curr_irrep = part
-            elif not part in ['(equivalent', 'subspecies)', '----']:
+            elif part not in ['(equivalent', 'subspecies)', '----']:
                 Ekin[curr_irrep].append(float(part))
             if part == 'subspecies)':
                 Ekin[curr_irrep] = Ekin[curr_irrep.split(':')[0] + ':1']

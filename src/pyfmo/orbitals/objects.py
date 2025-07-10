@@ -4,7 +4,6 @@ from tcutility import cache, ensure_list
 import os
 import numpy as np
 from collections.abc import Container
-from typing_extensions import deprecated
 import math
 
 
@@ -648,7 +647,6 @@ class Orbitals:
 
     def _gather_mos(self):
         self.mos = MOs([], self)
-        nfrozen_cores = self.data.MOs.nfrozencores.total
         for moi in range(self.data.SFOs.number):
             for spin_idx, mo_spin in enumerate(self.data.calc_info.mo_spins):
                 symm_idx = self.data.MOs.symmetry_index[moi]

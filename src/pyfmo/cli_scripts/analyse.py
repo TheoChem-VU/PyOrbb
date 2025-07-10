@@ -290,7 +290,7 @@ def main(args: argparse.Namespace):
                 mo = orbs.mos[gid[3:]]
                 submixes = main_mix.split()
                 submix = [submix for submix in submixes if mo in submix.mos][0]
-                s += f'MO'.ljust(35)
+                s += 'MO'.ljust(35)
                 s += f'\n   {mo}'
                 s += f'\n   {mo.relative_name}'
                 s += f'\n   {mo.symmetry} {mo.irrep_relative_name}\n'
@@ -318,7 +318,7 @@ def main(args: argparse.Namespace):
                 sfo = orbs.sfos[gid[4:]]
                 submixes = main_mix.split()
                 submix = [submix for submix in submixes if sfo in submix.sfos][0]
-                s += f'SFO'.ljust(35)
+                s += 'SFO'.ljust(35)
                 s += f'\n   {sfo}'
                 s += f'\n   {sfo.relative_name}'
                 s += f'\n   {sfo.symmetry} {sfo.irrep_relative_name}\n'
@@ -358,11 +358,11 @@ def main(args: argparse.Namespace):
                 sfo = orbs.sfos[gid[4:].split('->')[0].strip()]
                 mo = orbs.mos[gid[4:].split('->')[1].strip()]
                 connected_sfos = [conn[0] for conn in main_mix.connections if conn[1] == mo and conn[0].fragment_unique != sfo.fragment_unique]
-                s += f'SFO'.ljust(35)
+                s += 'SFO'.ljust(35)
                 s += f'\n   {sfo}'
                 s += f'\n   {sfo.relative_name}'
                 s += f'\n   {sfo.symmetry} {sfo.irrep_relative_name}\n'
-                s += f'\nMO'
+                s += '\nMO'
                 s += f'\n   {mo}'
                 s += f'\n   {mo.relative_name}'
                 s += f'\n   {mo.symmetry} {mo.irrep_relative_name}\n'

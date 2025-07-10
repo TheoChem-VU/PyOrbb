@@ -1,5 +1,4 @@
 import matplotlib.pyplot as plt
-from matplotlib import patheffects as pe
 import numpy as np
 import pyfmo
 
@@ -128,7 +127,7 @@ def draw_interaction(sfos, mos, connections,
     ax.tick_params(bottom = False)
     for orb in poss:
         E = energies[orb]
-        
+
         spin_part = {
             'A': r' $\alpha$',
             'B': r' $\beta$'

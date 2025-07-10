@@ -40,7 +40,7 @@ def draw_interaction(sfos, mos, connections,
             energies = [getattr(orb, energy_type) for orb in list(sfos)] + [orb.energy for orb in list(mos)]
             energy_span = max(energies) - min(energies)
             ax.set_ylim(min(energies) - .1 * energy_span, max(energies) + .1 * energy_span, auto=False)
-        except:
+        except ValueError:
             energy_span = 1
             ax.set_ylim(0, 1, auto=False)
     else:
