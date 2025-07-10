@@ -379,10 +379,10 @@ class Mixing:
         mixes = []
         for subG in subGs:
             orbs_ = subG.nodes()
-            mos = [orb for orb in orbs_ if isinstance(orb, pyfmo.orbitals2.objects.MO)]
-            sfos = [orb for orb in orbs_ if isinstance(orb, pyfmo.orbitals2.objects.SFO)]
+            mos = [orb for orb in orbs_ if isinstance(orb, pyfmo.orbitals.objects.MO)]
+            sfos = [orb for orb in orbs_ if isinstance(orb, pyfmo.orbitals.objects.SFO)]
             connections = subG.edges()
-            connections = [conn[::-1] if isinstance(conn[0], pyfmo.orbitals2.objects.MO) else conn for conn in connections]
+            connections = [conn[::-1] if isinstance(conn[0], pyfmo.orbitals.objects.MO) else conn for conn in connections]
             mixes.append(Mixing(
                 self.orbs,
                 mos=mos, 
