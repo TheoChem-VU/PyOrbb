@@ -8,4 +8,5 @@ xlsxwriter
 sphinx-autodoc-typehints
 sphinx-argparse
 sphinxcontrib-video
+sphinx-tabs
 sphinx_design
