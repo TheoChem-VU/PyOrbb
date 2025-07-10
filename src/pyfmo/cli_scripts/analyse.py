@@ -326,6 +326,7 @@ def main(args: argparse.Namespace):
                 s += f'\n   {sfo.symmetry} {sfo.irrep_relative_name}\n'
                 s += f'\nFragment   {sfo.fragment_unique}'
                 s += f'\nEnergy    {getattr(sfo, orbs.sfo_energy_types[etype_b.index_selected]): .2f} eV'
+                s += f'\nOccupation {sfo.occupation:.2f}'
                 s += f'\nPop.      {sfo.gross_population: .3f}'
                 s += f'\nSpin-pop. {sfo.gross_spin: .3f}'
                 s += f'\nSpin       {sfo.spin}'
