@@ -4,3 +4,8 @@ numpy
 git+https://github.com/SCM-NV/PLAMS
 matplotlib
 TCviewer
+xlsxwriter
+sphinx-autodoc-typehints
+sphinx-argparse
+sphinxcontrib-video
+sphinx_design
