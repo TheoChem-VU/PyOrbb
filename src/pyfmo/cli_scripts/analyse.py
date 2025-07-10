@@ -16,7 +16,7 @@ mpl.font_manager.fontManager.addfont(font_path)
 prop = mpl.font_manager.FontProperties(fname=font_path)
 
 plt.rcParams['font.monospace'] = prop.get_name()
-
+mpl.rcParams['toolbar'] = 'None'
 
 def create_subparser(parent_parser: argparse.ArgumentParser):
     desc = "Start an interactive PyOrbb orbital diagram."
