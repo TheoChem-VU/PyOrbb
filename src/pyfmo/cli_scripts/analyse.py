@@ -106,11 +106,11 @@ def main(args: argparse.Namespace):
     oi_b = CheckButtons(oi_bax, labels=[' Show'], actives=[True])
     pauli_b = CheckButtons(pauli_bax, labels=[' Show'], actives=[False])
     oi_s_max = max(max(mix.xiaobo_value() for mix in mixes) for mixes in oi_mixes.values())
-    oi_s = Slider(oi_sax, 'OI', np.log10(0.0001), np.log10(oi_s_max), valinit=np.log10(oi_s_max/1.5), facecolor='g', closedmax=False)
+    oi_s = Slider(oi_sax, 'CT', np.log10(0.00000001), np.log10(oi_s_max), valinit=np.log10(oi_s_max/1.5), facecolor='g', closedmax=False)
     pauli_s_max = max(max(mix.xiaobo_value() for mix in mixes) for mixes in pauli_mixes.values())
     # pauli_s_max = max(mix.xiaobo_value() for mix in pauli_mixes)
-    pauli_s = Slider(pauli_sax, 'Pauli', 0.001, pauli_s_max, valinit=pauli_s_max/1.5, facecolor='r')
-    
+    pauli_s = Slider(pauli_sax, 'PR', 0.001, pauli_s_max, valinit=pauli_s_max/1.5, facecolor='r')
+
     oi_b.on_clicked(update)
     pauli_b.on_clicked(update)
 
