@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+from matplotlib import patheffects as pe
 import numpy as np
 import pyfmo
 
@@ -11,35 +12,37 @@ def draw_interaction(sfos, mos, connections,
         ylim=None,
         draw_mo_labels=False,
         draw_sfo_labels=True,
-        alpha_range=(0.1, 1)):
-    arrow_length        = .3 / 4.8280888207
-    arrow_thickness     = .35
+        alpha_range=(0.05, 0.3)):
+    arrow_length        = .14 / 4.8280888207
+    arrow_thickness     = .05
     arrow_width         = .005
-    arrow_head_width    = .025
-    arrow_head_length   = .1 / 4.8280888207
+    arrow_head_width    = .02
+    arrow_head_length   = .04 / 4.8280888207
     arrow_overhang      = .4
     arrow_spacing       = .012
 
-    level_width = .08
-    level_thickness = 3
-    if draw_mo_labels:
-        degenerate_mo_threshold = .08
-    else:
-        degenerate_mo_threshold = .008
+    mo_level_outline_width = 0.7
 
-    if draw_sfo_labels:
-        degenerate_sfo_threshold = .08
-    else:
-        degenerate_sfo_threshold = .008
+    level_width = .055
+    level_thickness = 1
+
+    degenerate_filled_threshold = arrow_length * 1.4
+    degenerate_virtual_threshold = arrow_length / 5
+
+    # store all energies here
+    energies = {}
+    for sfo in sfos:
+        energies[sfo] = getattr(sfo, energy_type)
+    for mo in mos:
+        energies[mo] = mo.energy
 
     if ax is None:
         ax = plt.gca()
 
     if ylim is None:
         try:
-            energies = [getattr(orb, energy_type) for orb in list(sfos)] + [orb.energy for orb in list(mos)]
-            energy_span = max(energies) - min(energies)
-            ax.set_ylim(min(energies) - .1 * energy_span, max(energies) + .1 * energy_span, auto=False)
+            energy_span = max(energies.values()) - min(energies.values())
+            ax.set_ylim(min(energies.values()) - .1 * energy_span, max(energies.values()) + .1 * energy_span, auto=False)
         except:
             energy_span = 1
             ax.set_ylim(0, 1, auto=False)
@@ -54,7 +57,6 @@ def draw_interaction(sfos, mos, connections,
     sep_orbs = {frag: [sfo for sfo in sfos if sfo.fragment_unique == frag] for frag in frags}
     sep_orbs['mo'] = mos
     poss = {}
-    energies = {}
 
     for typ, sep_orbs_ in sep_orbs.items():
         if typ == 'mo':
@@ -67,11 +69,6 @@ def draw_interaction(sfos, mos, connections,
 
         degenerates = []
         for orb in sep_orbs_:
-            if typ == 'mo':
-                energies[orb] = orb.energy
-            else:
-                energies[orb] = getattr(orb, energy_type)
-
             if any(orb in degenerates_ for degenerates_ in degenerates):
                 continue
 
@@ -80,19 +77,31 @@ def draw_interaction(sfos, mos, connections,
                 if orb == other_orb:
                     continue
 
-                E1, E2 = orb.energy, other_orb.energy
-                if orb in sfos:
-                    E1, E2 = getattr(orb, energy_type), getattr(other_orb, energy_type)
+                E1, E2 = energies[orb], energies[other_orb]
 
-                if isinstance(orb, pyfmo.orbitals2.objects.MO):
-                    if abs(E1 - E2) < (degenerate_mo_threshold * energy_span):
+                if other_orb.occupied:
+                    if abs(E1 - E2) < (degenerate_filled_threshold * energy_span):
                         degenerates[-1].append(other_orb)
                 else:
-                    if abs(E1 - E2) < (degenerate_sfo_threshold * energy_span):
+                    if abs(E1 - E2) < (degenerate_virtual_threshold * energy_span):
                         degenerates[-1].append(other_orb)
 
-        degenerates = [list(sorted(deg, key=lambda orb: orb.energy)) for deg in degenerates]
-        degenerate_energies = [sum([orb.energy for orb in deg])/len(deg) for deg in degenerates]
+        degenerates = [list(sorted(deg, key=lambda orb: energies[orb])) for deg in degenerates]
+        degenerate_energies = [sum([energies[orb] for orb in deg])/len(deg) for deg in degenerates]
+        # remove duplicates in the degenerate lists
+        for orb in sep_orbs_:
+            deg_members = [(i, deg) for i, deg in enumerate(degenerates) if orb in deg]
+            deg_energies = [sum([energies[orb] for orb in deg])/len(deg) for _, deg in deg_members]
+            deg_energy_diffs = [abs(energies[orb] - deg_energy) for deg_energy in deg_energies]
+            closest_idx = np.argmin(deg_energy_diffs)
+            for i, deg_ in enumerate(deg_members):
+                if i == closest_idx:
+                    continue
+                deg_[1].remove(orb)
+
+        degenerates = [list(sorted(deg, key=lambda orb: energies[orb])) for deg in degenerates]
+        degenerate_energies = [sum([energies[orb] for orb in deg])/len(deg) for deg in degenerates]
+
         for orb in sep_orbs_:
             degenerate_idx, orb_degenerate = [(i, deg) for i, deg in enumerate(degenerates) if orb in deg][0]
             deg_idx = orb_degenerate.index(orb) + 1
@@ -110,31 +119,46 @@ def draw_interaction(sfos, mos, connections,
         xtick_pos.append(poss[orb])
         xtick_label.append(orb.fragment_unique)
 
-
     ax.set_title(title)
+    ax.set_ylabel('Orbital Energy / eV')
     ax.set_xticks(xtick_pos, xtick_label)
-    ax.set_yticks([], [])
-    ax.spines[['top', 'bottom', 'left', 'right']].set_visible(False)
+    # ax.set_yticks([], [])
+    ax.spines[['top', 'bottom', 'right']].set_visible(False)
     ax.tick_params('x', labelsize=12, labelcolor='grey')
     ax.tick_params(bottom = False)
     for orb in poss:
         E = energies[orb]
-
+        
         spin_part = {
             'A': r' $\alpha$',
             'B': r' $\beta$'
         }.get(orb.spin, '')
 
-        if isinstance(orb, pyfmo.orbitals2.objects.MO):
+        if isinstance(orb, pyfmo.orbitals.objects.MO):
             orb_name = f'{orb.name}{spin_part}'
+            color = '#b3b3b3'
+            color = 'k'
         else:
+            color = 'k'
+            color = '#b3b3b3'
             if orb.spin == 'AB':
                 orb_name = orb.name
             else:
                 orb_name = f'{orb.name[:-2]}{spin_part}'
 
         is_MO = orb in mos
-        ax.plot([poss[orb]-level_width/2, poss[orb]+level_width/2], [E, E], c='k', linewidth=level_thickness, gid=f'{"MO" if is_MO else "SFO"}_{orb}')
+        ax.plot(
+            [poss[orb]-level_width/2, poss[orb]+level_width/2], 
+            [E, E], 
+            c='k', 
+            linewidth=level_thickness + mo_level_outline_width, 
+            gid=f'{"MO" if is_MO else "SFO"}_{orb}')
+
+        ax.plot(
+            [poss[orb]-level_width/2, poss[orb]+level_width/2], 
+            [E, E], 
+            c=color, 
+            linewidth=level_thickness)
 
         if not orb.occupied:
             continue
@@ -167,6 +191,19 @@ def draw_interaction(sfos, mos, connections,
                       head_width=arrow_head_width, 
                       head_length=arrow_head_length * energy_span, 
                       color='k', 
+                      overhang=arrow_overhang, 
+                      length_includes_head=True,
+                      linewidth=arrow_thickness + mo_level_outline_width,
+                      gid=f'{"ARROWMO" if is_MO else "ARROWSFO"}_{orb}')
+
+            ax.arrow(poss[orb]+offset_x, 
+                      E+offset_y, 
+                      0, 
+                      displacement, 
+                      width=arrow_width, 
+                      head_width=arrow_head_width, 
+                      head_length=arrow_head_length * energy_span, 
+                      color=color, 
                       overhang=arrow_overhang, 
                       length_includes_head=True,
                       linewidth=arrow_thickness,
