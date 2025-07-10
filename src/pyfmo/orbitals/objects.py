@@ -640,6 +640,22 @@ class Orbitals:
     def sfo_energy_types(self):
         return self.sfos.energy_types
 
+    def rename_fragment(self, old: str, new: str):
+        '''
+        Rename the ``old`` fragment ``new``.
+        '''
+        for sfo in self.sfos:
+            # we have to replace the ``fragment`` and ``fragment_unique`` properties
+            if sfo.fragment == old:
+                sfo.fragment = new
+            # ``fragment_unique`` can contain ':'
+            if sfo.fragment_unique.split(':')[0] == old:
+                if ':' not in sfo.fragment_unique:
+                    sfo.fragment_unique = new
+                    continue
+                unique_part = sfo.fragment_unique.split(':')[1]
+                sfo.fragment_unique = f'{new}:{unique_part}'
+
 
 class OrbitalSelector:
     '''
