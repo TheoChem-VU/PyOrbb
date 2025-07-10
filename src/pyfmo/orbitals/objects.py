@@ -142,6 +142,10 @@ class Orbital:
         Args:
             gridsize: the size of the grid to generate the cube-file with.
             overwrite: whether to overwrite the previous calculation if found.
+
+        .. seealso::
+            :meth:`Orbital.draw` to draw and open a TCviewer screen showing this |Orbital|.
+            :meth:`Orbital.screenshot` to generate a screenshot of this |Orbital|.
         '''
         from tcutility.job.adf import DensfJob
         from tcintegral import grid
@@ -175,6 +179,7 @@ class Orbital:
 
         .. seealso::
             :meth:`Orbital.cube_file` to generate and return a cube-file for this |Orbital|.
+            :meth:`Orbital.screenshot` to generate a screenshot of this |Orbital|.
         '''
         import tcviewer
 
@@ -197,12 +202,54 @@ class Orbital:
             scene.draw_molecule(self.molecule)
             scene.draw_isosurface(cub, -0.03, c1)
             scene.draw_isosurface(cub,  0.03, c2)
-            # scene.draw_axes()
 
         if screen is None:
             scr.exec()
 
         return scr
+
+
+    def screenshot(self, output_path: str = None, gridsize: str = 'medium', isovalue: float = 0.03, overwrite: bool = False, transform: "tcutility.geometry.Transform" = None) -> str:
+        '''
+        Generate a screenshot for this |Orbital| object.
+
+        Args:
+            output_path: the path to save the image to.
+            gridsize: the size of the grid to generate the cube-file with.
+            isovalue: the value with which to generate the isosurface of this |Orbital|.
+            overwrite: whether to overwrite the previous calculation if found.
+            screen: the ``tcviewer.screen.Screen`` object to use to draw this orbital. 
+                If not given we start a new screen.
+            transform: the geometrical transformation to use with this orbital.
+
+        .. seealso::
+            :meth:`Orbital.cube_file` to generate and return a cube-file for this |Orbital|.
+            :meth:`Orbital.draw` to draw and open a TCviewer screen showing this |Orbital|.
+        '''
+        import tcviewer
+
+        if output_path is None:
+            output_path = str(self) + '.png'
+
+        # generate a cube-file or load an existing one
+        cub = self.cube_file(gridsize=gridsize, overwrite=overwrite)
+
+        # make a new screen and draw the orbital
+        with tcviewer.Screen(headless=True) as scr:
+            with scr.add_molscene() as scene:
+                c1, c2 = ([1, 0, 0], [0, 0, 1]) if self.occupied else ([1, .5, 0], [0, 1, 1])
+                if transform is not None:
+                    scene.transform = transform.to_vtkTransform()
+
+                scene.draw_molecule(self.molecule)
+                scene.draw_isosurface(cub, -0.03, c1)
+                scene.draw_isosurface(cub,  0.03, c2)
+
+                # and take a screenshot
+                scene.screenshot(output_path)
+
+        return output_path
+
 
     @property
     @cache.cache
