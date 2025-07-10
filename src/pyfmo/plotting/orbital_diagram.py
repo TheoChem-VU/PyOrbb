@@ -78,7 +78,7 @@ def draw_interaction(sfos, mos, connections,
                 if orb in sfos:
                     E1, E2 = getattr(orb, energy_type), getattr(other_orb, energy_type)
 
-                if isinstance(orb, pyfmo.orbitals2.objects.MO):
+                if isinstance(orb, pyfmo.orbitals.objects.MO):
                     if abs(E1 - E2) < (degenerate_mo_threshold * energy_span):
                         degenerates[-1].append(other_orb)
                 else:
@@ -120,7 +120,7 @@ def draw_interaction(sfos, mos, connections,
             'B': r' $\beta$'
         }.get(orb.spin, '')
 
-        if isinstance(orb, pyfmo.orbitals2.objects.MO):
+        if isinstance(orb, pyfmo.orbitals.objects.MO):
             orb_name = f'{orb.name}{spin_part}'
         else:
             if orb.spin == 'AB':
