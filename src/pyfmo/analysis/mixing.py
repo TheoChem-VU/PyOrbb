@@ -53,20 +53,14 @@ class Mixer:
 
                 self.S_oi[(frag, frag2)] = overlap_mat(self.sfos[frag], self.sfos[frag2])
                 self.dE_oi[(frag, frag2)] = abs(self.sfos_energy[frag] - self.sfos_energy[frag2].T)
-                # print(self.dE_oi[(frag, frag2)])
                 nogap_mask = self.dE_oi[(frag, frag2)] != 0
-                # total_mask = occ_virt_mask * nogap_mask
                 self.dE_oi[(frag, frag2)] += (1 - nogap_mask)
-                # print(self.dE_oi[(frag, frag2)])
 
                 self.oi[(frag, frag2)] = -self.S_oi[(frag, frag2)]**2 / self.dE_oi[(frag, frag2)] * occ_virt_mask
                 self.oi_approx_total += self.oi[(frag, frag2)].sum()
-                # print(self.dE_oi[(frag, frag2)])
 
                 # get data for pauli
                 occ_occ_mask = np.logical_and(self.sfos_occ[frag], self.sfos_occ[frag2].T)
-                # plt.imshow(occ_occ_mask)
-                # plt.show()
                 self.S_pauli[(frag, frag2)] = overlap_mat(self.sfos[frag], self.sfos[frag2])
                 self.pauli[(frag, frag2)] = self.S_pauli[(frag, frag2)]**2 * occ_occ_mask
                 self.pauli_approx_total += self.pauli[(frag, frag2)].sum()
@@ -134,8 +128,6 @@ class Mixer:
             for frag2 in self.orbs.sfos.fragments[i+1:]:
                 j = 0
                 while 1:
-                    # plt.imshow(self.pauli[(frag, frag2)])
-                    # plt.show()
                     best = np.unravel_index(argNmax(self.pauli[(frag, frag2)], j), self.pauli[(frag, frag2)].shape)
                     best_pauli = self.pauli[(frag, frag2)][best]
                     sfo1, sfo2  = self.sfos[frag][best[0]], self.sfos[frag2][best[1]]
@@ -148,14 +140,9 @@ class Mixer:
                     occ_mo1_idx = argNmax(occ_contrs, 0)
                     occ_mo2_idx = argNmax(occ_contrs, 1)
 
-                    # print(sfo1, sfo2)
-                    # print(occ_mo1_idx, occ_mo2_idx)
-
                     occ_mo1 = self.mos[occ_mo1_idx]
                     occ_mo2 = self.mos[occ_mo2_idx]
 
-                    # print(occ_mo1, occ_mo1.occupation, occ_mo1.occupied)
-                    # print(occ_mo2, occ_mo2.occupation, occ_mo2.occupied)
                     frac = best_pauli / self.pauli_approx_total
                     if fraction_thresh is None and j == N:
                         break
@@ -265,7 +252,6 @@ class Mixing:
         transform.rotate((np.diag(s/2) @ Vh).T)
         centroids = transform(centroids)
         transform.rotate(tcutility.geometry.vector_align_rotmat(centroids[0] - centroids[1], [0, 1, 0]))
-        # mol = transform(mol)
 
         os.makedirs(outdir, exist_ok=True)
         with tcviewer.Screen(headless=True) as scr:
@@ -497,13 +483,12 @@ class Mixing:
             sfo2 = self.sfos[argNmax(contr, 1)]
             contr1 = np.clip(sfo1.mulliken_contribution(mo), 0, 1)
             contr2 = np.clip(sfo2.mulliken_contribution(mo), 0, 1)
-            # print(mo, contr1 * contr2, max_contr, contr1 * contr2 > max_contr)
             if contr1 * contr2 > max_contr:
                 max_contr = contr1 * contr2
                 max_contr_mo = mo
                 max_contr_sfo1 = sfo1
                 max_contr_sfo2 = sfo2
-        # print(max_contr_mo)
+
         self.mos.append(max_contr_mo)
         self.connections.append([max_contr_sfo1, max_contr_mo])
         self.connections.append([max_contr_sfo2, max_contr_mo])
@@ -802,54 +787,3 @@ def oi2(orbs, index=0, irrep=None):
         mos=[best_mo, best_other_mo], 
         sfos=[best_sfo1, best_sfo2], 
         connections=[(best_sfo1, best_mo), (best_sfo2, best_mo), (best_sfo1, best_other_mo), (best_sfo2, best_other_mo)])
-
-
-if __name__ == '__main__':
-    import networkx as nx
-    import tcviewer
-    import matplotlib.pyplot as plt
-    p = '../../../calculations/PyOrb_testing_2022/DonorAcceptor/NH3BH3.results/'
-    # p = '../../../calculations/PyOrb_testing_2022/TransitionState/DielsAlder.results/'
-    # p = '../../../calculations/PyOrb_testing_2022/CoordinationBondFeCO4CO/FeCO4CO.results/'
-    # p = '../../../calculations/PyOrb_testing_2022/CoordinationBondFeCO4CH4/FeCO4CH4.results/'
-    # p = '../../../calculations/PyOrb_testing_2022/HydrogenBond/GuanineCytosine.results/'
-    # p = '../../../calculations/PyOrb_testing_2022/HeterolyticBond/complex/'
-    # p = '../../../calculations/PyOrb_testing_2022/HomolyticBond/complex/'
-    # p = '../../../calculations/PyOrb_testing_2022/ChemicalBond/frag.results/'
-    orbs = pyfmo.Orbitals(p + 'adf.rkf')
-    # res = tcutility.results.read(p)
-
-    frag1_sfos = orbs.sfos.get_fragment_sfos('NH3')
-    frag2_sfos = orbs.sfos.get_fragment_sfos('BH3')
-
-    print(frag1_sfos)
-    occ1 = np.array([sfo.occupied for sfo in frag1_sfos]).reshape(-1, 1)
-    occ2 = np.array([sfo.occupied for sfo in frag2_sfos]).reshape(-1, 1)
-    E1 = np.array([sfo.energy for sfo in frag1_sfos]).reshape(-1, 1)
-    E2 = np.array([sfo.energy for sfo in frag2_sfos]).reshape(-1, 1).T
-    occ_virt_mask = np.logical_xor(occ1.T, occ2)
-    plt.imshow(occ_virt_mask)
-    plt.show()
-    S = np.array([[abs(sfo1 @ sfo2) for sfo1 in frag1_sfos] for sfo2 in frag2_sfos])
-    dE = np.array([[abs(sfo1.energy - sfo2.energy) for sfo1 in frag1_sfos] for sfo2 in frag2_sfos])
-    
-    plt.imshow(S**2/dE * occ_virt_mask)
-    plt.show()
-
-    stab = []
-    K = 1.75
-    for sfo1 in frag1_sfos:
-        stab.append([])
-        for sfo2 in frag2_sfos:
-            S = abs(sfo1 @ sfo2)
-            e1, e2 = list(sorted([sfo1.energy, sfo2.energy]))
-            print(e1, e2)
-            H = K * S * (e1 + e2) / 2
-            stab[-1].append((H - e1*S)**2 / (e1 - e2))
-            # stab[-1].append(-S**2 * ((K/2 - 1) * e1 + K/2*e2)**2/(e1-e2))
-
-    stab = np.array(stab)
-    # stab = S**2 * ((K/2 - 1) * E1 + K/2*E2)**2/(E1-E2)
-    plt.imshow(stab * occ_virt_mask)
-    plt.show()
-

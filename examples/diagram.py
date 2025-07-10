@@ -1,5 +1,4 @@
 import pyfmo
-import itertools as it
 import matplotlib.pyplot as plt
 
 

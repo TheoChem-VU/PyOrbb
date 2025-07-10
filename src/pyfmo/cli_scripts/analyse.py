@@ -6,7 +6,6 @@ import matplotlib as mpl
 from matplotlib.widgets import Slider, CheckButtons, RadioButtons
 from matplotlib.gridspec import GridSpec
 from matplotlib.backend_tools import Cursors
-from matplotlib import animation
 import numpy as np
 import os
 
@@ -76,7 +75,6 @@ def main(args: argparse.Namespace):
 
         main_mix.sanitize()
         main_mix.draw_diagram(ax=main_ax, ylim=ylim)
-        sub_mixes = main_mix.split()
 
         props = dict(edgecolor='white', facecolor='white', alpha=1)  # bbox features
         main_ax.txt = main_ax.text(1.03, 0.98, ' '*37, transform=main_ax.transAxes, fontsize=8, fontname='monospace', verticalalignment='top', bbox=props)
@@ -165,7 +163,7 @@ def main(args: argparse.Namespace):
             if not hasattr(artist, 'orig_color'):
                 try:
                     artist.orig_color = artist.get_color()
-                except:
+                except AttributeError:
                     artist.orig_color = artist.get_fc()
             if not hasattr(artist, 'orig_alpha'):
                 artist.orig_alpha = artist.get_alpha() or 1
@@ -197,7 +195,7 @@ def main(args: argparse.Namespace):
             if not hasattr(artist, 'orig_color'):
                 try:
                     artist.orig_color = artist.get_color()
-                except:
+                except AttributeError:
                     artist.orig_color = artist.get_fc()
 
             if not hasattr(artist, 'orig_alpha'):

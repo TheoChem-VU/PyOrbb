@@ -12,6 +12,7 @@ import pyfmo
 import os
 import matplotlib.pyplot as plt
 import numpy as np
+import moviepy.editor as mvp
 
 
 # obtain all adf.rkf files
@@ -112,8 +113,6 @@ for i, orb in enumerate(orbs):
 
 
 # take the file locations of the frames we saved and make a movie
-import moviepy.editor as mvp
-
 clips = [mvp.ImageClip(frame).set_duration(1/14) for frame in frames]
 concat_clip = mvp.concatenate_videoclips(clips, method="compose")
 concat_clip.write_videofile('orbint.mp4', fps=14)
