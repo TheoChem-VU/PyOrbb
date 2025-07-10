@@ -788,8 +788,9 @@ class OrbitalSelector:
             symmetry: str or Container[str] = None, 
             spin: str or Container[str] = None, 
             fragment: str or Container[str] = None, 
-            fragment_index: int or Container[str]= None, 
-            orbname: str or Container[str]= None) -> Orbital or list[Orbital]:
+            fragment_index: int or Container[str] = None, 
+            orbname: str or Container[str] = None,
+            occupation: float or str or Container[float] or Container[str] = None) -> Orbital or list[Orbital]:
         '''
         filter |Orbital| objects that match the given parameters.
         If any of the arguments is given as a ``Container`` we check for membership.
@@ -800,8 +801,12 @@ class OrbitalSelector:
             spin: the spin label of the orbital, should be one of [``A``, ``B``, ``AB``].
             fragment: the fragment name of the SFO.
             fragment_index: the index of the fragment of the SFO.
-            orbname: the name of the orbital. Can be either the proper name or a relative name, e.g. ``SOMO`` or ``LUMO+5``.
-        
+            orbname: the name of the orbital. Can be either the proper name or a relative name, 
+                e.g. ``SOMO`` or ``LUMO+5``.
+            occupation: what kind of occupation to allow. Can be a floating point number 
+                specifying the occupation or a string from one of [``unoccupied``, ``partially_occupied``, ``fully_occupied``].
+                Floating point numbers will be rounded to 2 decimals before comparison.
+
         Returns:
             The |Orbital| objects that match the provided arguments.
             If there is only one |Orbital| object selected, return only that one.
@@ -879,6 +884,23 @@ class OrbitalSelector:
         # orbname can be either the proper name or the relative name
         if orbname:
             orbs = [orb for orb in orbs if orb.name in ensure_list(orbname) or orb.relative_name in ensure_list(orbname)]
+
+        # check for the occupation of the orbitals
+        if occupation:
+            orbs_ = []
+            for orb in orbs:
+                for occ in ensure_list(occupation):
+                    if isinstance(occ, float):
+                        if round(orb.occupation, 2) == round(occ, 2):
+                            orbs_.append(orb)
+                    if isinstance(occ, str):
+                        if occ == 'unoccupied' and orb.unoccupied:
+                            orbs_.append(orb)
+                        if occ == 'fully_occupied' and orb.fully_occupied:
+                            orbs_.append(orb)
+                        if occ == 'partially_occupied' and orb.partially_occupied:
+                            orbs_.append(orb)
+            orbs = orbs_
 
         # return None if nothing was found
         if len(orbs) == 0:
