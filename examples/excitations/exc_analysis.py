@@ -80,6 +80,6 @@ for irrep, irrep_data in excitation_data.items():
             print(f'Excitation[{irrep}, {excitation_type}, {exc_index+1}]:')
             print(f'  λ   = {wl:.1f} nm')
             print(f'  f12 = {f12:.4f} a.u.')
-            print(f'  Transitions:')
+            print('  Transitions:')
             [print('    ' + transition) for transition in transitions]
             print()
