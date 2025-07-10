@@ -260,7 +260,7 @@ def read_data(reader: plams.KFReader, SCF0_reader: plams.KFReader = None, output
 
     ret.calc_info = _get_calc_info(reader)
 
-    ret.SFOs.fragment_molecules = _get_molecules(reader)
+    ret.molecules = _get_molecules(reader)
 
     ret.SFOs.number = reader.read('SFOs', 'number')
     # the name of the fragment

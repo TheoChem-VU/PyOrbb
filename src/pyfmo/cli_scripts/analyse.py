@@ -431,8 +431,8 @@ def main(args: argparse.Namespace):
             with screen.add_molscene() as scene:
             # scr.draw_cub(cub, isovalue, material=tcviewer.materials.orbital_shiny)            
                 c1, c2 = ([1, 0, 0], [0, 0, 1]) if orb.occupied else ([1, .5, 0], [0, 1, 1])
-                scene.draw_molecule(orbs.molecule)
                 scene.draw_dual_isosurface(orb.cube_file(), colorm=c1, colorp=c2, opacity=.3)
+                scene.draw_molecule(orb.molecule)
                 # scene.draw_isosurface(orb.cube_file(), -0.03, c1, opacity=.3)
                 # scene.draw_isosurface(orb.cube_file(),  0.03, c2, opacity=.3)
                 scene.draw_text(str(orb))

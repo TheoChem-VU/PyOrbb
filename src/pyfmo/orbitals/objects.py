@@ -592,7 +592,8 @@ class Orbitals:
                     'energy': self.data.MOs.energy[symlabel][mo_spin][symm_idx] * 27.2114079527,
                     'occupation': occ,
                     'occupied': int(self.data.MOs.occupation[symlabel][mo_spin][symm_idx]) > 0,
-                    'kinetic_energy': kin
+                    'kinetic_energy': kin,
+                    'molecule': self.data.molecules['complex'],
                 }
                 sfo = MO(data, self.mos)
                 self.mos.orbitals.append(sfo)
