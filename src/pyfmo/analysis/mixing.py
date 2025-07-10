@@ -1,11 +1,11 @@
 import pyfmo
 import tcutility
 import numpy as np
-import itertools as it
+import itertools as it  # noqa: F401
 import matplotlib.pyplot as plt
 import os
 import scipy
-import networkx as nx
+import networkx as nx  # noqa: F401
 
 
 class Mixer:
@@ -21,12 +21,10 @@ class Mixer:
         self._prepare()
 
     def _prepare(self):
-        C = self.orbs.data.matrices.mulliken_contribution.total
         self.sfos = {}
         self.sfos_occ = {}
         self.sfos_vir = {}
         self.sfos_energy = {}
-        max_occ = max(sfo.occupation for sfo in self.orbs.sfos)
         for i, frag in enumerate(self.orbs.sfos.fragments):
             self.sfos[frag] = [sfo for sfo in self.orbs.sfos if sfo.fragment_unique == frag]
             self.sfos_occ[frag] = np.array([sfo.occupation > 0 for sfo in self.sfos[frag]]).reshape(-1, 1)
@@ -209,18 +207,13 @@ class Mixing:
         return s
 
     def draw_diagram(self, ax=None, ylim=None, simple=False):
-        if self.strength is not None:
-            title = rf'$\Delta E^{{({self.nelectrons()})}}_{{ij}} \approx {self.strength:5.1f}$ kcal/mol (${self.fraction:5.1%}$% of total)'
-        else:
-            title = None
-
         if simple:
             pyfmo.plotting.simple_orbital_diagram.draw_interaction(self.sfos, self.mos, self.connections, None, energy_type=self.energy_type, connection_colors=self.connection_colors, ax=ax, ylim=ylim)
         else:
             pyfmo.plotting.orbital_diagram.draw_interaction(self.sfos, self.mos, self.connections, None, energy_type=self.energy_type, connection_colors=self.connection_colors, ax=ax, ylim=ylim)
 
     def draw_sfos(self, overlap=False, screen=None):
-        import tcviewer
+        import tcviewer  # noqa: F811
 
         if screen is None:
             scr = tcviewer.Screen()
@@ -246,7 +239,7 @@ class Mixing:
             scr.__exit__()
 
     def screenshot_sfos(self, outdir='SFO_pictures'):
-        import tcviewer
+        import tcviewer  # noqa: F811
 
         mols = list(set(sfo.molecule for sfo in self.sfos))
         centroids = [np.mean(mol, axis=0) for mol in mols]
@@ -654,7 +647,6 @@ def argNmax(arr, N):
 
 
 def track_mixing(orbss, mixing):
-    ret = []
     out_dir = 'pyfrag_imgs'
     os.makedirs(out_dir, exist_ok=True)
     for i, orbs in enumerate(orbss):
