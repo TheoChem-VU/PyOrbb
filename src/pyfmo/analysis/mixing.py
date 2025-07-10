@@ -824,7 +824,7 @@ if __name__ == '__main__':
     # p = '../../../calculations/PyOrb_testing_2022/HeterolyticBond/complex/'
     # p = '../../../calculations/PyOrb_testing_2022/HomolyticBond/complex/'
     # p = '../../../calculations/PyOrb_testing_2022/ChemicalBond/frag.results/'
-    orbs = pyfmo.orbitals2.objects.Orbitals(p + 'adf.rkf')
+    orbs = pyfmo.Orbitals(p + 'adf.rkf')
     # res = tcutility.results.read(p)
 
     frag1_sfos = orbs.sfos.get_fragment_sfos('NH3')
