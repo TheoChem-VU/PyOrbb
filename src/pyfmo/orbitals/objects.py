@@ -575,7 +575,7 @@ class Orbitals:
                     'occupied': int(self.data.SFOs.occupation[sfo_spin][sfo_idx]) > 0,
                     'gross_population': gross_pop,
                     'gross_spin': gross_spin,
-                    'molecule': self.data.SFOS.fragment_molecules[self.data.SFOs.fragment_unique.total[sfo_idx]],
+                    'molecule': self.data.molecules[self.data.SFOs.fragment_unique.total[sfo_idx]],
                 }
 
                 data['site_energy'] = np.nan
