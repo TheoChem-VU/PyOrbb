@@ -41,8 +41,10 @@ extensions = [
     'sphinx.ext.viewcode',
     # 'sphinx.ext.autosummary',
     "sphinx_autodoc_typehints",
-    "sphinx_click",
+    "sphinxarg.ext",
     "sphinx_design",
+    "sphinx_tabs.tabs",
+    "sphinxcontrib.video",
 ]
 
 templates_path = ['_templates']
