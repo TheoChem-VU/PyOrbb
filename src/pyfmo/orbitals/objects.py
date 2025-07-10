@@ -165,7 +165,12 @@ class Orbital:
         # we only generate one, so we simply return the first element
         return grid.from_cub_file(job.output_cub_paths[0])
 
-    def draw(self, gridsize: str = 'medium', isovalue: float = 0.03, overwrite: bool = False, screen: "tcviewer.screen.Screen" = None, transform: "tcutility.geometry.Transform" = None):
+    def draw(self, 
+             gridsize: str = 'medium', 
+             isovalue: float = 0.03, 
+             overwrite: bool = False, 
+             screen: "tcviewer.screen.Screen" = None,  # noqa: F821
+             transform: "tcutility.geometry.Transform" = None):  # noqa: F821
         '''
         Generate and draw a cube-file for this |Orbital| object.
 
@@ -209,7 +214,12 @@ class Orbital:
         return scr
 
 
-    def screenshot(self, output_path: str = None, gridsize: str = 'medium', isovalue: float = 0.03, overwrite: bool = False, transform: "tcutility.geometry.Transform" = None) -> str:
+    def screenshot(self, 
+                   output_path: str = None, 
+                   gridsize: str = 'medium', 
+                   isovalue: float = 0.03, 
+                   overwrite: bool = False, 
+                   transform: "tcutility.geometry.Transform" = None) -> str:  # noqa: F821
         '''
         Generate a screenshot for this |Orbital| object.
 
