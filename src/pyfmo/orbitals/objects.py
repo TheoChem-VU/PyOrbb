@@ -2,7 +2,6 @@ import pyfmo
 from scm import plams
 import functools
 import os
-import numpy as np
 from collections.abc import Container
 import math
 
