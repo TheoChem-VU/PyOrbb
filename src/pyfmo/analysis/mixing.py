@@ -235,7 +235,7 @@ class Mixing:
             for sfo in self.sfos:
                 with scr.add_molscene() as scene:
                     cub = sfo.cube_file()
-                    scene.draw_molecule(mol)
+                    scene.draw_molecule(sfo.molecule)
 
                     if sfo.occupied:
                         colors = ([1, 0, 0], [0, 0, 1])
