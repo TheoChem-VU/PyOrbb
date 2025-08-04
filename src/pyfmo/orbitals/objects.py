@@ -979,7 +979,7 @@ class OrbitalSelector:
         return iter(self.orbitals)
 
     @property
-    def spins(self) -> list[str]:
+    def spins(self) -> List[str]:
         '''
         The spin species that are present in the given orbitals.
         '''
@@ -998,7 +998,7 @@ class SFOs(OrbitalSelector):
     Object storing all |SFO| objects for the given calculation.
     '''
     @property
-    def fragments(self) -> list[str]:
+    def fragments(self) -> List[str]:
         '''
         Return a list of fragment names found in the orbitals.
         '''
@@ -1009,7 +1009,7 @@ class SFOs(OrbitalSelector):
         return frags
 
     @property
-    def energy_types(self) -> list[str]:
+    def energy_types(self) -> List[str]:
         '''
         Object storing all |SFO| objects for the |Orbitals| objects.
 
