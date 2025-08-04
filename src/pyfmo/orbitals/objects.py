@@ -715,10 +715,10 @@ class OrbitalSelector:
         self.orbitals = orbitals
         self.parent = parent
 
-    def __getitem__(self, key: int or str) -> list[Orbital] or Orbital:
+    def __getitem__(self, key: int or str) -> List[Orbital] or Orbital:
         return self.get(key)
 
-    def get(self, key: int or str) -> list[Orbital] or Orbital:
+    def get(self, key: int or str) -> List[Orbital] or Orbital:
         '''
         Get |Orbital| objects based on the given key.
 
@@ -851,7 +851,7 @@ class OrbitalSelector:
             fragment: str or Container[str] = None, 
             fragment_index: int or Container[str] = None, 
             orbname: str or Container[str] = None,
-            occupation: float or str or Container[float] or Container[str] = None) -> Orbital or list[Orbital]:
+            occupation: float or str or Container[float] or Container[str] = None) -> Orbital or List[Orbital]:
         '''
         filter |Orbital| objects that match the given parameters.
         If any of the arguments is given as a ``Container`` we check for membership.
