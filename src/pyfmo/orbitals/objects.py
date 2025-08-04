@@ -3,6 +3,7 @@ from scm import plams
 import functools
 import os
 from collections.abc import Container
+from typing import List
 import math
 
 ensure_list = lambda x: [x] if not isinstance(x, (list, tuple, set)) else list(x)  # noqa: E731
@@ -275,7 +276,7 @@ class Orbital:
         return len(self.degenerate_orbitals)
 
     @functools.cached_property
-    def degenerate_orbitals(self) -> list["Orbital"]:
+    def degenerate_orbitals(self) -> List["Orbital"]:
         '''
         |Orbital| objects that are very close in energy to this |Orbital|.
         '''
