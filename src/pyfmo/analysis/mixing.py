@@ -1,11 +1,13 @@
 import pyfmo
-import tcutility
+import functools
 import numpy as np
 import itertools as it  # noqa: F401
 import matplotlib.pyplot as plt
 import os
-import scipy
 import networkx as nx  # noqa: F401
+
+
+ensure_list = lambda x: [x] if not isinstance(x, (list, tuple, set)) else list(x)  # noqa: E731
 
 
 class Mixer:
@@ -228,36 +230,10 @@ class Mixing:
     def screenshot_sfos(self, outdir='SFO_pictures'):
         import tcviewer  # noqa: F811
 
-        mols = list(set(sfo.molecule for sfo in self.sfos))
-        centroids = [np.mean(mol, axis=0) for mol in mols]
-        # print(centroids)
-        mol = mols[0]
-        for mol_ in mols[1:]:
-            mol = mol + mol_
-
-        coordinates = np.array(mol)
-
-        # for this to work we should first get the centroid of our molecule
-        centroid = np.mean(coordinates, axis=0)
-        # and get the centered coordiantes
-        Xc = coordinates - centroid
-
-        # we then do a singular-value decomposition to obtain
-        # the three principle components (Vh) with their eigenvalues (s)
-        _, s, Vh = scipy.linalg.svd(Xc)
-
-        # then compute a transformation matrix for generating the correct spheroid
-        transform = tcutility.geometry.Transform()
-        transform.translate(centroid)
-        transform.rotate((np.diag(s/2) @ Vh).T)
-        centroids = transform(centroids)
-        transform.rotate(tcutility.geometry.vector_align_rotmat(centroids[0] - centroids[1], [0, 1, 0]))
-
         os.makedirs(outdir, exist_ok=True)
         with tcviewer.Screen(headless=True) as scr:
             for sfo in self.sfos:
                 with scr.add_molscene() as scene:
-                    scene.transform = transform.to_vtkTransform()
                     cub = sfo.cube_file()
                     scene.draw_molecule(mol)
 
@@ -617,9 +593,9 @@ class Mixing:
 
 def overlap_mat(sfos1, sfos2):
     ret = []
-    for sfo1 in tcutility.ensure_list(sfos1):
+    for sfo1 in ensure_list(sfos1):
         ret.append([])
-        for sfo2 in tcutility.ensure_list(sfos2):
+        for sfo2 in ensure_list(sfos2):
             ret[-1].append(abs(sfo1 @ sfo2))
     return np.array(ret).squeeze()
 
@@ -669,7 +645,7 @@ def _find_orbs(sfos1, sfos2, mos):
 def _is_bonding(sfo1, sfo2, mo):
     return round(sfo1.coefficient(mo) * sfo2.coefficient(mo) * (sfo1 @ sfo2), 4) >= 0
 
-@tcutility.cache.cache
+@functools.cache
 def pauli2(orbs, index=0, mo1=None, mo2=None, sfo1=None, sfo2=None, irrep=None, spin=None):
     frag1, frag2 = orbs.fragments[0], orbs.fragments[1]
 

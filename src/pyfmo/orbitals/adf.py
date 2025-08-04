@@ -1,7 +1,10 @@
 import numpy as np
-from tcutility import results, ensure_list
 from math import sqrt
 from scm import plams
+from pyfmo.nested_dict import NestedDict
+
+
+ensure_list = lambda x: [x] if not isinstance(x, (list, tuple, set)) else list(x)  # noqa: E731
 
 
 def _get_molecules(reader: plams.KFReader) -> dict:
@@ -68,37 +71,37 @@ def _get_calc_info(reader: plams.KFReader) -> dict:
     '''
     Function to read useful info about orbitals from kf reader
     '''
-    ret = results.Result()
+    ret = NestedDict()
 
-    ret.engine = 'ADF'
+    ret.set('engine', 'ADF')
 
     # determine if calculation used relativistic corrections
     # if it did, variable 'escale' will be present in 'SFOs'
     # if it didnt, only variable 'energy' will be present
-    ret.relativistic = ('SFOs', 'escale') in reader
+    ret.set('relativistic', ('SFOs', 'escale') in reader)
 
-    ret.symlabels = reader.read('Symmetry', 'symlab').strip().split()
-    ret.symmetry = reader.read('Symmetry', 'grouplabel')
+    ret.set('symlabels', reader.read('Symmetry', 'symlab').strip().split())
+    ret.set('symmetry', reader.read('Symmetry', 'grouplabel'))
     
     # determine if SFOs are unrestricted or not
-    ret.unrestricted_sfos = ('SFOs', 'energy_B') in reader
+    ret.set('unrestricted_sfos', ('SFOs', 'energy_B') in reader)
 
     # determine if MOs are unrestricted or not
-    ret.unrestricted_mos = (ret.symlabels[0], 'eps_B') in reader
+    ret.set('unrestricted_mos', (ret['symlabels'][0], 'eps_B') in reader)
 
-    ret.sfo_spins = ['A', 'B'] if ret.unrestricted_sfos else ['AB']
-    ret.mo_spins = ['A', 'B'] if ret.unrestricted_mos else ['AB']
+    ret.set('sfo_spins', ['A', 'B'] if ret['unrestricted_sfos'] else ['AB'])
+    ret.set('mo_spins', ['A', 'B'] if ret['unrestricted_mos'] else ['AB'])
 
     # determine if the calculation used regions or not
-    ret.used_regions = reader.read('Geometry', 'nr of fragments') != reader.read('Geometry', 'nr of atoms')
-    ret.fragments = reader.read('Geometry', 'fragmenttype').split()
-    if not ret.used_regions:
+    ret.set('used_regions', reader.read('Geometry', 'nr of fragments') != reader.read('Geometry', 'nr of atoms'))
+    ret.set('fragments', reader.read('Geometry', 'fragmenttype').split())
+    if not ret['used_regions']:
         natom = reader.read('Geometry', 'nr of atoms')
-        frags = np.array(ret.fragments)
+        frags = np.array(ret['fragments'])
         atom_order = np.array(reader.read('Geometry', 'atom order index'))
         fragment_index = np.array(reader.read('Geometry', 'fragment and atomtype index')) - 1
         frag_per_atom = frags[fragment_index[natom:]]
-        ret.fragments = [f'{frag}:{idx}' for frag, idx in zip(frag_per_atom, atom_order[natom:])]
+        ret.set('fragments', [f'{frag}:{idx}' for frag, idx in zip(frag_per_atom, atom_order[natom:])])
 
     return ret
 
@@ -167,14 +170,14 @@ def read_data(reader: plams.KFReader, SCF0_reader: plams.KFReader = None, output
             return np.atleast_1d(site_energy)
 
         site_energy = []
-        for symlabel in ret.calc_info.symlabels:
+        for symlabel in ret['calc_info']['symlabels']:
             # This is to correct for symlable being split up into :1, :2, etc., e.g. 1E:1 becomes 1E
             if ':' in symlabel and symlabel.split(':')[1].isdigit():
                 Fock_symlabel = symlabel.split(':')[0]
             else:
                 Fock_symlabel = symlabel
 
-            if ret.calc_info.unrestricted_sfos:
+            if ret['calc_info']['unrestricted_sfos']:
                 fock_A =  _read_spin_indep('SFO_Fock_A', Fock_symlabel, sfo_spin, R)
                 fock_B =  _read_spin_indep('SFO_Fock_B', Fock_symlabel, sfo_spin, R)
                 fmats = [fock_A, fock_B]
@@ -243,7 +246,7 @@ def read_data(reader: plams.KFReader, SCF0_reader: plams.KFReader = None, output
 
     def _compose_matrix(data, spins):
         # form a block-diagonal matrix from its corresponding blocks
-        blocks = [np.array(data[symlabel][spin]) for symlabel in ret.calc_info.symlabels for spin in spins]
+        blocks = [np.array(data[symlabel][spin]) for symlabel in ret['calc_info']['symlabels'] for spin in spins]
         shapes = [block.shape for block in blocks]
         total_shape = sum(shape[0] for shape in shapes), sum(shape[1] for shape in shapes)
         out = np.zeros(total_shape)
@@ -256,31 +259,31 @@ def read_data(reader: plams.KFReader, SCF0_reader: plams.KFReader = None, output
         return out
 
     ## MAIN FUNCTION
-    ret = results.Result()
+    ret = NestedDict()
 
-    ret.calc_info = _get_calc_info(reader)
+    ret.set('calc_info', _get_calc_info(reader))
 
-    ret.molecules = _get_molecules(reader)
+    ret.set('molecules', _get_molecules(reader))
 
-    ret.SFOs.number = reader.read('SFOs', 'number')
+    ret.set('SFOs', 'number', reader.read('SFOs', 'number'))
     # the name of the fragment
-    ret.SFOs.fragment_types = np.atleast_1d(reader.read('SFOs', 'fragtype').split())
-    ret.SFOs.fragment_index = np.atleast_1d(reader.read('SFOs', 'fragment'))
+    ret.set('SFOs', 'fragment_types', np.atleast_1d(reader.read('SFOs', 'fragtype').split()))
+    ret.set('SFOs', 'fragment_index', np.atleast_1d(reader.read('SFOs', 'fragment')))
 
     # the symmlabel of the SFO
-    ret.SFOs.subspecies = np.atleast_1d(reader.read('SFOs', 'subspecies').split())
-    ret.SFOs.subspecies_fixed = []
+    ret.set('SFOs', 'subspecies', np.atleast_1d(reader.read('SFOs', 'subspecies').split()))
+    ret.set('SFOs', 'subspecies_fixed', [])
     # index of the SFO in its symmlabel
-    ret.SFOs.symmetry_index = np.atleast_1d(reader.read('SFOs', 'isfo')) - 1
+    ret.set('SFOs', 'symmetry_index', np.atleast_1d(reader.read('SFOs', 'isfo')) - 1)
 
     # some symmetry species can have a subspecies
     # for example, C(3V) symmetry has the E1:1 and E1:2 symmetry species
     # however, ADF only reports for one of the (general E1 label)
     subspecies_visited_symm_index = {}
-    for subsp, isfo in zip(ret.SFOs.subspecies, ret.SFOs.symmetry_index):
+    for subsp, isfo in zip(ret['SFOs']['subspecies'], ret['SFOs']['symmetry_index']):
         subspecies_visited_symm_index.setdefault(subsp, [])
         if isfo in subspecies_visited_symm_index[subsp]:
-            if ret.calc_info.used_regions:
+            if ret['calc_info']['used_regions']:
                 n = int(subsp.split(':')[1])
                 subsp = subsp.split(':')[0] + ':' + str(n + 1)
                 subspecies_visited_symm_index.setdefault(subsp, [])
@@ -289,119 +292,125 @@ def read_data(reader: plams.KFReader, SCF0_reader: plams.KFReader = None, output
                 subspecies_visited_symm_index.setdefault(subsp, [])
 
         subspecies_visited_symm_index[subsp].append(isfo)
-        ret.SFOs.subspecies_fixed.append(subsp)
+        ret['SFOs']['subspecies_fixed'].append(subsp)
 
     # the index of the SFO in its symlabel
-    ret.SFOs.ifo = np.atleast_1d(reader.read('SFOs', 'ifo')) - 1
-    ret.SFOs.spin = [spin for spin in ret.calc_info.sfo_spins for _ in range(ret.SFOs.number)]
+    ret.set('SFOs', 'ifo', np.atleast_1d(reader.read('SFOs', 'ifo')) - 1)
+    ret.set('SFOs', 'spin', [spin for spin in ret['calc_info']['sfo_spins'] for _ in range(ret['SFOs']['number'])])
 
     # construct unique names for the fragments
-    if ret.calc_info.used_regions:
+    if ret['calc_info']['used_regions']:
         # if regions were used the fragments are already unique
-        ret.SFOs.fragment_unique = {spin: ret.SFOs.fragment_types for spin in ret.calc_info.sfo_spins}
+        ret.set('SFOs', 'fragment_unique', {spin: ret['SFOs']['fragment_types'] for spin in ret['calc_info']['sfo_spins']})
     else:
         # if no regions were specified we append ``:{atom_idx}`` to the atom symbol to obtain unique names
-        ret.SFOs.fragment_unique = {spin: [f'{frag_name}:{frag_idx}' for frag_name, frag_idx in zip(ret.SFOs.fragment_types, ret.SFOs.fragment_index)] for spin in ret.calc_info.sfo_spins}
-    ret.SFOs.fragment_unique.total = _compose_vector(ret.SFOs.fragment_unique, ret.calc_info.sfo_spins)
+        ret.set('SFOs', 'fragment_unique', {spin: [f'{frag_name}:{frag_idx}' for frag_name, frag_idx in zip(ret['SFOs']['fragment_types'], ret['SFOs']['fragment_index'])] for spin in ret['calc_info']['sfo_spins']})
+    ret.set('SFOs', 'fragment_unique', 'total', _compose_vector(ret['SFOs']['fragment_unique'], ret['calc_info']['sfo_spins']))
     
     # read basic information about the sfos here
-    for sfo_spin in ret.calc_info.sfo_spins:
-        ret.SFOs.energy[sfo_spin] = np.atleast_1d(_read_spin_indep('SFOs', 'escale', sfo_spin))
-        ret.SFOs.occupation[sfo_spin] = np.atleast_1d(_read_spin_indep('SFOs', 'occupation', sfo_spin))
+    for sfo_spin in ret['calc_info']['sfo_spins']:
+        ret.set('SFOs', 'energy', sfo_spin, np.atleast_1d(_read_spin_indep('SFOs', 'escale', sfo_spin)))
+        ret.set('SFOs', 'occupation', sfo_spin, np.atleast_1d(_read_spin_indep('SFOs', 'occupation', sfo_spin)))
         # the order in terms of the energy of the SFO
-        ret.SFOs.order[sfo_spin] = np.argsort(ret.SFos.energy[sfo_spin])
-        ret.SFOs.site_energy[sfo_spin] = _read_site_energy(sfo_spin, False)
+        ret.set('SFOs', 'order', sfo_spin, np.argsort(ret['SFOs']['energy'][sfo_spin]))
+        s =  _read_site_energy(sfo_spin, False)
+        if s is not None:
+            ret.set('SFOs', 'site_energy', sfo_spin, s)
         if SCF0_reader:
-            ret.SFOs.site_energy_SCF0[sfo_spin] = _read_site_energy(sfo_spin, True)
+            s = _read_site_energy(sfo_spin, True)
+            if s is not None:
+                ret.set('SFOs', 'site_energy_SCF0', sfo_spin, s)
 
-        for symlabel in ret.calc_info.symlabels:
-            energy_by_symlabel = ret.SFOs.energy[sfo_spin][ret.SFOs.subspecies_fixed == symlabel]
-            ret.SFOs.order_by_symlabel[symlabel][sfo_spin] = np.argsort(energy_by_symlabel)
+        for symlabel in ret['calc_info']['symlabels']:
+            energy_by_symlabel = ret['SFOs']['energy'][sfo_spin][ret['SFOs']['subspecies_fixed'] == symlabel]
+            ret.set('SFOs', 'order_by_symlabel', symlabel, sfo_spin, np.argsort(energy_by_symlabel))
 
-    ret.SFOs.energy.total = _compose_vector(ret.SFOs.energy, ret.calc_info.sfo_spins)
-    ret.SFOs.occupation.total = _compose_vector(ret.SFOs.occupation, ret.calc_info.sfo_spins)
-    ret.SFOs.order.total = np.argsort(ret.SFOs.energy.total)
+    ret.set('SFOs', 'energy', 'total', _compose_vector(ret['SFOs']['energy'], ret['calc_info']['sfo_spins']))
+    ret.set('SFOs', 'occupation', 'total', _compose_vector(ret['SFOs']['occupation'], ret['calc_info']['sfo_spins']))
+    ret.set('SFOs', 'order', 'total', np.argsort(ret['SFOs']['energy']['total']))
 
     # construct the names of the SFOs as they would appear in ADFLevels
-    for spin in ret.calc_info.sfo_spins:
+    for spin in ret['calc_info']['sfo_spins']:
         if spin == 'AB':
-            ret.SFOs.adf_names[spin] = [f'{index + 1}{symlabel}' for index, symlabel in zip(ret.SFOs.ifo, ret.SFOs.subspecies_fixed)]
+            ret.set('SFOs', 'adf_names', spin, [f'{index + 1}{symlabel}' for index, symlabel in zip(ret['SFOs']['ifo'], ret['SFOs']['subspecies_fixed'])])
         else:
-            ret.SFOs.adf_names[spin] = [f'{index + 1}{symlabel}_{spin}' for index, symlabel in zip(ret.SFOs.ifo, ret.SFOs.subspecies_fixed)]
+            ret.set('SFOs', 'adf_names', spin, [f'{index + 1}{symlabel}_{spin}' for index, symlabel in zip(ret['SFOs']['ifo'], ret['SFOs']['subspecies_fixed'])])
 
-    ret.SFOs.adf_names.total = _compose_vector(ret.SFOs.adf_names, ret.calc_info.sfo_spins)
+    ret.set('SFOs', 'adf_names', 'total', _compose_vector(ret['SFOs']['adf_names'], ret['calc_info']['sfo_spins']))
     # construct here the unique names, e.g. ``NH3(4E1:1)`` that contains both the SFO orbital name and its fragment name
-    ret.SFOs.unique_names = {spin: [f'{frag}({name})' for frag, name in zip(ret.SFOs.fragment_unique[spin], ret.SFOs.adf_names[spin])] for spin in ret.calc_info.sfo_spins}
-    ret.SFOs.unique_names.total = _compose_vector(ret.SFOs.unique_names, ret.calc_info.sfo_spins)
+    ret.set('SFOs', 'unique_names', {spin: [f'{frag}({name})' for frag, name in zip(ret['SFOs']['fragment_unique'][spin], ret['SFOs']['adf_names'][spin])] for spin in ret['calc_info']['sfo_spins']})
+    ret.set('SFOs', 'unique_names', 'total', _compose_vector(ret['SFOs']['unique_names'], ret['calc_info']['sfo_spins']))
 
     # read the matrix data such as overlaps, coefficients, etc.
     # we correct for the number of frozen cores later
-    ret.MOs.nfrozencores = {symlabel: ncbs for symlabel, ncbs in zip(ret.calc_info.symlabels, ensure_list(reader.read('Symmetry', 'ncbs')))}
-    ret.MOs.nfrozencores.total = sum(ret.MOs.nfrozencores.values())
+    ret.set('MOs', 'nfrozencores', {symlabel: ncbs for symlabel, ncbs in zip(ret['calc_info']['symlabels'], ensure_list(reader.read('Symmetry', 'ncbs')))})
+    ret.set('MOs', 'nfrozencores', 'total', sum(ret['MOs']['nfrozencores'].values()))
 
-    for symlabel in ret.calc_info.symlabels:
-        for sfo_spin in ret.calc_info.sfo_spins:
+    for symlabel in ret['calc_info']['symlabels']:
+        for sfo_spin in ret['calc_info']['sfo_spins']:
             S = _read_spin_indep(symlabel, 'S-CoreSFO', sfo_spin)
             S = _square_matrix(S)
-            ret.matrices.overlap[symlabel][sfo_spin] = S
+            ret.set('matrices', 'overlap', symlabel, sfo_spin, S)
 
-        for sfo_spin in ret.calc_info.sfo_spins:
+        for sfo_spin in ret['calc_info']['sfo_spins']:
             F = _read_spin_indep('SFO_Fock', symlabel.split(':')[0], sfo_spin)
             if F:
                 F = _square_matrix(F)
-                ret.matrices.fock[symlabel][sfo_spin] = F
+                ret.set('matrices', 'fock', symlabel, sfo_spin, F)
 
-        for mo_spin in ret.calc_info.mo_spins:
+        for mo_spin in ret['calc_info']['mo_spins']:
             nmo = _read_spin_indep(symlabel, 'nmo', mo_spin)
-            ret.MOs.number[symlabel][mo_spin] = nmo
-            ret.MOs.energy[symlabel][mo_spin] = np.atleast_1d(_read_spin_indep(symlabel, 'escale', mo_spin))
+            ret.set('MOs', 'number', symlabel, mo_spin, nmo)
+            ret.set('MOs', 'energy', symlabel, mo_spin, np.atleast_1d(_read_spin_indep(symlabel, 'escale', mo_spin)))
             occupation = np.atleast_1d(_read_spin_indep(symlabel, 'froc', mo_spin))
-            ret.MOs.occupation[symlabel][mo_spin] = occupation
+            ret.set('MOs', 'occupation', symlabel, mo_spin, occupation)
 
             coefficients = np.atleast_2d(_read_spin_indep(symlabel, 'Eig-CoreSFO', mo_spin))
             coefficients = coefficients.reshape(nmo, -1)
-            ret.matrices.coefficients[symlabel][mo_spin] = coefficients
+            ret.set('matrices', 'coefficients', symlabel, mo_spin, coefficients)
 
             # perform mulliken analysis here
             # contribution = C * (C @ S)
             # population   = O * contribution
             # see: https://github.com/TheoChem-VU/PyFMO/issues/28
-            if ret.calc_info.sfo_spins == ret.calc_info.mo_spins:
-                S = ret.matrices.overlap[symlabel][mo_spin]
+            if ret['calc_info']['sfo_spins'] == ret['calc_info']['mo_spins']:
+                S = ret['matrices']['overlap'][symlabel][mo_spin]
             else:
-                S = ret.matrices.overlap[symlabel].AB
+                S = ret['matrices']['overlap'][symlabel]['AB']
 
-            ret.matrices.mulliken_contribution[symlabel][mo_spin] = coefficients * (coefficients @ S)
-            ret.matrices.mulliken_population[symlabel][mo_spin] = np.atleast_2d(occupation).T * ret.matrices.mulliken_contribution[symlabel][mo_spin]
+            ret.set('matrices', 'mulliken_contribution', symlabel, mo_spin, coefficients * (coefficients @ S))
+            ret.set('matrices', 'mulliken_population', symlabel, mo_spin, np.atleast_2d(occupation).T * ret['matrices']['mulliken_contribution'][symlabel][mo_spin])
 
-    ret.MOs.energy.total = np.hstack([_compose_vector(ret.MOs.energy[symlabel], ret.calc_info.mo_spins) for symlabel in ret.calc_info.symlabels])
-    ret.MOs.occupation.total = np.hstack([_compose_vector(ret.MOs.occupation[symlabel], ret.calc_info.mo_spins) for symlabel in ret.calc_info.symlabels])
-    ret.MOs.order.total = np.argsort(ret.MOs.energy.total)
-    ret.MOs.number.total = len(ret.MOs.energy.total)
-    ret.MOs.spin = [spin for spin in ret.calc_info.mo_spins for _ in range(ret.MOs.number.total)]
-    ret.MOs.kinetic_energy = _read_kinetic_energy()
+    ret.set('MOs', 'energy', 'total', np.hstack([_compose_vector(ret['MOs']['energy'][symlabel], ret['calc_info']['mo_spins']) for symlabel in ret['calc_info']['symlabels']]))
+    ret.set('MOs', 'occupation', 'total', np.hstack([_compose_vector(ret['MOs']['occupation'][symlabel], ret['calc_info']['mo_spins']) for symlabel in ret['calc_info']['symlabels']]))
+    ret.set('MOs', 'order', 'total', np.argsort(ret['MOs']['energy']['total']))
+    ret.set('MOs', 'number', 'total', len(ret['MOs']['energy']['total']))
+    ret.set('MOs', 'spin', [spin for spin in ret['calc_info']['mo_spins'] for _ in range(ret['MOs']['number']['total'])])
+    K = _read_kinetic_energy()
+    if K is not None:
+        ret.set('MOs', 'kinetic_energy', K)
 
-    ret.matrices.overlap.total =                _compose_matrix(ret.matrices.overlap,                ret.calc_info.sfo_spins)
-    ret.matrices.coefficients.total =           _compose_matrix(ret.matrices.coefficients,           ret.calc_info.mo_spins)
-    ret.matrices.mulliken_contribution.total =  _compose_matrix(ret.matrices.mulliken_contribution,  ret.calc_info.mo_spins)
-    ret.matrices.mulliken_population.total =    _compose_matrix(ret.matrices.mulliken_population,    ret.calc_info.mo_spins)
+    ret.set('matrices', 'overlap', 'total',                _compose_matrix(ret['matrices']['overlap'],                ret['calc_info']['sfo_spins']))
+    ret.set('matrices', 'coefficients', 'total',           _compose_matrix(ret['matrices']['coefficients'],           ret['calc_info']['mo_spins']))
+    ret.set('matrices', 'mulliken_contribution', 'total',  _compose_matrix(ret['matrices']['mulliken_contribution'],  ret['calc_info']['mo_spins']))
+    ret.set('matrices', 'mulliken_population', 'total',    _compose_matrix(ret['matrices']['mulliken_population'],    ret['calc_info']['mo_spins']))
 
     # gross population is the vertical marginal of the Mulliken population matrix
-    ret.SFOs.symlabel = []
-    ret.MOs.symlabel = []
-    ret.MOs.symmetry_index = []
+    ret.set('SFOs', 'symlabel', [])
+    ret.set('MOs', 'symlabel', [])
+    ret.set('MOs', 'symmetry_index', [])
 
-    for mo_spin in ret.calc_info.mo_spins:
-        ret.SFOs.gross_population[mo_spin] = []
+    for mo_spin in ret['calc_info']['mo_spins']:
+        ret.set('SFOs', 'gross_population', mo_spin, [])
 
-    for symlabel in ret.calc_info.symlabels:
-        norb = ret.MOs.number[symlabel][ret.calc_info.mo_spins[0]]
-        ret.SFOs.symlabel.extend([symlabel] * norb)
-        ret.MOs.symlabel.extend([symlabel] * norb)
-        ret.MOs.symmetry_index.extend(range(norb))
-        for mo_spin in ret.calc_info.mo_spins:
-            gp = ret.matrices.mulliken_population[symlabel][mo_spin]
-            gp = np.sum(gp, axis=0)[ret.MOs.nfrozencores[symlabel]:]
-            ret.SFOs.gross_population[mo_spin].extend(gp.tolist())
+    for symlabel in ret['calc_info']['symlabels']:
+        norb = ret['MOs']['number'][symlabel][ret['calc_info']['mo_spins'][0]]
+        ret['SFOs']['symlabel'].extend([symlabel] * norb)
+        ret['MOs']['symlabel'].extend([symlabel] * norb)
+        ret['MOs']['symmetry_index'].extend(range(norb))
+        for mo_spin in ret['calc_info']['mo_spins']:
+            gp = ret['matrices']['mulliken_population'][symlabel][mo_spin]
+            gp = np.sum(gp, axis=0)[ret['MOs']['nfrozencores'][symlabel]:]
+            ret['SFOs']['gross_population'][mo_spin].extend(gp.tolist())
 
     return ret

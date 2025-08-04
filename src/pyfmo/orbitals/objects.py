@@ -1,10 +1,12 @@
 import pyfmo
 from scm import plams
-from tcutility import cache, ensure_list
+import functools
 import os
 import numpy as np
 from collections.abc import Container
 import math
+
+ensure_list = lambda x: [x] if not isinstance(x, (list, tuple, set)) else list(x)  # noqa: E731
 
 
 class Orbital:
@@ -21,8 +23,7 @@ class Orbital:
     def __repr__(self):
         return str(self)
 
-    @property
-    @cache.cache
+    @functools.cached_property
     def relative_name(self) -> str:
         '''
         The relative name of the orbital. E.g. HOMO or HOMO-1
@@ -48,8 +49,7 @@ class Orbital:
         if self.unoccupied:
             return f'LUMO+{order}' if order > 0 else 'LUMO'
 
-    @property
-    @cache.cache
+    @functools.cached_property
     def irrep_relative_name(self) -> str:
         '''
         The relative name of the orbital in its irreducible representation. 
@@ -76,8 +76,7 @@ class Orbital:
         if self.unoccupied:
             return f'LUMO+{order}' if order > 0 else 'LUMO'
 
-    @property
-    @cache.cache
+    @functools.cached_property
     def fully_occupied(self) -> bool:
         '''
         Whether the orbital is fully occupied.
@@ -87,40 +86,35 @@ class Orbital:
         if self.spin == 'AB':
             return self.doubly_occupied
 
-    @property
-    @cache.cache
+    @functools.cached_property
     def partially_occupied(self) -> bool:
         '''
         Whether the orbital is not empty and not fully occupied.
         '''
         return not self.unoccupied and not self.fully_occupied
 
-    @property
-    @cache.cache
+    @functools.cached_property
     def doubly_occupied(self) -> bool:
         '''
         Whether the orbital is doubly occupied.
         '''
         return self.spin_total_occupation == 2
 
-    @property
-    @cache.cache
+    @functools.cached_property
     def singly_occupied(self) -> bool:
         '''
         Whether the orbital is singly occupied.
         '''
         return self.spin_total_occupation == 1
 
-    @property
-    @cache.cache
+    @functools.cached_property
     def unoccupied(self) -> bool:
         '''
         Whether the orbital is unoccupied.
         '''
         return self.spin_total_occupation == 0
 
-    @property
-    @cache.cache
+    @functools.cached_property
     def spin_total_occupation(self) -> int:
         '''
         The occupation of this orbital plus its spin counterpart if it exists.
@@ -208,7 +202,7 @@ class Orbital:
             scene.draw_isosurface(cub,  0.03, c2)
 
         if screen is None:
-            scr.exec()
+            scr.__exit__()
 
         return scr
 
@@ -260,32 +254,28 @@ class Orbital:
         return output_path
 
 
-    @property
-    @cache.cache
+    @functools.cached_property
     def degeneracy_index(self) -> int:
         '''
         The index of this |Orbital| among its degenerate |Orbital| objects.
         '''
         return self.degenerate_orbitals.index(self)
 
-    @property
-    @cache.cache
+    @functools.cached_property
     def degenerate(self) -> bool:
         '''
         Whether the |Orbital| is degenerate.
         '''
         return self.degeneracy > 1
 
-    @property
-    @cache.cache
+    @functools.cached_property
     def degeneracy(self) -> int:
         '''
         The number of |Orbital| objects that are degenerate with this one.
         '''
         return len(self.degenerate_orbitals)
 
-    @property
-    @cache.cache
+    @functools.cached_property
     def degenerate_orbitals(self) -> list["Orbital"]:
         '''
         |Orbital| objects that are very close in energy to this |Orbital|.
@@ -444,7 +434,7 @@ class SFO(Orbital):
             return 0
 
         # access the right overlap matrix and return the right value
-        S = self.parent.parent.data.matrices.overlap[self.symmetry][self.spin]
+        S = self.parent.parent.data['matrices']['overlap'][self.symmetry][self.spin]
         return S[other.symmetry_index-1][self.symmetry_index-1]
 
 
@@ -463,7 +453,7 @@ class SFO(Orbital):
         if self.symmetry != other.symmetry:
             return 0
 
-        F = self.parent.parent.data.matrices.fock[self.symmetry][self.spin]
+        F = self.parent.parent.data['matrices']['fock'][self.symmetry][self.spin]
         return F[other.symmetry_index-1][self.symmetry_index-1]
 
 
@@ -482,7 +472,7 @@ class SFO(Orbital):
         if self.symmetry != other.symmetry:
             return 0
 
-        c = self.parent.parent.data.matrices.mulliken_contribution[self.symmetry][other.spin]
+        c = self.parent.parent.data['matrices']['mulliken_contribution'][self.symmetry][other.spin]
         return c[other.symmetry_index-1][self.symmetry_index-1]
 
 
@@ -501,7 +491,7 @@ class SFO(Orbital):
         if self.symmetry != other.symmetry:
             return 0
 
-        c = self.parent.parent.data.matrices.coefficients[self.symmetry][other.spin]
+        c = self.parent.parent.data['matrices']['coefficients'][self.symmetry][other.spin]
         return c[other.symmetry_index-1][self.symmetry_index-1]
 
 
@@ -601,59 +591,59 @@ class Orbitals:
 
     def _gather_sfos(self):
         self.sfos = SFOs([], self)
-        sfo_mo_spin_match = self.data.calc_info.unrestricted_mos == self.data.calc_info.unrestricted_sfos
-        for sfo_idx in range(self.data.SFOs.number):
-            for spin_idx, sfo_spin in enumerate(self.data.calc_info.sfo_spins):
+        sfo_mo_spin_match = self.data['calc_info']['unrestricted_mos'] == self.data['calc_info']['unrestricted_sfos']
+        for sfo_idx in range(self.data['SFOs']['number']):
+            for spin_idx, sfo_spin in enumerate(self.data['calc_info']['sfo_spins']):
                 if not sfo_mo_spin_match:
-                    if self.data.calc_info.unrestricted_mos:
-                        gross_pop = self.data.SFOs.gross_population.A[sfo_idx] + self.data.SFOs.gross_population.B[sfo_idx]
-                        gross_spin = self.data.SFOs.gross_population.A[sfo_idx] - self.data.SFOs.gross_population.B[sfo_idx]
+                    if self.data['calc_info']['unrestricted_mos']:
+                        gross_pop = self.data['SFOs']['gross_population']['A'][sfo_idx] + self.data['SFOs']['gross_population']['B'][sfo_idx]
+                        gross_spin = self.data['SFOs']['gross_population']['A'][sfo_idx] - self.data['SFOs']['gross_population']['B'][sfo_idx]
                     else:
-                        gross_pop = self.data.SFOs.gross_population.AB[sfo_idx]
+                        gross_pop = self.data['SFOs']['gross_population']['AB'][sfo_idx]
                         gross_spin = 0
                 else:
-                    gross_pop = self.data.SFOs.gross_population[sfo_spin][sfo_idx]
+                    gross_pop = self.data['SFOs']['gross_population'][sfo_spin][sfo_idx]
                     gross_spin = 0
 
-                symlabel = self.data.SFOs.symlabel[sfo_idx]
+                symlabel = self.data['SFOs']['symlabel'][sfo_idx]
                 data = {
-                    'index': sfo_idx + 1 + self.data.MOs.nfrozencores[symlabel],
-                    'name': self.data.SFOs.adf_names[sfo_spin][sfo_idx],
-                    'subspecies': self.data.SFOs.subspecies[sfo_idx],
+                    'index': sfo_idx + 1 + self.data['MOs']['nfrozencores'][symlabel],
+                    'name': self.data['SFOs']['adf_names'][sfo_spin][sfo_idx],
+                    'subspecies': self.data['SFOs']['subspecies'][sfo_idx],
                     'symmetry': symlabel,
-                    'symmetry_index': self.data.SFOs.symmetry_index[sfo_idx] + 1 + self.data.MOs.nfrozencores[symlabel],
-                    'fragment': self.data.calc_info.fragments[self.data.SFOs.fragment_index[sfo_idx] - 1].split(':')[0],
-                    'fragment_unique': self.data.SFOs.fragment_unique.total[sfo_idx],
-                    'fragment_index': self.data.SFOs.fragment_index[sfo_idx],
+                    'symmetry_index': self.data['SFOs']['symmetry_index'][sfo_idx] + 1 + self.data['MOs']['nfrozencores'][symlabel],
+                    'fragment': self.data['calc_info']['fragments'][self.data['SFOs']['fragment_index'][sfo_idx] - 1].split(':')[0],
+                    'fragment_unique': self.data['SFOs']['fragment_unique']['total'][sfo_idx],
+                    'fragment_index': self.data['SFOs']['fragment_index'][sfo_idx],
                     'spin': sfo_spin,
-                    'energy': self.data.SFOs.energy[sfo_spin][sfo_idx] * 27.2114079527,
-                    'occupation': float(self.data.SFOs.occupation[sfo_spin][sfo_idx]),
-                    'occupied': int(self.data.SFOs.occupation[sfo_spin][sfo_idx]) > 0,
+                    'energy': self.data['SFOs']['energy'][sfo_spin][sfo_idx] * 27.2114079527,
+                    'occupation': float(self.data['SFOs']['occupation'][sfo_spin][sfo_idx]),
+                    'occupied': int(self.data['SFOs']['occupation'][sfo_spin][sfo_idx]) > 0,
                     'gross_population': gross_pop,
                     'gross_spin': gross_spin,
-                    'molecule': self.data.molecules[self.data.SFOs.fragment_unique.total[sfo_idx]],
+                    'molecule': self.data['molecules'][self.data['SFOs']['fragment_unique']['total'][sfo_idx]],
                 }
 
-                data['site_energy'] = np.nan
-                if isinstance(self.data.SFOs.site_energy[sfo_spin], np.ndarray):
-                    data['site_energy'] = self.data.SFOs.site_energy[sfo_spin][sfo_idx] * 27.2114079527
+                data['site_energy'] = None
+                if 'site_energy' in self.data['SFOs']:
+                    data['site_energy'] = self.data['SFOs']['site_energy'][sfo_spin][sfo_idx] * 27.2114079527
 
-                data['site_energy_SCF0'] = np.nan
-                if isinstance(self.data.SFOs.site_energy_SCF0[sfo_spin], np.ndarray):
-                    data['site_energy_SCF0'] = self.data.SFOs.site_energy_SCF0[sfo_spin][sfo_idx] * 27.2114079527
+                data['site_energy_SCF0'] = None
+                if 'site_energy_SCF0' in self.data['SFOs']:
+                    data['site_energy_SCF0'] = self.data['SFOs']['site_energy_SCF0'][sfo_spin][sfo_idx] * 27.2114079527
 
                 sfo = SFO(data, self.sfos)
                 self.sfos.orbitals.append(sfo)
 
     def _gather_mos(self):
         self.mos = MOs([], self)
-        for moi in range(self.data.SFOs.number):
-            for spin_idx, mo_spin in enumerate(self.data.calc_info.mo_spins):
-                symm_idx = self.data.MOs.symmetry_index[moi]
-                symlabel = self.data.MOs.symlabel[moi]
-                occ = int(self.data.MOs.occupation[symlabel][mo_spin][symm_idx])
-                if self.data.MOs.kinetic_energy:
-                    kin = self.data.MOs.kinetic_energy[symlabel][symm_idx] * 27.2114079527 if occ else 0
+        for moi in range(self.data['SFOs']['number']):
+            for spin_idx, mo_spin in enumerate(self.data['calc_info']['mo_spins']):
+                symm_idx = self.data['MOs']['symmetry_index'][moi]
+                symlabel = self.data['MOs']['symlabel'][moi]
+                occ = int(self.data['MOs']['occupation'][symlabel][mo_spin][symm_idx])
+                if 'kinetic_energy' in self.data['MOs']:
+                    kin = self.data['MOs']['kinetic_energy'][symlabel][symm_idx] * 27.2114079527 if occ else 0
                 else:
                     kin = None
 
@@ -661,13 +651,13 @@ class Orbitals:
                     'index': moi + 1,
                     'name': f'{symm_idx+1}{symlabel}',
                     'symmetry': symlabel,
-                    'symmetry_index': self.data.MOs.symmetry_index[moi] + 1,
+                    'symmetry_index': self.data['MOs']['symmetry_index'][moi] + 1,
                     'spin': mo_spin,
-                    'energy': self.data.MOs.energy[symlabel][mo_spin][symm_idx] * 27.2114079527,
+                    'energy': self.data['MOs']['energy'][symlabel][mo_spin][symm_idx] * 27.2114079527,
                     'occupation': occ,
-                    'occupied': int(self.data.MOs.occupation[symlabel][mo_spin][symm_idx]) > 0,
+                    'occupied': int(self.data['MOs']['occupation'][symlabel][mo_spin][symm_idx]) > 0,
                     'kinetic_energy': kin,
-                    'molecule': self.data.molecules['complex'],
+                    'molecule': self.data['molecules']['complex'],
                 }
                 sfo = MO(data, self.mos)
                 self.mos.orbitals.append(sfo)
@@ -935,7 +925,7 @@ class OrbitalSelector:
             orbs = [orb for orb in orbs if orb.index in ensure_list(index)]
 
         if symmetry:
-            if self.parent.data.calc_info.used_regions:
+            if self.parent.data['calc_info']['used_regions']:
                 orbs = [orb for orb in orbs if orb.symmetry in ensure_list(symmetry)]
             else:
                 orbs = [orb for orb in orbs if orb.subspecies in ensure_list(symmetry)]
@@ -1030,11 +1020,11 @@ class SFOs(OrbitalSelector):
         ret = []
         if len(self.orbitals) > 0:
             orb = self.orbitals[0]
-            if orb.energy is not np.nan:
+            if orb.energy is not None:
                 ret.append('energy')
-            if orb.site_energy is not np.nan:
+            if orb.site_energy is not None:
                 ret.append('site_energy')
-            if orb.site_energy_SCF0 is not np.nan:
+            if orb.site_energy_SCF0 is not None:
                 ret.append('site_energy_SCF0')
 
         return ret
@@ -1063,8 +1053,6 @@ if __name__ == '__main__':
     sfos = orbs.sfos.filter(symmetry='A2', fragment='BH3')
     print(sfos)
     sfos = orbs.sfos.filter(fragment='NH3')
-    print(sfos)
-    sfos = orbs.sfos.get_fragment_sfos('NH3')
     print(sfos)
     sfos = orbs.mos.filter(orbname=('1E1:1', '1E1:2'))
     print(sfos)
