@@ -9,7 +9,7 @@ and the donating orbital for the transition should have at least 90% Donor fragm
 and the accepting orbital should have at least 90% Acceptor fragment character.
 '''
 
-import tcutility
+import tcutility.results2
 import pyfmo
 
 # exc should have wl of at least 300
@@ -31,24 +31,24 @@ orbs = pyfmo.Orbitals('excitations.adf.rkf')
 
 # the excitation data is sorted by the irrep (only 'A' for this system) 
 # and the excitation type (only 'SS' = singlet-singlet for this system)
-excitation_data = res.properties.excitations
+excitation_data = res['properties']['excitations']
 for irrep, irrep_data in excitation_data.items():
     for excitation_type, data  in irrep_data.items():
-        for exc_index in range(data.number_of_excitations):
-            wl = data.wavelengths[exc_index]
+        for exc_index in range(data['number_of_excitations']):
+            wl = data['wavelengths'][exc_index]
             # set a threshold for the wavelength
             if wl < wavelength_thresh:
                 continue
 
-            f12 = data.oscillator_strengths[exc_index]
+            f12 = data['oscillator_strengths'][exc_index]
             # and for oscillator strength
             if f12 < oscillator_strength_thresh:
                 continue
 
             # obtain the contributions and MO names
-            contribs = data.contributions[exc_index]
-            from_MO_names = data.from_MO[exc_index]
-            to_MO_names = data.to_MO[exc_index]
+            contribs = data['contributions'][exc_index]
+            from_MO_names = data['from_MO'][exc_index]
+            to_MO_names = data['to_MO'][exc_index]
 
             n_transitions = len(contribs)
             transitions = []
