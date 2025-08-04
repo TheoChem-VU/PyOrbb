@@ -6,7 +6,7 @@ authors = [
   { name="Tori Gijzen", email="t.gijzen@vu.nl"}]
 description = "PyFMO is an automated orbital analysis tool used in the TheoCheM group at VU Amsterdam"
 readme = "README.md"
-requires-python = ">=3.7"
+requires-python = ">=3.9"
 classifiers = [
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: MIT License",
