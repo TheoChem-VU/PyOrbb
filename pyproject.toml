@@ -2,8 +2,8 @@
 name = "pyfmo"
 authors = [
   { name="Yuman Hordijk", email="y.hordijk@vu.nl"},
-  { name="Tori Gijzen", email="t.gijzen@vu.nl"},
-  { name="Steven E. Beutick", email="s.e.beutick@vu.nl"}]
+  { name="Steven E. Beutick", email="s.e.beutick@vu.nl"},
+  { name="Tori Gijzen", email="t.gijzen@vu.nl"}]
 description = "PyFMO is an automated orbital analysis tool used in the TheoCheM group at VU Amsterdam"
 readme = "README.md"
 requires-python = ">=3.7"
@@ -12,13 +12,17 @@ classifiers = [
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent"]
 dynamic = ["version"]
+dependencies = [
+    "matplotlib>=3.5.3",
+    "networkx>=2.6.3",
+    "numpy>=1.21.6",
+    "plams>=2024.106",
+    "xlsxwriter>=3.2.2",
+]
 
 [build-system]
-requires = ["setuptools==63.4.3", "wheel", "setuptools-git-versioning<2"]
+requires = ["setuptools", "wheel", "setuptools-git-versioning<2"]
 build-backend = "setuptools.build_meta"
-
-[tool.setuptools.dynamic]
-dependencies = {file = ["requirements.txt"]}
 
 [tool.setuptools-git-versioning]
 enabled = true
@@ -26,5 +30,22 @@ template = "{tag}"
 dev_template = "{tag}"
 dirty_template = "{tag}"
 
+[dependency-groups]
+docs = [
+    "gitpython>=3.1.45",
+    "sphinx-argparse>=0.4.0",
+    "sphinx-autodoc-typehints>=1.23.0",
+    "sphinx-design>=0.4.1",
+    "sphinx-tabs>=3.4.7",
+    "sphinxcontrib-video>=0.4.1",
+]
+
 [project.scripts]
 pyfmo = "pyfmo.cli_scripts.pyfmoparser:main"
+
+[project.optional-dependencies]
+draw = [
+    "tcintegral>=1.0.0",
+    "tcutility>=0.5.0",
+    "tcviewer>=0.0.1",
+]
