@@ -2,7 +2,6 @@ import pyfmo
 from scm import plams
 import functools
 import os
-from collections.abc import Container
 from typing import List, Dict
 import math
 
@@ -711,7 +710,7 @@ class OrbitalSelector:
         orbitals: a list of |SFOs| or |MOs| that will be managed by this class.
         parent: the parent |Orbitals| object.
     '''
-    def __init__(self, orbitals: Container[Orbital], parent: Orbitals):
+    def __init__(self, orbitals: List[Orbital], parent: Orbitals):
         self.orbitals = orbitals
         self.parent = parent
 
@@ -845,13 +844,13 @@ class OrbitalSelector:
 
 
     def filter(self, 
-            index: int or Container[int] = None, 
-            symmetry: str or Container[str] = None, 
-            spin: str or Container[str] = None, 
-            fragment: str or Container[str] = None, 
-            fragment_index: int or Container[str] = None, 
-            orbname: str or Container[str] = None,
-            occupation: float or str or Container[float] or Container[str] = None) -> Orbital or List[Orbital]:
+            index: int or List[int] = None, 
+            symmetry: str or List[str] = None, 
+            spin: str or List[str] = None, 
+            fragment: str or List[str] = None, 
+            fragment_index: int or List[str] = None, 
+            orbname: str or List[str] = None,
+            occupation: float or str or List[float] or List[str] = None) -> Orbital or List[Orbital]:
         '''
         filter |Orbital| objects that match the given parameters.
         If any of the arguments is given as a ``Container`` we check for membership.
