@@ -47,8 +47,8 @@ for i, orb in enumerate(orbs):
     fig, axes = plt.subplots(1, 3, figsize=(6.4*2, 4.8))
     # the first interaction
     Pd_5s = orb.sfos['Pd(5S)']
-    sub_lumo = orb.sfos['Substrate(LUMO)']
-    mos = [orb.mos['22AA'], orb.mos['18AA']]
+    sub_lumo = orb.sfos['Substrate(HOMO)']
+    mos = [orb.mos['21AA'], orb.mos['17AA']]
     mix1 = pyfmo.analysis.mixing.Mixing(
         orb,
         sfos=[Pd_5s, sub_lumo], 
@@ -61,8 +61,8 @@ for i, orb in enumerate(orbs):
 
     # the second interaction
     Pd_4d = orb.sfos['Pd(2D:x2-y2)']
-    sub_homo = orb.sfos['Substrate(HOMO)']
-    mos = [orb.mos['21AA'], orb.mos['17AA']]
+    sub_homo = orb.sfos['Substrate(LUMO)']
+    mos = [orb.mos['22AA'], orb.mos['18AA']]
     mix2 = pyfmo.analysis.mixing.Mixing(
         orb,
         sfos=[Pd_4d, sub_homo], 
@@ -81,16 +81,16 @@ for i, orb in enumerate(orbs):
     plt.suptitle(f'C-H distance: {distances[i]: .2f} Å')
 
     # and then plot the overlaps
-    axes[1].plot(distances[:i+1], overlaps1, label=r'$\langle 5S | 5AA \rangle$', c='b')
-    axes[1].plot(distances[:i+1], overlaps2, label=r'$\langle 2D:x2-y2 | 4AA \rangle$', c='r')
+    axes[1].plot(distances[:i+1], overlaps1, label=r'$\langle 5S | 4AA \rangle$', c='b')
+    axes[1].plot(distances[:i+1], overlaps2, label=r'$\langle 2D:x2-y2 | 5AA \rangle$', c='r')
 
     # and energy gaps
-    axes[2].plot(distances[:i+1], egaps1, label=r'$| \varepsilon_{5S} - \varepsilon_{5AA} |$', c='b')
-    axes[2].plot(distances[:i+1], egaps2, label=r'$| \varepsilon_{2D:x2-y2} - \varepsilon_{4AA} |$', c='r')
+    axes[2].plot(distances[:i+1], egaps1, label=r'$| \varepsilon_{5S} - \varepsilon_{4AA} |$', c='b')
+    axes[2].plot(distances[:i+1], egaps2, label=r'$| \varepsilon_{2D:x2-y2} - \varepsilon_{5AA} |$', c='r')
 
     # set some limits and labels
     axes[1].set_xlim(min(distances), max(distances))
-    axes[1].set_ylim(0, 0.6)
+    axes[1].set_ylim(0, 0.65)
     axes[1].vlines(1.614, 0, 0.6, colors='k', alpha=0.5, linestyle='dashed')
     axes[1].set_ylabel('Overlap')
     axes[1].set_xlabel('C-H distance / Å')
@@ -116,3 +116,4 @@ for i, orb in enumerate(orbs):
 clips = [mvp.ImageClip(frame).set_duration(1/14) for frame in frames]
 concat_clip = mvp.concatenate_videoclips(clips, method="compose")
 concat_clip.write_videofile('orbint.mp4', fps=14)
+concat_clip.write_gif('orbint.gif', fps=14)
