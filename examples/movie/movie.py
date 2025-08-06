@@ -10,7 +10,6 @@ with Good numerical quality.
 
 import pyfmo
 import os
-import matplotlib.pyplot as plt
 import numpy as np
 import moviepy.editor as mvp
 import tcviewer
@@ -47,8 +46,8 @@ def make_frames(orbs: List[pyfmo.Orbitals], sfo1_name: str, sfo2_name: str, fram
         frames.append(frame_file)
 
         # if we already have the frame somewhere we can skip
-        # if os.path.exists(frame_file):
-        #     continue
+        if os.path.exists(frame_file):
+            continue
 
         # obtain the SFOs
         sfo1 = orb.sfos[sfo1_name]
