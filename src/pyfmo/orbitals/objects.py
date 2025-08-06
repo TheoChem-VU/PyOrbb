@@ -127,13 +127,14 @@ class Orbital:
 
         return sum(orb.occupation for orb in matching_orbs)
 
-    def cube_file(self, gridsize: str = 'medium', overwrite: bool = False):
+    def cube_file(self, gridsize: str = 'medium', overwrite: bool = False, cube_file_prefix: str = None):
         '''
         Generate a cube-file for this |Orbital| with a certain grid-size.
 
         Args:
             gridsize: the size of the grid to generate the cube-file with.
             overwrite: whether to overwrite the previous calculation if found.
+            cube_file_prefix: prefix for the cube file path.
 
         .. seealso::
             :meth:`Orbital.draw` to draw and open a TCviewer screen showing this |Orbital|.
@@ -144,7 +145,7 @@ class Orbital:
 
         # start a Densf job to calculate the cube-file. 
         # We want to return the cube-file, so we should wait for it to finish.
-        with DensfJob(wait_for_finish=True, overwrite=overwrite) as job:
+        with DensfJob(wait_for_finish=True, overwrite=overwrite, cube_file_prefix=cube_file_prefix) as job:
             # job.orbital(self)
             if isinstance(self, SFO):
                 job._sfos.append(self)
