@@ -13,7 +13,7 @@ These examples have all been used and applied in real research applications over
       :link: pi_orbitals.html
 
       .. image:: pi_orbitals.png
-         :width: 300px
+         :height: 250px
          :align: center
 
       PyOrbb script to differentiate π- and σ-orbitals.
@@ -23,7 +23,7 @@ These examples have all been used and applied in real research applications over
       :link: tracking.html
 
       .. image:: orbint.gif
-         :width: 300px
+         :height: 250px
          :align: center
 
       PyOrbb script to generate movies of orbital interaction during a reaction.
@@ -33,7 +33,7 @@ These examples have all been used and applied in real research applications over
       :link: excitations.html
 
       .. image:: EDA_complex_orbs.png
-         :width: 300px
+         :height: 250px
          :align: center
 
       PyOrbb script to analyse and filter data from UV/VIS excitation data.
@@ -43,7 +43,7 @@ These examples have all been used and applied in real research applications over
       :link: bonding.html
 
       .. image:: bonding.png
-         :width: 150px
+         :height: 250px
          :align: center
 
       PyOrbb script to distinguish bonding and antibonding MOs.
