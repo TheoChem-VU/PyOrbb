@@ -2,6 +2,7 @@ import numpy as np
 from math import sqrt
 from scm import plams
 from pyfmo.nested_dict import NestedDict
+from pyfmo.orbitals import _symmetry
 
 
 ensure_list = lambda x: [x] if not isinstance(x, (list, tuple, set)) else list(x)  # noqa: E731
@@ -80,8 +81,12 @@ def _get_calc_info(reader: plams.KFReader) -> dict:
     # if it didnt, only variable 'energy' will be present
     ret.set('relativistic', ('SFOs', 'escale') in reader)
 
-    ret.set('symlabels', reader.read('Symmetry', 'symlab').strip().split())
-    ret.set('symmetry', reader.read('Symmetry', 'grouplabel'))
+    if ('Symmetry', 'symlab') in reader:
+        ret.set('symlabels', reader.read('Symmetry', 'symlab').strip().split())
+    else:
+        ret.set('symlabels', _symmetry.get_irreps(reader))
+
+    ret.set('symmetry', reader.read('Geometry', 'grouplabel'))
     
     # determine if SFOs are unrestricted or not
     ret.set('unrestricted_sfos', ('SFOs', 'energy_B') in reader)
