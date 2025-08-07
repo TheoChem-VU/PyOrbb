@@ -95,13 +95,22 @@ Or to obtain the coefficient of an |SFO| into an |MO|.
    0.02125011726149327
 
 
+More Examples
+-------------
+
+More basic examples are available in the `basic examples <../examples/index.html>`_ section of this site.
+
+.. toctree::
+
+   ../examples
+
+
 Advanced Examples
 -----------------
 
 For more advanced examples please see the `advanced examples <../examples/index.html>`_ section of this site.
 
 .. toctree::
+   :glob:
 
-   ../examples/pi_orbitals
-   ../examples/tracking
-   ../examples/excitations
+   ../examples/*
