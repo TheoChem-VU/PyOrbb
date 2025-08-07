@@ -2,7 +2,7 @@ import numpy as np
 from math import sqrt
 from scm import plams
 from pyfmo.nested_dict import NestedDict
-from pyfmo.orbitals import _symmetry
+from pyfmo.orbitals import _symmetry_free
 
 
 ensure_list = lambda x: [x] if not isinstance(x, (list, tuple, set)) else list(x)  # noqa: E731
@@ -84,7 +84,7 @@ def _get_calc_info(reader: plams.KFReader) -> dict:
     if ('Symmetry', 'symlab') in reader:
         ret.set('symlabels', reader.read('Symmetry', 'symlab').strip().split())
     else:
-        ret.set('symlabels', _symmetry.get_irreps(reader))
+        ret.set('symlabels', _symmetry_free.get_irreps(reader))
 
     ret.set('symmetry', reader.read('Geometry', 'grouplabel'))
     
@@ -348,7 +348,7 @@ def read_data(reader: plams.KFReader, SCF0_reader: plams.KFReader = None, output
 
     # read the matrix data such as overlaps, coefficients, etc.
     # we correct for the number of frozen cores later
-    ret.set('MOs', 'nfrozencores', {symlabel: ncbs for symlabel, ncbs in zip(ret['calc_info']['symlabels'], ensure_list(reader.read('Symmetry', 'ncbs')))})
+    ret.set('MOs', 'nfrozencores', {symlabel: ncbs for symlabel, ncbs in zip(ret['calc_info']['symlabels'], ensure_list(_symmetry_free.get_ncbs(reader)))})
     ret.set('MOs', 'nfrozencores', 'total', sum(ret['MOs']['nfrozencores'].values()))
 
     for symlabel in ret['calc_info']['symlabels']:

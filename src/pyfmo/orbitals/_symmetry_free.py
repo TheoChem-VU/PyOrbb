@@ -20,3 +20,9 @@ def get_irreps(reader: str) -> List[str]:
 		irreps.extend([sec for sec in reader_sections if sec.startswith(start)])
 
 	return irreps
+
+
+
+def get_ncbs(reader: str) -> List[str]:
+	irreps = get_irreps(reader)
+	return [reader.read(irrep, 'ncbas') for irrep in irreps]
