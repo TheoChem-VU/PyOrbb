@@ -20,6 +20,3 @@ def get_irreps(reader: str) -> List[str]:
 		irreps.extend([sec for sec in reader_sections if sec.startswith(start)])
 
 	return irreps
-
-from scm import plams
-print(get_irreps(plams.KFReader('/Users/yumanhordijk/Desktop/symmetries/D_LIN/sp.results/adf.rkf')))
