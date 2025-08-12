@@ -924,43 +924,50 @@ class OrbitalSelector:
         if index:
             orbs = [orb for orb in orbs if orb.index in ensure_list(index)]
 
-        if symmetry:
+        if symmetry is not None:
             if self.parent.data['calc_info']['used_regions']:
                 orbs = [orb for orb in orbs if orb.symmetry in ensure_list(symmetry)]
             else:
                 orbs = [orb for orb in orbs if orb.subspecies in ensure_list(symmetry)]
 
-        if spin:
+        if spin is not None:
             orbs = [orb for orb in orbs if orb.spin in ensure_list(spin)]
 
         # we match based on either fragment or fragment_unique
         # this ensures that if we select for instance "C(1P:x)" we match ALL carbons
         # if we match "C:1(1P:x)" we match only the first carbon
-        if fragment:
+        if fragment is not None:
             orbs = [orb for orb in orbs if orb.fragment_unique in ensure_list(fragment) or orb.fragment in ensure_list(fragment)]
 
-        if fragment_index:
+        if fragment_index is not None:
             orbs = [orb for orb in orbs if orb.fragment_index in ensure_list(fragment_index)]
 
         # orbname can be either the proper name or the relative name
-        if orbname:
+        if orbname is not None:
             orbs = [orb for orb in orbs if orb.name in ensure_list(orbname) or orb.relative_name in ensure_list(orbname)]
 
         # check for the occupation of the orbitals
-        if occupation:
+        if occupation is not None:
             orbs_ = []
             for orb in orbs:
                 for occ in ensure_list(occupation):
                     if isinstance(occ, float):
                         if round(orb.occupation, 2) == round(occ, 2):
                             orbs_.append(orb)
+
                     if isinstance(occ, str):
+                        if occ == 'occupied' and orb.occupied:
+                            orbs_.append(orb)
+                            continue
                         if occ == 'unoccupied' and orb.unoccupied:
                             orbs_.append(orb)
+                            continue
                         if occ == 'fully_occupied' and orb.fully_occupied:
                             orbs_.append(orb)
+                            continue
                         if occ == 'partially_occupied' and orb.partially_occupied:
                             orbs_.append(orb)
+                            continue
             orbs = orbs_
 
         # return None if nothing was found
