@@ -106,7 +106,7 @@ def draw_interaction(sfos, mos, connections,
     ax.set_title(title)
     ax.set_ylabel('Orbital Energy / eV')
     ax.set_xticks(xtick_pos, xtick_label)
-    ax.spines[['top', 'bottom']].set_visible(False)
+    ax.spines[['top', 'bottom', 'right']].set_visible(False)
     ax.tick_params('x', labelsize=12, labelcolor='grey')
     ax.tick_params(bottom = False)
     for orb in poss:
@@ -126,7 +126,7 @@ def draw_interaction(sfos, mos, connections,
             if orb.spin == 'AB':
                 orb_name = orb.name
             else:
-                orb_name = f'{orb.name[:-2]}{spin_part}'
+                orb_name = f'{orb.name}{spin_part}'
 
         is_MO = orb in mos
         ax.plot([poss[orb]-level_width/2, poss[orb]+level_width/2], [E, E], c='k', linewidth=level_thickness, gid=f'{"MO" if is_MO else "SFO"}_{orb}')
@@ -191,5 +191,3 @@ def draw_interaction(sfos, mos, connections,
 
         c = connection_colors.get((sfo, mo), 'k')
         ax.plot([psfo, pmo], [getattr(sfo, energy_type), mo.energy], c=c, linewidth=1, alpha=np.clip(sfo.mulliken_contribution(mo), *alpha_range), gid=f'MIX_{sfo} -> {mo}', zorder=-10)
-
-    # ax.fill_betweenx(ax.get_ylim(), 0, 1, alpha=.05, facecolor='k')
