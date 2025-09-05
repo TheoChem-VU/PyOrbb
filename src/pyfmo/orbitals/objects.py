@@ -121,11 +121,15 @@ class Orbital:
         E.g. if orbital ``5A_A`` has an occupation of 1 and orbitals ``5A_B``has an 
         occupation of 0 then both orbitals will have the ``spin_total_occupation`` set to ``1``.
         '''
+        return self.occupation + sum(orb.occupation for orb in self.spin_match_orbs)
+
+    @functools.cached_property
+    def spin_match_orbs(self) -> "Orbital":
         matching_orbs = [orb for orb in self.parent.orbitals if orb.name == self.name]
         if hasattr(self, 'fragment_unique'):
             matching_orbs = [orb for orb in matching_orbs if orb.fragment_unique == self.fragment_unique]
 
-        return sum(orb.occupation for orb in matching_orbs)
+        return [orb for orb in matching_orbs if orb != self]
 
     def cube_file(self, gridsize: str = 'medium', overwrite: bool = False, cube_file_prefix: str = None):
         '''
@@ -608,7 +612,7 @@ class Orbitals:
                 symlabel = self.data['SFOs']['symlabel'][sfo_idx]
                 data = {
                     'index': sfo_idx + 1 + self.data['MOs']['nfrozencores'][symlabel],
-                    'name': self.data['SFOs']['adf_names'][sfo_spin][sfo_idx],
+                    'name': self.data['SFOs']['adf_names'][sfo_spin][sfo_idx].removesuffix('_AB').removesuffix('_A').removesuffix('_B'),
                     'subspecies': self.data['SFOs']['subspecies'][sfo_idx],
                     'symmetry': symlabel,
                     'symmetry_index': self.data['SFOs']['symmetry_index'][sfo_idx] + 1 + self.data['MOs']['nfrozencores'][symlabel],
@@ -649,7 +653,7 @@ class Orbitals:
 
                 data = {
                     'index': moi + 1,
-                    'name': f'{symm_idx+1}{symlabel}',
+                    'name': f'{symm_idx+1}{symlabel}'.removesuffix('_AB').removesuffix('_A').removesuffix('_B'),
                     'symmetry': symlabel,
                     'symmetry_index': self.data['MOs']['symmetry_index'][moi] + 1,
                     'spin': mo_spin,
