@@ -1,9 +1,11 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import pyfmo
+import itertools
 
 
-def draw_interaction(sfos, mos, connections,
+def draw_interaction(sfos, mos, 
+        connections=None,
         title=None,
         energy_type='energy',
         connection_colors={},
@@ -11,7 +13,8 @@ def draw_interaction(sfos, mos, connections,
         ylim=None,
         draw_mo_labels=False,
         draw_sfo_labels=True,
-        alpha_range=(0.05, 0.3)):
+        alpha_range=(0.05, 0.3),
+        merge_non_radical=True):
     arrow_length        = .14 / 4.8280888207
     arrow_thickness     = .05
     arrow_width         = .005
@@ -25,6 +28,32 @@ def draw_interaction(sfos, mos, connections,
     level_width = .055
     level_thickness = 1
 
+    if connections is None:
+        connections = [(sfo, mo, abs(sfo.mulliken_contribution(mo))) for sfo, mo in itertools.product(sfos, mos) if abs(sfo.mulliken_contribution(mo)) > 0.1]
+
+    if merge_non_radical:
+        # determine which orbitals, if specified, should be merged into one
+        merged = [sfo for sfo in sfos if sfo.spin_total_occupation in (0, 1, 2)]
+        merged.extend([mo for mo in mos if mo.spin_total_occupation in (0, 1, 2)])
+
+        sfos = [sfo for sfo in sfos if sfo not in merged or sfo.spin in ('A', 'AB')]
+        mos = [mo for mo in mos if mo not in merged or mo.spin in ('A', 'AB')]
+
+    merged = list(sfos) + list(mos)
+    _connections = []
+    for sfo, mo, strength in connections:
+        if sfo not in sfos:
+            sfo = [_sfo for _sfo in sfos if _sfo.name == sfo.name][0]
+        if mo not in mos:
+            mo = [_mo for _mo in mos if _mo.name == mo.name][0]
+
+        if any(conn[0] is sfo and conn[1] is mo for conn in _connections):
+            continue
+        _connections.append((sfo, mo, float(strength)))
+
+    connections = _connections
+    # connections = [conn for conn in connections if conn[0] in sfos and conn[1] in mos]
+
     degenerate_filled_threshold = arrow_length * 1.4
     degenerate_virtual_threshold = arrow_length / 5
 
@@ -34,6 +63,17 @@ def draw_interaction(sfos, mos, connections,
         energies[sfo] = getattr(sfo, energy_type)
     for mo in mos:
         energies[mo] = mo.energy
+
+    _energies = {}
+    for sfo in sfos:
+        other_sfos = sfo.spin_match_orbs
+        _energies[sfo] = float((getattr(sfo, energy_type) + sum(getattr(other_sfo, energy_type) for other_sfo in other_sfos)) / (len(other_sfos) + 1))
+
+    for mo in mos:
+        other_mos = mo.spin_match_orbs
+        _energies[mo] = float((mo.energy + sum(other_mo.energy for other_mo in other_mos)) / (len(other_mos) + 1))
+
+    energies.update(_energies)
 
     if ax is None:
         ax = plt.gca()
@@ -109,7 +149,7 @@ def draw_interaction(sfos, mos, connections,
             energies[orb] = degenerate_energies[degenerate_idx]
 
     xtick_pos, xtick_label = [.5], ['MOs']
-    for orb in poss:
+    for orb in list(sfos) + list(mos):
         if orb not in sfos:
             continue
         if orb.fragment_unique in xtick_label:
@@ -125,13 +165,18 @@ def draw_interaction(sfos, mos, connections,
     ax.spines[['top', 'bottom', 'right']].set_visible(False)
     ax.tick_params('x', labelsize=12, labelcolor='grey')
     ax.tick_params(bottom = False)
-    for orb in poss:
+    for orb in list(sfos) + list(mos):
         E = energies[orb]
+        spin = orb.spin
+
+        if merge_non_radical and orb in merged:
+            spin = 'AB'
+
 
         spin_part = {
             'A': r' $\alpha$',
             'B': r' $\beta$'
-        }.get(orb.spin, '')
+        }.get(spin, '')
 
         if isinstance(orb, pyfmo.orbitals.objects.MO):
             color = 'k'
@@ -155,24 +200,29 @@ def draw_interaction(sfos, mos, connections,
         if not orb.occupied:
             continue
 
-        for spin_part in orb.spin:
-            break_on_one = False
-            if orb.spin == 'AB' and orb.occupation == 1:
+        for spin_part in spin:
+            break_after_one = False
+            if spin == 'AB' and orb.spin_total_occupation == 1:
                 offset_x = 0
                 offset_y = -arrow_length / 2 * energy_span
                 displacement = arrow_length * energy_span
-                break_on_one = True
+                break_after_one = True
+                if orb.spin == 'B':
+                    offset_x =  0
+                    offset_y =  arrow_length / 2 * energy_span
+                    displacement = -arrow_length * energy_span
 
             elif spin_part == 'A':
                 offset_x = -arrow_spacing
                 offset_y = -arrow_length / 2 * energy_span
                 displacement = arrow_length * energy_span
+
             elif spin_part == 'B':
                 offset_x =  arrow_spacing
                 offset_y =  arrow_length / 2 * energy_span
                 displacement = -arrow_length * energy_span
 
-            if orb.spin != 'AB':
+            if spin != 'AB':
                 offset_x = 0
 
             ax.arrow(poss[orb]+offset_x, 
@@ -200,10 +250,11 @@ def draw_interaction(sfos, mos, connections,
                       length_includes_head=True,
                       linewidth=arrow_thickness,
                       gid=f'{"ARROWMO" if is_MO else "ARROWSFO"}_{orb}')
-            if break_on_one:
+
+            if break_after_one:
                 break
 
-    for sfo, mo in connections:
+    for sfo, mo, strength in connections:
         psfo, pmo = poss[sfo], poss[mo]
         if psfo < pmo:
             psfo += level_width/2
@@ -213,6 +264,21 @@ def draw_interaction(sfos, mos, connections,
             pmo  += level_width/2
 
         c = connection_colors.get((sfo, mo), 'k')
-        ax.plot([psfo, pmo], [energies[sfo], energies[mo]], c=c, linewidth=1, alpha=np.clip(sfo.mulliken_contribution(mo), *alpha_range), gid=f'MIX_{sfo} -> {mo}', zorder=-10)
+        ax.plot([psfo, pmo], [energies[sfo], energies[mo]], c=c, linewidth=1, alpha=np.clip(strength, *alpha_range), gid=f'MIX_{sfo} -> {mo}', zorder=-10)
 
-    # ax.fill_betweenx(ax.get_ylim(), 0, 1, alpha=.05, facecolor='k')
+
+if __name__ == '__main__':
+    orbs = pyfmo.Orbitals('/Users/yumanhordijk/PhD/Programs/TheoCheM/PyFMO/calculations/PyOrb_testing_2022/HomolyticEthane/Ethane.results/adf.rkf')
+
+    ylim = (-20, 0)
+    plt.figure()
+    draw_interaction(
+        [sfo for sfo in orbs.sfos if ylim[0] < sfo.energy < ylim[1]], 
+        [mo for mo in orbs.mos if ylim[0] < mo.energy < ylim[1]])
+
+    plt.figure()
+    draw_interaction(
+        [sfo for sfo in orbs.sfos if ylim[0] < sfo.energy < ylim[1]], 
+        [mo for mo in orbs.mos if ylim[0] < mo.energy < ylim[1]],
+        merge_non_radical=False)
+    plt.show()
