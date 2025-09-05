@@ -26,6 +26,8 @@ def get_irreps(reader: str) -> List[str]:
 def get_ncbs(reader: str) -> List[str]:
 	irreps = get_irreps(reader)
 	try:
-		return [reader.read(irrep, 'ncbas') for irrep in irreps]
+		ncbs = [reader.read(irrep, 'ncbas') for irrep in irreps]
 	except KeyError:
-		return [0 for _ in irreps]
+		ncbs = [0 for _ in irreps]
+		
+	return ncbs
