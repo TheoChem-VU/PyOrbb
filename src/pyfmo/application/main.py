@@ -763,8 +763,8 @@ class AnalysisWindow(QtWidgets.QWidget):
         # load a mixer object for each energy type we have available
         mixers = {etype: pyfmo.analysis.mixing.Mixer(self.orbs, energy_type=etype) for etype in self.orbs.sfo_energy_types}
         # and for each mixer generate 20 OI and PR interactions
-        self.oi_mixes = {etype: mixer.orbital_interactions(N=20) for etype, mixer in mixers.items()}
-        self.pauli_mixes = {etype: mixer.pauli_repulsions(N=20) for etype, mixer in mixers.items()}
+        self.oi_mixes = {etype: mixer.orbital_interactions(N=40) for etype, mixer in mixers.items()}
+        self.pauli_mixes = {etype: mixer.pauli_repulsions(N=40) for etype, mixer in mixers.items()}
 
         self._analysis_page_frame = QtWidgets.QFrame(self)
         self.central_layout.addWidget(self._analysis_page_frame)
@@ -889,6 +889,8 @@ class AnalysisWindow(QtWidgets.QWidget):
         misc_box_layout.addWidget(save_fig_btn, 0, 1, 1, 1)
         self._update_plot()
 
+        print(self.size())
+
     def get_sheets_save_file(self):
         d = os.path.join(os.path.split(self.orbs.kfpath)[0], 'pyorbb.xlsx')
         filename, _ = QtWidgets.QFileDialog.getSaveFileName(self, "Save File", dir=d, filter="XLSX file (*.xlsx);;Any file (*)")
@@ -961,7 +963,7 @@ class PyOrbbApp(QtWidgets.QApplication):
         _id = QtGui.QFontDatabase.addApplicationFont(fontpath)
 
         self.window = QtWidgets.QMainWindow()
-        # self.window.resize(500, 500)
+        self.window.resize(1030 + 22, 698 + 52)
         self.window.layout = QtWidgets.QGridLayout()
         grid_widget = QtWidgets.QWidget()
         grid_widget.setLayout(self.window.layout)
