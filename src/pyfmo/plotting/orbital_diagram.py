@@ -149,8 +149,12 @@ def draw_interaction(sfos, mos, connections,
             break_on_one = False
             if orb.spin == 'AB' and orb.occupation == 1:
                 offset_x = 0
-                offset_y = -arrow_length / 2 * energy_span
-                displacement = arrow_length * energy_span
+                if orb.spin_pol in (0, 1):
+                    offset_y = -arrow_length / 2 * energy_span
+                    displacement = arrow_length * energy_span
+                elif orb.spin_pol == -1:
+                    offset_y = arrow_length / 2 * energy_span
+                    displacement = -arrow_length * energy_span
                 break_on_one = True
 
             elif spin_part == 'A':

@@ -7,6 +7,54 @@ from pyfmo.nested_dict import NestedDict
 ensure_list = lambda x: [x] if not isinstance(x, (list, tuple, set)) else list(x)  # noqa: E731
 
 
+def _get_fragoccupations(reader: plams.KFReader) -> dict:
+    '''
+    Read the fragment occupations from a calculation.
+    
+    Returns:
+        A dictionary containing the alpha and beta spin occupations for each fragment and irrep.
+    '''
+    inp = reader.read('General', 'engine input')
+    if 'fragoccupations' not in inp.lower():
+        return
+
+    lines = []
+    read = False
+    for line in inp.splitlines():
+        line = line.strip()
+        if line.lower() == 'fragoccupations':
+            read = True
+            continue
+        if read and line.lower() == 'end':
+            break
+
+        if read:
+            lines.append(line)
+
+    lines_lower = [line.lower() for line in lines]
+    indices = [0]
+    while 'subend' in lines_lower[indices[-1]+1:]:
+        index = lines_lower[indices[-1]+1:].index('subend')
+        indices.append(index + indices[-1] + 2)
+
+    blocks = []
+    for start, end in zip(indices, indices[1:]):
+        blocks.append(lines[start:end-1])
+    
+    data = {}
+    for block in blocks:
+        frag = block[0]
+        data[frag] = {}
+        for occ in block[1:]:
+            irrep, rest = occ.split(' ', 1)
+            a, b = rest.split('//')
+            Na = sum(int(part) for part in a.split())
+            Nb = sum(int(part) for part in b.split())
+            data[frag][irrep] = (Na, Nb)
+
+    return data
+
+
 def _get_molecules(reader: plams.KFReader) -> dict:
     '''
     Method used to get molecules involved in this calculation.
@@ -85,11 +133,11 @@ def _get_calc_info(reader: plams.KFReader) -> dict:
     
     # determine if SFOs are unrestricted or not
     ret.set('unrestricted_sfos', ('SFOs', 'energy_B') in reader)
+    ret.set('sfo_spins', ['A', 'B'] if ret['unrestricted_sfos'] else ['AB'])
+    ret.set('sfo_spinpolarizations', _get_fragoccupations(reader))
 
     # determine if MOs are unrestricted or not
     ret.set('unrestricted_mos', (ret['symlabels'][0], 'eps_B') in reader)
-
-    ret.set('sfo_spins', ['A', 'B'] if ret['unrestricted_sfos'] else ['AB'])
     ret.set('mo_spins', ['A', 'B'] if ret['unrestricted_mos'] else ['AB'])
 
     # determine if the calculation used regions or not

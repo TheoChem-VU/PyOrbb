@@ -598,6 +598,9 @@ class Orbitals:
         sfo_mo_spin_match = self.data['calc_info']['unrestricted_mos'] == self.data['calc_info']['unrestricted_sfos']
         for sfo_idx in range(self.data['SFOs']['number']):
             for spin_idx, sfo_spin in enumerate(self.data['calc_info']['sfo_spins']):
+                symlabel = self.data['SFOs']['symlabel'][sfo_idx]
+                frag = self.data['calc_info']['fragments'][self.data['SFOs']['fragment_index'][sfo_idx] - 1].split(':')[0]
+
                 if not sfo_mo_spin_match:
                     if self.data['calc_info']['unrestricted_mos']:
                         gross_pop = self.data['SFOs']['gross_population']['A'][sfo_idx] + self.data['SFOs']['gross_population']['B'][sfo_idx]
@@ -609,19 +612,27 @@ class Orbitals:
                     gross_pop = self.data['SFOs']['gross_population'][sfo_spin][sfo_idx]
                     gross_spin = 0
 
-                symlabel = self.data['SFOs']['symlabel'][sfo_idx]
+                if float(self.data['SFOs']['occupation'][sfo_spin][sfo_idx]) in (0, 2):
+                    spinpol = 0
+                elif float(self.data['SFOs']['occupation'][sfo_spin][sfo_idx]) == 1:
+                    if self.data['calc_info']['sfo_spinpolarizations'] is not None:
+                        occs = self.data['calc_info']['sfo_spinpolarizations'][frag][symlabel]
+                        # print(occs)
+                        spinpol = (occs[0] - occs[1]) / abs(occs[0] - occs[1])
+
                 data = {
                     'index': sfo_idx + 1 + self.data['MOs']['nfrozencores'][symlabel],
                     'name': self.data['SFOs']['adf_names'][sfo_spin][sfo_idx].removesuffix('_AB').removesuffix('_A').removesuffix('_B'),
                     'subspecies': self.data['SFOs']['subspecies'][sfo_idx],
                     'symmetry': symlabel,
                     'symmetry_index': self.data['SFOs']['symmetry_index'][sfo_idx] + 1 + self.data['MOs']['nfrozencores'][symlabel],
-                    'fragment': self.data['calc_info']['fragments'][self.data['SFOs']['fragment_index'][sfo_idx] - 1].split(':')[0],
+                    'fragment': frag,
                     'fragment_unique': self.data['SFOs']['fragment_unique']['total'][sfo_idx],
                     'fragment_index': self.data['SFOs']['fragment_index'][sfo_idx],
                     'spin': sfo_spin,
                     'energy': self.data['SFOs']['energy'][sfo_spin][sfo_idx] * 27.2114079527,
                     'occupation': float(self.data['SFOs']['occupation'][sfo_spin][sfo_idx]),
+                    'spin_pol': spinpol,
                     'occupied': int(self.data['SFOs']['occupation'][sfo_spin][sfo_idx]) > 0,
                     'gross_population': gross_pop,
                     'gross_spin': gross_spin,
@@ -1092,3 +1103,12 @@ if __name__ == '__main__':
 
     orbs = Orbitals('/Users/yumanhordijk/PhD/Programs/TheoCheM/PyFMO/calculations/PyOrb_testing_2022/TransitionState/DielsAlder.Diene.results/adf.rkf')
     print(orbs.sfos.filter(orbname=('1P:x', '1P:y', '1P:z'), fragment='C', fragment_index=2))
+
+
+    orbs = Orbitals('/Users/yumanhordijk/Downloads/pyr_c2v_frageda_occ2_pyridone.adf.rkf')
+    for sfo in orbs.sfos.filter(fragment='CO'):
+        if sfo.spin_pol != 0:
+            print(sfo, sfo.spin_pol)
+    for sfo in orbs.sfos.filter(fragment='NH'):
+        if sfo.spin_pol != 0:
+            print(sfo, sfo.spin_pol)
