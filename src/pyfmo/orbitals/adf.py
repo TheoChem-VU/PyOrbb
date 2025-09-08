@@ -48,8 +48,8 @@ def _get_fragoccupations(reader: plams.KFReader) -> dict:
         for occ in block[1:]:
             irrep, rest = occ.split(' ', 1)
             a, b = rest.split('//')
-            Na = sum(int(part) for part in a.split())
-            Nb = sum(int(part) for part in b.split())
+            Na = sum(int(float(part)) for part in a.split())
+            Nb = sum(int(float(part)) for part in b.split())
             data[frag][irrep] = (Na, Nb)
 
     return data
