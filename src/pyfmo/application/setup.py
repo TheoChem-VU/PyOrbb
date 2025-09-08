@@ -9,7 +9,7 @@ from setuptools import setup
 
 APP = ['main.py']
 DATA_FILES = []
-OPTIONS = {'iconfile': "icon.png"}
+OPTIONS = {'iconfile': "icons/icon_12.png", 'emulate_shell_environment': True}
 
 setup(
     name='PyOrbb',
