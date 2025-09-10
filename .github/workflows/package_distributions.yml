@@ -6,16 +6,22 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: "publishing"
+  group: "packaging"
   cancel-in-progress: true
 
 jobs:
   distribution:
     strategy:
       matrix:
-        target: [ "windows-latest", "macos-latest"]
+        include:
+          - os: windows-latest
+            artifact_name: dist/PyOrbb-0.0.0.msi
+            asset_name: PyOrbb-${{ github.ref}}-Windows
+          - os: macos-latest
+            artifact_name: dist/PyOrbb-0.0.0.dmg
+            asset_name: PyOrbb-${{ github.ref}}-macOS
         
-    runs-on: ${{ matrix.target }}
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v3
       - name: Set up Python3.12
@@ -26,27 +32,16 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install briefcase
-      - name: Set app version
-        run: |
-          sed 's/$APPVERSION/$ {{ github.ref }}/' pyproject.toml > pyproject.toml
       - name: Build the app
         run: |
           briefcase build -r
       - name: Package the app
         run: |
           briefcase package --adhoc-sign
-      - name: Upload app
-        # Briefcase cannot create iOS artefacts; instead, apps
-        # must be packaged and published for iOS through Xcode.
-        uses: actions/upload-artifact@v4
-        with:
-          name: App-${{ matrix.target }}
-          path: dist
-          if-no-files-found: error
       - name: Upload distributions to release
         uses: svenstaro/upload-release-action@v2
         with:
-          file_glob: true
-          file: dist/*{.msi,.dmg}
+          file: $ {{ matrix.artifact_name }}
+          asset_name: $ {{matrix.asset_name }}
           tag: ${{ github.ref }}
           overwrite: true
