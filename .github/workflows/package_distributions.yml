@@ -28,8 +28,7 @@ jobs:
           pip install briefcase
       - name: Set app version
         run: |
-          sed 's/$APPVERSION/$ {{ github.ref }}/' pyproject.toml > pyproject.toml
-          cat pyproject.toml
+          sed 's/$APPVERSION/0.2.0/' pyproject.toml | diff -p pyproject.toml /dev/stdin | patch 
       - name: Build the app
         run: |
           briefcase build -r
