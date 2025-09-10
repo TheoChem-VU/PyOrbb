@@ -263,6 +263,57 @@ class FragRenameDialog(QtWidgets.QDialog):
         self._text = self._frag_rename_textedit.text()
 
 
+class YAxisDialog(QtWidgets.QDialog):
+    def __init__(self, parent=None):
+        super().__init__()
+        layout = QtWidgets.QGridLayout(self)
+        self.setLayout(layout)
+        layout.addWidget(QtWidgets.QLabel('Choose Y-axis limits'), 0, 0, 1, 2)
+
+        label = QtWidgets.QLabel("Min:")
+        layout.addWidget(label, 1, 0, 1, 1)
+        self._ylim_low_textedit = QtWidgets.QLineEdit(self)
+        layout.addWidget(self._ylim_low_textedit, 1, 1, 1, 1)
+
+        label = QtWidgets.QLabel("Max:")
+        layout.addWidget(label, 2, 0, 1, 1)
+        self._ylim_high_textedit = QtWidgets.QLineEdit(self)
+        layout.addWidget(self._ylim_high_textedit, 2, 1, 1, 1)
+
+        save_btn = QtWidgets.QPushButton('save')
+        save_btn.clicked.connect(self.accept)
+        cancel_btn = QtWidgets.QPushButton('cancel')
+        cancel_btn.clicked.connect(self.reject)
+        layout.addWidget(save_btn, 4, 0, 1, 1)
+        layout.addWidget(cancel_btn, 4, 1, 1, 1)
+
+        _reset_btn = QtWidgets.QPushButton("Reset Y-axis")
+        _reset_btn.clicked.connect(self.reset)
+        _reset_btn.clicked.connect(self.reject)
+        layout.addWidget(_reset_btn, 3, 0, 1, 1)
+
+    def reset(self):
+        self._tup = None
+
+    def open(self, default):
+        self._tup = default
+        self._ylim_low_textedit.setText(str(round(default[0], 3)))
+        self._ylim_high_textedit.setText(str(round(default[1], 3)))
+        super().open()
+
+        # wait until the dialog is done
+        loop = QtCore.QEventLoop()
+        self.finished.connect(loop.quit)
+        self.accepted.connect(self.get_tup)
+        loop.exec()
+
+        return self._tup
+
+    def get_tup(self):
+        self._tup = float(self._ylim_low_textedit.text()), float(self._ylim_high_textedit.text())
+
+
+
 
 class MplCanvas(FigureCanvas):
     def __init__(self, parent=None, width=9, height=6.5, dpi=100):
@@ -275,15 +326,19 @@ class MplCanvas(FigureCanvas):
         self.fig.canvas.mpl_connect('button_press_event', self.on_click)
 
         self._frag_rename_dialog = FragRenameDialog(self)
+        self._yaxis_dialog = YAxisDialog(self)
         self._already_unfaded = True
 
     def on_click(self, event):
-
         # global screen
         artists = self.axes.get_children()
         artists = sorted(artists, key=lambda artist: artist.zorder)
 
         if event.dblclick:
+            if any(artist.contains(event)[0] for artist in self.axes.get_yticklabels()):
+                self.parent.ylim = self._yaxis_dialog.open(self.axes.get_ylim())
+                self.parent._update_plot()
+
             self.parent.new_tick_labels = []
             for artist in self.axes.get_xticklabels():
                 if not artist.contains(event)[0]:
@@ -291,6 +346,7 @@ class MplCanvas(FigureCanvas):
                     continue
                 new_txt = self._frag_rename_dialog.open(artist.get_text())
                 self.parent.new_tick_labels.append(new_txt)
+
             self.axes.set_xticklabels(self.parent.new_tick_labels)
             self.fig.canvas.draw_idle()
 
@@ -593,11 +649,10 @@ class AnalysisWindow(QtWidgets.QWidget):
         self.open_rkf_filedialog.setNameFilters({"RKF file (*.rkf)", "Any file (*)"})
 
         self.errordialog = QtWidgets.QErrorMessage(self)
-        self.warningdialog = QtWidgets.QMessageBox(self)
-        self.warningdialog.setIcon(QtWidgets.QMessageBox.Warning);
         self.central_layout = QtWidgets.QVBoxLayout(self)
 
         self.new_tick_labels = None
+        self.ylim = None
 
         self.tcviewer_screen = None
 
@@ -662,6 +717,7 @@ class AnalysisWindow(QtWidgets.QWidget):
             oi_thresh=10**(self.slider_OI.value()/slider_resolution),
             pauli_thresh=self.slider_PR.value()/slider_resolution,
             energy_type=self._energytype_selection,
+            ylim=self.ylim,
             )
 
 
@@ -742,11 +798,10 @@ class AnalysisWindow(QtWidgets.QWidget):
 
         is_charged = _detect_charged_fragments(self.orbs)
         if is_charged and 'site_energy' not in self.orbs.sfo_energy_types:
-            self.warningdialog.showMessage("WARNING\nYou have charged fragments but the effective energies are not available!\n\n Rerun your calculation with SFOSiteEnergies or FMatSFO enabled.");
+            QtWidgets.QMessageBox.warning(self, "Warning", "WARNING\nYou have charged fragments but the effective energies are not available!\n\n Rerun your calculation with SFOSiteEnergies or FMatSFO enabled.");
         
         if is_charged and 'site_energy' in self.orbs.sfo_energy_types:
             self._energytype_selection = 'site_energy'
-
 
         self._energytype_selection_dialog = ETypeDialog(self, self.orbs.sfo_energy_types, self._energytype_selection)
 
@@ -765,8 +820,8 @@ class AnalysisWindow(QtWidgets.QWidget):
         # load a mixer object for each energy type we have available
         mixers = {etype: pyfmo.analysis.mixing.Mixer(self.orbs, energy_type=etype) for etype in self.orbs.sfo_energy_types}
         # and for each mixer generate 20 OI and PR interactions
-        self.oi_mixes = {etype: mixer.orbital_interactions(N=40) for etype, mixer in mixers.items()}
-        self.pauli_mixes = {etype: mixer.pauli_repulsions(N=40) for etype, mixer in mixers.items()}
+        self.oi_mixes = {etype: mixer.orbital_interactions(N=100) for etype, mixer in mixers.items()}
+        self.pauli_mixes = {etype: mixer.pauli_repulsions(N=100) for etype, mixer in mixers.items()}
 
         self._analysis_page_frame = QtWidgets.QFrame(self)
         self.central_layout.addWidget(self._analysis_page_frame)
@@ -793,12 +848,13 @@ class AnalysisWindow(QtWidgets.QWidget):
         slider_box.setLayout(slider_layout)
         layout.addWidget(slider_box, 1, 0)
 
-        self.cbox_OI = QtWidgets.QCheckBox('Show')
+        self.cbox_OI = QtWidgets.QCheckBox('Show OI')
         self.cbox_OI.setChecked(True)
         slider_layout.addWidget(self.cbox_OI, 0, 0, QtCore.Qt.AlignCenter)
         self.cbox_OI.checkStateChanged.connect(self._update_plot)
 
-        label_OI = QtWidgets.QLabel('OI')
+        label_OI = QtWidgets.QLabel('τ<sub>OI</sub>')
+        label_OI.setStyleSheet("QLabel{font-size: 16pt;}")
         slider_layout.addWidget(label_OI, 0, 1, QtCore.Qt.AlignCenter)
 
         self.slider_OI = QtWidgets.QSlider(QtCore.Qt.Horizontal, self._analysis_page_frame)
@@ -812,12 +868,13 @@ class AnalysisWindow(QtWidgets.QWidget):
         slider_layout.addWidget(label_value_OI, 0, 3, QtCore.Qt.AlignCenter)
         self.slider_OI.valueChanged.connect(lambda value: (self._update_plot(), label_value_OI.setText(f'{10**(value/slider_resolution):.2e}')))
 
-        self.cbox_PR = QtWidgets.QCheckBox('Show')
+        self.cbox_PR = QtWidgets.QCheckBox('Show PR')
         self.cbox_PR.setChecked(True)
         slider_layout.addWidget(self.cbox_PR, 1, 0, QtCore.Qt.AlignCenter)
         self.cbox_PR.checkStateChanged.connect(self._update_plot)
 
-        label_PR = QtWidgets.QLabel('PR')
+        label_PR = QtWidgets.QLabel('τ<sub>PR</sub>')
+        label_PR.setStyleSheet("QLabel{font-size: 16pt;}")
         slider_layout.addWidget(label_PR, 1, 1, QtCore.Qt.AlignCenter)
 
         self.slider_PR = QtWidgets.QSlider(QtCore.Qt.Horizontal, self._analysis_page_frame)
@@ -1041,7 +1098,3 @@ class PyOrbbApp(QtWidgets.QApplication):
         self.exec()
         self.shutdown()
 
-
-if __name__ == '__main__':
-    with PyOrbbApp():
-        ...
