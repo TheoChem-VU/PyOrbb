@@ -32,3 +32,18 @@ jobs:
       - name: Package the app
         run: |
           briefcase package --adhoc-sign
+      - name: Upload app
+        # Briefcase cannot create iOS artefacts; instead, apps
+        # must be packaged and published for iOS through Xcode.
+        uses: actions/upload-artifact@v4
+        with:
+          name: App-${{ matrix.target }}
+          path: dist
+          if-no-files-found: error
+      - name: Upload distributions to release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          file_glob: true
+          file: dist/*{.msi,.dmg}
+          tag: ${{ github.ref }}
+          overwrite: true
