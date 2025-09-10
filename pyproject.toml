@@ -42,7 +42,7 @@ pyfmo = "pyfmo.cli_scripts.pyfmoparser:main"
 [tool.briefcase]
 project_name = "PyOrbb"
 bundle = "nl.theochem"
-version = "1.0.0"
+version = "$APPVERSION"
 url = "https://theochem.nl/pyorbb"
 license.file = "LICENSE"
 author = "Yuman Hordijk, Xiaobo Sun, Steven E. Beutick, Laurens Groot, Tori Gijzen, Jordi Poater, Trevor A. Hamlin, Matthias Bickelhaupt, Célia Fonseca Guerra"
