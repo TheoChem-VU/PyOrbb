@@ -44,6 +44,6 @@ jobs:
         uses: svenstaro/upload-release-action@v2
         with:
           file_glob: true
-          file: dist\*{.msi,.dmg}
+          file: dist/*{.msi,.dmg}
           tag: ${{ github.ref }}
           overwrite: true
