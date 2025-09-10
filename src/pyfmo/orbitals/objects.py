@@ -632,12 +632,17 @@ class Orbitals:
                     'spin': sfo_spin,
                     'energy': self.data['SFOs']['energy'][sfo_spin][sfo_idx] * 27.2114079527,
                     'occupation': float(self.data['SFOs']['occupation'][sfo_spin][sfo_idx]),
-                    'spin_pol': spinpol,
                     'occupied': int(self.data['SFOs']['occupation'][sfo_spin][sfo_idx]) > 0,
                     'gross_population': gross_pop,
                     'gross_spin': gross_spin,
                     'molecule': self.data['molecules'][self.data['SFOs']['fragment_unique']['total'][sfo_idx]],
                 }
+                
+                if self.data['calc_info']['sfo_spinpolarizations'] is not None:
+                    occs = self.data['calc_info']['sfo_spinpolarizations'][frag][symlabel]
+                    spinpol = (occs[0] - occs[1]) / abs(occs[0] - occs[1])
+                    data['spin_pol'] = spinpol,
+
 
                 data['site_energy'] = None
                 if 'site_energy' in self.data['SFOs']:
