@@ -59,9 +59,6 @@ sources = [
 ]
 
 requires = [
-    "docx>=0.2.4",
-    "htmldocx",
-    "opencv-python",
     "git+https://github.com/TheoChem-VU/TCutility.git@Import-restructuring-&-type-annotations-fixes",
     "numpy",
     "matplotlib>=3.5.3",
