@@ -10,7 +10,6 @@ classifiers = [
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent"]
-dynamic = ["version"]
 
 [build-system]
 requires = ["setuptools", "wheel", "setuptools-git-versioning<2"]
@@ -40,9 +39,9 @@ pyfmo = "pyfmo.cli_scripts.pyfmoparser:main"
 # content below this line added by briefcase convert
 # This project was generated with 0.3.25 using template: https://github.com/beeware/briefcase-template @ v0.3.25
 [tool.briefcase]
+version = "0.0.0"
 project_name = "PyOrbb"
 bundle = "nl.theochem"
-version = "$APPVERSION"
 url = "https://theochem.nl/pyorbb"
 license.file = "LICENSE"
 author = "Yuman Hordijk, Xiaobo Sun, Steven E. Beutick, Laurens Groot, Tori Gijzen, Jordi Poater, Trevor A. Hamlin, Matthias Bickelhaupt, Célia Fonseca Guerra"
