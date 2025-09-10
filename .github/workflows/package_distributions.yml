@@ -40,3 +40,10 @@ jobs:
           name: App-${{ matrix.target }}
           path: dist
           if-no-files-found: error
+      - name: Upload distributions to release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          file_glob: true
+          file: dist\*{.msi,.dmg}
+          tag: ${{ github.ref }}
+          overwrite: true
