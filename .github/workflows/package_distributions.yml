@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: "publishing"
+  group: "packaging"
   cancel-in-progress: true
 
 jobs:
