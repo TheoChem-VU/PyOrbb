@@ -16,10 +16,10 @@ jobs:
         include:
           - os: windows-latest
             artifact_name: dist/PyOrbb-0.0.0.msi
-            asset_name: PyOrbb-${{ github.ref}}-Windows
+            asset_name: PyOrbb-${{ github.ref_name}}-Windows
           - os: macos-latest
             artifact_name: dist/PyOrbb-0.0.0.dmg
-            asset_name: PyOrbb-${{ github.ref}}-macOS
+            asset_name: PyOrbb-${{ github.ref_name}}-macOS
         
     runs-on: ${{ matrix.os }}
     steps:
