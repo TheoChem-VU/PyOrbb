@@ -10,6 +10,16 @@ import networkx as nx  # noqa: F401
 ensure_list = lambda x: [x] if not isinstance(x, (list, tuple, set)) else list(x)  # noqa: E731
 
 
+# class Mixer:
+
+#     def __init__(self, orbs: pyfmo.Orbitals, energy_type: str = 'energy'):
+#         self.orbs = orbs
+#         self.energy_type = energy_type
+#         self._prepare()
+
+#     def _prepare(self):
+        
+
 class Mixer:
     '''
     The main class responsible for generating 2-mixing situations.
@@ -287,12 +297,14 @@ class Mixing:
                     maxval = max(maxval, abs(sfo1.overlap(sfo2)))
             return maxval
 
-        val = 1
+        val = (self.sfos[0] @ self.sfos[1])**2 / abs(self.sfos[0].energy - self.sfos[1].energy)
+
         for sfo in self.sfos:
             gp = sfo.gross_population
             gp = np.clip(gp, 0, 2)
             excess = abs(sfo.occupation - gp)
             val *= excess
+
         return val
 
     def xiaobo_check(self, threshold=0.01):
@@ -305,12 +317,17 @@ class Mixing:
                         return False
             return True
 
-        val = 1
+        val = (self.sfos[0] @ self.sfos[1])**2 / abs(self.sfos[0].energy - self.sfos[1].energy)
+        # val = 1
+        # print(self.sfos)
+        # dps = []
         for sfo in self.sfos:
             gp = sfo.gross_population
             gp = np.clip(gp, 0, 2)
             excess = abs(sfo.occupation - gp)
+            # dps.append(excess)
             val *= excess
+        # val *= min(dps)
 
         return val > threshold
 
