@@ -31,4 +31,4 @@ jobs:
           briefcase build -r
       - name: Package the app
         run: |
-          build package --adhoc-sign
+          briefcase package --adhoc-sign
