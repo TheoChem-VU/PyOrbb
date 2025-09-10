@@ -41,7 +41,7 @@ jobs:
       - name: Upload distributions to release
         uses: svenstaro/upload-release-action@v2
         with:
-          file: $ {{ matrix.artifact_name }}
-          asset_name: $ {{matrix.asset_name }}
+          file: ${{ matrix.artifact_name }}
+          asset_name: ${{matrix.asset_name }}
           tag: ${{ github.ref }}
           overwrite: true
