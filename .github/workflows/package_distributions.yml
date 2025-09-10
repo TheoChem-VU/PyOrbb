@@ -29,6 +29,7 @@ jobs:
       - name: Set app version
         run: |
           sed 's/$APPVERSION/$ {{ github.ref }}/' pyproject.toml > pyproject.toml
+          cat pyproject.toml
       - name: Build the app
         run: |
           briefcase build -r
