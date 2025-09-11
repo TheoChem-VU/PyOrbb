@@ -1,4 +1,4 @@
-from PySide6 import *
+from PySide6 import QtWidgets, QtCore, QtGui
 import pyfmo
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qtagg import FigureCanvas
@@ -858,8 +858,11 @@ class AnalysisWindow(QtWidgets.QWidget):
         slider_layout.addWidget(label_OI, 0, 1, QtCore.Qt.AlignCenter)
 
         self.slider_OI = QtWidgets.QSlider(QtCore.Qt.Horizontal, self._analysis_page_frame)
+        # print(mix.xiaobo_value() for mixes in self.oi_mixes.values() for mix in mixes)
         slider_OI_max = max(max(mix.xiaobo_value() for mix in mixes) for mixes in self.oi_mixes.values())
         self.slider_OI.setMinimum(np.log10(0.00000001) * slider_resolution)
+        print(f'{slider_OI_max=}')
+        print(f'{np.log10(slider_OI_max)=}')
         self.slider_OI.setMaximum(np.log10(slider_OI_max) * slider_resolution)
         self.slider_OI.setSliderPosition(np.log10(slider_OI_max/1.5) * slider_resolution)
         slider_layout.addWidget(self.slider_OI, 0, 2, QtCore.Qt.AlignCenter)

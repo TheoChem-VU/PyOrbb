@@ -67,7 +67,7 @@ requires = [
     "xlsxwriter>=3.2.2",
     "tcintegral>=1.0.1",
     "pyside6",
-    "tcviewer>=0.1.5",
+    "tcviewer>=0.1.9",
     "std-nslog",
     ]
 test_sources = [
