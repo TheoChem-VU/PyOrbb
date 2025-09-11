@@ -58,7 +58,7 @@ sources = [
 ]
 
 requires = [
-    "tcviewer>=0.1.6",
+    "tcviewer>=0.1.9",
     "git+https://github.com/TheoChem-VU/TCutility.git@Import-restructuring-&-type-annotations-fixes",
     "numpy",
     "matplotlib>=3.5.3",
