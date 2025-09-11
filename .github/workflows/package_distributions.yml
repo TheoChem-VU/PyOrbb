@@ -7,19 +7,21 @@ on:
 
 concurrency:
   group: "packaging"
-  cancel-in-progress: true
 
 jobs:
   distribution:
     strategy:
+      fail-fast: true
       matrix:
         include:
-          - os: windows-latest
-            artifact_name: dist/PyOrbb-0.0.0.msi
-            asset_name: PyOrbb-${{ github.ref_name}}-Windows.msi
+          # - os: windows-latest
+          #   artifact_name: dist/PyOrbb-0.0.0.msi
+          #   asset_name: PyOrbb-${{ github.ref_name}}-Windows.msi
+          #   build_sh: build_windows_app.sh
           - os: macos-latest
             artifact_name: dist/PyOrbb-0.0.0.dmg
             asset_name: PyOrbb-${{ github.ref_name}}-macOS.dmg
+            build_sh: build_macos_app.sh
         
     runs-on: ${{ matrix.os }}
     steps:
@@ -34,10 +36,8 @@ jobs:
           pip install briefcase
       - name: Build the app
         run: |
-          briefcase build -r
-      - name: Package the app
-        run: |
-          briefcase package --adhoc-sign
+          chmod +x ${{ matrix.build_sh }}
+          ./${{ matrix.build_sh }}
       - name: Upload distributions to release
         uses: svenstaro/upload-release-action@v2
         with:
