@@ -11,6 +11,7 @@ concurrency:
 jobs:
   distribution:
     strategy:
+      fail-fast: true
       matrix:
         include:
           - os: windows-latest
