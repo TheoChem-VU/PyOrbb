@@ -58,6 +58,7 @@ sources = [
 ]
 
 requires = [
+    "tcviewer>=0.1.6",
     "git+https://github.com/TheoChem-VU/TCutility.git@Import-restructuring-&-type-annotations-fixes",
     "numpy",
     "matplotlib>=3.5.3",
@@ -66,8 +67,7 @@ requires = [
     "plams>=2024.106",
     "xlsxwriter>=3.2.2",
     "tcintegral>=1.0.1",
-    "pyside6",
-    "tcviewer>=0.1.5",
+    "pyside6-essentials",
     "std-nslog",
     ]
 test_sources = [
