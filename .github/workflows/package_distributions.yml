@@ -14,10 +14,10 @@ jobs:
       fail-fast: true
       matrix:
         include:
-          - os: windows-latest
-            artifact_name: dist/PyOrbb-0.0.0.msi
-            asset_name: PyOrbb-${{ github.ref_name}}-Windows.msi
-            build_sh: build_windows_app.sh
+          # - os: windows-latest
+          #   artifact_name: dist/PyOrbb-0.0.0.msi
+          #   asset_name: PyOrbb-${{ github.ref_name}}-Windows.msi
+          #   build_sh: build_windows_app.sh
           - os: macos-latest
             artifact_name: dist/PyOrbb-0.0.0.dmg
             asset_name: PyOrbb-${{ github.ref_name}}-macOS.dmg
