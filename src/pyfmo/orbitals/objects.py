@@ -4,6 +4,7 @@ import functools
 import os
 from typing import List, Dict
 import math
+import platformdirs
 
 ensure_list = lambda x: [x] if not isinstance(x, (list, tuple, set)) else list(x)  # noqa: E731
 
@@ -131,7 +132,7 @@ class Orbital:
 
         return [orb for orb in matching_orbs if orb != self]
 
-    def cube_file(self, gridsize: str = 'medium', overwrite: bool = False, cube_file_prefix: str = None):
+    def cube_file(self, gridsize: str = 'medium', overwrite: bool = False, cube_file_prefix: str = None, preambles=[]):
         '''
         Generate a cube-file for this |Orbital| with a certain grid-size.
 
@@ -150,7 +151,9 @@ class Orbital:
         # start a Densf job to calculate the cube-file. 
         # We want to return the cube-file, so we should wait for it to finish.
         with DensfJob(wait_for_finish=True, overwrite=overwrite, cube_file_prefix=cube_file_prefix) as job:
-            # job.orbital(self)
+            [job.add_preamble(preamble) for preamble in preambles]
+            job.rundir = os.path.split(self.parent.parent.kfpath)[0]
+            job.name = 'densf'
             if isinstance(self, SFO):
                 job._sfos.append(self)
             else:

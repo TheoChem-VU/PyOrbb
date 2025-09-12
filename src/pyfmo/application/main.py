@@ -412,7 +412,7 @@ class MplCanvas(FigureCanvas):
             # scr.draw_cub(cub, isovalue, material=tcviewer.materials.orbital_shiny)            
                 c1, c2 = ([1, 0, 0], [0, 0, 1]) if orb.occupied else ([1, .5, 0], [0, 1, 1])
                 scene.draw_molecule(orb.molecule)
-                scene.draw_dual_isosurface(orb.cube_file(), colorm=c1, colorp=c2)
+                scene.draw_dual_isosurface(orb.cube_file(preambles=[f'source {os.path.join(os.path.split(self.parent.parent._amsbin_loc)[0], "amsbashrc.sh")}']), colorm=c1, colorp=c2)
                 # scene.draw_isosurface(orb.cube_file(), -0.03, c1, opacity=.3)
                 # scene.draw_isosurface(orb.cube_file(),  0.03, c2, opacity=.3)
                 scene.draw_text(str(orb))
@@ -1131,7 +1131,7 @@ class PyOrbbApp(QtWidgets.QApplication):
             self._amsbin_loc = os.path.join(path, 'Contents', 'Resources', 'amshome', 'bin')
             save_setting('amsbin', self._amsbin_loc)
             os.environ['AMSBIN'] = self._amsbin_loc
-            
+
 
     def _add_analysis_tab(self, object=None, tabname='new'):
         window = AnalysisWindow(self)
