@@ -6,8 +6,41 @@ from matplotlib.backend_tools import Cursors
 from matplotlib.figure import Figure
 import numpy as np
 import os
+import shutil
+import platformdirs
+import json
 
 slider_resolution = 500
+
+
+def load_setting(key, default=None):
+    d = platformdirs.user_config_dir('PyOrbb', 'TheoCheM', ensure_exists=True)
+    if not os.path.exists(os.path.join(d, 'settings.json')):
+        return
+
+    with open(os.path.join(d, 'settings.json')) as jf:
+        data = json.loads(jf.read())
+
+    return data.get(key, None)
+
+def save_setting(key, value):
+    d = platformdirs.user_config_dir('PyOrbb', 'TheoCheM', ensure_exists=True)
+    if not os.path.exists(os.path.join(d, 'settings.json')):
+        data = {}
+    else:
+        with open(os.path.join(d, 'settings.json')) as jf:
+            data = json.loads(jf.read())
+
+    data[key] = value
+    with open(os.path.join(d, 'settings.json'), 'w+') as jf:
+        jf.write(json.dumps(data))
+
+def default_setting(key, value):
+    if load_setting(key) is not None:
+        return
+    save_setting(key, value)
+
+default_setting('amsbin', '$AMSBIN')
 
 
 def _detect_charged_fragments(orbs):
@@ -367,7 +400,6 @@ class MplCanvas(FigureCanvas):
             else:
                 continue
 
-
             import tcviewer
 
             # orb.draw()
@@ -639,8 +671,9 @@ class SaveFileDialog(QtWidgets.QFileDialog):
 
 
 class AnalysisWindow(QtWidgets.QWidget):
-    def __init__(self):
+    def __init__(self, parent):
         super().__init__()
+        self.parent = parent
         self.setAcceptDrops(True)
         self.open_rkf_filedialog = QtWidgets.QFileDialog(self)
         self.open_rkf_filedialog.setFileMode(QtWidgets.QFileDialog.ExistingFile)
@@ -1018,7 +1051,6 @@ class AnalysisWindow(QtWidgets.QWidget):
         layout.addWidget(button, alignment=QtCore.Qt.AlignCenter)
 
 
-
 class PyOrbbApp(QtWidgets.QApplication):
     def __post_init__(self):
         fontpath = os.path.split(__file__)[0] + '/../cli_scripts/ibm_plex_mono/IBMPlexMono-Regular.ttf'
@@ -1031,15 +1063,15 @@ class PyOrbbApp(QtWidgets.QApplication):
         grid_widget.setLayout(self.window.layout)
         self.window.setCentralWidget(grid_widget)
 
+        # try to get the densf path from the environment
+        # this will be None if it could not be found
+        self._amsbin_loc = load_setting('amsbin')
+        if 'AMSBIN' not in os.environ:
+            os.environ['AMSBIN'] = self._amsbin_loc
+
         self.window.setWindowTitle("PyOrbb Analysis Tool")
 
         self.tabs = QtWidgets.QTabWidget()
-        # self.tabs.setStyleSheet("""
-        #     QTabBar::tab:selected {
-        #         background-color: white;
-        #         border: 1px lightgray solid;
-        #         padding: 9px;
-        #     }""")
         self.tabs.setTabsClosable(True)
         add_tab_button = QtWidgets.QPushButton('+')
         # add_tab_button.setFlat(True)
@@ -1062,11 +1094,47 @@ class PyOrbbApp(QtWidgets.QApplication):
         self.tabs.tabCloseRequested.connect(self.tabs.removeTab)
         self.tabs.tabBarDoubleClicked.connect(self._edit_tab_title)
 
+        # File menu
+        menuBar = self.window.menuBar()
+        fileMenu = menuBar.addMenu("File")
+        fileMenu.addAction("New")
+
+        save = QtGui.QAction("Save",self)
+        save.setShortcut("Ctrl+S")
+        fileMenu.addAction(save)
+
+        quit = QtGui.QAction("&Quit", self)
+        quit.setShortcut("Ctrl+Q")
+        fileMenu.addAction(quit)
+
+        # Edit menu
+        editMenu = menuBar.addMenu("Edit")
+        editMenu.addAction("Copy")
+        editMenu.addAction("Paste")
+
+        # Help menu
+        preferenceMenu = menuBar.addMenu("Preferences")
+        open_densfpath = QtGui.QAction("Set AMS Path",self)
+        open_densfpath.triggered.connect(self.AMS_loc_dialogue)
+        preferenceMenu.addAction(open_densfpath)
+        
         self.setStyle('Fusion')
         self._add_analysis_tab()
 
+    def AMS_loc_dialogue(self):
+        '''
+        opens a filedialog allowing the user to select the path to densf
+        '''
+        path = QtWidgets.QFileDialog.getOpenFileName(caption='Select AMS install location', dir=os.getcwd())[0]
+        # if it is an app we get the amsbin
+        if path.endswith('.app'):
+            self._amsbin_loc = os.path.join(path, 'Contents', 'Resources', 'amshome', 'bin')
+            save_setting('amsbin', self._amsbin_loc)
+            os.environ['AMSBIN'] = self._amsbin_loc
+            
+
     def _add_analysis_tab(self, object=None, tabname='new'):
-        window = AnalysisWindow()
+        window = AnalysisWindow(self)
         window.setup_new()
         idx = self.tabs.addTab(window, tabname)
         self.tabs.setCurrentIndex(idx)
@@ -1074,7 +1142,6 @@ class PyOrbbApp(QtWidgets.QApplication):
     def _edit_tab_title(self, index):
         def text_change_handler(arg):
             self.tabs.tabBar().setTabText(index, lineedit.text())
-            print(lineedit.text(), arg)
             rect = self.tabs.tabBar().tabRect(index)
             rect.adjust(34, 0.5, 1, 0.5)
             lineedit.setGeometry(rect)
@@ -1083,9 +1150,6 @@ class PyOrbbApp(QtWidgets.QApplication):
         lineedit.textChanged.connect(text_change_handler)
         lineedit.editingFinished.connect(lambda: lineedit.hide())
         lineedit.setText(self.tabs.tabText(index))
-        # rect = self.tabs.tabBar().tabRect(index)
-        # rect.adjust(34, 0.5, 1, 0.5)
-        # lineedit.setGeometry(rect)
         lineedit.setStyleSheet("border: 0px; background-color: rgba(0,0,0,0);")
         lineedit.show()
         text_change_handler("")
