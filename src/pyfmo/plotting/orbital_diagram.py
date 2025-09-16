@@ -3,83 +3,6 @@ import numpy as np
 import pyfmo
 import re
 
-IRREP_TRANSLATION = {
-    "A1": r"A$_1$",
-    "A2": r"A$_2$",
-    "E1:1": r"A$_1^1$",
-    "E1:2": r"A$_1^2$",
-    "AA": r"A$^{\prime}$",
-    "AAA": r"A$^{\prime\prime}$",
-    "A.g": r"A$_g$",
-    "A.u": r"A$_u$",
-    "B1": r"B$_1$",
-    "B2": r"B$_2$",
-    "T1": r"T$_1$",
-    "T2": r"T$_2$",
-    "A1.g": r"A$_\mathrm{1g}$",
-    "A1.u": r"A$_\mathrm{1u}$",
-    "A2.g": r"A$_\mathrm{2g}$",
-    "A2.u": r"A$_\mathrm{2g}$",
-    "E.g": r"E$_\mathrm{g}$",
-    "E.u":r"E$_\mathrm{u}$",
-    "T1.g": r"T$_\mathrm{1g}$",
-    "T1.u": r"T$_\mathrm{1u}$",
-    "T2.g": r"T$_\mathrm{2g}$", 
-    "T2.u": r"T$_\mathrm{2u}$",
-    
-    "SIGMA": r"$\Sigma$",
-    "PI": r"$\Pi$",
-    "DELTA": r"$\Delta$",
-    "PHI": r"$\Phi$",
-
-    "SIGMA.g": r"$\Sigma_\mathrm{g}$",
-    "PI.g": r"$\Pi_g$",
-    "DELTA.g": r"$\Delta_\mathrm{g}$",
-    "PHI.g": r"$\Phi_g$",
-    "SIGMA.u": r"$\Sigma_\mathrm{u}$",
-    "PI.u": r"$\Pi_u$",
-    "DELTA.u": r"$\Delta_\mathrm{u}$",
-    "PHI.u": r"$\Phi_\mathrm{u}$",
-
-    "S": "s",
-    "P:x": r"$p_x",
-    "P:y": r"$p_y",
-    "P:z": r"$p_z",
-    "D:xy": r"$d_{xy}$",
-    "D:xz": r"$d_{xz}$",
-    "D:yz": r"$d_{yz}$",
-    "D:z2": r"$d_{z^2}$",
-    "D:x2-y2": r"$d_{x^2-y^2}$",
-    "F:x": r"$f_{x}$",
-    "F:y": r"$f_{y}$",
-    "F:z": r"$f_{z}$",
-    "F": "$f$",
-    "F:xyz": r"$f_{xyz}$",
-    "F:z2x": r"$f_{z^2x}$",
-    "F:z2y": r"$f_{z^2y}$",
-    "F:z3": r"$f_{z^2}$",
-    
-}
-
-def translate_label(symm_label: str) -> str:
-    print(symm_label)
-    if symm_label in IRREP_TRANSLATION:
-        return IRREP_TRANSLATION[symm_label]
-        
-    if ":" in symm_label:
-        symm, dimension = symm_label.split(":", 1)
-        
-        if re.search(r"\d+", dimension): 
-            dimension = re.sub(r"([xyz])(\d+)", r"\1^{\2}", dimension)
-        if symm in IRREP_TRANSLATION:
-            if "." in symm:
-                symm, parity = symm.split(".", 1)
-                return f"{IRREP_TRANSLATION[symm]}$_\mathrm{{{parity}}},\!_{{{dimension}}}$"
-            else:
-                return f"{IRREP_TRANSLATION[symm]}$_{{{dimension}}}$"
-
-    return symm_label
-
 
 def draw_interaction(sfos, mos, connections, 
         title=None, 
@@ -101,12 +24,12 @@ def draw_interaction(sfos, mos, connections,
     level_width = .08
     level_thickness = 3
     if draw_mo_labels:
-        degenerate_mo_threshold = .08
+        degenerate_mo_threshold = .15
     else:
         degenerate_mo_threshold = .008
 
     if draw_sfo_labels:
-        degenerate_sfo_threshold = .08
+        degenerate_sfo_threshold = .15
     else:
         degenerate_sfo_threshold = .008
 
@@ -200,13 +123,13 @@ def draw_interaction(sfos, mos, connections,
 
         if isinstance(orb, pyfmo.orbitals.objects.MO):
             orb_name = f'{orb.name}{spin_part}'
-            orb_name = orb_name.replace(orb.symmetry, translate_label(orb.symmetry))
+            orb_name = orb_name.replace(orb.symmetry, pyfmo.translate_irrep_label(orb.symmetry))
         else:
             if orb.spin == 'AB':
                 orb_name = orb.name
             else:
                 orb_name = f'{orb.name}{spin_part}'
-            orb_name = orb_name.replace(orb.subspecies, translate_label(orb.subspecies))
+            orb_name = orb_name.replace(orb.subspecies, pyfmo.translate_irrep_label(orb.subspecies))
 
         # if orb.symmetry in IRREP_TRANSLATION:
         #     orb_name = orb_name.replace(orb.symmetry, IRREP_TRANSLATION[orb.symmetry])
