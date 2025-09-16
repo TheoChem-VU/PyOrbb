@@ -5,20 +5,217 @@ import itertools as it  # noqa: F401
 import matplotlib.pyplot as plt
 import os
 import networkx as nx  # noqa: F401
+import warnings
+warnings.filterwarnings('ignore')
 
 
 ensure_list = lambda x: [x] if not isinstance(x, (list, tuple, set)) else list(x)  # noqa: E731
 
 
-# class Mixer:
+class Mixer2:
+    def __init__(self, orbs: pyfmo.Orbitals or str, pr_min_thresh=1e-3, oi_min_thresh=1e-7):
+        self.orbs = orbs
+        if isinstance(orbs, str):
+            self.orbs = pyfmo.Orbitals(str)
 
-#     def __init__(self, orbs: pyfmo.Orbitals, energy_type: str = 'energy'):
-#         self.orbs = orbs
-#         self.energy_type = energy_type
-#         self._prepare()
+        self.data = {}
+        self.main_mix = Mixing(self.orbs)
+        self.mixes = {'OI': {}, 'PR': {}}
 
-#     def _prepare(self):
-        
+        self.set_enable_oi(True)
+        self.set_enable_pr(True)
+        self.set_allowed_mos(self.orbs.mos.orbitals)
+        self.set_allowed_sfos(self.orbs.sfos.orbitals)
+        self.set_energy_type('energy')
+        self._prepare()
+        self._get_orbital_interactions(oi_min_thresh)
+        self._get_pauli_repulsions(pr_min_thresh)
+
+
+    def _prepare(self):
+        '''
+        Prepare the data used to construct the mixing situations.
+        We construct an array ``Ei`` for each SFO energy-type we have in our system.
+        The values of the array indicate the strength and type of interaction.
+        Positive values indicate destabilizing Pauli repulsions, while 
+        negative values indicate stabilizing orbital interactions.
+        '''
+        for energy_type in self.orbs.sfo_energy_types:
+            sfos = self.orbs.sfos.orbitals
+            # prepare the data we will use
+            S = np.array([[sfo1.overlap(sfo2) for sfo1 in sfos] for sfo2 in sfos])
+            e = np.array([getattr(sfo, energy_type) for sfo in sfos])
+            o = np.array([sfo.occupation for sfo in sfos])
+            p = np.array([sfo.gross_population for sfo in sfos])
+
+            # get the maximum occupation of an SFO
+            max_pop = 1 if self.orbs.data['calc_info']['unrestricted_sfos'] else 2
+
+            # make sure all populations are between 0 and max_pop
+            p = np.clip(p, 0, max_pop)
+
+            # mangle some data into various matrices
+            S2 = S*S  # overlap squared
+            de = abs(e - e.reshape(-1, 1))  # energy gap
+            dp = abs(p - o) * abs(p - o).reshape(-1, 1)  # electron gains and losses
+            P = p + p.reshape(-1, 1)  # sum of SFO populations
+            O = o + o.reshape(-1, 1)  # sum of occupations
+
+            # first max_pop electrons go to the bonding MO
+            Noi = np.clip(P, 0, max_pop)
+            # any remaining electrons go to the anti-bonding MO
+            Npr = np.clip(P - Noi, 0, max_pop)
+
+            # calculate the non-degenerate orbital interaction terms
+            Eoi = -Noi * dp * S2 / de
+            # for degenerate elements we replace S^2/de with S
+            degenerate_mask = np.isclose(de, 0, atol=0.002)
+            Eoi[degenerate_mask] = (-Noi * dp * abs(S))[degenerate_mask]
+
+            # and calculate the Pauli repulsive terms
+            Eoi = Eoi + Npr * S2 * 2
+
+            # the total interaction energies are the sums of 
+            # the orbital and pauli terms
+            Epr = (O == (2 * max_pop)) * S2
+
+            # remove upper echelon plus diagonal
+            # since the matrix should be symmetric and the diagonal 
+            # terms are the self-interactions
+            Eoi = np.tril(Eoi, k=-1)
+            Epr = np.tril(Epr, k=-1)
+
+            self.data[energy_type] = (
+                Eoi, np.argsort(Eoi, axis=None), 
+                Epr, np.argsort(-Epr, axis=None)
+                )
+
+        self.data['mo_occ'] = np.array([mo.occupied for mo in self.orbs.mos])
+
+    def set_enable_oi(self, val):
+        self.enable_oi = val
+
+    def set_enable_pr(self, val):
+        self.enable_pr = val
+
+    def set_allowed_mos(self, allowed_mos):
+        self.allowed_mos = allowed_mos
+
+    def set_allowed_sfos(self, allowed_sfos):
+        self.allowed_sfos = allowed_sfos
+
+    def set_oi_threshold(self, thresh):
+        self.oi_threshold = thresh
+        self.oi_N = None
+
+    def set_pr_threshold(self, thresh):
+        self.pr_threshold = thresh
+        self.pr_N = None
+
+    def set_oi_N(self, N):
+        self.oi_threshold = None
+        self.oi_N = N
+
+    def set_pr_N(self, N):
+        self.pr_threshold = None
+        self.pr_N = N
+
+    def set_energy_type(self, typ):
+        self.energy_type = typ
+
+    def _get_orbital_interactions(self, min_thresh):
+        Eoi, Eoi_order = self.data[self.energy_type][0], self.data[self.energy_type][1]
+        self._get_mixes(Eoi, Eoi_order, min_thresh, 'OI')
+
+    def _get_pauli_repulsions(self, min_thresh):
+        Epr, Epr_order = self.data[self.energy_type][2], self.data[self.energy_type][3]
+        self._get_mixes(Epr, Epr_order, min_thresh, 'PR')
+
+    def _get_mixes(self, 
+        M, 
+        order, 
+        min_thresh,
+        interaction_type):
+        v = float('inf')
+
+        if self.allowed_mos is None:
+            self.allowed_mos = self.orbs.mos.orbitals
+
+        if self.allowed_sfos is None:
+            self.allowed_sfos = self.orbs.sfos.orbitals
+
+        n = 0
+        while 1:
+            i, j = np.unravel_index(order[n], M.shape)
+            v = M[i, j]
+
+            if abs(v) < min_thresh:
+                break
+
+            sfo1, sfo2 = self.orbs.sfos.orbitals[i], self.orbs.sfos.orbitals[j]
+            if sfo1 not in self.allowed_sfos or sfo2 not in self.allowed_sfos:
+                continue
+
+            mo1, mo2 = self._get_mos(sfo1, sfo2, interaction_type=interaction_type)
+            if mo1 not in self.allowed_mos or mo2 not in self.allowed_mos:
+                continue
+
+            col = {
+                'OI': 'g',
+                'PR': 'r'
+            }.get(interaction_type)
+            mix = Mixing(self.orbs, [mo1, mo2], [sfo1, sfo2], connection_colors=col)
+            self.mixes[interaction_type][mix] = v
+            n += 1
+
+
+    def _get_mos(self, sfo1, sfo2, interaction_type=None):
+        sfo1_contr = np.array([sfo1.mulliken_contribution(mo) for mo in self.orbs.mos.orbitals])
+        sfo2_contr = np.array([sfo2.mulliken_contribution(mo) for mo in self.orbs.mos.orbitals])
+
+        occ_contrs = abs(sfo1_contr * sfo2_contr) * self.data['mo_occ']
+        virt_contrs = abs(sfo2_contr * sfo1_contr) * (1-self.data['mo_occ'])
+
+        max_occ = 1 if self.orbs.data['calc_info']['unrestricted_mos'] else 2
+        occ_total = sfo1.occupation + sfo2.occupation
+
+        # handle orbital interactions
+        if interaction_type == 'OI':
+            occ_mo = self.orbs.mos.orbitals[argNmax(occ_contrs, 0)]
+            virt_mo = self.orbs.mos.orbitals[argNmax(virt_contrs, 0)]
+            return occ_mo, virt_mo
+
+        elif interaction_type == 'PR':
+            occ_mo1 = self.orbs.mos.orbitals[argNmax(occ_contrs, 0)]
+            occ_mo2 = self.orbs.mos.orbitals[argNmax(occ_contrs, 1)]
+            return occ_mo1, occ_mo2
+
+
+    def reset_mixes(self):
+        self.main_mix = Mixing(self.orbs)
+        if self.enable_oi:
+            for mix, strength in self.mixes['OI'].items():
+                if self.oi_threshold is not None and abs(strength) >= self.oi_threshold:
+                    self.main_mix += mix
+
+        if self.enable_pr:
+            for mix, strength in self.mixes['PR'].items():
+                if self.pr_threshold is not None and abs(strength) >= self.pr_threshold:
+                    self.main_mix += mix
+
+
+    def sanitize(self):
+        return self.main_mix.sanitize()
+
+    def split(self):
+        return self.main_mix.split()
+
+    def draw_diagram(self, *args, **kwargs):
+        return self.main_mix.draw_diagram(*args, **kwargs)
+
+    @property
+    def connections(self):
+        return self.main_mix.connections
 
 class Mixer:
     '''
@@ -780,3 +977,5 @@ def oi2(orbs, index=0, irrep=None):
         mos=[best_mo, best_other_mo], 
         sfos=[best_sfo1, best_sfo2], 
         connections=[(best_sfo1, best_mo), (best_sfo2, best_mo), (best_sfo1, best_other_mo), (best_sfo2, best_other_mo)])
+
+
