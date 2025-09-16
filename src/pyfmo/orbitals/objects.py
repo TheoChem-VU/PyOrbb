@@ -870,6 +870,7 @@ class OrbitalSelector:
     def filter(self, 
             index: int or List[int] = None, 
             symmetry: str or List[str] = None, 
+            subspecies: str or List[str] = None, 
             spin: str or List[str] = None, 
             fragment: str or List[str] = None, 
             fragment_index: int or List[str] = None, 
@@ -882,6 +883,7 @@ class OrbitalSelector:
         Arguments:
             index: the index of the orbital.
             symmetry: the symmetry label of the orbital.
+            subspecies: the subspecies label of the orbital.
             spin: the spin label of the orbital, should be one of [``A``, ``B``, ``AB``].
             fragment: the fragment name of the SFO.
             fragment_index: the index of the fragment of the SFO.
@@ -946,13 +948,10 @@ class OrbitalSelector:
         # filter down the orbitals in this object
         if index:
             orbs = [orb for orb in orbs if orb.index in ensure_list(index)]
-
         if symmetry is not None:
-            if self.parent.data['calc_info']['used_regions']:
-                orbs = [orb for orb in orbs if orb.symmetry in ensure_list(symmetry)]
-            else:
-                orbs = [orb for orb in orbs if orb.subspecies in ensure_list(symmetry)]
-
+            orbs = [orb for orb in orbs if orb.symmetry in ensure_list(symmetry)]
+        if subspecies is not None:
+            orbs = [orb for orb in orbs if orb.subspecies in ensure_list(subspecies)]
         if spin is not None:
             orbs = [orb for orb in orbs if orb.spin in ensure_list(spin)]
 
