@@ -70,7 +70,9 @@ class SpinSelectionDialog(QtWidgets.QDialog):
         for i, (key, val) in enumerate(state.items()):
             self.cboxes[key] = QtWidgets.QCheckBox()
             self.cboxes[key].setChecked(val)
-            cbox_layout.addWidget(QtWidgets.QLabel(key), i, 0, 1, 1)
+
+            lab = QtWidgets.QLabel({'AB': '<i>αβ</i>', 'A': '<i>α</i>', 'B': '<i>β</i>'}[key])
+            cbox_layout.addWidget(lab, i, 0, 1, 1)
             cbox_layout.addWidget(self.cboxes[key], i, 1, 1, 1)
 
         # layout.addWidget(self._frag_rename_textedit, 1, 0, 1, 2)
@@ -170,7 +172,8 @@ class SymmSelectionDialog(QtWidgets.QDialog):
             for i, (key, val) in enumerate(col_state.items()):
                 self.cboxes[column][key] = QtWidgets.QCheckBox()
                 self.cboxes[column][key].setChecked(val)
-                cbox_layout.addWidget(QtWidgets.QLabel(key), i, 0, 1, 1)
+                lab = QtWidgets.QLabel(pyfmo.translate_irrep_label(key, 'html'))
+                cbox_layout.addWidget(lab, i, 0, 1, 1)
                 cbox_layout.addWidget(self.cboxes[column][key], i, 1, 1, 1)
 
         # layout.addWidget(self._frag_rename_textedit, 1, 0, 1, 2)
@@ -363,7 +366,6 @@ class MplCanvas(FigureCanvas):
         self._already_unfaded = True
 
     def on_click(self, event):
-        # global screen
         artists = self.axes.get_children()
         artists = sorted(artists, key=lambda artist: artist.zorder)
 
@@ -402,19 +404,15 @@ class MplCanvas(FigureCanvas):
 
             import tcviewer
 
-            # orb.draw()
             if self.parent.tcviewer_screen is None or self.parent.tcviewer_screen.isclosed:
                 self.parent.tcviewer_screen = tcviewer.screen._ScreenWindow()
                 self.parent.tcviewer_screen.__enter__()
                 self.parent.tcviewer_screen.show()
 
             with self.parent.tcviewer_screen.add_molscene() as scene:
-            # scr.draw_cub(cub, isovalue, material=tcviewer.materials.orbital_shiny)            
                 c1, c2 = ([1, 0, 0], [0, 0, 1]) if orb.occupied else ([1, .5, 0], [0, 1, 1])
                 scene.draw_molecule(orb.molecule)
                 scene.draw_dual_isosurface(orb.cube_file(preambles=[f'source {os.path.join(os.path.split(self.parent.parent._amsbin_loc)[0], "amsbashrc.sh")}']), colorm=c1, colorp=c2)
-                # scene.draw_isosurface(orb.cube_file(), -0.03, c1, opacity=.3)
-                # scene.draw_isosurface(orb.cube_file(),  0.03, c2, opacity=.3)
                 scene.draw_text(str(orb))
 
 
@@ -719,7 +717,6 @@ class AnalysisWindow(QtWidgets.QWidget):
         else:
             e.ignore()
 
-
     def open_filedialog(self):
         self.open_rkf_filedialog.open(self, QtCore.SLOT("get_file_from_dialog()"))
 
@@ -740,19 +737,16 @@ class AnalysisWindow(QtWidgets.QWidget):
     @QtCore.Slot()
     def get_figure_file_from_dialog(self):
         file = self.new_figure_filedialog.selectedFiles()[0]
-        # self.load_analysis(file)
-        print(file)
 
     def _update_plot(self):
         self._draw_diagram(
             allowed_spins=self._spin_selection,
             allowed_irreps=self._symmetry_selection,
             oi_thresh=10**(self.slider_OI.value()/slider_resolution),
-            pauli_thresh=self.slider_PR.value()/slider_resolution,
+            pauli_thresh=self.slider_PR.value()/slider_resolution/1000,
             energy_type=self._energytype_selection,
             ylim=self.ylim,
             )
-
 
     def _draw_diagram(self, *args, allowed_spins=None, allowed_irreps=None, oi_thresh=None, pauli_thresh=None, ylim=None, energy_type=None):
         ax = self.plot.axes
@@ -760,31 +754,19 @@ class AnalysisWindow(QtWidgets.QWidget):
         ax.clear()
         ax.yaxis.set_major_formatter('{x: 3.0f}')
 
-        # global self.main_mix
-        self.main_mix = pyfmo.analysis.mixing.Mixing(self.orbs, energy_type=energy_type)
-        if self.cbox_OI.isChecked():
-            for mix_ in self.oi_mixes[energy_type]:
-                if not all(allowed_irreps['mos'][mo.symmetry] for mo in mix_.mos):
-                    continue
-                if not all(allowed_irreps[sfo.fragment_unique][sfo.subspecies] for sfo in mix_.sfos):
-                    continue
-                if not all(allowed_spins[mo.spin] for mo in mix_.mos):
-                    continue
+        allowed_mos = self.orbs.mos.filter(symmetry=allowed_irreps['mos'].keys(), spin=allowed_spins.keys())
+        allowed_sfos = []
+        for frag in self.orbs.fragments:
+            allowed_sfos.extend(self.orbs.sfos.filter(subspecies=list(allowed_irreps[frag].keys()), spin=list(allowed_spins.keys()), fragment=frag))
 
-                if mix_.xiaobo_check(oi_thresh):
-                    self.main_mix += mix_
-
-        if self.cbox_PR.isChecked():
-            for mix_ in self.pauli_mixes[energy_type]:
-                if not all(allowed_irreps['mos'][mo.symmetry] for mo in mix_.mos):
-                    continue
-                if not all(allowed_irreps[sfo.fragment_unique][sfo.subspecies] for sfo in mix_.sfos):
-                    continue
-                if not all(allowed_spins[mo.spin] for mo in mix_.mos):
-                    continue
-                if mix_.xiaobo_check(pauli_thresh):
-                    self.main_mix += mix_
-
+        self.main_mix.set_oi_threshold(oi_thresh)
+        self.main_mix.set_pr_threshold(pauli_thresh)
+        self.main_mix.set_enable_oi(self.cbox_OI.isChecked())
+        self.main_mix.set_enable_pr(self.cbox_PR.isChecked())
+        self.main_mix.set_allowed_mos(allowed_mos)
+        self.main_mix.set_allowed_sfos(allowed_sfos)
+        self.main_mix.set_energy_type(energy_type)
+        self.main_mix.reset_mixes()
         self.main_mix.sanitize()
         self.main_mix.draw_diagram(ax=ax, ylim=ylim)
         if self.new_tick_labels is not None:
@@ -803,9 +785,10 @@ class AnalysisWindow(QtWidgets.QWidget):
             traceback.print_exc(e)
             return
 
+        self.main_mix = pyfmo.analysis.mixing.Mixer2(self.orbs, pr_min_thresh=0.001**2, oi_min_thresh=0.00000001)
+
         self._spin_selection = {}
         self._symmetry_selection = {}
-        # self._symmetry_selection['mos'] = {}
         self._energytype_selection = 'energy'
 
         for spin in self.orbs.sfos.spins:
@@ -850,12 +833,6 @@ class AnalysisWindow(QtWidgets.QWidget):
 
         self._orb_selection_dialog = OrbitalSelectionDialog(self, self._orb_selection)
 
-        # load a mixer object for each energy type we have available
-        mixers = {etype: pyfmo.analysis.mixing.Mixer(self.orbs, energy_type=etype) for etype in self.orbs.sfo_energy_types}
-        # and for each mixer generate 20 OI and PR interactions
-        self.oi_mixes = {etype: mixer.orbital_interactions(N=100) for etype, mixer in mixers.items()}
-        self.pauli_mixes = {etype: mixer.pauli_repulsions(N=100) for etype, mixer in mixers.items()}
-
         self._analysis_page_frame = QtWidgets.QFrame(self)
         self.central_layout.addWidget(self._analysis_page_frame)
         layout = QtWidgets.QGridLayout(self._analysis_page_frame)
@@ -892,12 +869,12 @@ class AnalysisWindow(QtWidgets.QWidget):
 
         self.slider_OI = QtWidgets.QSlider(QtCore.Qt.Horizontal, self._analysis_page_frame)
         # print(mix.xiaobo_value() for mixes in self.oi_mixes.values() for mix in mixes)
-        slider_OI_max = max(max(mix.xiaobo_value() for mix in mixes) for mixes in self.oi_mixes.values())
+        slider_OI_max = abs(min(self.main_mix.mixes['OI'].values()))
+        # slider_OI_max = max(max(mix.xiaobo_value() for mix in mixes) for mixes in self.oi_mixes.values())
         self.slider_OI.setMinimum(np.log10(0.00000001) * slider_resolution)
-        print(f'{slider_OI_max=}')
-        print(f'{np.log10(slider_OI_max)=}')
         self.slider_OI.setMaximum(np.log10(slider_OI_max) * slider_resolution)
         self.slider_OI.setSliderPosition(np.log10(slider_OI_max/1.5) * slider_resolution)
+        self.main_mix.set_oi_threshold(slider_OI_max/1.5)
         slider_layout.addWidget(self.slider_OI, 0, 2, QtCore.Qt.AlignCenter)
 
         label_value_OI = QtWidgets.QLabel(f'{10**(self.slider_OI.value()/slider_resolution):.2e}')
@@ -914,16 +891,21 @@ class AnalysisWindow(QtWidgets.QWidget):
         slider_layout.addWidget(label_PR, 1, 1, QtCore.Qt.AlignCenter)
 
         self.slider_PR = QtWidgets.QSlider(QtCore.Qt.Horizontal, self._analysis_page_frame)
-        slider_PR_max = max(max(mix.xiaobo_value() for mix in mixes) for mixes in self.pauli_mixes.values())
-        self.slider_PR.setMinimum(0.001 * slider_resolution)
-        self.slider_PR.setMaximum(slider_PR_max * slider_resolution)
-        self.slider_PR.setSliderPosition(slider_PR_max/1.5 * slider_resolution)
+        # slider_PR_max = max(max(mix.xiaobo_value() for mix in mixes) for mixes in self.pauli_mixes.values())
+        if len(self.main_mix.mixes['PR']) == 0:
+            slider_PR_max = 0.001**2
+        else:
+            slider_PR_max = max(self.main_mix.mixes['PR'].values())
+
+        self.slider_PR.setMinimum(0.001**2 * 1000 * slider_resolution)
+        self.slider_PR.setMaximum(slider_PR_max * 1000 * slider_resolution)
+        self.slider_PR.setSliderPosition(slider_PR_max/1.5 * 1000 * slider_resolution)
+        self.main_mix.set_pr_threshold(slider_PR_max/1.1)
         slider_layout.addWidget(self.slider_PR, 1, 2, QtCore.Qt.AlignCenter)
 
         label_value_PR = QtWidgets.QLabel(f'{self.slider_PR.value()/slider_resolution:.3f}')
         slider_layout.addWidget(label_value_PR, 1, 3, QtCore.Qt.AlignCenter)
-        self.slider_PR.valueChanged.connect(lambda value: (self._update_plot(), label_value_PR.setText(f'{value/slider_resolution:.2f}')))
-
+        self.slider_PR.valueChanged.connect(lambda value: (self._update_plot(), label_value_PR.setText(f'{value/slider_resolution/1000:.4f}')))
 
         selector_box = QtWidgets.QFrame()
         selector_box.setStyleSheet('''
@@ -983,8 +965,6 @@ class AnalysisWindow(QtWidgets.QWidget):
         misc_box_layout.addWidget(make_sheet_btn, 0, 0, 1, 1)
         misc_box_layout.addWidget(save_fig_btn, 0, 1, 1, 1)
         self._update_plot()
-
-        print(self.size())
 
     def get_sheets_save_file(self):
         d = os.path.join(os.path.split(self.orbs.kfpath)[0], 'pyorbb.xlsx')
