@@ -373,6 +373,12 @@ def read_data(reader: plams.KFReader, SCF0_reader: plams.KFReader = None, output
             energy_by_symlabel = ret['SFOs']['energy'][sfo_spin][ret['SFOs']['subspecies_fixed'] == symlabel]
             ret.set('SFOs', 'order_by_symlabel', symlabel, sfo_spin, np.argsort(energy_by_symlabel))
 
+    if 'site_energy' in ret['SFOs']:
+        ret.set('SFOs', 'site_energy', 'total', _compose_vector(ret['SFOs']['site_energy'], ret['calc_info']['sfo_spins']))
+
+    if 'site_energy_SCF0' in ret['SFOs']:
+        ret.set('SFOs', 'site_energy_SCF0', 'total', _compose_vector(ret['SFOs']['site_energy_SCF0'], ret['calc_info']['sfo_spins']))
+
     ret.set('SFOs', 'energy', 'total', _compose_vector(ret['SFOs']['energy'], ret['calc_info']['sfo_spins']))
     ret.set('SFOs', 'occupation', 'total', _compose_vector(ret['SFOs']['occupation'], ret['calc_info']['sfo_spins']))
     ret.set('SFOs', 'order', 'total', np.argsort(ret['SFOs']['energy']['total']))
@@ -460,5 +466,7 @@ def read_data(reader: plams.KFReader, SCF0_reader: plams.KFReader = None, output
             gp = ret['matrices']['mulliken_population'][symlabel][mo_spin]
             gp = np.sum(gp, axis=0)[ret['MOs']['nfrozencores'][symlabel]:]
             ret['SFOs']['gross_population'][mo_spin].extend(gp.tolist())
+
+    ret.set('SFOs', 'gross_population', 'total', _compose_vector(ret['SFOs']['gross_population'], ret['calc_info']['mo_spins']))
 
     return ret
