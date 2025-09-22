@@ -8,8 +8,16 @@ import re
 IRREP_TRANSLATION_LATEX = {
     "E1:1": r"E$_\mathrm{1}^\mathrm{1}$",
     "E1:2": r"E$_\mathrm{1}^\mathrm{2}$",
+    "EE1:1": r"E$^{\mathrm{1}\prime}_\mathrm{1}$",
+    "EE1:2": r"E$^{\mathrm{2}\prime}_\mathrm{1}$",
+    "EEE1:1": r"E$^{\mathrm{1}\prime\prime}_\mathrm{1}$",
+    "EEE1:2": r"E$^{\mathrm{2}\prime\prime}_\mathrm{1}$",
     "AA": r"A$^{\prime}$",
     "AAA": r"A$^{\prime\prime}$",
+    "AA1": r"A$^{\prime}_\mathrm{1}$",
+    "AA2": r"A$^{\prime}_\mathrm{2}$",
+    "AAA1": r"A$^{\prime\prime}_\mathrm{1}$",
+    "AAA2": r"A$^{\prime\prime}_\mathrm{2}$",
     "A": r"A",
     "A1": r"A$_\mathrm{1}$",
     "A2": r"A$_\mathrm{2}$",
@@ -32,10 +40,18 @@ IRREP_TRANSLATION_LATEX = {
 
 
 IRREP_TRANSLATION_HTML = {
-    "E1:1": "E<sub>1</sub><sup>1<sup>",
-    "E1:2": "E<sub>1</sub><sup>2<sup>",
+    "E1:1": "E<sub>1</sub><sup>1</sup>",
+    "E1:2": "E<sub>1</sub><sup>2</sup>",
+    "EE1:1": "E<sup>1</sup>′<sub>1</sub>",
+    "EE1:2": "E<sup>2</sup>′<sub>1</sub>",
+    "EEE1:1": "E<sup>1</sup>′′<sub>1</sub>",
+    "EEE1:2": "E<sup>2</sup>′′<sub>1</sub>",
     "AA": "A′",
     "AAA": "A″",
+    "AA1": "A′<sub>1</sub>",
+    "AA2": "A′<sub>2</sub>",
+    "AAA1": "A′′<sub>1</sub>",
+    "AAA2": "A′′<sub>2</sub>",
     "A": "A",
     "A1": "A<sub>1</sub>",
     "A2": "A<sub>2</sub>",
@@ -110,3 +126,41 @@ def translate_irrep_label(symm_label: str, mode='latex') -> str:
         return s
 
     return symm_label
+
+
+def generate_label(orb, mode='latex'):
+    if mode == 'latex':
+        spin_part = {
+            'A': r'$\alpha$',
+            'B': r'$\beta$'
+        }.get(orb.spin, '')
+    elif mode == 'html':
+        spin_part = {
+            'A': '<i>α</i>',
+            'B': '<i>β</i>'
+        }.get(orb.spin, '')
+
+
+    if isinstance(orb, orbitals.objects.MO):
+        orb_name = f'{orb.name}{spin_part}'
+        orb_name = orb_name.replace(orb.symmetry, translate_irrep_label(orb.symmetry, mode=mode))
+    else:
+        if orb.spin == 'AB':
+            orb_name = orb.name
+        else:
+            orb_name = f'{orb.name}{spin_part}'
+
+        if orb.subspecies.startswith('P:'):
+            principal_qn = orb_name.split(':')[0][:-1]
+            orb_name.replace(principal_qn, str(int(principal_qn) + 1), 1)
+        if orb.subspecies.startswith('D:'):
+            principal_qn = orb_name.split(':')[0][:-1]
+            orb_name.replace(principal_qn, str(int(principal_qn) + 2), 1)
+        if orb.subspecies.startswith('F:'):
+            principal_qn = orb_name.split(':')[0][:-1]
+            orb_name.replace(principal_qn, str(int(principal_qn) + 3), 1)
+
+        orb_name = orb_name.replace(orb.subspecies, translate_irrep_label(orb.subspecies, mode=mode))
+
+    return orb_name
+
