@@ -75,7 +75,6 @@ class SpinSelectionDialog(QtWidgets.QDialog):
             cbox_layout.addWidget(lab, i, 0, 1, 1)
             cbox_layout.addWidget(self.cboxes[key], i, 1, 1, 1)
 
-        # layout.addWidget(self._frag_rename_textedit, 1, 0, 1, 2)
         save_btn = QtWidgets.QPushButton('save')
         save_btn.clicked.connect(self.accept)
         cancel_btn = QtWidgets.QPushButton('cancel')
@@ -91,10 +90,14 @@ class SpinSelectionDialog(QtWidgets.QDialog):
         self.finished.connect(loop.quit)
         loop.exec()
 
+    def accept(self):
         for key, val in self.cboxes.items():
+            self.parent._spin_selection[key] = val.isChecked()
             self.state[key] = val.isChecked()
 
+        self.parent._orb_selection_dialog.reset()
         self.parent._update_plot()
+        self.hide()
 
 
 class ETypeDialog(QtWidgets.QDialog):
@@ -142,10 +145,13 @@ class ETypeDialog(QtWidgets.QDialog):
         loop = QtCore.QEventLoop()
         self.finished.connect(loop.quit)
         loop.exec()
+
+    def accept(self):
         for key, val in self.rbuttons.items():
             if val.isChecked():
                 self.parent._energytype_selection = key
         self.parent._update_plot()
+        self.hide()
 
 
 class SymmSelectionDialog(QtWidgets.QDialog):
@@ -176,7 +182,6 @@ class SymmSelectionDialog(QtWidgets.QDialog):
                 cbox_layout.addWidget(lab, i, 0, 1, 1)
                 cbox_layout.addWidget(self.cboxes[column][key], i, 1, 1, 1)
 
-        # layout.addWidget(self._frag_rename_textedit, 1, 0, 1, 2)
         save_btn = QtWidgets.QPushButton('save')
         save_btn.clicked.connect(self.accept)
         cancel_btn = QtWidgets.QPushButton('cancel')
@@ -192,13 +197,13 @@ class SymmSelectionDialog(QtWidgets.QDialog):
         self.finished.connect(loop.quit)
         loop.exec()
 
+    def accept(self):
         for column, col_cboxes in self.cboxes.items():
             for key, val in col_cboxes.items():
-                self.state[column][key] = val.isChecked()
-
+                self.parent._symmetry_selection[column][key] = val.isChecked()
+        self.parent._orb_selection_dialog.reset()
         self.parent._update_plot()
-        # state = {key: val.isChecked() for key, val in self.cboxes.items()}
-        # return state
+        self.hide()
 
 
 class OrbitalSelectionDialog(QtWidgets.QDialog):
@@ -206,47 +211,108 @@ class OrbitalSelectionDialog(QtWidgets.QDialog):
         super().__init__()
         self.parent = parent
         self.state = state
+        self._btns = {}
         layout = QtWidgets.QGridLayout(self)
 
         self.setLayout(layout)
-        layout.addWidget(QtWidgets.QLabel('Select allowed orbitals:\n'), 0, 0, 1, 2)
+        layout.addWidget(QtWidgets.QLabel('Select allowed orbitals:\n'), 0, 0, 1, 3)
 
-        tabs = QtWidgets.QTabWidget()
-        layout.addWidget(tabs, 1, 0, 1, 2)
+        self.tabs = QtWidgets.QTabWidget()
+        layout.addWidget(self.tabs, 1, 0, 1, 3)
+
+        self.select_all_btns = {}
 
         self.tables = {}
         for column, col_state in state.items():
-            # col_frame = QtWidgets.QFrame()
+            self._btns[column] = {}
             self.tables[column] = QtWidgets.QTableWidget(len(col_state), 3)
+            self.tables[column].setColumnWidth(0, 150)
+            self.tables[column].setColumnWidth(1, 40)
+            self.tables[column].setColumnWidth(2, 100)
+            self.tables[column].verticalHeader().setDefaultSectionSize(35)
             self.tables[column].setHorizontalHeaderLabels(['Orbital', 'Spin', 'Relative Name'])
             self.tables[column].verticalHeader().setVisible(False)
-            tabs.addTab(self.tables[column], column)
 
-            # cbox_layout = QtWidgets.QGridLayout()
-            # col_frame.setLayout(cbox_layout)
-            for i, (key, val) in enumerate(col_state.items()):
+            tab_frame = QtWidgets.QFrame()
+            layout_ = QtWidgets.QVBoxLayout()
+            tab_frame.setLayout(layout_)
+            self.select_all_btns[column] = QtWidgets.QCheckBox('Select All')
+            self.select_all_btns[column].setTristate(True)
+            self.select_all_btns[column].setCheckState(QtCore.Qt.CheckState.Checked)
+            self.select_all_btns[column].checkStateChanged.connect(self.select_all_btn_handler)
+
+            layout_.addWidget(self.select_all_btns[column])
+            layout_.addWidget(self.tables[column])
+
+            self.tabs.addTab(tab_frame, column)
+            for i, (orb, is_enabled) in enumerate(col_state.items()):
                 frame = QtWidgets.QFrame()
                 layout_ = QtWidgets.QHBoxLayout()
                 frame.setLayout(layout_)
-                layout_.addWidget(QtWidgets.QCheckBox())
-                layout_.addWidget(QtWidgets.QLabel(key.name))
+                
+                self._btns[column][orb] = QtWidgets.QCheckBox()
+                self._btns[column][orb].setChecked(is_enabled)
+                layout_.addWidget(self._btns[column][orb])
+                layout_.addWidget(QtWidgets.QLabel(pyfmo.generate_label(orb, mode='html')))
 
                 self.tables[column].setCellWidget(i, 0, frame)
-                self.tables[column].setCellWidget(i, 1, QtWidgets.QLabel(key.spin))
-                self.tables[column].setCellWidget(i, 2, QtWidgets.QLabel(key.relative_name))
-                ...
-                # self.tables[column][key] = QtWidgets.QCheckBox()
-                # self.tables[column][key].setChecked(val)
-                # cbox_layout.addWidget(QtWidgets.QLabel(key.name), i, 0, 1, 1)
-                # cbox_layout.addWidget(self.tables[column][key], i, 1, 1, 1)
+                spin_label = QtWidgets.QLabel(orb.spin)
+                spin_label.setAlignment(QtCore.Qt.AlignCenter)
+                self.tables[column].setCellWidget(i, 1, spin_label)
+                self.tables[column].setCellWidget(i, 2, QtWidgets.QLabel(orb.relative_name))
 
-        # layout.addWidget(self._frag_rename_textedit, 1, 0, 1, 2)
         save_btn = QtWidgets.QPushButton('save')
         save_btn.clicked.connect(self.accept)
         cancel_btn = QtWidgets.QPushButton('cancel')
         cancel_btn.clicked.connect(self.reject)
+        reset_btn = QtWidgets.QPushButton('reset')
+        reset_btn.clicked.connect(self.reset)
         layout.addWidget(save_btn, 2, 0, 1, 1)
         layout.addWidget(cancel_btn, 2, 1, 1, 1)
+        layout.addWidget(reset_btn, 2, 2, 1, 1)
+
+    def reset(self, tab=None):
+        allowed_spins = self.parent.allowed_spins
+        allowed_irreps = self.parent.allowed_irreps
+
+        for fragment, frag_btns in self._btns.items():
+            if tab is not None and fragment != tab:
+                continue
+
+            for orb, btn in frag_btns.items():
+                if orb.spin not in allowed_spins:
+                    btn.setChecked(False)
+                    continue
+                if isinstance(orb, pyfmo.orbitals.objects.SFO):
+                    if not self.parent._symmetry_selection[fragment][orb.subspecies]:
+                        btn.setChecked(False)
+                        continue
+                else:
+                    if not self.parent._symmetry_selection[fragment][orb.symmetry]:
+                        btn.setChecked(False)
+                        continue
+                btn.setChecked(True)
+
+        self.apply()
+
+    def select_all_btn_handler(self, state):
+        tab = self.tabs.tabText(self.tabs.currentIndex())
+        if state == QtCore.Qt.CheckState.PartiallyChecked:
+            state = QtCore.Qt.CheckState.Checked
+            self.select_all_btns[tab].setCheckState(state)
+
+        if state == QtCore.Qt.CheckState.Unchecked:
+            for orb, btn in self._btns[tab].items():
+                btn.setChecked(False)
+
+        if state == QtCore.Qt.CheckState.Checked:
+            self.reset(tab)
+
+    def apply(self):
+        for column, col_btns in self._btns.items():
+            for orb, btn in col_btns.items():
+                self.parent._orb_selection[column][orb] = btn.isChecked()
+
 
     def open(self, *args):
         super().open()
@@ -256,15 +322,10 @@ class OrbitalSelectionDialog(QtWidgets.QDialog):
         self.finished.connect(loop.quit)
         loop.exec()
 
-        for column, col_tables in self.tables.items():
-            for key, val in col_tables.items():
-                self.state[column][key] = val.isChecked()
-
+    def accept(self):
+        self.apply()
         self.parent._update_plot()
-        # state = {key: val.isChecked() for key, val in self.cboxes.items()}
-        # return state
-
-
+        self.hide()
 
 
 class FragRenameDialog(QtWidgets.QDialog):
@@ -349,8 +410,6 @@ class YAxisDialog(QtWidgets.QDialog):
         self._tup = float(self._ylim_low_textedit.text()), float(self._ylim_high_textedit.text())
 
 
-
-
 class MplCanvas(FigureCanvas):
     def __init__(self, parent=None, width=9, height=6.5, dpi=100):
         self.fig = Figure(figsize=(width, height), dpi=dpi)
@@ -407,6 +466,7 @@ class MplCanvas(FigureCanvas):
             if self.parent.tcviewer_screen is None or self.parent.tcviewer_screen.isclosed:
                 self.parent.tcviewer_screen = tcviewer.screen._ScreenWindow()
                 self.parent.tcviewer_screen.__enter__()
+                self.parent.tcviewer_screen.setWindowTitle('PyOrbb Viewer')
                 self.parent.tcviewer_screen.show()
 
             with self.parent.tcviewer_screen.add_molscene() as scene:
@@ -469,8 +529,7 @@ class MplCanvas(FigureCanvas):
                 s += f'\n   {sfo.relative_name}'
                 s += f'\n   {sfo.symmetry} {sfo.irrep_relative_name}\n'
                 s += f'\nFragment   {sfo.fragment_unique}'
-                s += f'\nEnergy    {getattr(sfo, "energy"): .2f} eV'
-                # s += f'\nEnergy    {getattr(sfo, self.parent.orbs.sfo_energy_types[etype_b.index_selected]): .2f} eV'
+                s += f'\nEnergy    {getattr(sfo, self.parent._energytype_selection): .2f} eV'
                 s += f'\nOccupation {sfo.occupation:.2f}'
                 s += f'\nPop.      {sfo.gross_population: .3f}'
                 s += f'\nSpin-pop. {sfo.gross_spin: .3f}'
@@ -484,7 +543,7 @@ class MplCanvas(FigureCanvas):
                         continue
                     if sfo2.fragment_unique == sfo.fragment_unique:
                         continue
-                    s += f'\n{str(sfo2):19.19} {sfo @ sfo2: 5.3f} {abs(sfo.energy - sfo2.energy): 8.2f}'
+                    s += f'\n{str(sfo2):19.19} {sfo @ sfo2: 5.3f} {abs(getattr(sfo, self.parent._energytype_selection) - getattr(sfo2, self.parent._energytype_selection)): 8.2f}'
                 
                 s += '\n\nMO                     Contr   Coeff'
                 s += '\n─────────────────── ──────── ───────'
@@ -738,10 +797,19 @@ class AnalysisWindow(QtWidgets.QWidget):
     def get_figure_file_from_dialog(self):
         file = self.new_figure_filedialog.selectedFiles()[0]
 
+    @property
+    def allowed_spins(self):
+        return [k for k, v in self._spin_selection.items() if v]
+    
+    @property
+    def allowed_irreps(self):
+        return {frag: [k for k, v in frag_irreps.items() if v] for frag, frag_irreps in self._symmetry_selection.items()}
+    
+
     def _update_plot(self):
         self._draw_diagram(
-            allowed_spins=self._spin_selection,
-            allowed_irreps=self._symmetry_selection,
+            allowed_spins=self.allowed_spins,
+            allowed_irreps=self.allowed_irreps,
             oi_thresh=10**(self.slider_OI.value()/slider_resolution),
             pauli_thresh=self.slider_PR.value()/slider_resolution/1000,
             energy_type=self._energytype_selection,
@@ -753,11 +821,32 @@ class AnalysisWindow(QtWidgets.QWidget):
         fig = self.plot.fig
         ax.clear()
         ax.yaxis.set_major_formatter('{x: 3.0f}')
-
-        allowed_mos = self.orbs.mos.filter(symmetry=allowed_irreps['mos'].keys(), spin=allowed_spins.keys())
+        allowed_mos = self.orbs.mos.filter(symmetry=allowed_irreps['Complex'], spin=allowed_spins)
+        if allowed_mos is None:
+            allowed_mos = []
         allowed_sfos = []
         for frag in self.orbs.fragments:
-            allowed_sfos.extend(self.orbs.sfos.filter(subspecies=list(allowed_irreps[frag].keys()), spin=list(allowed_spins.keys()), fragment=frag))
+            l = self.orbs.sfos.filter(subspecies=allowed_irreps[frag], spin=allowed_spins, fragment=frag)
+            if l is None:
+                l = []
+            allowed_sfos.extend(l)
+
+        for frag, states in self._orb_selection.items():
+            for orb, enabled in states.items():
+                if isinstance(orb, pyfmo.orbitals.objects.MO):
+                    if enabled and orb not in allowed_mos:
+                        allowed_mos.append(orb)
+
+                    if not enabled and orb in allowed_mos:
+                        allowed_mos.remove(orb)
+
+                if isinstance(orb, pyfmo.orbitals.objects.SFO):
+                    if enabled and orb not in allowed_sfos:
+                        allowed_sfos.append(orb)
+
+                    if not enabled and orb in allowed_sfos:
+                        allowed_sfos.remove(orb)
+
 
         self.main_mix.set_oi_threshold(oi_thresh)
         self.main_mix.set_pr_threshold(pauli_thresh)
@@ -767,7 +856,6 @@ class AnalysisWindow(QtWidgets.QWidget):
         self.main_mix.set_allowed_sfos(allowed_sfos)
         self.main_mix.set_energy_type(energy_type)
         self.main_mix.reset_mixes()
-        self.main_mix.sanitize()
         self.main_mix.draw_diagram(ax=ax, ylim=ylim)
         if self.new_tick_labels is not None:
             self.plot.axes.set_xticklabels(self.new_tick_labels)
@@ -801,9 +889,9 @@ class AnalysisWindow(QtWidgets.QWidget):
             for symm in sorted(set([sfo.subspecies for sfo in self.orbs.sfos.filter(fragment=frag)])):
                 self._symmetry_selection[frag][symm] = True
 
-        self._symmetry_selection['mos'] = {}
+        self._symmetry_selection['Complex'] = {}
         for symm in sorted(set([mo.symmetry for mo in self.orbs.mos])):
-                self._symmetry_selection['mos'][symm] = True
+                self._symmetry_selection['Complex'][symm] = True
 
         self._symmetry_selection_dialog = SymmSelectionDialog(self, self._symmetry_selection)
 
@@ -821,15 +909,14 @@ class AnalysisWindow(QtWidgets.QWidget):
 
         self._energytype_selection_dialog = ETypeDialog(self, self.orbs.sfo_energy_types, self._energytype_selection)
 
-        self._orb_selection = {}
+        self._orb_selection = {'Complex': {}}
         for frag in self.orbs.fragments:
             self._orb_selection[frag] = {}
             for sfo in self.orbs.sfos.filter(fragment=frag):
                 self._orb_selection[frag][sfo] = True
 
-        self._orb_selection['mos'] = {}
         for mo in self.orbs.mos:
-            self._orb_selection['mos'][mo] = True
+            self._orb_selection['Complex'][mo] = True
 
         self._orb_selection_dialog = OrbitalSelectionDialog(self, self._orb_selection)
 
@@ -863,14 +950,12 @@ class AnalysisWindow(QtWidgets.QWidget):
         slider_layout.addWidget(self.cbox_OI, 0, 0, QtCore.Qt.AlignCenter)
         self.cbox_OI.checkStateChanged.connect(self._update_plot)
 
-        label_OI = QtWidgets.QLabel('τ<sub>OI</sub>')
+        label_OI = QtWidgets.QLabel('τ<sub>oi</sub>')
         label_OI.setStyleSheet("QLabel{font-size: 16pt;}")
         slider_layout.addWidget(label_OI, 0, 1, QtCore.Qt.AlignCenter)
 
         self.slider_OI = QtWidgets.QSlider(QtCore.Qt.Horizontal, self._analysis_page_frame)
-        # print(mix.xiaobo_value() for mixes in self.oi_mixes.values() for mix in mixes)
-        slider_OI_max = abs(min(self.main_mix.mixes['OI'].values()))
-        # slider_OI_max = max(max(mix.xiaobo_value() for mix in mixes) for mixes in self.oi_mixes.values())
+        slider_OI_max = abs(min(min(v.values()) for v in self.main_mix.mixes['OI'].values()))
         self.slider_OI.setMinimum(np.log10(0.00000001) * slider_resolution)
         self.slider_OI.setMaximum(np.log10(slider_OI_max) * slider_resolution)
         self.slider_OI.setSliderPosition(np.log10(slider_OI_max/1.5) * slider_resolution)
@@ -886,7 +971,7 @@ class AnalysisWindow(QtWidgets.QWidget):
         slider_layout.addWidget(self.cbox_PR, 1, 0, QtCore.Qt.AlignCenter)
         self.cbox_PR.checkStateChanged.connect(self._update_plot)
 
-        label_PR = QtWidgets.QLabel('τ<sub>PR</sub>')
+        label_PR = QtWidgets.QLabel('τ<sub>pr</sub>')
         label_PR.setStyleSheet("QLabel{font-size: 16pt;}")
         slider_layout.addWidget(label_PR, 1, 1, QtCore.Qt.AlignCenter)
 
@@ -895,7 +980,8 @@ class AnalysisWindow(QtWidgets.QWidget):
         if len(self.main_mix.mixes['PR']) == 0:
             slider_PR_max = 0.001**2
         else:
-            slider_PR_max = max(self.main_mix.mixes['PR'].values())
+            # slider_PR_max = max(self.main_mix.mixes['PR'].values())
+            slider_PR_max = abs(max(max(v.values()) for v in self.main_mix.mixes['PR'].values()))
 
         self.slider_PR.setMinimum(0.001**2 * 1000 * slider_resolution)
         self.slider_PR.setMaximum(slider_PR_max * 1000 * slider_resolution)
