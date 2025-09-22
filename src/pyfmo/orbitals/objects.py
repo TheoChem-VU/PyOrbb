@@ -464,7 +464,7 @@ class SFO(Orbital):
         return F[other.symmetry_index-1][self.symmetry_index-1]
 
 
-    def mulliken_contribution(self, other: "MO") -> float:
+    def mulliken_contribution(self, other: "MO", normalized=False) -> float:
         '''
         Get the mulliken contribution of this |SFO| into an |MO|.
 
@@ -479,7 +479,10 @@ class SFO(Orbital):
         if self.symmetry != other.symmetry:
             return 0
 
-        c = self.parent.parent.data['matrices']['mulliken_contribution'][self.symmetry][other.spin]
+        if normalized:
+            c = self.parent.parent.data['matrices']['mulliken_contribution_normalized'][self.symmetry][other.spin]
+        else:
+            c = self.parent.parent.data['matrices']['mulliken_contribution'][self.symmetry][other.spin]
         return c[other.symmetry_index-1][self.symmetry_index-1]
 
 
@@ -620,7 +623,6 @@ class Orbitals:
                 elif float(self.data['SFOs']['occupation'][sfo_spin][sfo_idx]) == 1:
                     if self.data['calc_info']['sfo_spinpolarizations'] is not None:
                         occs = self.data['calc_info']['sfo_spinpolarizations'][frag][symlabel]
-                        # print(occs)
                         spinpol = (occs[0] - occs[1]) / abs(occs[0] - occs[1])
 
                 data = {
@@ -643,8 +645,8 @@ class Orbitals:
                 
                 if self.data['calc_info']['sfo_spinpolarizations'] is not None:
                     occs = self.data['calc_info']['sfo_spinpolarizations'][frag][symlabel]
-                    spinpol = (occs[0] - occs[1]) / abs(occs[0] - occs[1])
-                    data['spin_pol'] = spinpol,
+                    spinpol = occs[0] - occs[1]
+                    data['spin_pol'] = spinpol
 
 
                 data['site_energy'] = None
