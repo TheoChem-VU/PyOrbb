@@ -113,35 +113,16 @@ def draw_interaction(sfos, mos, connections,
     for orb in poss:
         E = orb.energy
         if orb in sfos:
-            # print(orb, E, energy_type)
             E = getattr(orb, energy_type)
 
-        spin_part = {
-            'A': r'$\alpha$',
-            'B': r'$\beta$'
-        }.get(orb.spin, '')
-
-        if isinstance(orb, pyfmo.orbitals.objects.MO):
-            orb_name = f'{orb.name}{spin_part}'
-            orb_name = orb_name.replace(orb.symmetry, pyfmo.translate_irrep_label(orb.symmetry))
-        else:
-            if orb.spin == 'AB':
-                orb_name = orb.name
-            else:
-                orb_name = f'{orb.name}{spin_part}'
-            orb_name = orb_name.replace(orb.subspecies, pyfmo.translate_irrep_label(orb.subspecies))
-
-        # if orb.symmetry in IRREP_TRANSLATION:
-        #     orb_name = orb_name.replace(orb.symmetry, IRREP_TRANSLATION[orb.symmetry])
-
-
+        orb_name = pyfmo.generate_label(orb)
+        
         is_MO = orb in mos
         ax.plot([poss[orb]-level_width/2, poss[orb]+level_width/2], [E, E], c='k', linewidth=level_thickness, gid=f'{"MO" if is_MO else "SFO"}_{orb}')
 
         if (is_MO and draw_mo_labels) or (not is_MO and draw_sfo_labels):
             ax.text(poss[orb],
                      E - arrow_length / 1.8 * energy_span,
-                     # f'({orb.relative_name.replace("OMO", "").replace("UMO", "")})',
                      orb_name,
                      ha='center',
                      va='top',
