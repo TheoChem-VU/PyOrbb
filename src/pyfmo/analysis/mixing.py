@@ -18,18 +18,25 @@ class Mixer2:
         if isinstance(orbs, str):
             self.orbs = pyfmo.Orbitals(str)
 
+        self.sfos = self.orbs.sfos.orbitals
+        self.allowed_mos = self.orbs.mos.orbitals
+        self.allowed_sfos = self.orbs.sfos.orbitals
+
         self.data = {}
         self.main_mix = Mixing(self.orbs)
         self.mixes = {'OI': {}, 'PR': {}}
 
+        self.energy_type = 'energy'
         self.set_enable_oi(True)
         self.set_enable_pr(True)
         self.set_allowed_mos(self.orbs.mos.orbitals)
         self.set_allowed_sfos(self.orbs.sfos.orbitals)
-        self.set_energy_type('energy')
         self._prepare()
-        self._get_orbital_interactions(oi_min_thresh)
-        self._get_pauli_repulsions(pr_min_thresh)
+        self.oi_min_thresh = oi_min_thresh
+        self.pr_min_thresh = pr_min_thresh
+        self._get_orbital_interactions()
+        self._get_pauli_repulsions()
+        self.set_energy_type('energy')
 
 
     def _prepare(self):
@@ -40,16 +47,19 @@ class Mixer2:
         Positive values indicate destabilizing Pauli repulsions, while 
         negative values indicate stabilizing orbital interactions.
         '''
+
         for energy_type in self.orbs.sfo_energy_types:
-            sfos = self.orbs.sfos.orbitals
             # prepare the data we will use
-            S = np.array([[sfo1.overlap(sfo2) for sfo1 in sfos] for sfo2 in sfos])
-            e = np.array([getattr(sfo, energy_type) for sfo in sfos])
-            o = np.array([sfo.occupation for sfo in sfos])
-            p = np.array([sfo.gross_population for sfo in sfos])
+            S = np.array([[sfo1.overlap(sfo2) for sfo1 in self.sfos] for sfo2 in self.sfos])
+            e = np.array([getattr(sfo, energy_type) for sfo in self.sfos])
+            o = np.array([sfo.occupation for sfo in self.sfos])
+            p = np.array([sfo.gross_population for sfo in self.sfos])
 
             # get the maximum occupation of an SFO
             max_pop = 1 if self.orbs.data['calc_info']['unrestricted_sfos'] else 2
+
+            # if max_pop == 1:
+
 
             # make sure all populations are between 0 and max_pop
             p = np.clip(p, 0, max_pop)
@@ -67,24 +77,23 @@ class Mixer2:
             Npr = np.clip(P - Noi, 0, max_pop)
 
             # calculate the non-degenerate orbital interaction terms
-            Eoi = -Noi * dp * S2 / de
+            Eoi = -(Noi - Npr) * dp * S2 / de
             # for degenerate elements we replace S^2/de with S
             degenerate_mask = np.isclose(de, 0, atol=0.002)
             Eoi[degenerate_mask] = (-Noi * dp * abs(S))[degenerate_mask]
 
             # and calculate the Pauli repulsive terms
-            Eoi = Eoi + Npr * S2 * 2
+            # Eoi = Eoi + Npr * S2 * 2
 
             # the total interaction energies are the sums of 
             # the orbital and pauli terms
-            Epr = (O == (2 * max_pop)) * S2
+            Epr = np.clip(O - max_pop, 0, max_pop) * S2
 
             # remove upper echelon plus diagonal
             # since the matrix should be symmetric and the diagonal 
             # terms are the self-interactions
             Eoi = np.tril(Eoi, k=-1)
             Epr = np.tril(Epr, k=-1)
-
             self.data[energy_type] = (
                 Eoi, np.argsort(Eoi, axis=None), 
                 Epr, np.argsort(-Epr, axis=None)
@@ -122,14 +131,18 @@ class Mixer2:
 
     def set_energy_type(self, typ):
         self.energy_type = typ
+        if typ not in self.mixes['OI']:
+            self._get_orbital_interactions()
+        if typ not in self.mixes['PR']:
+            self._get_pauli_repulsions()
 
-    def _get_orbital_interactions(self, min_thresh):
+    def _get_orbital_interactions(self):
         Eoi, Eoi_order = self.data[self.energy_type][0], self.data[self.energy_type][1]
-        self._get_mixes(Eoi, Eoi_order, min_thresh, 'OI')
+        self._get_mixes(Eoi, Eoi_order, self.oi_min_thresh, 'OI')
 
-    def _get_pauli_repulsions(self, min_thresh):
+    def _get_pauli_repulsions(self):
         Epr, Epr_order = self.data[self.energy_type][2], self.data[self.energy_type][3]
-        self._get_mixes(Epr, Epr_order, min_thresh, 'PR')
+        self._get_mixes(Epr, Epr_order, self.pr_min_thresh, 'PR')
 
     def _get_mixes(self, 
         M, 
@@ -138,12 +151,7 @@ class Mixer2:
         interaction_type):
         v = float('inf')
 
-        if self.allowed_mos is None:
-            self.allowed_mos = self.orbs.mos.orbitals
-
-        if self.allowed_sfos is None:
-            self.allowed_sfos = self.orbs.sfos.orbitals
-
+        self.mixes[interaction_type][self.energy_type] = {}
         n = 0
         while 1:
             i, j = np.unravel_index(order[n], M.shape)
@@ -152,7 +160,8 @@ class Mixer2:
             if abs(v) < min_thresh:
                 break
 
-            sfo1, sfo2 = self.orbs.sfos.orbitals[i], self.orbs.sfos.orbitals[j]
+            sfo1, sfo2 = self.sfos[i], self.sfos[j]
+
             if sfo1 not in self.allowed_sfos or sfo2 not in self.allowed_sfos:
                 continue
 
@@ -165,13 +174,13 @@ class Mixer2:
                 'PR': 'r'
             }.get(interaction_type)
             mix = Mixing(self.orbs, [mo1, mo2], [sfo1, sfo2], connection_colors=col)
-            self.mixes[interaction_type][mix] = v
+            self.mixes[interaction_type][self.energy_type][mix] = v
             n += 1
 
 
     def _get_mos(self, sfo1, sfo2, interaction_type=None):
-        sfo1_contr = np.array([sfo1.mulliken_contribution(mo) for mo in self.orbs.mos.orbitals])
-        sfo2_contr = np.array([sfo2.mulliken_contribution(mo) for mo in self.orbs.mos.orbitals])
+        sfo1_contr = np.array([sfo1.mulliken_contribution(mo, normalized=True) for mo in self.orbs.mos.orbitals])
+        sfo2_contr = np.array([sfo2.mulliken_contribution(mo, normalized=True) for mo in self.orbs.mos.orbitals])
 
         occ_contrs = abs(sfo1_contr * sfo2_contr) * self.data['mo_occ']
         virt_contrs = abs(sfo2_contr * sfo1_contr) * (1-self.data['mo_occ'])
@@ -192,20 +201,80 @@ class Mixer2:
 
 
     def reset_mixes(self):
-        self.main_mix = Mixing(self.orbs)
+        self.main_mix = Mixing(self.orbs, energy_type=self.energy_type)
         if self.enable_oi:
-            for mix, strength in self.mixes['OI'].items():
+            for mix, strength in self.mixes['OI'][self.energy_type].items():
+                if any(mo not in self.allowed_mos for mo in mix.mos):
+                    continue
+                if any(sfo not in self.allowed_sfos for sfo in mix.sfos):
+                    continue
                 if self.oi_threshold is not None and abs(strength) >= self.oi_threshold:
                     self.main_mix += mix
 
         if self.enable_pr:
-            for mix, strength in self.mixes['PR'].items():
+            for mix, strength in self.mixes['PR'][self.energy_type].items():
+                if any(mo not in self.allowed_mos for mo in mix.mos):
+                    continue
+                if any(sfo not in self.allowed_sfos for sfo in mix.sfos):
+                    continue
                 if self.pr_threshold is not None and abs(strength) >= self.pr_threshold:
                     self.main_mix += mix
 
+        self.sanitize()
+
 
     def sanitize(self):
-        return self.main_mix.sanitize()
+        max_pop = 1 if self.orbs.data['calc_info']['unrestricted_sfos'] else 2
+
+        N_elec_MO = sum([mo.occupation for mo in self.main_mix.mos])
+        N_virt_MO = len([mo for mo in self.main_mix.mos if mo.occupation == 0])
+        N_occ_MO = len([mo for mo in self.main_mix.mos if mo.occupation == max_pop])
+
+        N_elec_SFO = round(sum([sfo.gross_population for sfo in self.main_mix.sfos]))
+        N_virt_SFO = len(self.main_mix.sfos) - N_elec_SFO/max_pop
+        N_occ_SFO = len(self.main_mix.sfos) - N_virt_SFO
+
+        if N_virt_MO < N_virt_SFO:
+            N_virt_MO_missing = N_virt_SFO - N_virt_MO
+
+            highest_prods = {}
+            for mo in self.orbs.mos.orbitals:
+                if mo in self.main_mix.mos:
+                    continue
+
+                highest_prods[mo] = 0
+                for i in range(len(self.main_mix.sfos)):
+                    C1 = self.main_mix.sfos[i].mulliken_contribution(mo, normalized=True)
+                    for j in range(i+1, len(self.main_mix.sfos)):
+                        C2 = self.main_mix.sfos[j].mulliken_contribution(mo, normalized=True)
+                        if abs(C1 * C2) > highest_prods[mo]:
+                            highest_prods[mo] = abs(C1*C2)
+
+            highest_prods = sorted(highest_prods.items(), key=lambda r: -r[1])
+            for i in range(int(N_virt_MO_missing)):
+                # self.main_mix.mos.append(highest_prods[i][0])
+                self.main_mix.add_mo(highest_prods[i][0])
+
+
+        if N_occ_MO > N_occ_SFO:
+            N_occ_SFO_missing = N_occ_MO - N_occ_SFO
+
+            highest_prods = {}
+            for sfo in self.orbs.sfos.orbitals:
+                if sfo in self.main_mix.sfos:
+                    continue
+
+                highest_prods[sfo] = 0
+                for i in range(len(self.main_mix.mos)):
+                    C1 = sfo.mulliken_contribution(self.main_mix.mos[i], normalized=True)
+                    for j in range(i+1, len(self.main_mix.mos)):
+                        C2 = sfo.mulliken_contribution(self.main_mix.mos[j], normalized=True)
+                        if abs(C1 * C2) > highest_prods[sfo]:
+                            highest_prods[sfo] = abs(C1*C2)
+
+            highest_prods = sorted(highest_prods.items(), key=lambda r: -r[1])
+            for i in range(int(N_occ_SFO_missing)):
+                self.main_mix.add_sfo(highest_prods[i][0])
 
     def split(self):
         return self.main_mix.split()
@@ -216,6 +285,7 @@ class Mixer2:
     @property
     def connections(self):
         return self.main_mix.connections
+
 
 class Mixer:
     '''
@@ -282,7 +352,6 @@ class Mixer:
         """
         Yield the first ``N`` strongest orbital interactions.
         """
-        # print(self.oi_ref, self.oi_approx_total)
         if fraction_thresh is None and N is None:
             fraction_thresh = .03
         elif N is not None:
@@ -304,9 +373,7 @@ class Mixer:
 
                     occ_mo = self.mos[np.argmax(occ_contrs)]
                     virt_mo = self.mos[np.argmax(virt_contrs)]
-                    # print(best_oi, self.oi_approx_total)
                     frac = best_oi / self.oi_approx_total
-                    # print(frac, fraction_thresh)
                     if fraction_thresh is None and j == N:
                         break
                     elif fraction_thresh is not None and frac < fraction_thresh:
@@ -401,6 +468,38 @@ class Mixing:
             s += f', fraction={self.fraction:.1%}' 
         s += f', nelectrons={self.nelectrons()})'
         return s
+
+    def add_mo(self, mo, color='purple', connections=None):
+        '''
+        Add an MO to this mixing diagram. 
+        '''
+        self.mos.append(mo)
+        if connections is None:
+            for sfo in self.sfos:
+                if abs(sfo.mulliken_contribution(mo)) > 0.03:
+                    self.connections.append((sfo, mo))
+                    self.connection_colors[(sfo, mo)] = color
+        else:
+            self.connections.append(connections)
+            for conn in self.connections:
+                self.connection_colors[conn] = color
+
+
+    def add_sfo(self, sfo, color='purple', connections=None):
+        '''
+        Add an SFO to this mixing diagram. 
+        '''
+        self.sfos.append(sfo)
+        if connections is None:
+            for mo in self.mos:
+                if abs(sfo.mulliken_contribution(mo)) > 0.03:
+                    self.connections.append((sfo, mo))
+                    self.connection_colors[(sfo, mo)] = color
+        else:
+            self.connections.append(connections)
+            for conn in self.connections:
+                self.connection_colors[conn] = color
+
 
     def draw_diagram(self, ax=None, ylim=None, simple=False):
         if simple:
@@ -515,16 +614,12 @@ class Mixing:
             return True
 
         val = (self.sfos[0] @ self.sfos[1])**2 / abs(self.sfos[0].energy - self.sfos[1].energy)
-        # val = 1
-        # print(self.sfos)
-        # dps = []
+
         for sfo in self.sfos:
             gp = sfo.gross_population
             gp = np.clip(gp, 0, 2)
             excess = abs(sfo.occupation - gp)
-            # dps.append(excess)
             val *= excess
-        # val *= min(dps)
 
         return val > threshold
 
@@ -775,7 +870,6 @@ class Mixing:
         for mix in sub_mixes:
             if excess_virt() + excess_half() + excess_occ() == 0:
                 continue
-            
             # check the number of SFOs and MOs
             if excess_virt() > 0:
                 for i in range(excess_virt()):
@@ -977,5 +1071,3 @@ def oi2(orbs, index=0, irrep=None):
         mos=[best_mo, best_other_mo], 
         sfos=[best_sfo1, best_sfo2], 
         connections=[(best_sfo1, best_mo), (best_sfo2, best_mo), (best_sfo1, best_other_mo), (best_sfo2, best_other_mo)])
-
-
