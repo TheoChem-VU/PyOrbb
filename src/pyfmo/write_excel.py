@@ -1,5 +1,5 @@
 import xlsxwriter as xl
-from tcutility import ensure_list, formula
+from tcutility import formula
 from tcutility.report import character
 from scm import plams
 import numpy as np
@@ -8,6 +8,7 @@ import warnings
 
 warnings.filterwarnings('ignore', category=UserWarning, module='xlsxwriter')
 
+ensure_list = lambda x: [x] if not isinstance(x, (list, tuple, set)) else list(x)  # noqa: E731
 
 
 def _overlap_mat(sfos1, sfos2):
@@ -352,7 +353,7 @@ def to_excel(orbs: pyfmo.Orbitals, out_file: str = 'pyfmo.xlsx', sfo_energy_type
 
 
     mixer = pyfmo.analysis.mixing.Mixer(orbs, energy_type=sfo_energy_type)
-    mixes = mixer.orbital_interactions(N=1)
+    mixes = mixer.orbital_interactions(N=50)
     # write information about the mixing
     rows = [(str(mix.sfos[0]),
              str(mix.sfos[1]),
@@ -382,7 +383,7 @@ def to_excel(orbs: pyfmo.Orbitals, out_file: str = 'pyfmo.xlsx', sfo_energy_type
                 f'** SFO energy type: {sfo_energy_type}'])
 
     # write information about the mixing
-    mixes = mixer.pauli_repulsions(N=1)
+    mixes = mixer.pauli_repulsions(N=50)
     rows = [(str(mix.sfos[0]),
              str(mix.sfos[1]),
              str(mix.mos[0]),
