@@ -54,7 +54,6 @@ def _get_fragoccupations(reader: plams.KFReader) -> dict:
 
     return data
 
-
 def _get_molecules(reader: plams.KFReader) -> dict:
     '''
     Method used to get molecules involved in this calculation.
@@ -432,8 +431,11 @@ def read_data(reader: plams.KFReader, SCF0_reader: plams.KFReader = None, output
             else:
                 S = ret['matrices']['overlap'][symlabel]['AB']
 
-            ret.set('matrices', 'mulliken_contribution', symlabel, mo_spin, coefficients * (coefficients @ S))
-            ret.set('matrices', 'mulliken_population', symlabel, mo_spin, np.atleast_2d(occupation).T * ret['matrices']['mulliken_contribution'][symlabel][mo_spin])
+            contr = coefficients * (coefficients @ S)
+            contr_normed = (contr.T / np.sum(abs(contr), axis=1)).T
+            ret.set('matrices', 'mulliken_contribution', symlabel, mo_spin, contr)
+            ret.set('matrices', 'mulliken_contribution_normalized', symlabel, mo_spin, contr_normed)
+            ret.set('matrices', 'mulliken_population', symlabel, mo_spin, np.atleast_2d(occupation).T * contr)
 
     ret.set('MOs', 'energy', 'total', np.hstack([_compose_vector(ret['MOs']['energy'][symlabel], ret['calc_info']['mo_spins']) for symlabel in ret['calc_info']['symlabels']]))
     ret.set('MOs', 'occupation', 'total', np.hstack([_compose_vector(ret['MOs']['occupation'][symlabel], ret['calc_info']['mo_spins']) for symlabel in ret['calc_info']['symlabels']]))
