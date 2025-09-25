@@ -48,33 +48,39 @@ class Mixer2:
         negative values indicate stabilizing orbital interactions.
         '''
 
+        # prepare the data we will use
+        S = np.array([[sfo1.overlap(sfo2) for sfo1 in self.sfos] for sfo2 in self.sfos])
+        o = np.array([sfo.occupation for sfo in self.sfos])
+        p = np.array([sfo.gross_population for sfo in self.sfos])
+
+        # get the maximum occupation of an SFO
+        max_pop = 1 if self.orbs.data['calc_info']['unrestricted_sfos'] else 2
+
+        # make sure all populations are between 0 and max_pop
+        p = np.clip(p, 0, max_pop)
+
+        # mangle some data into various matrices
+        S2 = S*S  # overlap squared
+        dp = abs(p - o) * abs(p - o).reshape(-1, 1)  # electron gains and losses
+        P = p + p.reshape(-1, 1)  # sum of SFO populations
+        O = o + o.reshape(-1, 1)  # sum of occupations
+
+        # first max_pop electrons go to the bonding MO
+        Noi = np.clip(P, 0, max_pop)
+        # any remaining electrons go to the anti-bonding MO
+        Npr = np.clip(P - Noi, 0, max_pop)
+
+        # the number of electrons involved in pauli repulsion
+        Epr = np.clip(O - max_pop, 0, max_pop) * S2
+        # remove the upper echelon and diagonal
+        # this prevents SFO pair double counting
+        # and self-interactions
+        Epr = np.tril(Epr, k=-1)
+
         for energy_type in self.orbs.sfo_energy_types:
-            # prepare the data we will use
-            S = np.array([[sfo1.overlap(sfo2) for sfo1 in self.sfos] for sfo2 in self.sfos])
+            # we calculate the Eoi for each energy type we have available
             e = np.array([getattr(sfo, energy_type) for sfo in self.sfos])
-            o = np.array([sfo.occupation for sfo in self.sfos])
-            p = np.array([sfo.gross_population for sfo in self.sfos])
-
-            # get the maximum occupation of an SFO
-            max_pop = 1 if self.orbs.data['calc_info']['unrestricted_sfos'] else 2
-
-            # if max_pop == 1:
-
-
-            # make sure all populations are between 0 and max_pop
-            p = np.clip(p, 0, max_pop)
-
-            # mangle some data into various matrices
-            S2 = S*S  # overlap squared
             de = abs(e - e.reshape(-1, 1))  # energy gap
-            dp = abs(p - o) * abs(p - o).reshape(-1, 1)  # electron gains and losses
-            P = p + p.reshape(-1, 1)  # sum of SFO populations
-            O = o + o.reshape(-1, 1)  # sum of occupations
-
-            # first max_pop electrons go to the bonding MO
-            Noi = np.clip(P, 0, max_pop)
-            # any remaining electrons go to the anti-bonding MO
-            Npr = np.clip(P - Noi, 0, max_pop)
 
             # calculate the non-degenerate orbital interaction terms
             Eoi = -(Noi - Npr) * dp * S2 / de
@@ -82,18 +88,10 @@ class Mixer2:
             degenerate_mask = np.isclose(de, 0, atol=0.002)
             Eoi[degenerate_mask] = (-Noi * dp * abs(S))[degenerate_mask]
 
-            # and calculate the Pauli repulsive terms
-            # Eoi = Eoi + Npr * S2 * 2
-
-            # the total interaction energies are the sums of 
-            # the orbital and pauli terms
-            Epr = np.clip(O - max_pop, 0, max_pop) * S2
-
             # remove upper echelon plus diagonal
             # since the matrix should be symmetric and the diagonal 
             # terms are the self-interactions
             Eoi = np.tril(Eoi, k=-1)
-            Epr = np.tril(Epr, k=-1)
             self.data[energy_type] = (
                 Eoi, np.argsort(Eoi, axis=None), 
                 Epr, np.argsort(-Epr, axis=None)
