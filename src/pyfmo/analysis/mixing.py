@@ -202,7 +202,7 @@ class Mixer2:
         self.main_mix = Mixing(self.orbs, energy_type=self.energy_type)
         if self.enable_oi:
             for mix, strength in self.mixes['OI'][self.energy_type].items():
-                if any(mo not in self.allowed_mos for mo in mix.mos):
+                if not any(mo in self.allowed_mos for mo in mix.mos):
                     continue
                 if any(sfo not in self.allowed_sfos for sfo in mix.sfos):
                     continue
@@ -211,7 +211,7 @@ class Mixer2:
 
         if self.enable_pr:
             for mix, strength in self.mixes['PR'][self.energy_type].items():
-                if any(mo not in self.allowed_mos for mo in mix.mos):
+                if not any(mo in self.allowed_mos for mo in mix.mos):
                     continue
                 if any(sfo not in self.allowed_sfos for sfo in mix.sfos):
                     continue
