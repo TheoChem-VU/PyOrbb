@@ -1018,6 +1018,13 @@ class OrbitalSelector:
         return list(sorted({orb.spin for orb in self.orbitals}))
 
     @property
+    def symmetry(self) -> List[str]:
+        '''
+        The spin species that are present in the given orbitals.
+        '''
+        return list(sorted({orb.symmetry for orb in self.orbitals}))
+
+    @property
     def unrestricted(self) -> bool:
         '''
         Whether the calculation was performed in an unrestricted manner.
@@ -1059,6 +1066,13 @@ class SFOs(OrbitalSelector):
                 ret.append('site_energy_SCF0')
 
         return ret
+
+    @property
+    def subspecies(self) -> List[str]:
+        '''
+        The spin species that are present in the given orbitals.
+        '''
+        return list(sorted({orb.subspecies for orb in self.orbitals}))
 
 
 class MOs(OrbitalSelector):

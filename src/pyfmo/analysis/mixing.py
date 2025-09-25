@@ -8,7 +8,6 @@ import networkx as nx  # noqa: F401
 import warnings
 warnings.filterwarnings('ignore')
 
-
 ensure_list = lambda x: [x] if not isinstance(x, (list, tuple, set)) else list(x)  # noqa: E731
 
 
@@ -114,6 +113,30 @@ class Mixer2:
     def set_oi_threshold(self, thresh):
         self.oi_threshold = thresh
         self.oi_N = None
+
+    def get_next_oi_threshold(self):
+        vals = [-val for val in self.mixes['OI'][self.energy_type].values() if -val < self.oi_threshold]
+        if len(vals) == 0:
+            return self.oi_threshold
+        return vals[0]
+
+    def get_previous_oi_threshold(self):
+        vals = [-val for val in self.mixes['OI'][self.energy_type].values() if -val > self.oi_threshold]
+        if len(vals) == 0:
+            return self.oi_threshold
+        return vals[-1]
+        
+    def get_next_pr_threshold(self):
+        vals = [val for val in self.mixes['PR'][self.energy_type].values() if val < self.pr_threshold]
+        if len(vals) == 0:
+            return self.pr_threshold
+        return vals[0]
+
+    def get_previous_pr_threshold(self):
+        vals = [val for val in self.mixes['PR'][self.energy_type].values() if val > self.pr_threshold]
+        if len(vals) == 0:
+            return self.pr_threshold
+        return vals[-1]
 
     def set_pr_threshold(self, thresh):
         self.pr_threshold = thresh
@@ -224,55 +247,114 @@ class Mixer2:
     def sanitize(self):
         max_pop = 1 if self.orbs.data['calc_info']['unrestricted_sfos'] else 2
 
-        N_elec_MO = sum([mo.occupation for mo in self.main_mix.mos])
-        N_virt_MO = len([mo for mo in self.main_mix.mos if mo.occupation == 0])
-        N_occ_MO = len([mo for mo in self.main_mix.mos if mo.occupation == max_pop])
+        for spin in ['A', 'B']:
+            for symm in self.orbs.mos.symmetry:
+                allowed_mos = [mo for mo in self.orbs.mos if mo.spin in (spin, 'AB') and mo.symmetry == symm]
+                allowed_mix_mos = [mo for mo in allowed_mos if mo in self.main_mix.mos]
+                N_virt_MO = len([mo for mo in allowed_mix_mos if mo.occupation == 0])
+                N_occ_MO = len([mo for mo in allowed_mix_mos if mo.occupation == max_pop])
 
-        N_elec_SFO = round(sum([sfo.gross_population for sfo in self.main_mix.sfos]))
-        N_virt_SFO = len(self.main_mix.sfos) - N_elec_SFO/max_pop
-        N_occ_SFO = len(self.main_mix.sfos) - N_virt_SFO
+                # allowed_sfos = [sfo for sfo in self.orbs.sfos]
+                allowed_sfos = [sfo for sfo in self.orbs.sfos if sfo.spin in (spin, 'AB') and sfo.symmetry == symm]
+                allowed_mix_sfos = [sfo for sfo in allowed_sfos if sfo in self.main_mix.sfos]
+                N_elec_SFO = round(sum([sfo.gross_population for sfo in allowed_mix_sfos]))
+                N_virt_SFO = len(allowed_mix_sfos) - N_elec_SFO/max_pop
+                N_occ_SFO = len(allowed_mix_sfos) - N_virt_SFO
 
-        if N_virt_MO < N_virt_SFO:
-            N_virt_MO_missing = N_virt_SFO - N_virt_MO
-
-            highest_prods = {}
-            for mo in self.orbs.mos.orbitals:
-                if mo in self.main_mix.mos:
-                    continue
-
-                highest_prods[mo] = 0
-                for i in range(len(self.main_mix.sfos)):
-                    C1 = self.main_mix.sfos[i].mulliken_contribution(mo, normalized=True)
-                    for j in range(i+1, len(self.main_mix.sfos)):
-                        C2 = self.main_mix.sfos[j].mulliken_contribution(mo, normalized=True)
-                        if abs(C1 * C2) > highest_prods[mo]:
-                            highest_prods[mo] = abs(C1*C2)
-
-            highest_prods = sorted(highest_prods.items(), key=lambda r: -r[1])
-            for i in range(int(N_virt_MO_missing)):
-                # self.main_mix.mos.append(highest_prods[i][0])
-                self.main_mix.add_mo(highest_prods[i][0])
+                # checking some requirements
+                missing_occ_MOs = N_occ_MO < N_occ_SFO
+                missing_occ_SFOs = N_occ_SFO < N_occ_MO
+                missing_virt_MOs = N_virt_MO < N_virt_SFO
+                missing_virt_SFOs = N_virt_SFO < N_virt_MO
 
 
-        if N_occ_MO > N_occ_SFO:
-            N_occ_SFO_missing = N_occ_MO - N_occ_SFO
+                if not any([missing_occ_MOs, missing_occ_SFOs, missing_virt_MOs, missing_virt_SFOs]):
+                    return
 
-            highest_prods = {}
-            for sfo in self.orbs.sfos.orbitals:
-                if sfo in self.main_mix.sfos:
-                    continue
+                ## GENERATE CANDIDATE MOs AND SFOs
+                candidate_occ_mos = {}
+                candidate_virt_mos = {}
+                for mo in allowed_mos:
+                    if mo in self.main_mix.mos:
+                        continue
 
-                highest_prods[sfo] = 0
-                for i in range(len(self.main_mix.mos)):
-                    C1 = sfo.mulliken_contribution(self.main_mix.mos[i], normalized=True)
-                    for j in range(i+1, len(self.main_mix.mos)):
-                        C2 = sfo.mulliken_contribution(self.main_mix.mos[j], normalized=True)
-                        if abs(C1 * C2) > highest_prods[sfo]:
-                            highest_prods[sfo] = abs(C1*C2)
+                    # skip if we don't need the occupied MOs
+                    if mo.occupied and not missing_occ_MOs:
+                        continue
 
-            highest_prods = sorted(highest_prods.items(), key=lambda r: -r[1])
-            for i in range(int(N_occ_SFO_missing)):
-                self.main_mix.add_sfo(highest_prods[i][0])
+                    # same for virtual
+                    if not mo.occupied and not missing_virt_MOs:
+                        continue
+
+                    highest = 0
+                    for i in range(len(allowed_mix_sfos)):
+                        C1 = allowed_mix_sfos[i].mulliken_contribution(mo, normalized=True)
+                        for j in range(i+1, len(allowed_mix_sfos)):
+                            C2 = allowed_mix_sfos[j].mulliken_contribution(mo, normalized=True)
+                            if abs(C1 * C2) > highest:
+                                highest = abs(C1*C2)
+
+                    if mo.occupied:
+                        candidate_occ_mos[mo] = highest
+                    else:
+                        candidate_virt_mos[mo] = highest
+
+                candidate_occ_mos = sorted(candidate_occ_mos.items(), key=lambda r: -r[1])
+                candidate_virt_mos = sorted(candidate_virt_mos.items(), key=lambda r: -r[1])
+
+
+                candidate_occ_sfos = {}
+                candidate_virt_sfos = {}
+                for sfo in allowed_sfos:
+                    if sfo in allowed_mix_sfos:
+                        continue
+
+                    # skip if we don't need the occupied SFOs
+                    if sfo.occupied and not missing_occ_SFOs:
+                        continue
+
+                    # same for virtual
+                    if not sfo.occupied and not missing_virt_SFOs:
+                        continue
+
+                    highest = 0
+                    for i in range(len(allowed_mix_mos)):
+                        C1 = sfo.mulliken_contribution(allowed_mix_mos[i], normalized=True)
+                        for j in range(i+1, len(allowed_mix_mos)):
+                            C2 = sfo.mulliken_contribution(allowed_mix_mos[j], normalized=True)
+                            if abs(C1 * C2) > highest:
+                                highest = abs(C1*C2)
+
+                    if sfo.occupied:
+                        candidate_occ_sfos[sfo] = highest
+                    else:
+                        candidate_virt_sfos[sfo] = highest
+
+                candidate_occ_sfos = sorted(candidate_occ_sfos.items(), key=lambda r: -r[1])
+                candidate_virt_sfos = sorted(candidate_virt_sfos.items(), key=lambda r: -r[1])
+
+
+                # ADD MOs and SFOs BASED ON UNMET REQUIREMENTS
+                if missing_occ_MOs:
+                    N_occ_MO_missing = N_occ_SFO - N_occ_MO
+                    for i in range(int(N_occ_MO_missing)):
+                        self.main_mix.add_mo(candidate_occ_mos[i][0])
+
+                if missing_occ_SFOs:
+                    N_occ_SFO_missing = N_occ_MO - N_occ_SFO
+                    for i in range(int(N_occ_SFO_missing)):
+                        self.main_mix.add_sfo(candidate_occ_sfos[i][0])
+
+                if missing_virt_MOs:
+                    N_virt_MO_missing = N_virt_SFO - N_virt_MO
+                    for i in range(int(N_virt_MO_missing)):
+                        self.main_mix.add_mo(candidate_virt_mos[i][0])
+
+                if missing_virt_SFOs:
+                    N_virt_SFO_missing = N_virt_MO - N_virt_SFO
+                    for i in range(int(N_virt_SFO_missing)):
+                        self.main_mix.add_sfo(candidate_virt_sfos[i][0])
+
 
     def split(self):
         return self.main_mix.split()

@@ -9,6 +9,7 @@ import os
 import shutil
 import platformdirs
 import json
+from math import floor, ceil
 
 slider_resolution = 500
 
@@ -128,7 +129,7 @@ class ETypeDialog(QtWidgets.QDialog):
             rbtn_layout.addWidget(self.rbuttons[pos], i, 0, 1, 1)
 
         if _detect_charged_fragments(self.parent.orbs):
-            rbtn_layout.addWidget(QtWidgets.QLabel(f'\nNote:\nEffective energies are recommended for charge systems!'), i+1, 0, 1, 0)
+            rbtn_layout.addWidget(QtWidgets.QLabel(f'\nNote:\nEffective energies are recommended for charged systems!'), i+1, 0, 1, 0)
 
         # layout.addWidget(self._frag_rename_textedit, 1, 0, 1, 2)
         save_btn = QtWidgets.QPushButton('save')
@@ -824,6 +825,7 @@ class AnalysisWindow(QtWidgets.QWidget):
         allowed_mos = self.orbs.mos.filter(symmetry=allowed_irreps['Complex'], spin=allowed_spins)
         if allowed_mos is None:
             allowed_mos = []
+
         allowed_sfos = []
         for frag in self.orbs.fragments:
             l = self.orbs.sfos.filter(subspecies=allowed_irreps[frag], spin=allowed_spins, fragment=frag)
@@ -846,7 +848,6 @@ class AnalysisWindow(QtWidgets.QWidget):
 
                     if not enabled and orb in allowed_sfos:
                         allowed_sfos.remove(orb)
-
 
         self.main_mix.set_oi_threshold(oi_thresh)
         self.main_mix.set_pr_threshold(pauli_thresh)
@@ -929,51 +930,98 @@ class AnalysisWindow(QtWidgets.QWidget):
         plot_container.setFixedSize(700, 500)
 
         self.plot = MplCanvas(self)
-        plot_container.setStyleSheet('padding: 0px; margin: 0px; border: 2px solid lightgray; border-radius: 5px; background-color: white;')
+        plot_container.setStyleSheet('padding: 0px; margin: 0px; border: 1px solid lightgray; border-radius: 5px; background-color: white;')
         plot_container_layout.addWidget(self.plot, 0)
         layout.addWidget(plot_container, 0, 0, 1, 1, QtCore.Qt.AlignCenter)
 
+        self.info_tabs = QtWidgets.QTabWidget()
+        self.info_tabs.setStyleSheet('QTabWidget { border-radius: 5px; border: 1px solid lightgray} QTabWidget::pane { border: 1px solid lightgray; background-color: white;border-radius: 5px; border-top-left-radius: 0px;} QTabWidget::tab-bar {background-color: lightgray; border: 0px;}')
+        self.info_tabs.tabBar().setStyleSheet('border-radius: 5px; border: 1px solid lightgray; background-color: white')
+        self.info_tabs.setFixedSize(288, 500)
         self.info_box = QtWidgets.QLabel('')
-        self.info_box.setFixedSize(288, 500)
-        self.info_box.setStyleSheet('padding: 10px; font: 12pt "IBM Plex Mono"; border-radius: 5px; background-color: white; border: 2px solid lightgray;')
-        layout.addWidget(self.info_box, 0, 1, QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
+        # self.info_box.setStyleSheet('padding: 10px; font: 10pt "IBM Plex Mono"; border-radius: 5px; background-color: white; border: 1px solid lightgray;')
+        self.info_box.setStyleSheet('padding: 10px; font: 10pt "IBM Plex Mono"')
+        
+        self.info_tabs.addTab(self.info_box, 'Orbitals')
+
+        system_info_box = QtWidgets.QLabel(self._get_system_info_txt())
+        system_info_box.setStyleSheet('padding: 10px; font: 10pt "IBM Plex Mono";')
+        
+        self.info_tabs.addTab(system_info_box, 'System')
+        
+
+        layout.addWidget(self.info_tabs, 0, 1, QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
 
         slider_layout = QtWidgets.QGridLayout()
         slider_box = QtWidgets.QFrame()
         slider_box.setObjectName('sliderbox')
-        slider_box.setStyleSheet('QWidget#sliderbox{padding: 0px; margin: 0px; border: 2px solid lightgray; border-radius: 5px; background-color: white;}')
+        slider_box.setStyleSheet('QWidget#sliderbox{padding: 0px; margin: 0px; border: 1px solid lightgray; border-radius: 5px; background-color: white;}')
         slider_box.setLayout(slider_layout)
         layout.addWidget(slider_box, 1, 0)
 
         self.cbox_OI = QtWidgets.QCheckBox('Show OI')
         self.cbox_OI.setChecked(True)
-        slider_layout.addWidget(self.cbox_OI, 0, 0, QtCore.Qt.AlignCenter)
+        slider_layout.addWidget(self.cbox_OI, 0, 0)
         self.cbox_OI.checkStateChanged.connect(self._update_plot)
 
-        label_OI = QtWidgets.QLabel('τ<sub>oi</sub>')
-        label_OI.setStyleSheet("QLabel{font-size: 16pt;}")
-        slider_layout.addWidget(label_OI, 0, 1, QtCore.Qt.AlignCenter)
+        label_OI = QtWidgets.QLabel('τ<sub>oi</sub> =')
+        label_OI.setStyleSheet('QLabel{ font: 16pt}')
+        slider_layout.addWidget(label_OI, 0, 1)
 
+        inc_oi_btn = QtWidgets.QPushButton('<')
+        inc_oi_btn.clicked.connect(self._set_next_oi_slider)
+        slider_layout.addWidget(inc_oi_btn, 0, 3)
+        inc_oi_btn.setStyleSheet("""
+            QPushButton {
+                font-size: 12px;
+                border: 1px solid lightgray;
+                border-radius: 13px;
+                padding: 8px;
+                margin: 0px; 
+                background-color: white;
+            }
+            QPushButton:hover {
+                background-color: #f0f0f0;
+                }
+            """)
         self.slider_OI = QtWidgets.QSlider(QtCore.Qt.Horizontal, self._analysis_page_frame)
         slider_OI_max = abs(min(min(v.values()) for v in self.main_mix.mixes['OI'].values()))
         self.slider_OI.setMinimum(np.log10(0.00000001) * slider_resolution)
-        self.slider_OI.setMaximum(np.log10(slider_OI_max) * slider_resolution)
+        self.slider_OI.setMaximum(floor(np.log10(slider_OI_max) * slider_resolution))
         self.slider_OI.setSliderPosition(np.log10(slider_OI_max/1.5) * slider_resolution)
         self.main_mix.set_oi_threshold(slider_OI_max/1.5)
-        slider_layout.addWidget(self.slider_OI, 0, 2, QtCore.Qt.AlignCenter)
+        slider_layout.addWidget(self.slider_OI, 0, 4)
 
-        label_value_OI = QtWidgets.QLabel(f'{10**(self.slider_OI.value()/slider_resolution):.2e}')
-        slider_layout.addWidget(label_value_OI, 0, 3, QtCore.Qt.AlignCenter)
-        self.slider_OI.valueChanged.connect(lambda value: (self._update_plot(), label_value_OI.setText(f'{10**(value/slider_resolution):.2e}')))
+        dec_oi_btn = QtWidgets.QPushButton('>')
+        dec_oi_btn.clicked.connect(self._set_previous_oi_slider)
+        slider_layout.addWidget(dec_oi_btn, 0, 5)
+        dec_oi_btn.setStyleSheet("""
+            QPushButton {
+                font-size: 12px;
+                border: 1px solid lightgray;
+                border-radius: 13px;
+                padding: 8px;
+                margin: 0px; 
+                background-color: white;
+            }
+            QPushButton:hover {
+                background-color: #f0f0f0;
+                }
+            """)
+
+        label_value_OI = QtWidgets.QLabel(f'{10**(self.slider_OI.value()/slider_resolution):.2E}')
+        label_value_OI.setStyleSheet('font: 12pt "IBM Plex Mono"')
+        slider_layout.addWidget(label_value_OI, 0, 2)
+        self.slider_OI.valueChanged.connect(lambda value: (self._update_plot(), label_value_OI.setText(f'{10**(value/slider_resolution):.2E}')))
 
         self.cbox_PR = QtWidgets.QCheckBox('Show PR')
         self.cbox_PR.setChecked(True)
-        slider_layout.addWidget(self.cbox_PR, 1, 0, QtCore.Qt.AlignCenter)
+        slider_layout.addWidget(self.cbox_PR, 1, 0)
         self.cbox_PR.checkStateChanged.connect(self._update_plot)
 
-        label_PR = QtWidgets.QLabel('τ<sub>pr</sub>')
-        label_PR.setStyleSheet("QLabel{font-size: 16pt;}")
-        slider_layout.addWidget(label_PR, 1, 1, QtCore.Qt.AlignCenter)
+        label_PR = QtWidgets.QLabel('τ<sub>pr</sub> =')
+        label_PR.setStyleSheet('QLabel{ font: 16pt}')
+        slider_layout.addWidget(label_PR, 1, 1)
 
         self.slider_PR = QtWidgets.QSlider(QtCore.Qt.Horizontal, self._analysis_page_frame)
         # slider_PR_max = max(max(mix.xiaobo_value() for mix in mixes) for mixes in self.pauli_mixes.values())
@@ -983,15 +1031,55 @@ class AnalysisWindow(QtWidgets.QWidget):
             # slider_PR_max = max(self.main_mix.mixes['PR'].values())
             slider_PR_max = abs(max(max(v.values()) for v in self.main_mix.mixes['PR'].values()))
 
+        inc_pr_btn = QtWidgets.QPushButton('<')
+        inc_pr_btn.clicked.connect(self._set_next_pr_slider)
+        slider_layout.addWidget(inc_pr_btn, 1, 3)
+        inc_pr_btn.setStyleSheet("""
+            QPushButton {
+                font-size: 12px;
+                border: 1px solid lightgray;
+                border-radius: 13px;
+                padding: 8px;
+                margin: 0px; 
+                background-color: white;
+            }
+            QPushButton:hover {
+                background-color: #f0f0f0;
+                }
+            """)
         self.slider_PR.setMinimum(0.001**2 * 1000 * slider_resolution)
         self.slider_PR.setMaximum(slider_PR_max * 1000 * slider_resolution)
         self.slider_PR.setSliderPosition(slider_PR_max/1.5 * 1000 * slider_resolution)
         self.main_mix.set_pr_threshold(slider_PR_max/1.1)
-        slider_layout.addWidget(self.slider_PR, 1, 2, QtCore.Qt.AlignCenter)
+        slider_layout.addWidget(self.slider_PR, 1, 4)
 
+        dec_pr_btn = QtWidgets.QPushButton('>')
+        dec_pr_btn.clicked.connect(self._set_previous_pr_slider)
+        slider_layout.addWidget(dec_pr_btn, 1, 5)
+        dec_pr_btn.setStyleSheet("""
+            QPushButton {
+                font-size: 12px;
+                border: 1px solid lightgray;
+                border-radius: 13px;
+                padding: 8px;
+                margin: 0px; 
+                background-color: white;
+            }
+            QPushButton:hover {
+                background-color: #f0f0f0;
+                }
+            """)
         label_value_PR = QtWidgets.QLabel(f'{self.slider_PR.value()/slider_resolution:.3f}')
-        slider_layout.addWidget(label_value_PR, 1, 3, QtCore.Qt.AlignCenter)
+        label_value_PR.setStyleSheet('font: 12pt "IBM Plex Mono"')
+        slider_layout.addWidget(label_value_PR, 1, 2)
         self.slider_PR.valueChanged.connect(lambda value: (self._update_plot(), label_value_PR.setText(f'{value/slider_resolution/1000:.4f}')))
+        
+        slider_layout.setColumnStretch(0, 0)
+        slider_layout.setColumnStretch(1, 0)
+        slider_layout.setColumnStretch(2, 0)
+        slider_layout.setColumnStretch(3, 0)
+        slider_layout.setColumnStretch(4, 1)
+        slider_layout.setColumnStretch(5, 0)
 
         selector_box = QtWidgets.QFrame()
         selector_box.setStyleSheet('''
@@ -1051,6 +1139,26 @@ class AnalysisWindow(QtWidgets.QWidget):
         misc_box_layout.addWidget(make_sheet_btn, 0, 0, 1, 1)
         misc_box_layout.addWidget(save_fig_btn, 0, 1, 1, 1)
         self._update_plot()
+
+    def _get_system_info_txt(self):
+        return ''
+
+
+    def _set_next_pr_slider(self):
+        next_val = self.main_mix.get_next_pr_threshold()
+        self.slider_PR.setSliderPosition(floor(next_val * 1000 * slider_resolution))
+
+    def _set_previous_pr_slider(self):
+        next_val = self.main_mix.get_previous_pr_threshold()
+        self.slider_PR.setSliderPosition(ceil(next_val * 1000 * slider_resolution))
+
+    def _set_next_oi_slider(self):
+        next_val = self.main_mix.get_next_oi_threshold()
+        self.slider_OI.setSliderPosition(floor(np.log10(next_val) * slider_resolution))
+
+    def _set_previous_oi_slider(self):
+        next_val = self.main_mix.get_previous_oi_threshold()
+        self.slider_OI.setSliderPosition(ceil(np.log10(next_val) * slider_resolution))
 
     def get_sheets_save_file(self):
         d = os.path.join(os.path.split(self.orbs.kfpath)[0], 'pyorbb.xlsx')
@@ -1120,7 +1228,7 @@ class AnalysisWindow(QtWidgets.QWidget):
 class PyOrbbApp(QtWidgets.QApplication):
     def __post_init__(self):
         fontpath = os.path.split(__file__)[0] + '/../cli_scripts/ibm_plex_mono/IBMPlexMono-Regular.ttf'
-        _id = QtGui.QFontDatabase.addApplicationFont(fontpath)
+        QtGui.QFontDatabase.addApplicationFont(fontpath)
 
         self.window = QtWidgets.QMainWindow()
         self.window.resize(1030 + 22, 698 + 52)

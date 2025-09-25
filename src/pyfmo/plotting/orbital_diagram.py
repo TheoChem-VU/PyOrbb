@@ -4,6 +4,7 @@ import pyfmo
 import re
 
 
+
 def draw_interaction(sfos, mos, connections, 
         title=None, 
         energy_type='energy', 
@@ -116,7 +117,7 @@ def draw_interaction(sfos, mos, connections,
             E = getattr(orb, energy_type)
 
         orb_name = pyfmo.generate_label(orb)
-        
+
         is_MO = orb in mos
         ax.plot([poss[orb]-level_width/2, poss[orb]+level_width/2], [E, E], c='k', linewidth=level_thickness, gid=f'{"MO" if is_MO else "SFO"}_{orb}')
 
