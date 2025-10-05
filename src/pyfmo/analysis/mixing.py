@@ -549,6 +549,28 @@ class Mixing:
         s += f', nelectrons={self.nelectrons()})'
         return s
 
+    @property
+    def PR_is_empty(self):
+        max_pop = 1 if self.orbs.data['calc_info']['unrestricted_sfos'] else 2
+        for mix in self.two_mixings:
+            mix = mix[0]
+            if mix is self:
+                continue
+            if mix.nelectrons() == 2 * max_pop:
+                return False
+        return True
+
+    @property
+    def OI_is_empty(self):
+        max_pop = 1 if self.orbs.data['calc_info']['unrestricted_sfos'] else 2
+        for mix in self.two_mixings:
+            mix = mix[0]
+            if mix is self:
+                continue
+            if mix.nelectrons() == max_pop:
+                return False
+        return True
+
     def add_mo(self, mo, color='purple', connections=None):
         '''
         Add an MO to this mixing diagram. 
