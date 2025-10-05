@@ -149,10 +149,17 @@ def _get_calc_info(reader: plams.KFReader) -> dict:
         frag_per_atom = frags[fragment_index[natom:]]
         ret.set('fragments', [f'{frag}:{idx}' for frag, idx in zip(frag_per_atom, atom_order[natom:])])
 
+    # determine the spin polarization of the complex and fragments
     spin_pols = _get_fragoccupations(reader)
     for frag in ret['fragments']:
         spin_pols.setdefault(frag, {})
     ret.set('sfo_spinpolarizations', spin_pols)
+
+    # determine if we have access to effective orbital energies
+    if ('SFOs', 'site_energy') in reader or 'SFO_Fock_A' in reader or 'SFO_Fock' in reader:
+        ret.set('has_site_energy', True)
+    else:
+        ret.set('has_site_energy', False)
 
     return ret
 
