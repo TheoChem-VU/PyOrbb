@@ -645,13 +645,6 @@ class Orbitals:
                     gross_pop = self.data['SFOs']['gross_population'][sfo_spin][sfo_idx]
                     gross_spin = 0
 
-                # if float(self.data['SFOs']['occupation'][sfo_spin][sfo_idx]) in (0, 2):
-                #     spinpol = 0
-                # elif float(self.data['SFOs']['occupation'][sfo_spin][sfo_idx]) == 1:
-                #     if symlabel in self.data['calc_info']['sfo_spinpolarizations'][frag]:
-                #         occs = self.data['calc_info']['sfo_spinpolarizations'][frag][symlabel]
-                #         spinpol = (occs[0] - occs[1]) / abs(occs[0] - occs[1])
-
                 data = {
                     'index': sfo_idx + 1 + self.data['MOs']['nfrozencores'][symlabel],
                     'name': self.data['SFOs']['adf_names'][sfo_spin][sfo_idx].removesuffix('_AB').removesuffix('_A').removesuffix('_B'),
