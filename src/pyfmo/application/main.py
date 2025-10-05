@@ -259,15 +259,38 @@ class OrbitalSelectionDialog(QtWidgets.QDialog):
 
         self.select_all_btns = {}
 
+        column_widths = {
+            'Orbital': 150,
+            'Spin': 40,
+            'Occ.': 40,
+            'Gross Pop.': 70,
+            'Symm.': 50,
+            'Subsp.': 50,
+            'Energy (reg.)': 80,
+            'Energy (eff.)': 80,
+            'Rel. Name': 130,
+            'Rel. Name (Symm.)': 130,
+            'Rel. Name (Subsp.)': 130,
+        }
+
         self.tables = {}
         for column, col_state in state.items():
             self._btns[column] = {}
-            self.tables[column] = QtWidgets.QTableWidget(len(col_state), 3)
-            self.tables[column].setColumnWidth(0, 150)
-            self.tables[column].setColumnWidth(1, 40)
-            self.tables[column].setColumnWidth(2, 100)
+
+            headers = list(column_widths.keys())
+            if column == 'Complex':
+                headers.remove('Subsp.')
+                headers.remove('Energy (eff.)')
+                headers.remove('Gross Pop.')
+                headers.remove('Rel. Name (Subsp.)')
+                
+            self.tables[column] = QtWidgets.QTableWidget(len(col_state), len(headers))
             self.tables[column].verticalHeader().setDefaultSectionSize(35)
-            self.tables[column].setHorizontalHeaderLabels(['Orbital', 'Spin', 'Relative Name'])
+
+            self.tables[column].setHorizontalHeaderLabels(headers)
+            for i, header in enumerate(headers):
+                self.tables[column].setColumnWidth(i, column_widths[header])
+
             self.tables[column].verticalHeader().setVisible(False)
 
             tab_frame = QtWidgets.QFrame()
@@ -283,20 +306,45 @@ class OrbitalSelectionDialog(QtWidgets.QDialog):
 
             self.tabs.addTab(tab_frame, column)
             for i, (orb, is_enabled) in enumerate(col_state.items()):
-                frame = QtWidgets.QFrame()
+                orbital_frame = QtWidgets.QFrame()
                 layout_ = QtWidgets.QHBoxLayout()
-                frame.setLayout(layout_)
+                orbital_frame.setLayout(layout_)
                 
                 self._btns[column][orb] = QtWidgets.QCheckBox()
                 self._btns[column][orb].setChecked(is_enabled)
+                self._btns[column][orb].checkStateChanged.connect(self.multi_select)
                 layout_.addWidget(self._btns[column][orb])
                 layout_.addWidget(QtWidgets.QLabel(pyfmo.generate_label(orb, mode='html')))
 
-                self.tables[column].setCellWidget(i, 0, frame)
-                spin_label = QtWidgets.QLabel(orb.spin)
-                spin_label.setAlignment(QtCore.Qt.AlignCenter)
-                self.tables[column].setCellWidget(i, 1, spin_label)
-                self.tables[column].setCellWidget(i, 2, QtWidgets.QLabel(orb.relative_name))
+                self.tables[column].setCellWidget(i, headers.index('Orbital'), orbital_frame)
+                for j, header in enumerate(headers):
+                    if header == 'Spin':
+                        label = QtWidgets.QLabel(orb.spin)
+                    elif header == 'Occ.':
+                        label = QtWidgets.QLabel(str(round(orb.occupation, 3)))
+                    elif header == 'Gross Pop.':
+                        label = QtWidgets.QLabel(f'{orb.gross_population:.3f}')
+                    elif header == 'Symm.':
+                        label = QtWidgets.QLabel(pyfmo.translate_irrep_label(orb.symmetry, mode='html'))
+                    elif header == 'Subsp.':
+                        label = QtWidgets.QLabel(pyfmo.translate_irrep_label(orb.subspecies, mode='html'))
+                    elif header == 'Rel. Name':
+                        label = QtWidgets.QLabel(orb.relative_name)
+                    elif header == 'Rel. Name (Symm.)':
+                        label = QtWidgets.QLabel(orb.symmetry_relative_name)
+                    elif header == 'Rel. Name (Subsp.)':
+                        label = QtWidgets.QLabel(orb.subspecies_relative_name)
+                    elif header == 'Energy (reg.)':
+                        label = QtWidgets.QLabel(f'{orb.energy: .2f}')
+                    elif header == 'Energy (eff.)':
+                        label = QtWidgets.QLabel(f'{orb.site_energy: .2f}')
+                    else:
+                        continue
+
+                    label.setAlignment(QtCore.Qt.AlignCenter)
+                    label.setTextFormat(QtCore.Qt.RichText)
+                    self.tables[column].setCellWidget(i, j, label)
+
 
         save_btn = QtWidgets.QPushButton('save')
         save_btn.clicked.connect(self.accept)
