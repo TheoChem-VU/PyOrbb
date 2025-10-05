@@ -72,7 +72,7 @@ IRREP_TRANSLATION_HTML = {
     "F": "<i>f</i>",
 }
 
-def translate_irrep_label(symm_label: str, mode='latex') -> str:
+def translate_irrep_label(symm_label: str, mode='latex', use_italics=True) -> str:
     if mode == 'latex':
         if symm_label in IRREP_TRANSLATION_LATEX:
             return IRREP_TRANSLATION_LATEX[symm_label]
@@ -123,12 +123,16 @@ def translate_irrep_label(symm_label: str, mode='latex') -> str:
                 dimension = re.sub(r"([xyz])(\d+)", r"\1<sup>\2</sup>", dimension)
             s += f'<sub><i>{dimension}</i></sub>'
 
+        if not use_italics:
+            s = s.replace('<i>', '')
+            s = s.replace('</i>', '')
+
         return s
 
     return symm_label
 
 
-def generate_label(orb, mode='latex'):
+def generate_label(orb, mode='latex', use_italics=True):
     if mode == 'latex':
         spin_part = {
             'A': r'$\alpha$',
@@ -139,6 +143,10 @@ def generate_label(orb, mode='latex'):
             'A': '<i>α</i>',
             'B': '<i>β</i>'
         }.get(orb.spin, '')
+        
+        if not use_italics:
+            spin_part = spin_part.replace('<i>', '')
+            spin_part = spin_part.replace('</i>', '')
 
     if isinstance(orb, orbitals.objects.MO):
         orb_name = f'{orb.name}{spin_part}'
