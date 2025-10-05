@@ -380,6 +380,16 @@ class OrbitalSelectionDialog(QtWidgets.QDialog):
 
         self.apply()
 
+    def multi_select(self, state):
+        tab = self.tabs.tabText(self.tabs.currentIndex())
+        selected_rows = []
+        for selected_range in self.tables[tab].selectedRanges():
+            selected_rows.extend(range(selected_range.topRow(), selected_range.bottomRow() + 1))
+        
+        for row in selected_rows:
+            btn = list(self._btns[tab].values())[row]
+            btn.setCheckState(state)
+
     def select_all_btn_handler(self, state):
         tab = self.tabs.tabText(self.tabs.currentIndex())
         if state == QtCore.Qt.CheckState.PartiallyChecked:
