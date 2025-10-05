@@ -50,7 +50,7 @@ class Orbital:
             return f'LUMO+{order}' if order > 0 else 'LUMO'
 
     @functools.cached_property
-    def irrep_relative_name(self) -> str:
+    def symmetry_relative_name(self) -> str:
         '''
         The relative name of the orbital in its irreducible representation. 
         E.g. the overall HOMO-2 could be the HOMO of its irreducible representation.
