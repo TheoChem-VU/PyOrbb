@@ -618,12 +618,12 @@ class Orbitals:
                     gross_pop = self.data['SFOs']['gross_population'][sfo_spin][sfo_idx]
                     gross_spin = 0
 
-                if float(self.data['SFOs']['occupation'][sfo_spin][sfo_idx]) in (0, 2):
-                    spinpol = 0
-                elif float(self.data['SFOs']['occupation'][sfo_spin][sfo_idx]) == 1:
-                    if self.data['calc_info']['sfo_spinpolarizations'] is not None:
-                        occs = self.data['calc_info']['sfo_spinpolarizations'][frag][symlabel]
-                        spinpol = (occs[0] - occs[1]) / abs(occs[0] - occs[1])
+                # if float(self.data['SFOs']['occupation'][sfo_spin][sfo_idx]) in (0, 2):
+                #     spinpol = 0
+                # elif float(self.data['SFOs']['occupation'][sfo_spin][sfo_idx]) == 1:
+                #     if symlabel in self.data['calc_info']['sfo_spinpolarizations'][frag]:
+                #         occs = self.data['calc_info']['sfo_spinpolarizations'][frag][symlabel]
+                #         spinpol = (occs[0] - occs[1]) / abs(occs[0] - occs[1])
 
                 data = {
                     'index': sfo_idx + 1 + self.data['MOs']['nfrozencores'][symlabel],
@@ -643,11 +643,12 @@ class Orbitals:
                     'molecule': self.data['molecules'][self.data['SFOs']['fragment_unique']['total'][sfo_idx]],
                 }
                 
-                if self.data['calc_info']['sfo_spinpolarizations'] is not None:
+                if symlabel in self.data['calc_info']['sfo_spinpolarizations'][frag]:
                     occs = self.data['calc_info']['sfo_spinpolarizations'][frag][symlabel]
                     spinpol = occs[0] - occs[1]
                     data['spin_pol'] = spinpol
-
+                else:
+                    data['spin_pol'] = 0
 
                 data['site_energy'] = None
                 if 'site_energy' in self.data['SFOs']:

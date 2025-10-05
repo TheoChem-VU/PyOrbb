@@ -16,7 +16,7 @@ def _get_fragoccupations(reader: plams.KFReader) -> dict:
     '''
     inp = reader.read('General', 'engine input')
     if 'fragoccupations' not in inp.lower():
-        return
+        return {}
 
     lines = []
     read = False
@@ -129,11 +129,10 @@ def _get_calc_info(reader: plams.KFReader) -> dict:
 
     ret.set('symlabels', reader.read('Symmetry', 'symlab').strip().split())
     ret.set('symmetry', reader.read('Symmetry', 'grouplabel'))
-    
+
     # determine if SFOs are unrestricted or not
     ret.set('unrestricted_sfos', ('SFOs', 'energy_B') in reader)
     ret.set('sfo_spins', ['A', 'B'] if ret['unrestricted_sfos'] else ['AB'])
-    ret.set('sfo_spinpolarizations', _get_fragoccupations(reader))
 
     # determine if MOs are unrestricted or not
     ret.set('unrestricted_mos', (ret['symlabels'][0], 'eps_B') in reader)
@@ -149,6 +148,11 @@ def _get_calc_info(reader: plams.KFReader) -> dict:
         fragment_index = np.array(reader.read('Geometry', 'fragment and atomtype index')) - 1
         frag_per_atom = frags[fragment_index[natom:]]
         ret.set('fragments', [f'{frag}:{idx}' for frag, idx in zip(frag_per_atom, atom_order[natom:])])
+
+    spin_pols = _get_fragoccupations(reader)
+    for frag in ret['fragments']:
+        spin_pols.setdefault(frag, {})
+    ret.set('sfo_spinpolarizations', spin_pols)
 
     return ret
 
