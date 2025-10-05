@@ -561,6 +561,33 @@ class SFO(Orbital):
 
         return name
 
+    @functools.cached_property
+    def subspecies_relative_name(self) -> str:
+        '''
+        The relative name of the orbital in its irreducible representation. 
+        E.g. the overall HOMO-2 could be the HOMO of its irreducible representation.
+        '''
+        orbitals = [orb for orb in self.parent.orbitals if orb.spin == self.spin and orb.spin_total_occupation == self.spin_total_occupation and orb.subspecies == self.subspecies]
+        if hasattr(self, 'fragment_unique'):
+            orbitals = [orb for orb in orbitals if orb.fragment_unique == self.fragment_unique]
+
+        energies = sorted([orb.energy for orb in orbitals])
+        order = energies.index(self.energy) + self.degeneracy_index
+
+        if self.doubly_occupied:
+            order = len(orbitals) - order - 1
+            return f'HOMO-{order}' if order > 0 else 'HOMO'
+
+        if self.singly_occupied:
+            if self.occupation == 1:
+                order = len(orbitals) - order - 1
+                return f'SOMO-{order}' if order > 0 else 'SOMO'
+            else:
+                return f'SUMO+{order}' if order > 0 else 'SUMO'
+
+        if self.unoccupied:
+            return f'LUMO+{order}' if order > 0 else 'LUMO'
+
 
 class Orbitals:
     '''
