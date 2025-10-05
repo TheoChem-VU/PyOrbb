@@ -93,7 +93,7 @@ class ScrollLabel(QtWidgets.QScrollArea):
 
 class SpinSelectionDialog(QtWidgets.QDialog):
     def __init__(self, parent, state):
-        super().__init__()
+        super().__init__(parent=parent)
         self.parent = parent
         self.state = state
         layout = QtWidgets.QGridLayout(self)
@@ -139,7 +139,7 @@ class SpinSelectionDialog(QtWidgets.QDialog):
 
 class ETypeDialog(QtWidgets.QDialog):
     def __init__(self, parent, possibilities, selected):
-        super().__init__()
+        super().__init__(parent=parent)
         self.parent = parent
         self.possibilities = possibilities
         self.selected = selected
@@ -193,7 +193,7 @@ class ETypeDialog(QtWidgets.QDialog):
 
 class SymmSelectionDialog(QtWidgets.QDialog):
     def __init__(self, parent, state):
-        super().__init__()
+        super().__init__(parent=parent)
         self.parent = parent
         self.state = state
         layout = QtWidgets.QGridLayout(self)
@@ -245,7 +245,7 @@ class SymmSelectionDialog(QtWidgets.QDialog):
 
 class OrbitalSelectionDialog(QtWidgets.QDialog):
     def __init__(self, parent, state):
-        super().__init__()
+        super().__init__(parent=parent)
         self.parent = parent
         self.state = state
         self._btns = {}
@@ -367,7 +367,7 @@ class OrbitalSelectionDialog(QtWidgets.QDialog):
 
 class FragRenameDialog(QtWidgets.QDialog):
     def __init__(self, parent=None):
-        super().__init__()
+        super().__init__(parent=parent)
         layout = QtWidgets.QGridLayout(self)
         self.setLayout(layout)
         layout.addWidget(QtWidgets.QLabel('Rename orbital column name'), 0, 0, 1, 2)
@@ -399,7 +399,7 @@ class FragRenameDialog(QtWidgets.QDialog):
 
 class YAxisDialog(QtWidgets.QDialog):
     def __init__(self, parent=None):
-        super().__init__()
+        super().__init__(parent=parent)
         layout = QtWidgets.QGridLayout(self)
         self.setLayout(layout)
         layout.addWidget(QtWidgets.QLabel('Choose Y-axis limits'), 0, 0, 1, 2)
