@@ -408,7 +408,6 @@ class OrbitalSelectionDialog(QtWidgets.QDialog):
             for orb, btn in col_btns.items():
                 self.parent._orb_selection[column][orb] = btn.isChecked()
 
-
     def open(self, *args):
         super().open()
 
@@ -593,13 +592,12 @@ class MplCanvas(FigureCanvas):
                 submixes = self.parent.main_mix.split()
                 submix = [submix for submix in submixes if mo in submix.mos][0]
                 s += 'MO'
-                s += f'\n   {mo}'
-                s += f'\n   {mo.relative_name}'
-                s += f'\n   {mo.symmetry} {mo.irrep_relative_name}\n'
-                s += f'\nEnergy     {mo.energy:.2f} eV'
-                s += f'\nOccupation {mo.occupation}'
-                s += f'\nSpin       {mo.spin}'
-                s += f'\nIrrep      {mo.symmetry}'
+                s += f'\n  Name       {pyfmo.generate_label(mo, mode="html", use_italics=False)} ({mo.relative_name})'
+                s += f'\n  Symm.      {pyfmo.translate_irrep_label(mo.symmetry, mode="html", use_italics=False)} ({mo.symmetry_relative_name})'
+                s += f'\n  Energy     {mo.energy: .2f} eV'
+                s += f'\n  Occupation {mo.occupation}'
+                s += f'\n  Spin       {mo.spin}'
+                s += f'\n  Irrep      {mo.symmetry}'
 
                 s += '\n\nSFO                    Contr   Coeff'
                 s += '\n─────────────────── ──────── ───────'
@@ -619,16 +617,16 @@ class MplCanvas(FigureCanvas):
                 submixes = self.parent.main_mix.split()
                 submix = [submix for submix in submixes if sfo in submix.sfos][0]
                 s += 'SFO'
-                s += f'\n   {sfo}'
-                s += f'\n   {sfo.relative_name}'
-                s += f'\n   {sfo.symmetry} {sfo.irrep_relative_name}\n'
-                s += f'\nFragment   {sfo.fragment_unique}'
-                s += f'\nEnergy    {getattr(sfo, self.parent._energytype_selection): .2f} eV'
-                s += f'\nOccupation {sfo.occupation:.2f}'
-                s += f'\nPop.      {sfo.gross_population: .3f}'
-                s += f'\nSpin-pop. {sfo.gross_spin: .3f}'
-                s += f'\nSpin       {sfo.spin}'
-                s += f'\nIrrep      {sfo.symmetry}'
+                s += f'\n  Name       {pyfmo.generate_label(sfo, mode="html", use_italics=False)} ({sfo.relative_name})'
+                s += f'\n  Symm.      {pyfmo.translate_irrep_label(sfo.symmetry, mode="html", use_italics=False)} ({sfo.symmetry_relative_name})'
+                s += f'\n  Subsp.     {pyfmo.translate_irrep_label(sfo.subspecies, mode="html", use_italics=False)} ({sfo.subspecies_relative_name})'
+                s += f'\n  Fragment   {sfo.fragment_unique}'
+                s += f'\n  Energy     {getattr(sfo, self.parent._energytype_selection): .2f} eV'
+                s += f'\n  Occupation {sfo.occupation:.2f}'
+                s += f'\n  Pop.       {sfo.gross_population: .3f}'
+                s += f'\n  Spin-pop.  {sfo.gross_spin: .3f}'
+                s += f'\n  Spin       {sfo.spin}'
+                s += f'\n  Irrep      {sfo.symmetry}'
 
                 s += '\n\nSFO                      S   dE (eV)'
                 s += '\n─────────────────── ────── ─────────'
@@ -656,13 +654,11 @@ class MplCanvas(FigureCanvas):
                 mo = self.parent.orbs.mos[gid[4:].split('->')[1].strip()]
                 connected_sfos = [conn[0] for conn in self.parent.main_mix.connections if conn[1] == mo and conn[0].fragment_unique != sfo.fragment_unique]
                 s += 'SFO'
-                s += f'\n   {sfo}'
-                s += f'\n   {sfo.relative_name}'
-                s += f'\n   {sfo.symmetry} {sfo.irrep_relative_name}\n'
+                s += f'\n   {pyfmo.generate_label(sfo, mode="html", use_italics=False)} ({sfo.relative_name})'
+                s += f'\n   {pyfmo.translate_irrep_label(sfo.symmetry, mode="html")} {sfo.symmetry_relative_name}\n'
                 s += '\nMO'
-                s += f'\n   {mo}'
-                s += f'\n   {mo.relative_name}'
-                s += f'\n   {mo.symmetry} {mo.irrep_relative_name}\n'
+                s += f'\n   {pyfmo.generate_label(mo, mode="html", use_italics=False)} ({mo.relative_name})'
+                s += f'\n   {pyfmo.translate_irrep_label(mo.symmetry, mode="html")} {mo.symmetry_relative_name}\n'
                 s += f'\nContr.    {sfo.mulliken_contribution(mo): .2%}'
                 s += f'\nCoeff.    {sfo.coefficient(mo): .6f}'
                 s += f'\nSpin       {sfo.spin}'
