@@ -12,3 +12,4 @@ do
 done
 
 briefcase package --adhoc-sign
+mv dist/PyOrbb*.dmg dist/PyOrbb.dmg
