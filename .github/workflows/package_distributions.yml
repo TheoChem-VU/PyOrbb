@@ -32,7 +32,7 @@ jobs:
       - name: Upload distributions to release
         uses: svenstaro/upload-release-action@v2
         with:
-          file: dist/PyOrbb-0.0.0.dmg
+          file: dist/PyOrbb.dmg
           asset_name: PyOrbb-${{ github.ref_name}}-macOS.dmg
           tag: ${{ github.ref }}
           overwrite: true
