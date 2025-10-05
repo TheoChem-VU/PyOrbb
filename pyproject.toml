@@ -1,5 +1,6 @@
 [project]
 name = "pyfmo"
+version = "0.3.1"
 authors = [
   { name="Yuman Hordijk", email="y.hordijk@vu.nl"},
   { name="Steven E. Beutick", email="s.e.beutick@vu.nl"},
@@ -39,7 +40,6 @@ pyfmo = "pyfmo.cli_scripts.pyfmoparser:main"
 # content below this line added by briefcase convert
 # This project was generated with 0.3.25 using template: https://github.com/beeware/briefcase-template @ v0.3.25
 [tool.briefcase]
-version = "0.0.0"
 project_name = "PyOrbb"
 bundle = "nl.theochem"
 url = "https://theochem.nl/pyorbb"
