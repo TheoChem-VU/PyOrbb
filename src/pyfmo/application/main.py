@@ -10,6 +10,7 @@ import shutil
 import platformdirs
 import json
 from math import floor, ceil
+import tcutility
 
 slider_resolution = 500
 
@@ -44,15 +45,50 @@ def default_setting(key, value):
 default_setting('amsbin', '$AMSBIN')
 
 
-def _detect_charged_fragments(orbs):
+def _determine_charges(orbs):
+    charges = {}
     for frag in orbs.fragments:
         sfos = orbs.sfos.filter(fragment=frag)
         mol = sfos[0].molecule
         expected_Nelectrons = sum(atom.atnum for atom in mol)
         actual_Nelectrons = int(sum(sfo.occupation for sfo in sfos))
-        if expected_Nelectrons != actual_Nelectrons:
-            return True
-    return False
+        charges[frag] = expected_Nelectrons - actual_Nelectrons
+    charges['Complex'] = sum(charges.values())
+    return charges
+
+class ScrollLabel(QtWidgets.QScrollArea):
+    # constructor
+    def __init__(self, text='', *args, **kwargs):
+        QtWidgets.QScrollArea.__init__(self, *args, **kwargs)
+
+        # making widget resizable
+        self.setWidgetResizable(True)
+        self.horizontalScrollBar().setEnabled(False)
+
+        # making qwidget object
+        content = QtWidgets.QWidget(self)
+        self.setWidget(content)
+
+        # vertical box layout
+        lay = QtWidgets.QVBoxLayout(content)
+
+        # creating label
+        self.label = QtWidgets.QLabel(content)
+
+        # setting alignment to the text
+        self.label.setAlignment(QtCore.Qt.AlignLeft | QtCore.Qt.AlignTop)
+        self.label.setStyleSheet('padding: 10px; font: 10pt "IBM Plex Mono"')
+        self.label.setTextInteractionFlags(QtCore.Qt.TextSelectableByMouse)
+
+        # adding label to the layout
+        lay.addWidget(self.label)
+
+        self.setText(text)
+
+    # the setText method
+    def setText(self, text):
+        # setting text to the label
+        self.label.setText(text)
 
 
 class SpinSelectionDialog(QtWidgets.QDialog):
@@ -128,8 +164,8 @@ class ETypeDialog(QtWidgets.QDialog):
                 self.rbuttons[pos].setChecked(True)
             rbtn_layout.addWidget(self.rbuttons[pos], i, 0, 1, 1)
 
-        if _detect_charged_fragments(self.parent.orbs):
-            rbtn_layout.addWidget(QtWidgets.QLabel(f'\nNote:\nEffective energies are recommended for charged systems!'), i+1, 0, 1, 0)
+        if any(charge != 0 for charge in _determine_charges(self.parent.orbs).values()):
+            rbtn_layout.addWidget(QtWidgets.QLabel(f'\nNote:\nEffective energies are recommended for charged fragments!'), i+1, 0, 1, 0)
 
         # layout.addWidget(self._frag_rename_textedit, 1, 0, 1, 2)
         save_btn = QtWidgets.QPushButton('save')
@@ -493,12 +529,12 @@ class MplCanvas(FigureCanvas):
             if gid.startswith('MO_') or gid.startswith('SFO_'):
                 self.fig.canvas.set_cursor(Cursors.HAND)
 
-            s = '\n'
+            s = ''
             if gid.startswith('MO_'):
                 mo = self.parent.orbs.mos[gid[3:]]
                 submixes = self.parent.main_mix.split()
                 submix = [submix for submix in submixes if mo in submix.mos][0]
-                s += 'MO'.ljust(35)
+                s += 'MO'
                 s += f'\n   {mo}'
                 s += f'\n   {mo.relative_name}'
                 s += f'\n   {mo.symmetry} {mo.irrep_relative_name}\n'
@@ -512,7 +548,6 @@ class MplCanvas(FigureCanvas):
                 for sfo in sorted(submix.sfos, key=lambda sfo: -abs(sfo.mulliken_contribution(mo))):
                     s += f'\n{str(sfo):19.19} {sfo.mulliken_contribution(mo): 8.2%} {sfo.coefficient(mo): 7.4f}'
 
-                s += '\n' * (40 - len(s.splitlines()))
                 self._fade_unrelated_ints(mo)
                 self._already_unfaded = False
 
@@ -525,7 +560,7 @@ class MplCanvas(FigureCanvas):
                 sfo = self.parent.orbs.sfos[gid[4:]]
                 submixes = self.parent.main_mix.split()
                 submix = [submix for submix in submixes if sfo in submix.sfos][0]
-                s += 'SFO'.ljust(35)
+                s += 'SFO'
                 s += f'\n   {sfo}'
                 s += f'\n   {sfo.relative_name}'
                 s += f'\n   {sfo.symmetry} {sfo.irrep_relative_name}\n'
@@ -551,7 +586,6 @@ class MplCanvas(FigureCanvas):
                 for mo in sorted(submix.mos, key=lambda mo: -abs(sfo.mulliken_contribution(mo))):
                     s += f'\n{str(mo):19.19} {sfo.mulliken_contribution(mo): 8.2%} {sfo.coefficient(mo): 7.4f}'
 
-                s += '\n' * (40 - len(s.splitlines()))
                 self._fade_unrelated_ints(sfo)
                 self._already_unfaded = False
                 self.parent.info_box.setText(s)
@@ -563,7 +597,7 @@ class MplCanvas(FigureCanvas):
                 sfo = self.parent.orbs.sfos[gid[4:].split('->')[0].strip()]
                 mo = self.parent.orbs.mos[gid[4:].split('->')[1].strip()]
                 connected_sfos = [conn[0] for conn in self.parent.main_mix.connections if conn[1] == mo and conn[0].fragment_unique != sfo.fragment_unique]
-                s += 'SFO'.ljust(35)
+                s += 'SFO'
                 s += f'\n   {sfo}'
                 s += f'\n   {sfo.relative_name}'
                 s += f'\n   {sfo.symmetry} {sfo.irrep_relative_name}\n'
@@ -581,7 +615,6 @@ class MplCanvas(FigureCanvas):
                     is_bonding = ((sfo @ sfo2) * sfo.coefficient(mo) * sfo2.coefficient(mo)) >= 0
                     s += f'\n{str(sfo2):19.19} {"   Yes  " if is_bonding else "    No    "}'
 
-                s += '\n' * (40 - len(s.splitlines()))
                 self._fade_unrelated_ints(mo)
                 self._already_unfaded = False
                 self.parent.info_box.setText(s)
@@ -861,6 +894,9 @@ class AnalysisWindow(QtWidgets.QWidget):
         if self.new_tick_labels is not None:
             self.plot.axes.set_xticklabels(self.new_tick_labels)
 
+        self.OI_is_empty_label.setVisible(self.main_mix.main_mix.OI_is_empty)
+        self.PR_is_empty_label.setVisible(self.main_mix.main_mix.PR_is_empty)
+
         props = dict(edgecolor='white', facecolor='white', alpha=1)  # bbox features
         fig.canvas.draw_idle()
 
@@ -901,7 +937,7 @@ class AnalysisWindow(QtWidgets.QWidget):
             self._new_page_frame.hide()
             self.central_layout.removeWidget(self._new_page_frame)
 
-        is_charged = _detect_charged_fragments(self.orbs)
+        is_charged = any(charge != 0 for charge in _determine_charges(self.orbs).values())
         if is_charged and 'site_energy' not in self.orbs.sfo_energy_types:
             QtWidgets.QMessageBox.warning(self, "Warning", "WARNING\nYou have charged fragments but the effective energies are not available!\n\n Rerun your calculation with SFOSiteEnergies or FMatSFO enabled.");
         
@@ -938,17 +974,16 @@ class AnalysisWindow(QtWidgets.QWidget):
         self.info_tabs.setStyleSheet('QTabWidget { border-radius: 5px; border: 1px solid lightgray} QTabWidget::pane { border: 1px solid lightgray; background-color: white;border-radius: 5px; border-top-left-radius: 0px;} QTabWidget::tab-bar {background-color: lightgray; border: 0px;}')
         self.info_tabs.tabBar().setStyleSheet('border-radius: 5px; border: 1px solid lightgray; background-color: white')
         self.info_tabs.setFixedSize(288, 500)
-        self.info_box = QtWidgets.QLabel('')
+        self.info_box = ScrollLabel('')
         # self.info_box.setStyleSheet('padding: 10px; font: 10pt "IBM Plex Mono"; border-radius: 5px; background-color: white; border: 1px solid lightgray;')
-        self.info_box.setStyleSheet('padding: 10px; font: 10pt "IBM Plex Mono"')
         
         self.info_tabs.addTab(self.info_box, 'Orbitals')
 
-        system_info_box = QtWidgets.QLabel(self._get_system_info_txt())
-        system_info_box.setStyleSheet('padding: 10px; font: 10pt "IBM Plex Mono";')
+        system_info_box = ScrollLabel()
+        system_info_box.setText(self._get_system_info_txt())
+        # system_info_box.setStyleSheet('padding: 10px; font: 10pt "IBM Plex Mono";')
         
         self.info_tabs.addTab(system_info_box, 'System')
-        
 
         layout.addWidget(self.info_tabs, 0, 1, QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
 
@@ -959,18 +994,25 @@ class AnalysisWindow(QtWidgets.QWidget):
         slider_box.setLayout(slider_layout)
         layout.addWidget(slider_box, 1, 0)
 
+        self.OI_is_empty_label = QtWidgets.QLabel('⚠️')
+        self.OI_is_empty_label.setToolTip('Could not find any Orbital Interactions for these settings.')
+        slider_layout.addWidget(self.OI_is_empty_label, 0, 0)
+        sp_retain = self.OI_is_empty_label.sizePolicy()
+        sp_retain.setRetainSizeWhenHidden(True)
+        self.OI_is_empty_label.setSizePolicy(sp_retain)
+
         self.cbox_OI = QtWidgets.QCheckBox('Show OI')
         self.cbox_OI.setChecked(True)
-        slider_layout.addWidget(self.cbox_OI, 0, 0)
+        slider_layout.addWidget(self.cbox_OI, 0, 1)
         self.cbox_OI.checkStateChanged.connect(self._update_plot)
 
         label_OI = QtWidgets.QLabel('τ<sub>oi</sub> =')
         label_OI.setStyleSheet('QLabel{ font: 16pt}')
-        slider_layout.addWidget(label_OI, 0, 1)
+        slider_layout.addWidget(label_OI, 0, 2)
 
         inc_oi_btn = QtWidgets.QPushButton('<')
         inc_oi_btn.clicked.connect(self._set_next_oi_slider)
-        slider_layout.addWidget(inc_oi_btn, 0, 3)
+        slider_layout.addWidget(inc_oi_btn, 0, 4)
         inc_oi_btn.setStyleSheet("""
             QPushButton {
                 font-size: 12px;
@@ -990,11 +1032,11 @@ class AnalysisWindow(QtWidgets.QWidget):
         self.slider_OI.setMaximum(floor(np.log10(slider_OI_max) * slider_resolution))
         self.slider_OI.setSliderPosition(np.log10(slider_OI_max/1.5) * slider_resolution)
         self.main_mix.set_oi_threshold(slider_OI_max/1.5)
-        slider_layout.addWidget(self.slider_OI, 0, 4)
+        slider_layout.addWidget(self.slider_OI, 0, 5)
 
         dec_oi_btn = QtWidgets.QPushButton('>')
         dec_oi_btn.clicked.connect(self._set_previous_oi_slider)
-        slider_layout.addWidget(dec_oi_btn, 0, 5)
+        slider_layout.addWidget(dec_oi_btn, 0, 6)
         dec_oi_btn.setStyleSheet("""
             QPushButton {
                 font-size: 12px;
@@ -1011,17 +1053,21 @@ class AnalysisWindow(QtWidgets.QWidget):
 
         label_value_OI = QtWidgets.QLabel(f'{10**(self.slider_OI.value()/slider_resolution):.2E}')
         label_value_OI.setStyleSheet('font: 12pt "IBM Plex Mono"')
-        slider_layout.addWidget(label_value_OI, 0, 2)
+        slider_layout.addWidget(label_value_OI, 0, 3)
         self.slider_OI.valueChanged.connect(lambda value: (self._update_plot(), label_value_OI.setText(f'{10**(value/slider_resolution):.2E}')))
+
+        self.PR_is_empty_label = QtWidgets.QLabel('⚠️')
+        self.PR_is_empty_label.setToolTip('Could not find any Pauli Repulsions for these settings.')
+        slider_layout.addWidget(self.PR_is_empty_label, 1, 0)
 
         self.cbox_PR = QtWidgets.QCheckBox('Show PR')
         self.cbox_PR.setChecked(True)
-        slider_layout.addWidget(self.cbox_PR, 1, 0)
+        slider_layout.addWidget(self.cbox_PR, 1, 1)
         self.cbox_PR.checkStateChanged.connect(self._update_plot)
 
         label_PR = QtWidgets.QLabel('τ<sub>pr</sub> =')
         label_PR.setStyleSheet('QLabel{ font: 16pt}')
-        slider_layout.addWidget(label_PR, 1, 1)
+        slider_layout.addWidget(label_PR, 1, 2)
 
         self.slider_PR = QtWidgets.QSlider(QtCore.Qt.Horizontal, self._analysis_page_frame)
         # slider_PR_max = max(max(mix.xiaobo_value() for mix in mixes) for mixes in self.pauli_mixes.values())
@@ -1033,7 +1079,7 @@ class AnalysisWindow(QtWidgets.QWidget):
 
         inc_pr_btn = QtWidgets.QPushButton('<')
         inc_pr_btn.clicked.connect(self._set_next_pr_slider)
-        slider_layout.addWidget(inc_pr_btn, 1, 3)
+        slider_layout.addWidget(inc_pr_btn, 1, 4)
         inc_pr_btn.setStyleSheet("""
             QPushButton {
                 font-size: 12px;
@@ -1051,11 +1097,11 @@ class AnalysisWindow(QtWidgets.QWidget):
         self.slider_PR.setMaximum(slider_PR_max * 1000 * slider_resolution)
         self.slider_PR.setSliderPosition(slider_PR_max/1.5 * 1000 * slider_resolution)
         self.main_mix.set_pr_threshold(slider_PR_max/1.1)
-        slider_layout.addWidget(self.slider_PR, 1, 4)
+        slider_layout.addWidget(self.slider_PR, 1, 5)
 
         dec_pr_btn = QtWidgets.QPushButton('>')
         dec_pr_btn.clicked.connect(self._set_previous_pr_slider)
-        slider_layout.addWidget(dec_pr_btn, 1, 5)
+        slider_layout.addWidget(dec_pr_btn, 1, 6)
         dec_pr_btn.setStyleSheet("""
             QPushButton {
                 font-size: 12px;
@@ -1071,15 +1117,16 @@ class AnalysisWindow(QtWidgets.QWidget):
             """)
         label_value_PR = QtWidgets.QLabel(f'{self.slider_PR.value()/slider_resolution:.3f}')
         label_value_PR.setStyleSheet('font: 12pt "IBM Plex Mono"')
-        slider_layout.addWidget(label_value_PR, 1, 2)
+        slider_layout.addWidget(label_value_PR, 1, 3)
         self.slider_PR.valueChanged.connect(lambda value: (self._update_plot(), label_value_PR.setText(f'{value/slider_resolution/1000:.4f}')))
         
         slider_layout.setColumnStretch(0, 0)
         slider_layout.setColumnStretch(1, 0)
         slider_layout.setColumnStretch(2, 0)
         slider_layout.setColumnStretch(3, 0)
-        slider_layout.setColumnStretch(4, 1)
-        slider_layout.setColumnStretch(5, 0)
+        slider_layout.setColumnStretch(4, 0)
+        slider_layout.setColumnStretch(5, 1)
+        slider_layout.setColumnStretch(6, 0)
 
         selector_box = QtWidgets.QFrame()
         selector_box.setStyleSheet('''
@@ -1141,7 +1188,40 @@ class AnalysisWindow(QtWidgets.QWidget):
         self._update_plot()
 
     def _get_system_info_txt(self):
-        return ''
+        reader = self.orbs.reader
+        # results = tcutility.read(reader.path)
+        # print(results)
+        charges = _determine_charges(self.orbs)
+        unrestricted_mos = self.orbs.data['calc_info']['unrestricted_mos']
+        unrestricted_sfos = self.orbs.data['calc_info']['unrestricted_sfos']
+        spin_pols = self.orbs.data['calc_info']['sfo_spinpolarizations']
+
+        s = 'Complex\n'
+        s += f'    Charge: {charges["Complex"]}\n'
+        s += f'    Restricted: {not unrestricted_mos}\n'
+
+        for frag in self.orbs.fragments:
+            s += f'\nFragment({frag})\n'
+            s += f'    Charge: {charges[frag]}\n'
+            s += f'    Restricted: {not unrestricted_sfos}\n'
+
+
+        # rows = {
+        #     'Complex': '',
+        #     'Formula': formula.molecule(mols['complex']),
+        #     'Nº MOs': len(orbs.mos),
+        #     'Nº occ. MOs': len([mo for mo in orbs.mos if mo.occupied]),
+        #     'Nº virt. MOs': len([mo for mo in orbs.mos if not mo.occupied]),
+        #     'Nº frozen cores': orbs.data['MOs']['nfrozencores']['total'],
+        #     'ΔE_int': orbs.reader.read('Energy', 'Bond Energy') * 627.503,
+        #     'ΔE_Pauli': orbs.reader.read('Energy', 'Pauli Total') * 627.503,
+        #     'ΔE_oi': orbs.reader.read('Energy', 'Orb.Int. Total') * 627.503,
+        #     'ΔV_elstat': orbs.reader.read('Energy', 'elstat') * 627.503,
+        #     'ΔE_disp': orbs.reader.read('Energy', 'Dispersion Energy') * 627.503,
+        #     'Point group': orbs.reader.read('Symmetry', 'grouplabel').strip(),
+        # }
+
+        return s
 
 
     def _set_next_pr_slider(self):
