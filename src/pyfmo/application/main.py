@@ -523,13 +523,30 @@ class MplCanvas(FigureCanvas):
         super().__init__(self.fig)
 
         self.fig.canvas.mpl_connect('motion_notify_event', self.on_plot_hover)
-        self.fig.canvas.mpl_connect('button_press_event', self.on_click)
+        self.fig.canvas.mpl_connect('button_press_event', self.on_plot_click)
 
         self._frag_rename_dialog = FragRenameDialog(self)
         self._yaxis_dialog = YAxisDialog(self)
         self._already_unfaded = True
 
-    def on_click(self, event):
+    def draw_orbital(self, event):
+    
+        import tcviewer
+
+        if self.parent.tcviewer_screen is None or self.parent.tcviewer_screen.isclosed:
+            self.parent.tcviewer_screen = tcviewer.screen._ScreenWindow()
+            self.parent.tcviewer_screen.__enter__()
+            self.parent.tcviewer_screen.setWindowTitle('PyOrbb Viewer')
+            self.parent.tcviewer_screen.show()
+
+        with self.parent.tcviewer_screen.add_molscene() as scene:
+            c1, c2 = ([1, 0, 0], [0, 0, 1]) if self.selected_orbital.occupied else ([1, .5, 0], [0, 1, 1])
+            scene.draw_molecule(self.selected_orbital.molecule)
+            scene.draw_dual_isosurface(self.selected_orbital.cube_file(preambles=[f'source {os.path.join(os.path.split(self.parent.parent._amsbin_loc)[0], "amsbashrc.sh")}']), colorm=c1, colorp=c2)
+            scene.draw_text(str(self.selected_orbital))
+
+
+    def on_plot_click(self, event):
         artists = self.axes.get_children()
         artists = sorted(artists, key=lambda artist: artist.zorder)
 
@@ -549,39 +566,7 @@ class MplCanvas(FigureCanvas):
             self.axes.set_xticklabels(self.parent.new_tick_labels)
             self.fig.canvas.draw_idle()
 
-        for artist in artists:
-            gid = artist.get_gid()
-            if gid is None:
-                continue
 
-            # Searching which data member corresponds to current mouse position
-            if not artist.contains(event)[0]:
-                continue
-
-            if gid.startswith('MO_'):
-                orb = self.parent.orbs.mos[gid[3:]]
-
-            elif gid.startswith('SFO_'):
-                orb = self.parent.orbs.sfos[gid[4:]]
-            else:
-                continue
-
-            import tcviewer
-
-            if self.parent.tcviewer_screen is None or self.parent.tcviewer_screen.isclosed:
-                self.parent.tcviewer_screen = tcviewer.screen._ScreenWindow()
-                self.parent.tcviewer_screen.__enter__()
-                self.parent.tcviewer_screen.setWindowTitle('PyOrbb Viewer')
-                self.parent.tcviewer_screen.show()
-
-            with self.parent.tcviewer_screen.add_molscene() as scene:
-                c1, c2 = ([1, 0, 0], [0, 0, 1]) if orb.occupied else ([1, .5, 0], [0, 1, 1])
-                scene.draw_molecule(orb.molecule)
-                scene.draw_dual_isosurface(orb.cube_file(preambles=[f'source {os.path.join(os.path.split(self.parent.parent._amsbin_loc)[0], "amsbashrc.sh")}']), colorm=c1, colorp=c2)
-                scene.draw_text(str(orb))
-
-
-    def on_plot_hover(self, event):
         # Iterating over each data member plotted
         lines = self.axes.get_children()
         lines = sorted(lines, key=lambda line: -line.zorder)
@@ -618,7 +603,10 @@ class MplCanvas(FigureCanvas):
                 self._fade_unrelated_ints(mo)
                 self._already_unfaded = False
 
-                self.parent.info_box.setText(s)
+                self.parent.orbital_info_box.setText(s)
+                self.parent.orbital_draw_button.setEnabled(True)
+                self.parent.orbital_filter_button.setEnabled(True)
+                self.selected_orbital = mo
                 self.fig.canvas.draw_idle()
 
                 break
@@ -655,7 +643,10 @@ class MplCanvas(FigureCanvas):
 
                 self._fade_unrelated_ints(sfo)
                 self._already_unfaded = False
-                self.parent.info_box.setText(s)
+                self.parent.orbital_info_box.setText(s)
+                self.parent.orbital_draw_button.setEnabled(True)
+                self.parent.orbital_filter_button.setEnabled(True)
+                self.selected_orbital = sfo
                 self.fig.canvas.draw_idle()
 
                 break
@@ -682,7 +673,10 @@ class MplCanvas(FigureCanvas):
 
                 self._fade_unrelated_ints(mo)
                 self._already_unfaded = False
-                self.parent.info_box.setText(s)
+                self.parent.orbital_info_box.setText(s)
+                self.parent.orbital_draw_button.setEnabled(False)
+                self.parent.orbital_filter_button.setEnabled(False)
+                self.selected_orbital = None
                 self.fig.canvas.draw_idle()
 
                 break
@@ -691,10 +685,33 @@ class MplCanvas(FigureCanvas):
             if not self._already_unfaded:
                 self._already_unfaded = True
                 self._unfade()
-
-                # self.parent.info_box.setText((' '*35 + '\n')*40)
+                self.parent.orbital_info_box.setText('')
+                self.parent.orbital_draw_button.setEnabled(False)
+                self.parent.orbital_filter_button.setEnabled(False)
+                self.selected_orbital = None
                 self.fig.canvas.set_cursor(Cursors.POINTER)
                 self.fig.canvas.draw_idle()
+
+
+    def on_plot_hover(self, event):
+        # Iterating over each data member plotted
+        lines = self.axes.get_children()
+        lines = sorted(lines, key=lambda line: -line.zorder)
+        for curve in lines:
+            gid = curve.get_gid()
+            if gid is None:
+                continue 
+
+            # Searching which data member corresponds to current mouse position
+            if not curve.contains(event)[0]:
+                continue
+
+            if gid.startswith('MO_') or gid.startswith('SFO_') or gid.startswith('MIX_'):
+                self.fig.canvas.set_cursor(Cursors.HAND)
+                break
+        else:
+            self.fig.canvas.set_cursor(Cursors.POINTER)
+
 
     def _unfade(self):
         artists = self.axes.get_children()
@@ -1035,14 +1052,53 @@ class AnalysisWindow(QtWidgets.QWidget):
         plot_container_layout.addWidget(self.plot, 0)
         layout.addWidget(plot_container, 0, 0, 1, 1, QtCore.Qt.AlignCenter)
 
+
         self.info_tabs = QtWidgets.QTabWidget()
         self.info_tabs.setStyleSheet('QTabWidget { border-radius: 5px; border: 1px solid lightgray} QTabWidget::pane { border: 1px solid lightgray; background-color: white;border-radius: 5px; border-top-left-radius: 0px;} QTabWidget::tab-bar {background-color: lightgray; border: 0px;}')
         self.info_tabs.tabBar().setStyleSheet('border-radius: 5px; border: 1px solid lightgray; background-color: white')
         self.info_tabs.setFixedSize(288, 500)
-        self.info_box = ScrollLabel('')
-        # self.info_box.setStyleSheet('padding: 10px; font: 10pt "IBM Plex Mono"; border-radius: 5px; background-color: white; border: 1px solid lightgray;')
+        orbital_info_frame = QtWidgets.QFrame()
+        orbital_info_layout = QtWidgets.QGridLayout()
+        orbital_info_frame.setLayout(orbital_info_layout)
+        self.orbital_info_box = ScrollLabel('')
+        orbital_info_layout.addWidget(self.orbital_info_box, 0, 0, 1, 2)
+        self.orbital_draw_button = QtWidgets.QPushButton('Draw')
+        self.orbital_draw_button.clicked.connect(self.plot.draw_orbital)
+        self.orbital_draw_button.setEnabled(False)
+        self.orbital_draw_button.setStyleSheet("""
+            QPushButton {
+                font-size: 12px;
+                border: 1px solid lightgray;
+                border-radius: 5px;
+                padding: 8px;
+                margin: 0px; 
+                background-color: white;
+            }
+            QPushButton:hover {
+                background-color: #f0f0f0;
+                }
+            """)
+        self.orbital_filter_button = QtWidgets.QPushButton('Filter')
+        self.orbital_filter_button.setEnabled(False)
+        self.orbital_filter_button.setStyleSheet("""
+            QPushButton {
+                font-size: 12px;
+                border: 1px solid lightgray;
+                border-radius: 5px;
+                padding: 8px;
+                margin: 0px; 
+                background-color: white;
+            }
+            QPushButton:hover {
+                background-color: #f0f0f0;
+                }
+            """)
+        orbital_info_layout.addWidget(self.orbital_info_box, 0, 0, 1, 2)
+        orbital_info_layout.addWidget(self.orbital_draw_button, 1, 0, 1, 1)
+        orbital_info_layout.addWidget(self.orbital_filter_button, 1, 1, 1, 1)
+        # self.orbital_info_box.setStyleSheet('padding: 10px; font: 10pt "IBM Plex Mono"; border-radius: 5px; background-color: white; border: 1px solid lightgray;')
         
-        self.info_tabs.addTab(self.info_box, 'Orbitals')
+        self.info_tabs.addTab(orbital_info_frame, 'Orbitals')
 
         system_info_box = ScrollLabel()
         system_info_box.setText(self._get_system_info_txt())
