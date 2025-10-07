@@ -46,15 +46,25 @@ default_setting('amsbin', '$AMSBIN')
 
 
 def _determine_charges(orbs):
+    # build up the effective charges of the atoms
+    # this takes into account the atom number and number of frozen core electrons
+    atomtypes = orbs.reader.read('Geometry', 'atomtype').split()
+    eff_charges = orbs.reader.read('Geometry', 'atomtype effective charge')
+    atomtype_charges = {typ: charge for typ, charge in zip(atomtypes, eff_charges)}
+
+    # calculate the charges for the fragments and the complex
     charges = {}
     for frag in orbs.fragments:
         sfos = orbs.sfos.filter(fragment=frag)
+        # we need the atoms in the molecule
         mol = sfos[0].molecule
-        expected_Nelectrons = sum(atom.atnum for atom in mol)
+        expected_Nelectrons = sum(atomtype_charges[atom.symbol] for atom in mol)
         actual_Nelectrons = int(sum(sfo.occupation for sfo in sfos))
         charges[frag] = expected_Nelectrons - actual_Nelectrons
+        
     charges['Complex'] = sum(charges.values())
     return charges
+
 
 class ScrollLabel(QtWidgets.QScrollArea):
     # constructor
