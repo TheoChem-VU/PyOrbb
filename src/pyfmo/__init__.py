@@ -72,7 +72,7 @@ IRREP_TRANSLATION_HTML = {
     "F": "<i>f</i>",
 }
 
-def translate_irrep_label(symm_label: str, mode='latex', use_italics=True) -> str:
+def translate_irrep_label(symm_label: str, mode='latex', use_formatting=True) -> str:
     if mode == 'latex':
         if symm_label in IRREP_TRANSLATION_LATEX:
             return IRREP_TRANSLATION_LATEX[symm_label]
@@ -101,38 +101,38 @@ def translate_irrep_label(symm_label: str, mode='latex', use_italics=True) -> st
 
     if mode == 'html':
         if symm_label in IRREP_TRANSLATION_HTML:
-            return IRREP_TRANSLATION_HTML[symm_label]
-
-        if ':' in symm_label:
-            subspecies, dimension = symm_label.split(':')
+            s = IRREP_TRANSLATION_HTML[symm_label]
         else:
-            subspecies = symm_label
-            dimension = None
-        
-        if '.' in subspecies:
-            subspecies, parity = subspecies.split('.')
-        else:
-            parity = None
+            if ':' in symm_label:
+                subspecies, dimension = symm_label.split(':')
+            else:
+                subspecies = symm_label
+                dimension = None
+            
+            if '.' in subspecies:
+                subspecies, parity = subspecies.split('.')
+            else:
+                parity = None
 
-        s = IRREP_TRANSLATION_HTML.get(subspecies, subspecies)
-        if parity is not None:
-            s += f'<sub>{parity}</sub>'
-        if dimension is not None:
+            s = IRREP_TRANSLATION_HTML.get(subspecies, subspecies)
+            if parity is not None:
+                s += f'<sub>{parity}</sub>'
+            if dimension is not None:
 
-            if re.search(r"\d+", dimension): 
-                dimension = re.sub(r"([xyz])(\d+)", r"\1<sup>\2</sup>", dimension)
-            s += f'<sub><i>{dimension}</i></sub>'
+                if re.search(r"\d+", dimension): 
+                    dimension = re.sub(r"([xyz])(\d+)", r"\1<sup>\2</sup>", dimension)
+                s += f'<sub><i>{dimension}</i></sub>'
 
-        if not use_italics:
-            s = s.replace('<i>', '')
-            s = s.replace('</i>', '')
+        if not use_formatting:
+            for format_tag in ['<i>', '</i>', '<sub>', '</sub>', '<sup>', '</sup>']:
+                s = s.replace(format_tag, '')
 
         return s
 
     return symm_label
 
 
-def generate_label(orb, mode='latex', use_italics=True):
+def generate_label(orb, mode='latex', use_formatting=True):
     if mode == 'latex':
         spin_part = {
             'A': r'$\alpha$',
@@ -143,10 +143,6 @@ def generate_label(orb, mode='latex', use_italics=True):
             'A': '<i>α</i>',
             'B': '<i>β</i>'
         }.get(orb.spin, '')
-        
-        if not use_italics:
-            spin_part = spin_part.replace('<i>', '')
-            spin_part = spin_part.replace('</i>', '')
 
     if isinstance(orb, orbitals.objects.MO):
         orb_name = f'{orb.name}{spin_part}'
@@ -168,6 +164,10 @@ def generate_label(orb, mode='latex', use_italics=True):
             orb_name = orb_name.replace(principal_qn, str(int(principal_qn) + 3), 1)
 
         orb_name = orb_name.replace(orb.subspecies, translate_irrep_label(orb.subspecies, mode=mode))
+
+    if not use_formatting:
+        for format_tag in ['<i>', '</i>', '<sub>', '</sub>', '<sup>', '</sup>']:
+            orb_name = orb_name.replace(format_tag, '')
 
     return orb_name
 
