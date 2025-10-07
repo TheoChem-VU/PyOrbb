@@ -129,7 +129,7 @@ def draw_interaction(sfos, mos, connections,
         if orb in highlighted_orbitals:
             ax.plot([poss[orb]-level_width/2, poss[orb]+level_width/2], 
                     [E, E], 
-                    c='#00FFFF', 
+                    c='#36B8FF', 
                     linewidth=level_thickness + highlight_width, 
                     gid=f'{"MO" if is_MO else "SFO"}_{orb}')
 
@@ -176,19 +176,19 @@ def draw_interaction(sfos, mos, connections,
             if orb.spin != 'AB':
                 offset_x = 0
 
-            if orb in highlighted_orbitals:
-                ax.arrow(poss[orb]+offset_x, 
-                         E+offset_y, 
-                         0, 
-                         displacement, 
-                         width=arrow_width, 
-                         head_width=arrow_head_width, 
-                         head_length=arrow_head_length * energy_span, 
-                         color='#00FFFF', 
-                         overhang=arrow_overhang, 
-                         length_includes_head=True,
-                         linewidth=arrow_thickness + highlight_width,
-                         gid=f'{"ARROWMO" if is_MO else "ARROWSFO"}_{orb}')
+            # if orb in highlighted_orbitals:
+            #     ax.arrow(poss[orb]+offset_x, 
+            #              E+offset_y, 
+            #              0, 
+            #              displacement, 
+            #              width=arrow_width, 
+            #              head_width=arrow_head_width, 
+            #              head_length=arrow_head_length * energy_span, 
+            #              color='#36B8FF', 
+            #              overhang=arrow_overhang, 
+            #              length_includes_head=True,
+            #              linewidth=arrow_thickness + highlight_width,
+            #              gid=f'{"ARROWMO" if is_MO else "ARROWSFO"}_{orb}')
 
             ax.arrow(poss[orb]+offset_x, 
                      E+offset_y, 
