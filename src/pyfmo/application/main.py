@@ -290,10 +290,12 @@ class OrbitalSelectionDialog(QtWidgets.QDialog):
             headers = list(column_widths.keys())
             if column == 'Complex':
                 headers.remove('Subsp.')
-                headers.remove('Energy (eff.)')
                 headers.remove('Gross Pop.')
                 headers.remove('Rel. Name (Subsp.)')
-                
+
+            if not self.parent.orbs.data['calc_info']['has_site_energy'] or column == 'Complex':
+                headers.remove('Energy (eff.)')
+
             self.tables[column] = QtWidgets.QTableWidget(len(col_state), len(headers))
             self.tables[column].verticalHeader().setDefaultSectionSize(35)
 
