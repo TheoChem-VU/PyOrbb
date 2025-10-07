@@ -11,6 +11,7 @@ import platformdirs
 import json
 from math import floor, ceil
 import tcutility
+from functools import partial
 
 slider_resolution = 500
 
@@ -74,7 +75,7 @@ class ScrollLabel(QtWidgets.QScrollArea):
         # making widget resizable
         self.setWidgetResizable(True)
         self.horizontalScrollBar().setEnabled(False)
-
+        self.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff);
         # making qwidget object
         content = QtWidgets.QWidget(self)
         self.setWidget(content)
@@ -524,13 +525,23 @@ class MplCanvas(FigureCanvas):
 
         self.fig.canvas.mpl_connect('motion_notify_event', self.on_plot_hover)
         self.fig.canvas.mpl_connect('button_press_event', self.on_plot_click)
-
+        self.fig.canvas.mpl_connect('key_press_event', self.on_key_press)
+        self.fig.canvas.mpl_connect('key_release_event', self.on_key_release)
+        self._selected_orbitals = []
         self._frag_rename_dialog = FragRenameDialog(self)
         self._yaxis_dialog = YAxisDialog(self)
         self._already_unfaded = True
+        self.shift_is_held = False
 
-    def draw_orbital(self, event):
-    
+    def on_key_press(self, event):
+        if event.key == 'shift':
+            self.shift_is_held = True
+
+    def on_key_release(self, event):
+        if event.key == 'shift':
+            self.shift_is_held = False
+
+    def draw_orbital(self, orb=None, draw_type='single'):
         import tcviewer
 
         if self.parent.tcviewer_screen is None or self.parent.tcviewer_screen.isclosed:
@@ -540,10 +551,93 @@ class MplCanvas(FigureCanvas):
             self.parent.tcviewer_screen.show()
 
         with self.parent.tcviewer_screen.add_molscene() as scene:
-            c1, c2 = ([1, 0, 0], [0, 0, 1]) if self.selected_orbital.occupied else ([1, .5, 0], [0, 1, 1])
-            scene.draw_molecule(self.selected_orbital.molecule)
-            scene.draw_dual_isosurface(self.selected_orbital.cube_file(preambles=[f'source {os.path.join(os.path.split(self.parent.parent._amsbin_loc)[0], "amsbashrc.sh")}']), colorm=c1, colorp=c2)
-            scene.draw_text(str(self.selected_orbital))
+            if draw_type == 'single':
+                c1, c2 = ([1, 0, 0], [0, 0, 1]) if orb.occupied else ([1, .5, 0], [0, 1, 1])
+                scene.draw_molecule(orb.molecule)
+                scene.draw_dual_isosurface(orb.cube_file(preambles=[f'source {os.path.join(os.path.split(self.parent.parent._amsbin_loc)[0], "amsbashrc.sh")}']), colorm=c1, colorp=c2)
+                scene.draw_text(str(orb))
+
+            if draw_type == 'sum':
+                mol = orb[0].molecule + orb[1].molecule
+                scene.draw_molecule(mol)
+
+                c1, c2 = ([1, 0, 0], [0, 0, 1]) if orb[0].occupied else ([1, .5, 0], [0, 1, 1])
+                scene.draw_dual_isosurface(orb[0].cube_file(preambles=[f'source {os.path.join(os.path.split(self.parent.parent._amsbin_loc)[0], "amsbashrc.sh")}']), colorm=c1, colorp=c2)
+                c1, c2 = ([1, 0, 0], [0, 0, 1]) if orb[1].occupied else ([1, .5, 0], [0, 1, 1])
+                scene.draw_dual_isosurface(orb[1].cube_file(preambles=[f'source {os.path.join(os.path.split(self.parent.parent._amsbin_loc)[0], "amsbashrc.sh")}']), colorm=c1, colorp=c2)
+                
+                scene.draw_text(str(orb[0]) + ' & ' + str(orb[1]))
+
+            if draw_type == 'overlap':
+                c1, c2 = [0, 1, 0], [1, 0, 1]
+                mol = orb[0].molecule + orb[1].molecule
+                scene.draw_molecule(mol)
+
+                cub1 = orb[0].cube_file(preambles=[f'source {os.path.join(os.path.split(self.parent.parent._amsbin_loc)[0], "amsbashrc.sh")}'], grid_around_mol=mol)
+                cub2 = orb[1].cube_file(preambles=[f'source {os.path.join(os.path.split(self.parent.parent._amsbin_loc)[0], "amsbashrc.sh")}'], grid_around_mol=mol)
+                cub1.values *= cub2.values
+                scene.draw_dual_isosurface(cub1, colorm=c1, colorp=c2, isovalue=0.03**2)
+                
+                scene.draw_text(str(orb[0]) + ' * ' + str(orb[1]))
+
+    def _set_orbital_info_txt(self):
+        s = ''
+        for i, orb in enumerate(self._selected_orbitals):
+            if isinstance(orb, pyfmo.orbitals.objects.SFO):
+                submixes = self.parent.main_mix.split()
+                submix = [submix for submix in submixes if orb in submix.sfos][0]
+                if len(self._selected_orbitals) == 1:
+                    s += 'SFO'
+                else:
+                    s += f'({i+1}/{len(self._selected_orbitals)}) SFO'
+
+                s += f'\n  Name         {pyfmo.generate_label(orb, mode="html", use_formatting=False)} ({orb.relative_name})'
+                s += f'\n  Symm.        {pyfmo.translate_irrep_label(orb.symmetry, mode="html", use_formatting=False)} ({orb.symmetry_relative_name})'
+                s += f'\n  Subsp.       {pyfmo.translate_irrep_label(orb.subspecies, mode="html", use_formatting=False)} ({orb.subspecies_relative_name})'
+                s += f'\n  Fragment     {orb.fragment_unique}'
+                s += f'\n  Energy      {getattr(orb, self.parent._energytype_selection): .2f} eV'
+                s += f'\n  Occupation  {orb.occupation: .2f}'
+                s += f'\n  Pop.        {orb.gross_population: .3f}'
+                s += f'\n  Spin-pop.   {orb.gross_spin: .3f}'
+                s += f'\n  Spin         {orb.spin}'
+                s += f'\n  Irrep        {orb.symmetry}'
+
+                s += '\n\nSFO                      S   dE (eV)'
+                s += '\n─────────────────── ────── ─────────'
+                for sfo2 in sorted(submix.sfos, key=lambda sfo_: -abs(orb @ sfo_)):
+                    if sfo2 == orb:
+                        continue
+                    if sfo2.fragment_unique == orb.fragment_unique:
+                        continue
+                    s += f'\n{str(sfo2):19.19} {orb @ sfo2: 5.3f} {abs(getattr(orb, self.parent._energytype_selection) - getattr(sfo2, self.parent._energytype_selection)): 8.2f}'
+                
+                s += '\n\nMO                     Contr   Coeff'
+                s += '\n─────────────────── ──────── ───────'
+                for mo in sorted(submix.mos, key=lambda mo: -abs(orb.mulliken_contribution(mo))):
+                    s += f'\n{str(mo):19.19} {orb.mulliken_contribution(mo): 8.2%} {orb.coefficient(mo): 7.4f}'
+
+            if isinstance(orb, pyfmo.orbitals.objects.MO):
+                submixes = self.parent.main_mix.split()
+                submix = [submix for submix in submixes if orb in submix.mos][0]
+                if len(self._selected_orbitals) == 1:
+                    s += 'MO'
+                else:
+                    s += f'({i+1}/{len(self._selected_orbitals)}) MO'
+
+                s += f'\n  Name         {pyfmo.generate_label(orb, mode="html", use_formatting=False)} ({orb.relative_name})'
+                s += f'\n  Symm.        {pyfmo.translate_irrep_label(orb.symmetry, mode="html", use_formatting=False)} ({orb.symmetry_relative_name})'
+                s += f'\n  Energy      {orb.energy: .2f} eV'
+                s += f'\n  Occupation  {orb.occupation: .2f}'
+                s += f'\n  Spin         {orb.spin}'
+                s += f'\n  Irrep        {orb.symmetry}'
+
+                s += '\n\nSFO                    Contr   Coeff'
+                s += '\n─────────────────── ──────── ───────'
+                for sfo in sorted(submix.sfos, key=lambda sfo: -abs(sfo.mulliken_contribution(orb))):
+                    s += f'\n{str(sfo):19.19} {sfo.mulliken_contribution(orb): 8.2%} {sfo.coefficient(orb): 7.4f}'
+
+            s += '\n\n'
+        self.parent.orbital_info_box.setText(s)
 
 
     def on_plot_click(self, event):
@@ -566,10 +660,12 @@ class MplCanvas(FigureCanvas):
             self.axes.set_xticklabels(self.parent.new_tick_labels)
             self.fig.canvas.draw_idle()
 
-
         # Iterating over each data member plotted
         lines = self.axes.get_children()
         lines = sorted(lines, key=lambda line: -line.zorder)
+        if not self.shift_is_held:
+            self._selected_orbitals = []
+
         for curve in lines:
             gid = curve.get_gid()
             if gid is None:
@@ -579,31 +675,14 @@ class MplCanvas(FigureCanvas):
             if not curve.contains(event)[0]:
                 continue
 
-            if gid.startswith('MO_') or gid.startswith('SFO_'):
-                self.fig.canvas.set_cursor(Cursors.HAND)
-
             s = ''
             if gid.startswith('MO_'):
                 mo = self.parent.orbs.mos[gid[3:]]
-                submixes = self.parent.main_mix.split()
-                submix = [submix for submix in submixes if mo in submix.mos][0]
-                s += 'MO'
-                s += f'\n  Name         {pyfmo.generate_label(mo, mode="html", use_formatting=False)} ({mo.relative_name})'
-                s += f'\n  Symm.        {pyfmo.translate_irrep_label(mo.symmetry, mode="html", use_formatting=False)} ({mo.symmetry_relative_name})'
-                s += f'\n  Energy      {mo.energy: .2f} eV'
-                s += f'\n  Occupation  {mo.occupation: .2f}'
-                s += f'\n  Spin         {mo.spin}'
-                s += f'\n  Irrep        {mo.symmetry}'
-
-                s += '\n\nSFO                    Contr   Coeff'
-                s += '\n─────────────────── ──────── ───────'
-                for sfo in sorted(submix.sfos, key=lambda sfo: -abs(sfo.mulliken_contribution(mo))):
-                    s += f'\n{str(sfo):19.19} {sfo.mulliken_contribution(mo): 8.2%} {sfo.coefficient(mo): 7.4f}'
-
-                self._fade_unrelated_ints(mo)
+                
+                self._selected_orbitals.append(mo)
+                self._fade_unrelated_ints(self._selected_orbitals)
                 self._already_unfaded = False
 
-                self.parent.orbital_info_box.setText(s)
                 self.parent.orbital_draw_button.setEnabled(True)
                 self.parent.orbital_filter_button.setEnabled(True)
                 self.selected_orbital = mo
@@ -613,37 +692,10 @@ class MplCanvas(FigureCanvas):
 
             if gid.startswith('SFO_'):
                 sfo = self.parent.orbs.sfos[gid[4:]]
-                submixes = self.parent.main_mix.split()
-                submix = [submix for submix in submixes if sfo in submix.sfos][0]
-                s += 'SFO'
-                s += f'\n  Name         {pyfmo.generate_label(sfo, mode="html", use_formatting=False)} ({sfo.relative_name})'
-                s += f'\n  Symm.        {pyfmo.translate_irrep_label(sfo.symmetry, mode="html", use_formatting=False)} ({sfo.symmetry_relative_name})'
-                s += f'\n  Subsp.       {pyfmo.translate_irrep_label(sfo.subspecies, mode="html", use_formatting=False)} ({sfo.subspecies_relative_name})'
-                s += f'\n  Fragment     {sfo.fragment_unique}'
-                s += f'\n  Energy      {getattr(sfo, self.parent._energytype_selection): .2f} eV'
-                s += f'\n  Occupation  {sfo.occupation: .2f}'
-                s += f'\n  Pop.        {sfo.gross_population: .3f}'
-                s += f'\n  Spin-pop.   {sfo.gross_spin: .3f}'
-                s += f'\n  Spin         {sfo.spin}'
-                s += f'\n  Irrep        {sfo.symmetry}'
-
-                s += '\n\nSFO                      S   dE (eV)'
-                s += '\n─────────────────── ────── ─────────'
-                for sfo2 in sorted(submix.sfos, key=lambda sfo_: -abs(sfo @ sfo_)):
-                    if sfo2 == sfo:
-                        continue
-                    if sfo2.fragment_unique == sfo.fragment_unique:
-                        continue
-                    s += f'\n{str(sfo2):19.19} {sfo @ sfo2: 5.3f} {abs(getattr(sfo, self.parent._energytype_selection) - getattr(sfo2, self.parent._energytype_selection)): 8.2f}'
                 
-                s += '\n\nMO                     Contr   Coeff'
-                s += '\n─────────────────── ──────── ───────'
-                for mo in sorted(submix.mos, key=lambda mo: -abs(sfo.mulliken_contribution(mo))):
-                    s += f'\n{str(mo):19.19} {sfo.mulliken_contribution(mo): 8.2%} {sfo.coefficient(mo): 7.4f}'
-
-                self._fade_unrelated_ints(sfo)
+                self._selected_orbitals.append(sfo)
+                self._fade_unrelated_ints(self._selected_orbitals)
                 self._already_unfaded = False
-                self.parent.orbital_info_box.setText(s)
                 self.parent.orbital_draw_button.setEnabled(True)
                 self.parent.orbital_filter_button.setEnabled(True)
                 self.selected_orbital = sfo
@@ -671,7 +723,8 @@ class MplCanvas(FigureCanvas):
                     is_bonding = ((sfo @ sfo2) * sfo.coefficient(mo) * sfo2.coefficient(mo)) >= 0
                     s += f'\n{str(sfo2):19.19} {"   Yes  " if is_bonding else "    No    "}'
 
-                self._fade_unrelated_ints(mo)
+                self._selected_orbitals.extend([sfo, mo])
+                self._fade_unrelated_ints(self._selected_orbitals)
                 self._already_unfaded = False
                 self.parent.orbital_info_box.setText(s)
                 self.parent.orbital_draw_button.setEnabled(False)
@@ -691,6 +744,62 @@ class MplCanvas(FigureCanvas):
                 self.selected_orbital = None
                 self.fig.canvas.set_cursor(Cursors.POINTER)
                 self.fig.canvas.draw_idle()
+
+        self._set_orbital_info_txt()
+
+        # set up the menu for the pushbutton
+        menu = QtWidgets.QMenu(self)
+        for orb in self._selected_orbitals:
+            if isinstance(orb, pyfmo.orbitals.objects.SFO):
+                icon = QtGui.QIcon('application/icons/sfo.png')
+            else:
+                icon = QtGui.QIcon('application/icons/mo.png')
+
+            action = QtGui.QAction(str(orb), self)
+            action.setIconVisibleInMenu(True)
+            action.setIcon(icon)
+            action.triggered.connect(partial(self.draw_orbital, orb=orb, draw_type='single'))
+            menu.addAction(action)
+
+        # add the overlap actions
+        for i, orb in enumerate(self._selected_orbitals):
+            if isinstance(orb, pyfmo.orbitals.objects.MO):
+                continue
+
+            for orb2 in self._selected_orbitals[i+1:]:
+                if isinstance(orb2, pyfmo.orbitals.objects.MO):
+                    continue
+
+                if orb.fragment_unique == orb2.fragment_unique:
+                    continue
+
+                icon = QtGui.QIcon('application/icons/overlap.png')
+                action = QtGui.QAction(f'{orb} * {orb2}', self)
+                action.setIconVisibleInMenu(True)
+                action.setIcon(icon)
+                action.triggered.connect(partial(self.draw_orbital, orb=[orb, orb2], draw_type='overlap'))
+                menu.addAction(action)
+
+        # add the sum actions
+        for i, orb in enumerate(self._selected_orbitals):
+            if isinstance(orb, pyfmo.orbitals.objects.MO):
+                continue
+
+            for orb2 in self._selected_orbitals[i+1:]:
+                if isinstance(orb2, pyfmo.orbitals.objects.MO):
+                    continue
+
+                if orb.fragment_unique == orb2.fragment_unique:
+                    continue
+
+                icon = QtGui.QIcon('application/icons/sum.png')
+                action = QtGui.QAction(f'{orb}, {orb2}', self)
+                action.setIconVisibleInMenu(True)
+                action.setIcon(icon)
+                action.triggered.connect(partial(self.draw_orbital, orb=[orb, orb2], draw_type='sum'))
+                menu.addAction(action)
+
+        self.parent.orbital_draw_button.setMenu(menu)
 
 
     def on_plot_hover(self, event):
@@ -741,12 +850,9 @@ class MplCanvas(FigureCanvas):
 
             self.fig.canvas.draw_idle()
 
-    def _fade_unrelated_ints(self, orb):
+    def _fade_unrelated_ints(self, orbs):
         artists = self.axes.get_children()
         artists = sorted(artists, key=lambda artist: artist.zorder)
-        submixes = self.parent.main_mix.split()
-        submix = [submix for submix in submixes if orb in submix.sfos or orb in submix.mos][0]
-        connections = submix.find_closed_interactions(orb)
         faded_artists = []
         for artist in artists:
             gid = artist.get_gid()
@@ -764,39 +870,40 @@ class MplCanvas(FigureCanvas):
 
             if gid.startswith('MO_'):
                 mo = self.parent.orbs.mos[gid[3:]]
-                if any(mo in conn for conn in connections):
+                if mo in orbs:
                     continue
 
             if gid.startswith('SFO_'):
                 sfo = self.parent.orbs.sfos[gid[4:]]
-                if any(sfo in conn for conn in connections):
+                if sfo in orbs:
                     continue
 
             if gid.startswith('ARROWMO_'):
                 mo = self.parent.orbs.mos[gid[8:]]
-                if any(mo in conn for conn in connections):
+                if mo in orbs:
                     continue
 
             if gid.startswith('ARROWSFO_'):
                 sfo = self.parent.orbs.sfos[gid[9:]]
-                if any(sfo in conn for conn in connections):
+                if sfo in orbs:
                     continue
 
             if gid.startswith('TEXTMO_'):
                 mo = self.parent.orbs.mos[gid[7:]]
-                if any(mo in conn for conn in connections):
+                if mo in orbs:
                     continue
 
             if gid.startswith('TEXTSFO_'):
                 sfo = self.parent.orbs.sfos[gid[8:]]
-                if any(sfo in conn for conn in connections):
+                if sfo in orbs:
                     continue
 
             if gid.startswith('MIX_'):
                 sfo = self.parent.orbs.sfos[gid[4:].split('->')[0].strip()]
                 mo = self.parent.orbs.mos[gid[4:].split('->')[1].strip()]
-                if any(mo in conn for conn in connections) and any(sfo in conn for conn in connections):
+                if mo in orbs and sfo in orbs:
                     continue
+
             faded_artists.append(artist)
 
         for artist in faded_artists:
@@ -806,7 +913,7 @@ class MplCanvas(FigureCanvas):
             self.fig.canvas.draw_idle()
 
             artist.set_color(artist.orig_color)
-            artist.set_alpha(artist.orig_alpha * 0)
+            artist.set_alpha(artist.orig_alpha * 0.15)
             self.axes.draw_artist(artist)
             self.fig.canvas.draw_idle()
 
@@ -982,6 +1089,9 @@ class AnalysisWindow(QtWidgets.QWidget):
         props = dict(edgecolor='white', facecolor='white', alpha=1)  # bbox features
         fig.canvas.draw_idle()
 
+    def _set_orbital_filter(self):
+        orbs = []
+
 
     def load_analysis(self, file):
         try:
@@ -1048,6 +1158,8 @@ class AnalysisWindow(QtWidgets.QWidget):
         plot_container.setFixedSize(700, 500)
 
         self.plot = MplCanvas(self)
+        self.plot.setFocusPolicy( QtCore.Qt.ClickFocus )
+        self.plot.setFocus()
         plot_container.setStyleSheet('padding: 0px; margin: 0px; border: 1px solid lightgray; border-radius: 5px; background-color: white;')
         plot_container_layout.addWidget(self.plot, 0)
         layout.addWidget(plot_container, 0, 0, 1, 1, QtCore.Qt.AlignCenter)
@@ -1062,8 +1174,12 @@ class AnalysisWindow(QtWidgets.QWidget):
         orbital_info_frame.setLayout(orbital_info_layout)
         self.orbital_info_box = ScrollLabel('')
         orbital_info_layout.addWidget(self.orbital_info_box, 0, 0, 1, 2)
-        self.orbital_draw_button = QtWidgets.QPushButton('Draw')
-        self.orbital_draw_button.clicked.connect(self.plot.draw_orbital)
+        self.orbital_draw_button = QtWidgets.QPushButton()
+        self.orbital_draw_button.setStyleSheet('QPushButton::menu-indicator { image: none; }')
+        menu = QtWidgets.QMenu(self)
+        menu.addAction(QtGui.QAction('MO', self))
+        self.orbital_draw_button.setMenu(menu)
+        self.orbital_draw_button.setText('Draw')
         self.orbital_draw_button.setEnabled(False)
         self.orbital_draw_button.setStyleSheet("""
             QPushButton {
@@ -1079,6 +1195,7 @@ class AnalysisWindow(QtWidgets.QWidget):
                 }
             """)
         self.orbital_filter_button = QtWidgets.QPushButton('Filter')
+        self.orbital_filter_button.clicked.connect(self._set_orbital_filter)
         self.orbital_filter_button.setEnabled(False)
         self.orbital_filter_button.setStyleSheet("""
             QPushButton {
@@ -1096,13 +1213,11 @@ class AnalysisWindow(QtWidgets.QWidget):
         orbital_info_layout.addWidget(self.orbital_info_box, 0, 0, 1, 2)
         orbital_info_layout.addWidget(self.orbital_draw_button, 1, 0, 1, 1)
         orbital_info_layout.addWidget(self.orbital_filter_button, 1, 1, 1, 1)
-        # self.orbital_info_box.setStyleSheet('padding: 10px; font: 10pt "IBM Plex Mono"; border-radius: 5px; background-color: white; border: 1px solid lightgray;')
         
         self.info_tabs.addTab(orbital_info_frame, 'Orbitals')
 
         system_info_box = ScrollLabel()
         system_info_box.setText(self._get_system_info_txt())
-        # system_info_box.setStyleSheet('padding: 10px; font: 10pt "IBM Plex Mono";')
         
         self.info_tabs.addTab(system_info_box, 'System')
 
@@ -1307,6 +1422,7 @@ class AnalysisWindow(QtWidgets.QWidget):
         misc_box_layout.addWidget(make_sheet_btn, 0, 0, 1, 1)
         misc_box_layout.addWidget(save_fig_btn, 0, 1, 1, 1)
         self._update_plot()
+
 
     def _get_system_info_txt(self):
         reader = self.orbs.reader
