@@ -4,7 +4,14 @@ version = "0.3.1"
 authors = [
   { name="Yuman Hordijk", email="y.hordijk@vu.nl"},
   { name="Steven E. Beutick", email="s.e.beutick@vu.nl"},
-  { name="Tori Gijzen", email="t.gijzen@vu.nl"}]
+  { name="Xiaobo Sun"},
+  { name="Laurens Groot"},
+  { name="Tori Gijzen", email="t.gijzen@vu.nl"},
+  { name="Jordi Poater"},
+  { name="Trevor A. Hamlin", email="t.a.hamlin@vu.nl"},
+  { name="F. Matthias Bickelhaupt", email="f.m.bickelhaupt@vu.nl"},
+  { name="Célia Fonseca Guerra", email="c.fonsecaguerra@vu.nl"}]
+
 description = "PyFMO is an automated orbital analysis tool used in the TheoCheM group at VU Amsterdam"
 readme = "README.md"
 classifiers = [
@@ -45,7 +52,8 @@ version = "%REPLACE_VERSION"
 bundle = "nl.theochem"
 url = "https://theochem.nl/pyorbb"
 license.file = "LICENSE"
-author = "Yuman Hordijk, Xiaobo Sun, Steven E. Beutick, Laurens Groot, Tori Gijzen, Jordi Poater, Trevor A. Hamlin, Matthias Bickelhaupt, Célia Fonseca Guerra"
+# author = "Yuman Hordijk, Xiaobo Sun, Steven E. Beutick, Laurens Groot, Tori Gijzen, Jordi Poater, Trevor A. Hamlin, Matthias Bickelhaupt, Célia Fonseca Guerra"
+author = "TheoCheMVU"
 author_email = "yumanhordijk@gmail.com"
 
 [tool.briefcase.app.pyfmo]
