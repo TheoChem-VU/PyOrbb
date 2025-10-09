@@ -1,5 +1,6 @@
 from PySide6 import QtWidgets, QtCore, QtGui
 import pyfmo
+from .components import orbital_selector
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qtagg import FigureCanvas
 from matplotlib.backend_tools import Cursors
@@ -65,6 +66,130 @@ def _determine_charges(orbs):
         
     charges['Complex'] = sum(charges.values())
     return charges
+
+class Spoilers(QtWidgets.QScrollArea):
+    def __init__(self, parent=None):
+        # making widget resizable
+        super().__init__(parent=parent)
+        self.setWidgetResizable(True)
+        self.horizontalScrollBar().setEnabled(False)
+        self.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff);
+        self.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff);
+        # making qwidget object
+        content = QtWidgets.QWidget(self)
+        self.setWidget(content)
+
+        # vertical box layout
+        self.layout = QtWidgets.QVBoxLayout(content)
+        self.layout.addStretch(1)
+        self.setStyleSheet('background-color: white;')
+
+    def addSpoiler(self, title, widget, icon=None):
+        layout = QtWidgets.QVBoxLayout()
+        layout.addWidget(widget)
+        spoiler = Spoiler(self, title, icon=icon)
+        spoiler.setContentLayout(layout)
+        self.layout.insertWidget(self.layout.count() - 1, spoiler)
+
+    def empty(self):
+        for i in range(self.layout.count()):
+            widget = self.layout.takeAt(0)
+
+            if widget is None:
+                break
+
+            widget = widget.widget()
+            if widget is None:
+                break
+
+            widget.setParent(None)
+            widget.destroy()
+
+        self.layout.addStretch(1)
+
+
+class Spoiler(QtWidgets.QWidget):
+    def __init__(self, parent=None, title='', animationDuration=100, icon=None):
+        """
+        References:
+            # Adapted from c++ version
+            http://stackoverflow.com/questions/32476006/how-to-make-an-expandable-collapsable-section-widget-in-qt
+        """
+        super().__init__(parent=parent)
+
+        self.animationDuration = animationDuration
+        self.toggleAnimation = QtCore.QParallelAnimationGroup()
+        self.contentArea = QtWidgets.QScrollArea(self)
+        self.headerLine = QtWidgets.QFrame(self)
+        # toggleLayout = QtWidgets.QHBoxLayout()
+        # toggleFrame = 
+        self.toggleButton = QtWidgets.QToolButton(self)
+        self.mainLayout = QtWidgets.QGridLayout()
+
+        toggleButton = self.toggleButton
+        toggleButton.setStyleSheet("QToolButton { border: none; font-weight: bold; font-size:12pt;}")
+
+        toggleButton.setToolButtonStyle(QtCore.Qt.ToolButtonTextBesideIcon)
+        toggleButton.setArrowType(QtCore.Qt.RightArrow)
+        toggleButton.setText(f'{title}')
+        toggleButton.setCheckable(True)
+        toggleButton.setChecked(False)
+
+        headerLine = self.headerLine
+        headerLine.setFrameShape(QtWidgets.QFrame.HLine)
+        headerLine.setFrameShadow(QtWidgets.QFrame.Sunken)
+        headerLine.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Maximum)
+
+        self.contentArea.setStyleSheet("QScrollArea { background-color: white; border: none; }")
+        self.contentArea.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff);
+
+        self.contentArea.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
+        # start out collapsed
+        self.contentArea.setMaximumHeight(0)
+        self.contentArea.setMinimumHeight(0)
+        # let the entire widget grow and shrink with its content
+        toggleAnimation = self.toggleAnimation
+        toggleAnimation.addAnimation(QtCore.QPropertyAnimation(self, b"minimumHeight"))
+        toggleAnimation.addAnimation(QtCore.QPropertyAnimation(self, b"maximumHeight"))
+        toggleAnimation.addAnimation(QtCore.QPropertyAnimation(self.contentArea, b"maximumHeight"))
+        # don't waste space
+        mainLayout = self.mainLayout
+        mainLayout.setVerticalSpacing(0)
+        mainLayout.setContentsMargins(0, 0, 0, 0)
+        row = 0
+        icon_lab = QtWidgets.QLabel()
+        icon_lab.setPixmap(icon.pixmap(20, 20))
+        mainLayout.addWidget(icon_lab, row, 0, 1, 1)
+        mainLayout.addWidget(self.toggleButton, row, 1, 1, 1, QtCore.Qt.AlignLeft)
+        mainLayout.addWidget(self.headerLine, row, 2, 1, 1)
+        row += 1
+        mainLayout.addWidget(self.contentArea, row, 0, 1, 3)
+        self.setLayout(self.mainLayout)
+
+        def start_animation(checked):
+            arrow_type = QtCore.Qt.DownArrow if checked else QtCore.Qt.RightArrow
+            direction = QtCore.QAbstractAnimation.Forward if checked else QtCore.QAbstractAnimation.Backward
+            toggleButton.setArrowType(arrow_type)
+            self.toggleAnimation.setDirection(direction)
+            self.toggleAnimation.start()
+
+        self.toggleButton.clicked.connect(start_animation)
+
+    def setContentLayout(self, contentLayout):
+        # Not sure if this is equivalent to self.contentArea.destroy()
+        self.contentArea.destroy()
+        self.contentArea.setLayout(contentLayout)
+        collapsedHeight = self.sizeHint().height() - self.contentArea.maximumHeight()
+        contentHeight = contentLayout.sizeHint().height()
+        for i in range(self.toggleAnimation.animationCount()-1):
+            spoilerAnimation = self.toggleAnimation.animationAt(i)
+            spoilerAnimation.setDuration(self.animationDuration)
+            spoilerAnimation.setStartValue(collapsedHeight)
+            spoilerAnimation.setEndValue(collapsedHeight + contentHeight)
+        contentAnimation = self.toggleAnimation.animationAt(self.toggleAnimation.animationCount() - 1)
+        contentAnimation.setDuration(self.animationDuration)
+        contentAnimation.setStartValue(0)
+        contentAnimation.setEndValue(contentHeight)
 
 
 class ScrollLabel(QtWidgets.QScrollArea):
@@ -525,21 +650,11 @@ class MplCanvas(FigureCanvas):
 
         self.fig.canvas.mpl_connect('motion_notify_event', self.on_plot_hover)
         self.fig.canvas.mpl_connect('button_press_event', self.on_plot_click)
-        self.fig.canvas.mpl_connect('key_press_event', self.on_key_press)
-        self.fig.canvas.mpl_connect('key_release_event', self.on_key_release)
         self._selected_orbitals = []
         self._frag_rename_dialog = FragRenameDialog(self)
         self._yaxis_dialog = YAxisDialog(self)
         self._already_unfaded = True
-        self.shift_is_held = False
 
-    def on_key_press(self, event):
-        if event.key == 'shift':
-            self.shift_is_held = True
-
-    def on_key_release(self, event):
-        if event.key == 'shift':
-            self.shift_is_held = False
 
     def draw_orbital(self, orb=None, draw_type='single'):
         import tcviewer
@@ -580,17 +695,15 @@ class MplCanvas(FigureCanvas):
                 
                 scene.draw_text(str(orb[0]) + ' * ' + str(orb[1]))
 
-    def _set_orbital_info_txt(self):
-        s = ''
+    def _set_orbital_info_box(self):
+        self.parent.orbital_info_box.empty()
         for i, orb in enumerate(self._selected_orbitals):
+            s = ''
             if isinstance(orb, pyfmo.orbitals.objects.SFO):
+                icon = self.parent.parent._ICONS['sfo']
                 submixes = self.parent.main_mix.split()
                 submix = [submix for submix in submixes if orb in submix.sfos][0]
-                if len(self._selected_orbitals) == 1:
-                    s += 'SFO'
-                else:
-                    s += f'({i+1}/{len(self._selected_orbitals)}) SFO'
-
+                s += 'SFO'
                 s += f'\n  Name         {pyfmo.generate_label(orb, mode="html", use_formatting=False)} ({orb.relative_name})'
                 s += f'\n  Symm.        {pyfmo.translate_irrep_label(orb.symmetry, mode="html", use_formatting=False)} ({orb.symmetry_relative_name})'
                 s += f'\n  Subsp.       {pyfmo.translate_irrep_label(orb.subspecies, mode="html", use_formatting=False)} ({orb.subspecies_relative_name})'
@@ -617,13 +730,10 @@ class MplCanvas(FigureCanvas):
                     s += f'\n{str(mo):19.19} {orb.mulliken_contribution(mo): 8.2%} {orb.coefficient(mo): 7.4f}'
 
             if isinstance(orb, pyfmo.orbitals.objects.MO):
+                icon = self.parent.parent._ICONS['mo']
                 submixes = self.parent.main_mix.split()
                 submix = [submix for submix in submixes if orb in submix.mos][0]
-                if len(self._selected_orbitals) == 1:
-                    s += 'MO'
-                else:
-                    s += f'({i+1}/{len(self._selected_orbitals)}) MO'
-
+                s += 'MO'
                 s += f'\n  Name         {pyfmo.generate_label(orb, mode="html", use_formatting=False)} ({orb.relative_name})'
                 s += f'\n  Symm.        {pyfmo.translate_irrep_label(orb.symmetry, mode="html", use_formatting=False)} ({orb.symmetry_relative_name})'
                 s += f'\n  Energy      {orb.energy: .2f} eV'
@@ -636,8 +746,31 @@ class MplCanvas(FigureCanvas):
                 for sfo in sorted(submix.sfos, key=lambda sfo: -abs(sfo.mulliken_contribution(orb))):
                     s += f'\n{str(sfo):19.19} {sfo.mulliken_contribution(orb): 8.2%} {sfo.coefficient(orb): 7.4f}'
 
-            s += '\n\n'
-        self.parent.orbital_info_box.setText(s)
+            if isinstance(orb, tuple):
+                sfo, mo = orb
+                icon = self.parent.parent._ICONS['mix']
+                connected_sfos = [conn[0] for conn in self.parent.main_mix.connections if conn[1] == mo and conn[0].fragment_unique != sfo.fragment_unique]
+                s += 'SFO'
+                s += f'\n  Name     {pyfmo.generate_label(sfo, mode="html", use_formatting=False)} ({sfo.relative_name})'
+                s += f'\n  Symm.    {pyfmo.translate_irrep_label(sfo.symmetry, mode="html", use_formatting=False)} {sfo.symmetry_relative_name}\n'
+                s += '\nMO'
+                s += f'\n  Name     {pyfmo.generate_label(mo, mode="html", use_formatting=False)} ({mo.relative_name})'
+                s += f'\n  Symm.    {pyfmo.translate_irrep_label(mo.symmetry, mode="html", use_formatting=False)} {mo.symmetry_relative_name}\n'
+                s += f'\nContr.    {sfo.mulliken_contribution(mo): .2%}'
+                s += f'\nCoeff.    {sfo.coefficient(mo): .6f}'
+                s += f'\nSpin       {sfo.spin}'
+                s += f'\nIrrep      {sfo.symmetry}'
+                s += '\n\nSecond SFO          Bonding?'
+                s += '\n─────────────────── ────────'
+                for sfo2 in connected_sfos:
+                    is_bonding = ((sfo @ sfo2) * sfo.coefficient(mo) * sfo2.coefficient(mo)) >= 0
+                    s += f'\n{str(sfo2):19.19} {"   Yes  " if is_bonding else "    No    "}'
+                orb = f'{sfo} ⇒ {mo}'
+
+            label = QtWidgets.QLabel(s)
+            label.setStyleSheet('padding: 3px; font: 10pt "IBM Plex Mono"')
+            self.parent.orbital_info_box.addSpoiler(str(orb), label, icon)
+        # self.parent.orbital_info_box.layout.addStretch(1)
 
 
     def on_plot_click(self, event):
@@ -663,7 +796,9 @@ class MplCanvas(FigureCanvas):
         # Iterating over each data member plotted
         lines = self.axes.get_children()
         lines = sorted(lines, key=lambda line: -line.zorder)
-        if not self.shift_is_held:
+
+        shift_is_held = QtGui.QGuiApplication.instance().keyboardModifiers() == QtCore.Qt.KeyboardModifier.ShiftModifier
+        if not shift_is_held:
             self._selected_orbitals = []
 
         for curve in lines:
@@ -678,8 +813,8 @@ class MplCanvas(FigureCanvas):
             s = ''
             if gid.startswith('MO_'):
                 mo = self.parent.orbs.mos[gid[3:]]
-                
-                self._selected_orbitals.append(mo)
+                if mo not in self._selected_orbitals:
+                    self._selected_orbitals.append(mo)
                 self._fade_unrelated_ints(self._selected_orbitals)
                 self._already_unfaded = False
 
@@ -692,8 +827,8 @@ class MplCanvas(FigureCanvas):
 
             if gid.startswith('SFO_'):
                 sfo = self.parent.orbs.sfos[gid[4:]]
-                
-                self._selected_orbitals.append(sfo)
+                if sfo not in self._selected_orbitals:
+                    self._selected_orbitals.append(sfo)
                 self._fade_unrelated_ints(self._selected_orbitals)
                 self._already_unfaded = False
                 self.parent.orbital_draw_button.setEnabled(True)
@@ -706,27 +841,18 @@ class MplCanvas(FigureCanvas):
             if gid.startswith('MIX_'):
                 sfo = self.parent.orbs.sfos[gid[4:].split('->')[0].strip()]
                 mo = self.parent.orbs.mos[gid[4:].split('->')[1].strip()]
-                connected_sfos = [conn[0] for conn in self.parent.main_mix.connections if conn[1] == mo and conn[0].fragment_unique != sfo.fragment_unique]
-                s += 'SFO'
-                s += f'\n  Name     {pyfmo.generate_label(sfo, mode="html", use_formatting=False)} ({sfo.relative_name})'
-                s += f'\n  Symm.    {pyfmo.translate_irrep_label(sfo.symmetry, mode="html", use_formatting=False)} {sfo.symmetry_relative_name}\n'
-                s += '\nMO'
-                s += f'\n  Name     {pyfmo.generate_label(mo, mode="html", use_formatting=False)} ({mo.relative_name})'
-                s += f'\n  Symm.    {pyfmo.translate_irrep_label(mo.symmetry, mode="html", use_formatting=False)} {mo.symmetry_relative_name}\n'
-                s += f'\nContr.    {sfo.mulliken_contribution(mo): .2%}'
-                s += f'\nCoeff.    {sfo.coefficient(mo): .6f}'
-                s += f'\nSpin       {sfo.spin}'
-                s += f'\nIrrep      {sfo.symmetry}'
-                s += '\n\nSecond SFO          Bonding?'
-                s += '\n─────────────────── ────────'
-                for sfo2 in connected_sfos:
-                    is_bonding = ((sfo @ sfo2) * sfo.coefficient(mo) * sfo2.coefficient(mo)) >= 0
-                    s += f'\n{str(sfo2):19.19} {"   Yes  " if is_bonding else "    No    "}'
+                
+                if (sfo, mo) not in self._selected_orbitals:
+                    self._selected_orbitals.append((sfo, mo))
 
-                self._selected_orbitals.extend([sfo, mo])
+                if sfo not in self._selected_orbitals:
+                    self._selected_orbitals.append(sfo)
+
+                if mo not in self._selected_orbitals:
+                    self._selected_orbitals.append(mo)
+
                 self._fade_unrelated_ints(self._selected_orbitals)
                 self._already_unfaded = False
-                self.parent.orbital_info_box.setText(s)
                 self.parent.orbital_draw_button.setEnabled(False)
                 self.parent.orbital_filter_button.setEnabled(False)
                 self.selected_orbital = None
@@ -738,22 +864,21 @@ class MplCanvas(FigureCanvas):
             if not self._already_unfaded:
                 self._already_unfaded = True
                 self._unfade()
-                self.parent.orbital_info_box.setText('')
                 self.parent.orbital_draw_button.setEnabled(False)
                 self.parent.orbital_filter_button.setEnabled(False)
                 self.selected_orbital = None
                 self.fig.canvas.set_cursor(Cursors.POINTER)
                 self.fig.canvas.draw_idle()
 
-        self._set_orbital_info_txt()
+        self._set_orbital_info_box()
 
         # set up the menu for the pushbutton
         menu = QtWidgets.QMenu(self)
         for orb in self._selected_orbitals:
             if isinstance(orb, pyfmo.orbitals.objects.SFO):
-                icon = QtGui.QIcon('application/icons/sfo.png')
+                icon = self.parent.parent._ICONS['sfo']
             else:
-                icon = QtGui.QIcon('application/icons/mo.png')
+                icon = self.parent.parent._ICONS['mo']
 
             action = QtGui.QAction(str(orb), self)
             action.setIconVisibleInMenu(True)
@@ -773,7 +898,7 @@ class MplCanvas(FigureCanvas):
                 if orb.fragment_unique == orb2.fragment_unique:
                     continue
 
-                icon = QtGui.QIcon('application/icons/overlap.png')
+                icon = self.parent.parent._ICONS['overlap']
                 action = QtGui.QAction(f'{orb} * {orb2}', self)
                 action.setIconVisibleInMenu(True)
                 action.setIcon(icon)
@@ -792,7 +917,7 @@ class MplCanvas(FigureCanvas):
                 if orb.fragment_unique == orb2.fragment_unique:
                     continue
 
-                icon = QtGui.QIcon('application/icons/sum.png')
+                icon = self.parent.parent._ICONS['sum']
                 action = QtGui.QAction(f'{orb}, {orb2}', self)
                 action.setIconVisibleInMenu(True)
                 action.setIcon(icon)
@@ -913,7 +1038,7 @@ class MplCanvas(FigureCanvas):
             self.fig.canvas.draw_idle()
 
             artist.set_color(artist.orig_color)
-            artist.set_alpha(artist.orig_alpha * 0.15)
+            artist.set_alpha(0.05)
             self.axes.draw_artist(artist)
             self.fig.canvas.draw_idle()
 
@@ -1027,7 +1152,6 @@ class AnalysisWindow(QtWidgets.QWidget):
     @property
     def allowed_irreps(self):
         return {frag: [k for k, v in frag_irreps.items() if v] for frag, frag_irreps in self._symmetry_selection.items()}
-    
 
     def _update_plot(self):
         self._draw_diagram(
@@ -1092,7 +1216,6 @@ class AnalysisWindow(QtWidgets.QWidget):
     def _set_orbital_filter(self):
         orbs = []
 
-
     def load_analysis(self, file):
         try:
             self.orbs = pyfmo.Orbitals(file)
@@ -1147,7 +1270,9 @@ class AnalysisWindow(QtWidgets.QWidget):
         for mo in self.orbs.mos:
             self._orb_selection['Complex'][mo] = True
 
-        self._orb_selection_dialog = OrbitalSelectionDialog(self, self._orb_selection)
+        # self._orb_selection_dialog = OrbitalSelectionDialog(self, self._orb_selection)
+        self._orb_selection_dialog = orbital_selector.OrbitalSelectionDialog(self, self.orbs)
+
 
         self._analysis_page_frame = QtWidgets.QFrame(self)
         self.central_layout.addWidget(self._analysis_page_frame)
@@ -1168,11 +1293,11 @@ class AnalysisWindow(QtWidgets.QWidget):
         self.info_tabs = QtWidgets.QTabWidget()
         self.info_tabs.setStyleSheet('QTabWidget { border-radius: 5px; border: 1px solid lightgray} QTabWidget::pane { border: 1px solid lightgray; background-color: white;border-radius: 5px; border-top-left-radius: 0px;} QTabWidget::tab-bar {background-color: lightgray; border: 0px;}')
         self.info_tabs.tabBar().setStyleSheet('border-radius: 5px; border: 1px solid lightgray; background-color: white')
-        self.info_tabs.setFixedSize(288, 500)
+        self.info_tabs.setFixedSize(300, 500)
         orbital_info_frame = QtWidgets.QFrame()
         orbital_info_layout = QtWidgets.QGridLayout()
         orbital_info_frame.setLayout(orbital_info_layout)
-        self.orbital_info_box = ScrollLabel('')
+        self.orbital_info_box = Spoilers(self)
         orbital_info_layout.addWidget(self.orbital_info_box, 0, 0, 1, 2)
         self.orbital_draw_button = QtWidgets.QPushButton()
         self.orbital_draw_button.setStyleSheet('QPushButton::menu-indicator { image: none; }')
@@ -1548,7 +1673,7 @@ class PyOrbbApp(QtWidgets.QApplication):
         QtGui.QFontDatabase.addApplicationFont(fontpath)
 
         self.window = QtWidgets.QMainWindow()
-        self.window.resize(1030 + 22, 698 + 52)
+        self.window.resize(1030 + 22 + 12, 698 + 52)
         self.window.layout = QtWidgets.QGridLayout()
         grid_widget = QtWidgets.QWidget()
         grid_widget.setLayout(self.window.layout)
@@ -1611,6 +1736,12 @@ class PyOrbbApp(QtWidgets.QApplication):
         
         self.setStyle('Fusion')
         self._add_analysis_tab()
+
+
+        ICON_FOLDER = 'application/icons'
+        self._ICONS = {file.removesuffix('.png'): QtGui.QIcon(os.path.join(ICON_FOLDER, file)) for file in os.listdir(ICON_FOLDER)}
+        self._PIXMAPS = {file.removesuffix('.png'): QtGui.QPixmap(os.path.join(ICON_FOLDER, file)) for file in os.listdir(ICON_FOLDER)}
+
 
     def AMS_loc_dialogue(self):
         '''
