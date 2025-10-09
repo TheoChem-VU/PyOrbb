@@ -77,7 +77,6 @@ requires = [
     "xlsxwriter>=3.2.2",
     "tcintegral>=1.0.1",
     "pyside6-essentials",
-    "std-nslog",
     ]
 test_sources = [
     "test",
@@ -90,7 +89,7 @@ test_requires = [
 [tool.briefcase.app.pyfmo.macOS]
 universal_build = false
 requires = [
-
+    "std-nslog",
 ]
 
 [tool.briefcase.app.pyfmo.linux]
