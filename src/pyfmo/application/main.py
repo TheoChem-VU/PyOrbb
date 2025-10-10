@@ -1673,6 +1673,7 @@ class PyOrbbApp(QtWidgets.QApplication):
         QtGui.QFontDatabase.addApplicationFont(fontpath)
 
         self.window = QtWidgets.QMainWindow()
+        self.window.setWindowIcon(QtGui.QIcon(os.path.split(__file__)[0] + '/../../icon_12.png'))
         self.window.resize(1030 + 22 + 12, 698 + 52)
         self.window.layout = QtWidgets.QGridLayout()
         grid_widget = QtWidgets.QWidget()
@@ -1738,7 +1739,7 @@ class PyOrbbApp(QtWidgets.QApplication):
         self._add_analysis_tab()
 
 
-        ICON_FOLDER = 'application/icons'
+        ICON_FOLDER = os.path.join(os.path.split(__file__)[0], '..', 'application', 'icons')
         self._ICONS = {file.removesuffix('.png'): QtGui.QIcon(os.path.join(ICON_FOLDER, file)) for file in os.listdir(ICON_FOLDER)}
         self._PIXMAPS = {file.removesuffix('.png'): QtGui.QPixmap(os.path.join(ICON_FOLDER, file)) for file in os.listdir(ICON_FOLDER)}
 
