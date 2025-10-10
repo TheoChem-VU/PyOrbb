@@ -49,10 +49,12 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install briefcase
+      - name: Install Cygwin Action
+        uses: cygwin/cygwin-install-action@v6
       - name: Build the app
         run: |
-          briefcase build -r
-          briefcase package --adhoc-sign
+          chmod +x build_windows_app.sh
+          bash build_windows_app.sh
       - name: Upload distributions to release
         uses: svenstaro/upload-release-action@v2
         with:
