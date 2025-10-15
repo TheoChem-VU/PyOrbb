@@ -40,10 +40,13 @@ IRREP_TRANSLATION_LATEX = {
 
 
 IRREP_TRANSLATION_HTML = {
+    "E1": "E<sub>1</sub>",
     "E1:1": "E<sub>1</sub><sup>1</sup>",
     "E1:2": "E<sub>1</sub><sup>2</sup>",
+    "EE1": "E<sup>1</sup>′",
     "EE1:1": "E<sup>1</sup>′<sub>1</sub>",
     "EE1:2": "E<sup>2</sup>′<sub>1</sub>",
+    "EEE1": "E<sup>1</sup>′′",
     "EEE1:1": "E<sup>1</sup>′′<sub>1</sub>",
     "EEE1:2": "E<sup>2</sup>′′<sub>1</sub>",
     "AA": "A′",
