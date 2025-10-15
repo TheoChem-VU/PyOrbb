@@ -1,6 +1,6 @@
 from PySide6 import QtWidgets, QtCore, QtGui
 import pyfmo
-from .components import orbital_selector
+from .components import orbital_selector, rich_widgets
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qtagg import FigureCanvas
 from matplotlib.backend_tools import Cursors
@@ -13,9 +13,17 @@ import json
 from math import floor, ceil
 import tcutility
 from functools import partial
+import pyperclip
 
 slider_resolution = 500
 
+
+def mol2xyz(mol):
+    s = ''
+    s += str(len(mol.atoms)) + '\n\n'
+    for atom in mol:
+        s += f'{atom.symbol:2} {atom.coords[0]} {atom.coords[1]} {atom.coords[2]}\n'
+    return s
 
 def load_setting(key, default=None):
     d = platformdirs.user_config_dir('PyOrbb', 'TheoCheM', ensure_exists=True)
@@ -52,6 +60,13 @@ def _determine_charges(orbs):
     # this takes into account the atom number and number of frozen core electrons
     atomtypes = orbs.reader.read('Geometry', 'atomtype').split()
     eff_charges = orbs.reader.read('Geometry', 'atomtype effective charge')
+
+    if isinstance(eff_charges, float):
+        eff_charges = [eff_charges]
+
+    if isinstance(atomtypes, float):
+        atomtypes = [atomtypes]
+
     atomtype_charges = {typ: charge for typ, charge in zip(atomtypes, eff_charges)}
 
     # calculate the charges for the fragments and the complex
@@ -66,6 +81,7 @@ def _determine_charges(orbs):
         
     charges['Complex'] = sum(charges.values())
     return charges
+
 
 class Spoilers(QtWidgets.QScrollArea):
     def __init__(self, parent=None):
@@ -86,6 +102,8 @@ class Spoilers(QtWidgets.QScrollArea):
 
     def addSpoiler(self, title, widget, icon=None):
         layout = QtWidgets.QVBoxLayout()
+        layout.setSpacing(0)
+        layout.setContentsMargins(0, 0, 0, 0)
         layout.addWidget(widget)
         spoiler = Spoiler(self, title, icon=icon)
         spoiler.setContentLayout(layout)
@@ -120,14 +138,19 @@ class Spoiler(QtWidgets.QWidget):
         self.animationDuration = animationDuration
         self.toggleAnimation = QtCore.QParallelAnimationGroup()
         self.contentArea = QtWidgets.QScrollArea(self)
-        self.headerLine = QtWidgets.QFrame(self)
+        # self.headerLine = QtWidgets.QFrame(self)
         # toggleLayout = QtWidgets.QHBoxLayout()
         # toggleFrame = 
-        self.toggleButton = QtWidgets.QToolButton(self)
-        self.mainLayout = QtWidgets.QGridLayout()
+        self.toggleButton = rich_widgets.HTMLToolButton(self)
+        # self.toggleButton = QtWidgets.QToolButton(self)
+        # self.toggleButton.setStyle(rich_widgets.HTMLStyle())
+        self.mainLayout = QtWidgets.QVBoxLayout()
+        titleLayout = QtWidgets.QHBoxLayout()
+        titleFrame = QtWidgets.QFrame()
+        titleFrame.setLayout(titleLayout)
 
         toggleButton = self.toggleButton
-        toggleButton.setStyleSheet("QToolButton { border: none; font-weight: bold; font-size:12pt;}")
+        toggleButton.setStyleSheet("QToolButton { border: none; font-weight: bold; font-size: 20px; text-align: left top}")
 
         toggleButton.setToolButtonStyle(QtCore.Qt.ToolButtonTextBesideIcon)
         toggleButton.setArrowType(QtCore.Qt.RightArrow)
@@ -135,15 +158,15 @@ class Spoiler(QtWidgets.QWidget):
         toggleButton.setCheckable(True)
         toggleButton.setChecked(False)
 
-        headerLine = self.headerLine
-        headerLine.setFrameShape(QtWidgets.QFrame.HLine)
-        headerLine.setFrameShadow(QtWidgets.QFrame.Sunken)
-        headerLine.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Maximum)
+        # headerLine = self.headerLine
+        # headerLine.setFrameShape(QtWidgets.QFrame.HLine)
+        # headerLine.setFrameShadow(QtWidgets.QFrame.Sunken)
+        # headerLine.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Maximum)
 
         self.contentArea.setStyleSheet("QScrollArea { background-color: white; border: none; }")
         self.contentArea.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff);
 
-        self.contentArea.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
+        # self.contentArea.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
         # start out collapsed
         self.contentArea.setMaximumHeight(0)
         self.contentArea.setMinimumHeight(0)
@@ -154,16 +177,20 @@ class Spoiler(QtWidgets.QWidget):
         toggleAnimation.addAnimation(QtCore.QPropertyAnimation(self.contentArea, b"maximumHeight"))
         # don't waste space
         mainLayout = self.mainLayout
-        mainLayout.setVerticalSpacing(0)
+        mainLayout.setSpacing(0)
         mainLayout.setContentsMargins(0, 0, 0, 0)
-        row = 0
-        icon_lab = QtWidgets.QLabel()
-        icon_lab.setPixmap(icon.pixmap(20, 20))
-        mainLayout.addWidget(icon_lab, row, 0, 1, 1)
-        mainLayout.addWidget(self.toggleButton, row, 1, 1, 1, QtCore.Qt.AlignLeft)
-        mainLayout.addWidget(self.headerLine, row, 2, 1, 1)
-        row += 1
-        mainLayout.addWidget(self.contentArea, row, 0, 1, 3)
+        titleLayout.setSpacing(0)
+        titleLayout.setContentsMargins(0, 0, 0, 0)
+        if icon is not None:
+            icon_lab = QtWidgets.QLabel()
+            icon_lab.setPixmap(icon.pixmap(20, 20))
+            titleLayout.addWidget(icon_lab)
+        titleLayout.addWidget(self.toggleButton)
+        titleLayout.addStretch()
+
+        mainLayout.addWidget(titleFrame)
+        mainLayout.addWidget(self.contentArea)
+        # mainLayout.addStretch()
         self.setLayout(self.mainLayout)
 
         def start_animation(checked):
@@ -703,17 +730,16 @@ class MplCanvas(FigureCanvas):
                 icon = self.parent.parent._ICONS['sfo']
                 submixes = self.parent.main_mix.split()
                 submix = [submix for submix in submixes if orb in submix.sfos][0]
-                s += 'SFO'
-                s += f'\n  Name         {pyfmo.generate_label(orb, mode="html", use_formatting=False)} ({orb.relative_name})'
-                s += f'\n  Symm.        {pyfmo.translate_irrep_label(orb.symmetry, mode="html", use_formatting=False)} ({orb.symmetry_relative_name})'
-                s += f'\n  Subsp.       {pyfmo.translate_irrep_label(orb.subspecies, mode="html", use_formatting=False)} ({orb.subspecies_relative_name})'
-                s += f'\n  Fragment     {orb.fragment_unique}'
-                s += f'\n  Energy      {getattr(orb, self.parent._energytype_selection): .2f} eV'
-                s += f'\n  Occupation  {orb.occupation: .2f}'
-                s += f'\n  Pop.        {orb.gross_population: .3f}'
-                s += f'\n  Spin-pop.   {orb.gross_spin: .3f}'
-                s += f'\n  Spin         {orb.spin}'
-                s += f'\n  Irrep        {orb.symmetry}'
+                s += f'Name         {pyfmo.generate_label(orb, mode="html", use_formatting=False)} ({orb.relative_name})'
+                s += f'\nSymm.        {pyfmo.translate_irrep_label(orb.symmetry, mode="html", use_formatting=False)} ({orb.symmetry_relative_name})'
+                s += f'\nSubsp.       {pyfmo.translate_irrep_label(orb.subspecies, mode="html", use_formatting=False)} ({orb.subspecies_relative_name})'
+                s += f'\nFragment     {orb.fragment_unique}'
+                s += f'\nEnergy      {getattr(orb, self.parent._energytype_selection): .2f} eV'
+                s += f'\nOccupation  {orb.occupation: .2f}'
+                s += f'\nPop.        {orb.gross_population: .3f}'
+                s += f'\nSpin-pop.   {orb.gross_spin: .3f}'
+                s += f'\nSpin         {orb.spin}'
+                s += f'\nIrrep        {orb.symmetry}'
 
                 s += '\n\nSFO                      S   dE (eV)'
                 s += '\n─────────────────── ────── ─────────'
@@ -728,23 +754,24 @@ class MplCanvas(FigureCanvas):
                 s += '\n─────────────────── ──────── ───────'
                 for mo in sorted(submix.mos, key=lambda mo: -abs(orb.mulliken_contribution(mo))):
                     s += f'\n{str(mo):19.19} {orb.mulliken_contribution(mo): 8.2%} {orb.coefficient(mo): 7.4f}'
+                title = f"{orb.fragment_unique}({pyfmo.generate_label(orb, mode='html')})"
 
             if isinstance(orb, pyfmo.orbitals.objects.MO):
                 icon = self.parent.parent._ICONS['mo']
                 submixes = self.parent.main_mix.split()
                 submix = [submix for submix in submixes if orb in submix.mos][0]
-                s += 'MO'
-                s += f'\n  Name         {pyfmo.generate_label(orb, mode="html", use_formatting=False)} ({orb.relative_name})'
-                s += f'\n  Symm.        {pyfmo.translate_irrep_label(orb.symmetry, mode="html", use_formatting=False)} ({orb.symmetry_relative_name})'
-                s += f'\n  Energy      {orb.energy: .2f} eV'
-                s += f'\n  Occupation  {orb.occupation: .2f}'
-                s += f'\n  Spin         {orb.spin}'
-                s += f'\n  Irrep        {orb.symmetry}'
+                s += f'Name         {pyfmo.generate_label(orb, mode="html", use_formatting=False)} ({orb.relative_name})'
+                s += f'\nSymm.        {pyfmo.translate_irrep_label(orb.symmetry, mode="html", use_formatting=False)} ({orb.symmetry_relative_name})'
+                s += f'\nEnergy      {orb.energy: .2f} eV'
+                s += f'\nOccupation  {orb.occupation: .2f}'
+                s += f'\nSpin         {orb.spin}'
+                s += f'\nIrrep        {orb.symmetry}'
 
                 s += '\n\nSFO                    Contr   Coeff'
                 s += '\n─────────────────── ──────── ───────'
                 for sfo in sorted(submix.sfos, key=lambda sfo: -abs(sfo.mulliken_contribution(orb))):
                     s += f'\n{str(sfo):19.19} {sfo.mulliken_contribution(orb): 8.2%} {sfo.coefficient(orb): 7.4f}'
+                title = pyfmo.generate_label(orb, mode='html')
 
             if isinstance(orb, tuple):
                 sfo, mo = orb
@@ -766,10 +793,11 @@ class MplCanvas(FigureCanvas):
                     is_bonding = ((sfo @ sfo2) * sfo.coefficient(mo) * sfo2.coefficient(mo)) >= 0
                     s += f'\n{str(sfo2):19.19} {"   Yes  " if is_bonding else "    No    "}'
                 orb = f'{sfo} ⇒ {mo}'
+                title = f"{sfo.fragment_unique}({pyfmo.generate_label(sfo, mode='html')}) ⇒ {pyfmo.generate_label(mo, mode='html')}"
 
             label = QtWidgets.QLabel(s)
             label.setStyleSheet('padding: 3px; font: 10pt "IBM Plex Mono"')
-            self.parent.orbital_info_box.addSpoiler(str(orb), label, icon)
+            self.parent.orbital_info_box.addSpoiler(title, label, icon)
         # self.parent.orbital_info_box.layout.addStretch(1)
 
 
@@ -1075,6 +1103,47 @@ class SaveFileDialog(QtWidgets.QFileDialog):
         return self.selectedFiles()[0]
 
 
+class CopyLabel(QtWidgets.QFrame):
+    def __init__(self, text, copy_text=None, icon=None):
+        super().__init__()
+
+        self.copy_text = copy_text
+        if copy_text is None:
+            self.copy_text = text
+
+        layout = QtWidgets.QHBoxLayout()
+        self.setLayout(layout)
+        label = QtWidgets.QLabel(text)
+        label.setAlignment(QtCore.Qt.AlignLeft | QtCore.Qt.AlignVCenter)
+        label.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
+        layout.addWidget(label)
+        icon = QtGui.QIcon(os.path.join(os.path.split(__file__)[0], '..', 'application', 'icons', 'copy.png'))
+        copy_button = QtWidgets.QPushButton(icon, '')
+        copy_button.setToolTip('Copy')
+        copy_button.setSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Preferred)
+        copy_button.clicked.connect(self.copy)
+        copy_button.setStyleSheet("""
+            QPushButton {
+                font-size: 12px;
+                border: 1px solid lightgray;
+                border-radius: 5px;
+                padding: 3px;
+                margin: 0px; 
+                background-color: white;
+            }
+            QPushButton:hover {
+                background-color: #f0f0f0;
+                }
+            """)
+
+        layout.addWidget(copy_button)
+        layout.setContentsMargins(0, 0, 0, 0)
+        layout.setSpacing(0)
+
+    def copy(self):
+        pyperclip.copy(self.copy_text)
+
+
 class AnalysisWindow(QtWidgets.QWidget):
     def __init__(self, parent):
         super().__init__()
@@ -1195,6 +1264,8 @@ class AnalysisWindow(QtWidgets.QWidget):
                     if not enabled and orb in allowed_sfos:
                         allowed_sfos.remove(orb)
 
+        print(allowed_sfos)
+
         self.main_mix.set_oi_threshold(oi_thresh)
         self.main_mix.set_pr_threshold(pauli_thresh)
         self.main_mix.set_enable_oi(self.cbox_OI.isChecked())
@@ -1298,7 +1369,7 @@ class AnalysisWindow(QtWidgets.QWidget):
         orbital_info_layout = QtWidgets.QGridLayout()
         orbital_info_frame.setLayout(orbital_info_layout)
         self.orbital_info_box = Spoilers(self)
-        orbital_info_layout.addWidget(self.orbital_info_box, 0, 0, 1, 2)
+        orbital_info_layout.addWidget(self.orbital_info_box, 1, 0, 1, 2)
         self.orbital_draw_button = QtWidgets.QPushButton()
         self.orbital_draw_button.setStyleSheet('QPushButton::menu-indicator { image: none; }')
         menu = QtWidgets.QMenu(self)
@@ -1335,14 +1406,20 @@ class AnalysisWindow(QtWidgets.QWidget):
                 background-color: #f0f0f0;
                 }
             """)
-        orbital_info_layout.addWidget(self.orbital_info_box, 0, 0, 1, 2)
-        orbital_info_layout.addWidget(self.orbital_draw_button, 1, 0, 1, 1)
-        orbital_info_layout.addWidget(self.orbital_filter_button, 1, 1, 1, 1)
+        orbital_info_layout.addWidget(QtWidgets.QLabel('<i>Use</i> <b>Shift + Click</b> <i>to select multiple orbitals!</i>'), 0, 0, 1, 2)
+        orbital_info_layout.addWidget(self.orbital_info_box, 1, 0, 1, 2)
+        orbital_info_layout.addWidget(self.orbital_draw_button, 2, 0, 1, 1)
+        orbital_info_layout.addWidget(self.orbital_filter_button, 2, 1, 1, 1)
         
         self.info_tabs.addTab(orbital_info_frame, 'Orbitals')
 
-        system_info_box = ScrollLabel()
-        system_info_box.setText(self._get_system_info_txt())
+        system_info_box = Spoilers()
+        system_info_box.addSpoiler('General', self._get_general_system_info(), self.parent._ICONS['info'])
+        system_info_box.addSpoiler('Complex', self._get_complex_system_info(), self.parent._ICONS['mo'])
+        for frag in self.orbs.fragments:
+            system_info_box.addSpoiler(frag, self._get_fragment_system_info(frag), self.parent._ICONS['sfo'])
+
+        # system_info_box.addSpoiler(self._get_system_info_txt())
         
         self.info_tabs.addTab(system_info_box, 'System')
 
@@ -1549,42 +1626,162 @@ class AnalysisWindow(QtWidgets.QWidget):
         self._update_plot()
 
 
-    def _get_system_info_txt(self):
-        reader = self.orbs.reader
-        # results = tcutility.read(reader.path)
-        # print(results)
+    def _get_general_system_info(self):
+        frame = QtWidgets.QFrame()
+        frame.setStyleSheet('QLabel{padding: 2px; font: 10pt} QPushButton{icon-size: 10px;}')
+        layout = QtWidgets.QGridLayout()
+        frame.setLayout(layout)
+
+
+        row = 0
+        layout.addWidget(CopyLabel('<b>adf.rkf</b>', self.orbs.reader.path), row, 0, 1, 2)
+
+        row += 1
+        layout.addWidget(QtWidgets.QLabel('<b>Symmetry</b>'), row, 0, 1, 1)
+        label = QtWidgets.QLabel(self.orbs.data['calc_info']['symmetry'].strip())
+        label.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
+        layout.addWidget(label, row, 1, 1, 1)
+
+        # number of fragments
+        row += 1
+        layout.addWidget(QtWidgets.QLabel('<b>Nº Fragments</b>'), row, 0, 1, 1)
+        label = QtWidgets.QLabel(str(len(self.orbs.fragments)))
+        label.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
+        layout.addWidget(label, row, 1, 1, 1)
+
+        # level of theory
+        row += 1
+        layout.addWidget(QtWidgets.QLabel('<b>Level</b>'), row, 0, 1, 1)
+        layout.addWidget(QtWidgets.QLabel('BLYP-D3(BJ)/TZ2P(None)'), row, 1, 1, 1)
+
+        # EDA terms
+        row += 1
+        layout.addWidget(QtWidgets.QLabel('<b>Δ<i>E</i><sub>int</sub></b>'), row, 0, 1, 1)
+        label = QtWidgets.QLabel(f"{self.orbs.reader.read('Energy', 'Bond Energy') * 627.503:.2f} kcal mol<sup>–1</sup>")
+        label.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
+        layout.addWidget(label, row, 1, 1, 1)
+
+        row += 1
+        layout.addWidget(QtWidgets.QLabel('<b>Δ<i>E</i><sub>Pauli</sub></b>'), row, 0, 1, 1)
+        label = QtWidgets.QLabel(f"{self.orbs.reader.read('Energy', 'Pauli Total') * 627.503:.2f} kcal mol<sup>–1</sup>")
+        label.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
+        layout.addWidget(label, row, 1, 1, 1)
+
+        row += 1
+        layout.addWidget(QtWidgets.QLabel('<b>Δ<i>E</i><sub>oi</sub></b>'), row, 0, 1, 1)
+        label = QtWidgets.QLabel(f"{self.orbs.reader.read('Energy', 'Orb.Int. Total') * 627.503:.2f} kcal mol<sup>–1</sup>")
+        label.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
+        layout.addWidget(label, row, 1, 1, 1)
+
+        row += 1
+        layout.addWidget(QtWidgets.QLabel('<b>Δ<i>V</i><sub>elstat</sub></b>'), row, 0, 1, 1)
+        label = QtWidgets.QLabel(f"{self.orbs.reader.read('Energy', 'elstat') * 627.503:.2f} kcal mol<sup>–1</sup>")
+        label.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
+        layout.addWidget(label, row, 1, 1, 1)
+
+        row += 1
+        layout.addWidget(QtWidgets.QLabel('<b>Δ<i>E</i><sub>disp</sub></b>'), row, 0, 1, 1)
+        label = QtWidgets.QLabel(f"{self.orbs.reader.read('Energy', 'Dispersion Energy') * 627.503:.2f} kcal mol<sup>–1</sup>")
+        label.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
+        layout.addWidget(label, row, 1, 1, 1)
+
+        layout.setSpacing(0)
+
+        return frame
+
+    def _get_complex_system_info(self):
+        frame = QtWidgets.QFrame()
+        frame.setStyleSheet('QLabel{padding: 2px; font: 10pt} QPushButton{icon-size: 10px;}')
+        layout = QtWidgets.QGridLayout()
+        frame.setLayout(layout)
+
         charges = _determine_charges(self.orbs)
         unrestricted_mos = self.orbs.data['calc_info']['unrestricted_mos']
+
+        all_spin_pols = self.orbs.data['calc_info']['sfo_spinpolarizations']
+        total_spin_pols = 0
+        for frag, frag_spin_pols in all_spin_pols.items():
+            for irrep, spin_pols in frag_spin_pols.items():
+                total_spin_pols += spin_pols[0] - spin_pols[1]
+
+        row = 0
+        layout.addWidget(CopyLabel('<b>Geometry (xyz)</b>', mol2xyz(self.orbs.molecule)), row, 0, 1, 2)
+
+        row += 1
+        layout.addWidget(QtWidgets.QLabel('<b>Charge</b>'), row, 0, 1, 1)
+        label = QtWidgets.QLabel(f'{round(charges["Complex"]):+d}')
+        label.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
+        layout.addWidget(label, row, 1, 1, 1)
+
+        row += 1
+        layout.addWidget(QtWidgets.QLabel('<b>Restricted</b>'), row, 0, 1, 1)
+        label = QtWidgets.QLabel(str(not unrestricted_mos))
+        label.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
+        layout.addWidget(label, row, 1, 1, 1)
+
+        row += 1
+        layout.addWidget(QtWidgets.QLabel('<b>Spin-Polarization</b>'), row, 0, 1, 1)
+        label = QtWidgets.QLabel(f'{round(total_spin_pols):+d}')
+        label.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
+        layout.addWidget(label, row, 1, 1, 1)
+
+        row += 1
+        layout.addWidget(QtWidgets.QLabel('<b>Nº Electrons</b>'), row, 0, 1, 1)
+        label = QtWidgets.QLabel(str(sum(mo.occupation for mo in self.orbs.mos)))
+        label.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
+        layout.addWidget(label, row, 1, 1, 1)
+
+        return frame
+
+    def _get_fragment_system_info(self, frag):
+        frame = QtWidgets.QFrame()
+        frame.setStyleSheet('QLabel{padding: 2px; font: 10pt;} QPushButton{icon-size: 10px;}')
+        layout = QtWidgets.QGridLayout()
+        frame.setLayout(layout)
+
+        sfos = self.orbs.sfos.filter(fragment=frag)
+        charges = _determine_charges(self.orbs)
         unrestricted_sfos = self.orbs.data['calc_info']['unrestricted_sfos']
-        spin_pols = self.orbs.data['calc_info']['sfo_spinpolarizations']
 
-        s = 'Complex\n'
-        s += f'    Charge: {charges["Complex"]}\n'
-        s += f'    Restricted: {not unrestricted_mos}\n'
+        row = 0
+        layout.addWidget(CopyLabel('<b>Geometry (xyz)</b>', mol2xyz(sfos[0].molecule)), row, 0, 1, 2)
 
-        for frag in self.orbs.fragments:
-            s += f'\nFragment({frag})\n'
-            s += f'    Charge: {charges[frag]}\n'
-            s += f'    Restricted: {not unrestricted_sfos}\n'
+        row += 1
+        layout.addWidget(QtWidgets.QLabel('<b>Charge</b>'), row, 0, 1, 1)
+        label = QtWidgets.QLabel(f'{round(charges[frag]):+d}')
+        label.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
+        layout.addWidget(label, row, 1, 1, 1)
 
+        row += 1
+        layout.addWidget(QtWidgets.QLabel('<b>Restricted</b>'), row, 0, 1, 1)
+        label = QtWidgets.QLabel(str(not unrestricted_sfos))
+        label.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
+        layout.addWidget(label, row, 1, 1, 1)
 
-        # rows = {
-        #     'Complex': '',
-        #     'Formula': formula.molecule(mols['complex']),
-        #     'Nº MOs': len(orbs.mos),
-        #     'Nº occ. MOs': len([mo for mo in orbs.mos if mo.occupied]),
-        #     'Nº virt. MOs': len([mo for mo in orbs.mos if not mo.occupied]),
-        #     'Nº frozen cores': orbs.data['MOs']['nfrozencores']['total'],
-        #     'ΔE_int': orbs.reader.read('Energy', 'Bond Energy') * 627.503,
-        #     'ΔE_Pauli': orbs.reader.read('Energy', 'Pauli Total') * 627.503,
-        #     'ΔE_oi': orbs.reader.read('Energy', 'Orb.Int. Total') * 627.503,
-        #     'ΔV_elstat': orbs.reader.read('Energy', 'elstat') * 627.503,
-        #     'ΔE_disp': orbs.reader.read('Energy', 'Dispersion Energy') * 627.503,
-        #     'Point group': orbs.reader.read('Symmetry', 'grouplabel').strip(),
-        # }
+        frag_spin_pols = self.orbs.data['calc_info']['sfo_spinpolarizations'][frag]
+        total_spin_pols = 0
+        for irrep, spin_pols in frag_spin_pols.items():
+            total_spin_pols += spin_pols[0] - spin_pols[1]
 
-        return s
+            row += 1
+            layout.addWidget(QtWidgets.QLabel(f'<b>Spin-Polarization ({pyfmo.translate_irrep_label(irrep, mode="html")})</b>'), row, 0, 1, 1)
+            label = QtWidgets.QLabel(f'{round(spin_pols[0] - spin_pols[1]):+d}')
+            label.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
+            layout.addWidget(label, row, 1, 1, 1)
 
+        row += 1
+        layout.addWidget(QtWidgets.QLabel('<b>Spin-Polarization (Total)</b>'), row, 0, 1, 1)
+        label = QtWidgets.QLabel(f'{round(total_spin_pols):+d}')
+        label.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
+        layout.addWidget(label, row, 1, 1, 1)
+
+        row += 1
+        layout.addWidget(QtWidgets.QLabel('<b>Nº Electrons</b>'), row, 0, 1, 1)
+        label = QtWidgets.QLabel(str(round(sum(sfo.occupation for sfo in sfos))))
+        label.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
+        layout.addWidget(label, row, 1, 1, 1)
+
+        return frame
 
     def _set_next_pr_slider(self):
         next_val = self.main_mix.get_next_pr_threshold()
