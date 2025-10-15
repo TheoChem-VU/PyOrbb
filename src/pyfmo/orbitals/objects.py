@@ -637,6 +637,7 @@ class Orbitals:
             for spin_idx, sfo_spin in enumerate(self.data['calc_info']['sfo_spins']):
                 symlabel = self.data['SFOs']['symlabel'][sfo_idx]
                 frag = self.data['calc_info']['fragments'][self.data['SFOs']['fragment_index'][sfo_idx] - 1].split(':')[0]
+                # unique_frag = self.data['calc_info']['fragments'][self.data['SFOs']['fragment_index'][sfo_idx] - 1].split(':')[0]
 
                 if not sfo_mo_spin_match:
                     if self.data['calc_info']['unrestricted_mos']:
@@ -666,9 +667,9 @@ class Orbitals:
                     'gross_spin': gross_spin,
                     'molecule': self.data['molecules'][self.data['SFOs']['fragment_unique']['total'][sfo_idx]],
                 }
-                
-                if symlabel in self.data['calc_info']['sfo_spinpolarizations'][frag]:
-                    occs = self.data['calc_info']['sfo_spinpolarizations'][frag][symlabel]
+                frag_unique = str(self.data['SFOs']['fragment_unique']['total'][sfo_idx])
+                if symlabel in self.data['calc_info']['sfo_spinpolarizations'][frag_unique]:
+                    occs = self.data['calc_info']['sfo_spinpolarizations'][frag_unique][symlabel]
                     spinpol = occs[0] - occs[1]
                     data['spin_pol'] = spinpol
                 else:
