@@ -100,7 +100,7 @@ def draw_interaction(sfos, mos, connections,
             deg_degree = len(orb_degenerate) + 1
             poss[orb] = base_pos + 1 / deg_degree * deg_idx
 
-    xtick_pos, xtick_label = [.5], ['MOs']
+    xtick_pos, xtick_label = [.5], ['Complex']
     for orb in poss:
         if orb not in sfos:
             continue
@@ -202,7 +202,7 @@ def draw_interaction(sfos, mos, connections,
                      length_includes_head=True,
                      linewidth=arrow_thickness,
                      gid=f'{"ARROWMO" if is_MO else "ARROWSFO"}_{orb}')
-            
+
             if break_on_one:
                 break
 
