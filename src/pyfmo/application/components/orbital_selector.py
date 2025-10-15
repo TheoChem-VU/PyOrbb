@@ -1,4 +1,5 @@
 from PySide6 import QtWidgets, QtCore
+from pyfmo.application.components import rich_widgets
 import pyfmo
 
 
@@ -187,26 +188,135 @@ class OrbitalSelectionTable(QtWidgets.QTableWidget):
 
 
 class OrbitalSelectionTab(QtWidgets.QFrame):
-    def __init__(self, parent, orbitals):
+    def __init__(self, parent, orbitals, state_key):
         super().__init__(parent=parent)
         self.parent = parent
 
         layout = QtWidgets.QGridLayout()
         self.setLayout(layout)
 
+        self.state_key = state_key
+
         # each tabs has a table
-        table = OrbitalSelectionTable(self, orbitals)
+        self.table = OrbitalSelectionTable(self, orbitals)
         # a select all checkbox
         select_all_button = QtWidgets.QCheckBox('Select All')
         select_all_button.setChecked(True)
-        select_all_button.checkStateChanged.connect(table.select_all_button_handler)
+        select_all_button.checkStateChanged.connect(self.table.select_all_button_handler)
 
         # and a spins and irreps selection button
+        self.spin_selection_dialog = SpinSelectionDialog(self)
+        spin_select_button = QtWidgets.QPushButton('Spins')
+        spin_select_button.clicked.connect(self.spin_selection_dialog.open)
+        self.irrep_selection_dialog = IrrepSelectionDialog(self)
+        irrep_select_button = QtWidgets.QPushButton('Irreps')
+        irrep_select_button.clicked.connect(self.irrep_selection_dialog.open)
+
+        layout.addWidget(select_all_button, 0, 0, 1, 1)
+        layout.addWidget(spin_select_button, 0, 1, 1, 1)
+        layout.addWidget(irrep_select_button, 0, 2, 1, 1)
+        layout.addWidget(self.table, 1, 0, 1, 3)
+
+    def update_state(self):
+        for orb, checkbox in self.table.orbital_checkboxes.items():
+            self.parent.state.orbitals[self.state_key][orb] = checkbox.isChecked()
 
 
-        layout.addWidget(select_all_button, 0, 0, 1, 2)
-        layout.addWidget(table, 1, 0, 1, 2)
+class SpinSelectionDialog(QtWidgets.QDialog):
+    def __init__(self, parent):
+        super().__init__(parent=parent)
+        self.parent = parent
+        self.state_key = parent.state_key
 
+        layout = QtWidgets.QGridLayout()
+        self.setLayout(layout)
+
+        spin_state = self.parent.parent.state.spins[self.state_key]
+        self.checkboxes = {}
+        for i, spin in enumerate(spin_state):
+            label = {'A': 'α', 'B': 'β', 'AB': 'αβ'}[spin]
+            self.checkboxes[spin] = QtWidgets.QCheckBox(label)
+            layout.addWidget(self.checkboxes[spin], i, 0, 1, 2)
+
+        save_btn = QtWidgets.QPushButton('Save')
+        save_btn.clicked.connect(self.accept)
+        layout.addWidget(save_btn, i + 1, 0, 1, 1)
+        cancel_btn = QtWidgets.QPushButton('Cancel')
+        cancel_btn.clicked.connect(self.reject)
+        layout.addWidget(cancel_btn, i + 1, 1, 1, 1)
+
+        self.setup()
+
+    def setup(self):
+        spin_state = self.parent.parent.state.spins[self.state_key]
+        for spin, checkbox in self.checkboxes.items():
+            checkbox.setChecked(spin_state[spin])
+
+    def open(self):
+        self.setup()
+        super().open()
+
+    def accept(self):
+        # propagate state to parent table's checkboxes
+        for spin, checkbox in self.checkboxes.items():
+            self.parent.parent.state.spins[self.state_key][spin] = checkbox.isChecked()
+
+            for orb, table_checkbox in self.parent.table.orbital_checkboxes.items():
+                if orb.spin != spin:
+                    continue
+                table_checkbox.setChecked(checkbox.isChecked())
+
+        self.hide()
+
+class IrrepSelectionDialog(QtWidgets.QDialog):
+    def __init__(self, parent):
+        super().__init__(parent=parent)
+        self.parent = parent
+        self.state_key = parent.state_key
+
+        layout = QtWidgets.QGridLayout()
+        self.setLayout(layout)
+
+        irrep_state = self.parent.parent.state.irreps[self.state_key]
+        self.checkboxes = {}
+        for i, irrep in enumerate(irrep_state):
+            label = pyfmo.translate_irrep_label(irrep, mode='html')
+            self.checkboxes[irrep] = rich_widgets.HTMLCheckBox(label)
+            layout.addWidget(self.checkboxes[irrep], i, 0, 1, 2)
+
+        save_btn = QtWidgets.QPushButton('Save')
+        save_btn.clicked.connect(self.accept)
+        layout.addWidget(save_btn, i + 1, 0, 1, 1)
+        cancel_btn = QtWidgets.QPushButton('Cancel')
+        cancel_btn.clicked.connect(self.reject)
+        layout.addWidget(cancel_btn, i + 1, 1, 1, 1)
+
+        self.setup()
+
+    def setup(self):
+        irrep_state = self.parent.parent.state.irreps[self.state_key]
+        for irrep, checkbox in self.checkboxes.items():
+            checkbox.setChecked(irrep_state[irrep])
+
+    def open(self):
+        self.setup()
+        super().open()
+
+    def accept(self):
+        # propagate state to parent table's checkboxes
+        for irrep, checkbox in self.checkboxes.items():
+            self.parent.parent.state.irreps[self.state_key][irrep] = checkbox.isChecked()
+
+            for orb, table_checkbox in self.parent.table.orbital_checkboxes.items():
+                if isinstance(orb, pyfmo.orbitals.objects.MO):
+                    if orb.symmetry != irrep:
+                        continue
+                else:
+                    if orb.subspecies != irrep:
+                        continue
+                table_checkbox.setChecked(checkbox.isChecked())
+
+        self.hide()
 
 
 class OrbitalSelectionDialog(QtWidgets.QDialog):
@@ -229,10 +339,12 @@ class OrbitalSelectionDialog(QtWidgets.QDialog):
         self.tabs = QtWidgets.QTabWidget()
         layout.addWidget(self.tabs, 1, 0, 1, 3)
         # add a tab for the MOs
-        self.tabs.addTab(OrbitalSelectionTab(self, orbs.mos.orbitals), self.parent.parent._ICONS['mo'], 'Complex')
+        self.tab_stor = {orbs.mos: OrbitalSelectionTab(self, orbs.mos.orbitals, orbs.mos)}
+        self.tabs.addTab(self.tab_stor[orbs.mos], self.parent.parent._ICONS['mo'], 'Complex')
         # and for each fragment
         for fragment in orbs.fragments:
-            self.tabs.addTab(OrbitalSelectionTab(self, orbs.sfos.filter(fragment=fragment)), self.parent.parent._ICONS['sfo'], fragment)
+            self.tab_stor[fragment] = OrbitalSelectionTab(self, orbs.sfos.filter(fragment=fragment), fragment)
+            self.tabs.addTab(self.tab_stor[fragment], self.parent.parent._ICONS['sfo'], fragment)
 
         # some standard buttons
         save_btn = QtWidgets.QPushButton('Save')
@@ -251,9 +363,12 @@ class OrbitalSelectionDialog(QtWidgets.QDialog):
 
 
     def apply(self):
-        for column, col_btns in self._btns.items():
-            for orb, btn in col_btns.items():
-                self.parent._orb_selection[column][orb] = btn.isChecked()
+        for system, tab in self.tab_stor.items():
+            tab.update_state()
+
+        for system, states in list(self.parent._orb_selection.items()):
+            for orb in list(states.keys()):
+                self.parent._orb_selection[system][orb] = self.state.is_enabled(orb)
 
     def open(self, *args):
         super().open()
