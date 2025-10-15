@@ -150,9 +150,25 @@ def _get_calc_info(reader: plams.KFReader) -> dict:
         ret.set('fragments', [f'{frag}:{idx}' for frag, idx in zip(frag_per_atom, atom_order[natom:])])
 
     # determine the spin polarization of the complex and fragments
+    # if we were given fragoccupations we use those
     spin_pols = _get_fragoccupations(reader)
     for frag in ret['fragments']:
         spin_pols.setdefault(frag, {})
+
+    # otherwise, if unrestricted, we use the occupations
+    if ret['unrestricted_sfos']:
+        frag_index = np.array(reader.read('SFOs', 'fragment'))
+        subspecies = np.array([subsp.split(':')[0] for subsp in reader.read('SFOs', 'subspecies').split()])
+        occs_A = np.array(reader.read('SFOs', 'occupation'))
+        occs_B = np.array(reader.read('SFOs', 'occupation_B'))
+        occ_diff = occs_A - occs_B
+        for i, frag in enumerate(ret['fragments'], start=1):
+            subspecies_of_frag = subspecies[frag_index == i]
+            for subsp in np.unique(subspecies_of_frag):
+                spin_pols[frag][subsp] = (sum(occs_A[np.logical_and(frag_index == i, subspecies == subsp)]), sum(occs_B[np.logical_and(frag_index == i, subspecies == subsp)]))
+
+    print(spin_pols)
+
     ret.set('sfo_spinpolarizations', spin_pols)
 
     # determine if we have access to effective orbital energies
@@ -443,7 +459,7 @@ def read_data(reader: plams.KFReader, SCF0_reader: plams.KFReader = None, output
                 S = ret['matrices']['overlap'][symlabel]['AB']
 
             contr = coefficients * (coefficients @ S)
-            contr_normed = (contr.T / np.sum(abs(contr), axis=1)).T
+            contr_normed = (contr.T / np.sum(np.maximum(0, contr), axis=1)).T
             ret.set('matrices', 'mulliken_contribution', symlabel, mo_spin, contr)
             ret.set('matrices', 'mulliken_contribution_normalized', symlabel, mo_spin, contr_normed)
             ret.set('matrices', 'mulliken_population', symlabel, mo_spin, np.atleast_2d(occupation).T * contr)
