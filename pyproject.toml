@@ -77,6 +77,8 @@ requires = [
     "xlsxwriter>=3.2.2",
     "tcintegral>=1.0.1",
     "pyside6-essentials",
+    "pyperclip",
+    "platformdirs",
     ]
 test_sources = [
     "test",
