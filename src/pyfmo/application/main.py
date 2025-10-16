@@ -14,6 +14,7 @@ from math import floor, ceil
 import tcutility
 from functools import partial
 import pyperclip
+import platform
 
 slider_resolution = 500
 
@@ -158,15 +159,8 @@ class Spoiler(QtWidgets.QWidget):
         toggleButton.setCheckable(True)
         toggleButton.setChecked(False)
 
-        # headerLine = self.headerLine
-        # headerLine.setFrameShape(QtWidgets.QFrame.HLine)
-        # headerLine.setFrameShadow(QtWidgets.QFrame.Sunken)
-        # headerLine.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Maximum)
-
         self.contentArea.setStyleSheet("QScrollArea { background-color: white; border: none; }")
         self.contentArea.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff);
-
-        # self.contentArea.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
         # start out collapsed
         self.contentArea.setMaximumHeight(0)
         self.contentArea.setMinimumHeight(0)
@@ -254,52 +248,6 @@ class ScrollLabel(QtWidgets.QScrollArea):
         self.label.setText(text)
 
 
-class SpinSelectionDialog(QtWidgets.QDialog):
-    def __init__(self, parent, state):
-        super().__init__(parent=parent)
-        self.parent = parent
-        self.state = state
-        layout = QtWidgets.QGridLayout(self)
-
-        self.setLayout(layout)
-        layout.addWidget(QtWidgets.QLabel('Select allowed spin-states:\n'), 0, 0, 1, 2)
-        cbox_layout = QtWidgets.QGridLayout()
-        layout.addLayout(cbox_layout, 1, 0, 1, 2)
-
-        self.cboxes = {}
-        for i, (key, val) in enumerate(state.items()):
-            self.cboxes[key] = QtWidgets.QCheckBox()
-            self.cboxes[key].setChecked(val)
-
-            lab = QtWidgets.QLabel({'AB': '<i>αβ</i>', 'A': '<i>α</i>', 'B': '<i>β</i>'}[key])
-            cbox_layout.addWidget(lab, i, 0, 1, 1)
-            cbox_layout.addWidget(self.cboxes[key], i, 1, 1, 1)
-
-        save_btn = QtWidgets.QPushButton('Save')
-        save_btn.clicked.connect(self.accept)
-        cancel_btn = QtWidgets.QPushButton('Cancel')
-        cancel_btn.clicked.connect(self.reject)
-        layout.addWidget(save_btn, 2, 0, 1, 1)
-        layout.addWidget(cancel_btn, 2, 1, 1, 1)
-
-    def open(self, *args):
-        super().open()
-
-        # wait until the dialog is done
-        loop = QtCore.QEventLoop()
-        self.finished.connect(loop.quit)
-        loop.exec()
-
-    def accept(self):
-        for key, val in self.cboxes.items():
-            self.parent._spin_selection[key] = val.isChecked()
-            self.state[key] = val.isChecked()
-
-        self.parent._orb_selection_dialog.reset()
-        self.parent._update_plot()
-        self.hide()
-
-
 class ETypeDialog(QtWidgets.QDialog):
     def __init__(self, parent, possibilities, selected):
         super().__init__(parent=parent)
@@ -309,7 +257,7 @@ class ETypeDialog(QtWidgets.QDialog):
         layout = QtWidgets.QGridLayout(self)
 
         self.setLayout(layout)
-        layout.addWidget(QtWidgets.QLabel('Select energy type for SFOs:\n'), 0, 0, 1, 2)
+        layout.addWidget(QtWidgets.QLabel('<b>Select energy type for SFOs:</b>\n'), 0, 0, 1, 2)
         rbtn_layout = QtWidgets.QGridLayout()
         rbtn_group = QtWidgets.QButtonGroup()
         layout.addLayout(rbtn_layout, 1, 0, 1, 2)
@@ -328,7 +276,7 @@ class ETypeDialog(QtWidgets.QDialog):
             rbtn_layout.addWidget(self.rbuttons[pos], i, 0, 1, 1)
 
         if any(charge != 0 for charge in _determine_charges(self.parent.orbs).values()):
-            rbtn_layout.addWidget(QtWidgets.QLabel(f'\nNote:\nEffective energies are recommended for charged fragments!'), i+1, 0, 1, 0)
+            rbtn_layout.addWidget(QtWidgets.QLabel(f'\n<i><b>Note:</b>\nEffective energies are recommended for charged fragments!</i>'), i+1, 0, 1, 0)
 
         # layout.addWidget(self._frag_rename_textedit, 1, 0, 1, 2)
         save_btn = QtWidgets.QPushButton('Save')
@@ -354,245 +302,17 @@ class ETypeDialog(QtWidgets.QDialog):
         self.hide()
 
 
-class SymmSelectionDialog(QtWidgets.QDialog):
-    def __init__(self, parent, state):
-        super().__init__(parent=parent)
-        self.parent = parent
-        self.state = state
-        layout = QtWidgets.QGridLayout(self)
-
-        self.setLayout(layout)
-        layout.addWidget(QtWidgets.QLabel('Select allowed irreps:\n'), 0, 0, 1, 2)
-
-        tabs = QtWidgets.QTabWidget()
-        layout.addWidget(tabs, 1, 0, 1, 2)
-
-        self.cboxes = {}
-        for column, col_state in state.items():
-            self.cboxes[column] = {}
-            col_frame = QtWidgets.QFrame()
-            tabs.addTab(col_frame, column)
-
-            cbox_layout = QtWidgets.QGridLayout()
-            col_frame.setLayout(cbox_layout)
-            for i, (key, val) in enumerate(col_state.items()):
-                self.cboxes[column][key] = QtWidgets.QCheckBox()
-                self.cboxes[column][key].setChecked(val)
-                lab = QtWidgets.QLabel(pyfmo.translate_irrep_label(key, 'html'))
-                cbox_layout.addWidget(lab, i, 0, 1, 1)
-                cbox_layout.addWidget(self.cboxes[column][key], i, 1, 1, 1)
-
-        save_btn = QtWidgets.QPushButton('Save')
-        save_btn.clicked.connect(self.accept)
-        cancel_btn = QtWidgets.QPushButton('Cancel')
-        cancel_btn.clicked.connect(self.reject)
-        layout.addWidget(save_btn, 2, 0, 1, 1)
-        layout.addWidget(cancel_btn, 2, 1, 1, 1)
-
-    def open(self, *args):
-        super().open()
-
-        # wait until the dialog is done
-        loop = QtCore.QEventLoop()
-        self.finished.connect(loop.quit)
-        loop.exec()
-
-    def accept(self):
-        for column, col_cboxes in self.cboxes.items():
-            for key, val in col_cboxes.items():
-                self.parent._symmetry_selection[column][key] = val.isChecked()
-        self.parent._orb_selection_dialog.reset()
-        self.parent._update_plot()
-        self.hide()
-
-
-class OrbitalSelectionDialog(QtWidgets.QDialog):
-    def __init__(self, parent, state):
-        super().__init__(parent=parent)
-        self.parent = parent
-        self.state = state
-        self._btns = {}
-        layout = QtWidgets.QGridLayout(self)
-
-        self.setLayout(layout)
-        layout.addWidget(QtWidgets.QLabel('Select allowed orbitals:\n'), 0, 0, 1, 3)
-
-        self.tabs = QtWidgets.QTabWidget()
-        layout.addWidget(self.tabs, 1, 0, 1, 3)
-
-        self.select_all_btns = {}
-
-        column_widths = {
-            'Orbital': 150,
-            'Spin': 40,
-            'Occ.': 40,
-            'Gross Pop.': 70,
-            'Symm.': 50,
-            'Subsp.': 50,
-            'Energy (reg.)': 80,
-            'Energy (eff.)': 80,
-            'Rel. Name': 130,
-            'Rel. Name (Symm.)': 130,
-            'Rel. Name (Subsp.)': 130,
-        }
-
-        self.tables = {}
-        for column, col_state in state.items():
-            self._btns[column] = {}
-
-            headers = list(column_widths.keys())
-            if column == 'Complex':
-                headers.remove('Subsp.')
-                headers.remove('Gross Pop.')
-                headers.remove('Rel. Name (Subsp.)')
-
-            if not self.parent.orbs.data['calc_info']['has_site_energy'] or column == 'Complex':
-                headers.remove('Energy (eff.)')
-
-            self.tables[column] = QtWidgets.QTableWidget(len(col_state), len(headers))
-            self.tables[column].verticalHeader().setDefaultSectionSize(35)
-
-            self.tables[column].setHorizontalHeaderLabels(headers)
-            for i, header in enumerate(headers):
-                self.tables[column].setColumnWidth(i, column_widths[header])
-
-            self.tables[column].verticalHeader().setVisible(False)
-
-            tab_frame = QtWidgets.QFrame()
-            layout_ = QtWidgets.QVBoxLayout()
-            tab_frame.setLayout(layout_)
-            self.select_all_btns[column] = QtWidgets.QCheckBox('Select All')
-            self.select_all_btns[column].setTristate(True)
-            self.select_all_btns[column].setCheckState(QtCore.Qt.CheckState.Checked)
-            self.select_all_btns[column].checkStateChanged.connect(self.select_all_btn_handler)
-
-            layout_.addWidget(self.select_all_btns[column])
-            layout_.addWidget(self.tables[column])
-
-            self.tabs.addTab(tab_frame, column)
-            for i, (orb, is_enabled) in enumerate(col_state.items()):
-                orbital_frame = QtWidgets.QFrame()
-                layout_ = QtWidgets.QHBoxLayout()
-                orbital_frame.setLayout(layout_)
-                
-                self._btns[column][orb] = QtWidgets.QCheckBox()
-                self._btns[column][orb].setChecked(is_enabled)
-                self._btns[column][orb].checkStateChanged.connect(self.multi_select)
-                layout_.addWidget(self._btns[column][orb])
-                layout_.addWidget(QtWidgets.QLabel(pyfmo.generate_label(orb, mode='html')))
-
-                self.tables[column].setCellWidget(i, headers.index('Orbital'), orbital_frame)
-                for j, header in enumerate(headers):
-                    if header == 'Spin':
-                        label = QtWidgets.QLabel(orb.spin)
-                    elif header == 'Occ.':
-                        label = QtWidgets.QLabel(str(round(orb.occupation, 3)))
-                    elif header == 'Gross Pop.':
-                        label = QtWidgets.QLabel(f'{orb.gross_population:.3f}')
-                    elif header == 'Symm.':
-                        label = QtWidgets.QLabel(pyfmo.translate_irrep_label(orb.symmetry, mode='html'))
-                    elif header == 'Subsp.':
-                        label = QtWidgets.QLabel(pyfmo.translate_irrep_label(orb.subspecies, mode='html'))
-                    elif header == 'Rel. Name':
-                        label = QtWidgets.QLabel(orb.relative_name)
-                    elif header == 'Rel. Name (Symm.)':
-                        label = QtWidgets.QLabel(orb.symmetry_relative_name)
-                    elif header == 'Rel. Name (Subsp.)':
-                        label = QtWidgets.QLabel(orb.subspecies_relative_name)
-                    elif header == 'Energy (reg.)':
-                        label = QtWidgets.QLabel(f'{orb.energy: .2f}')
-                    elif header == 'Energy (eff.)':
-                        label = QtWidgets.QLabel(f'{orb.site_energy: .2f}')
-                    else:
-                        continue
-
-                    label.setAlignment(QtCore.Qt.AlignCenter)
-                    label.setTextFormat(QtCore.Qt.RichText)
-                    self.tables[column].setCellWidget(i, j, label)
-
-        save_btn = QtWidgets.QPushButton('Save')
-        save_btn.clicked.connect(self.accept)
-        cancel_btn = QtWidgets.QPushButton('Cancel')
-        cancel_btn.clicked.connect(self.reject)
-        reset_btn = QtWidgets.QPushButton('Reset')
-        reset_btn.clicked.connect(self.reset)
-        layout.addWidget(save_btn, 2, 0, 1, 1)
-        layout.addWidget(cancel_btn, 2, 1, 1, 1)
-        layout.addWidget(reset_btn, 2, 2, 1, 1)
-
-    def reset(self, tab=None):
-        allowed_spins = self.parent.allowed_spins
-        allowed_irreps = self.parent.allowed_irreps
-
-        for fragment, frag_btns in self._btns.items():
-            if tab is not None and fragment != tab:
-                continue
-
-            for orb, btn in frag_btns.items():
-                if orb.spin not in allowed_spins:
-                    btn.setChecked(False)
-                    continue
-                if isinstance(orb, pyfmo.orbitals.objects.SFO):
-                    if not self.parent._symmetry_selection[fragment][orb.subspecies]:
-                        btn.setChecked(False)
-                        continue
-                else:
-                    if not self.parent._symmetry_selection[fragment][orb.symmetry]:
-                        btn.setChecked(False)
-                        continue
-                btn.setChecked(True)
-
-        self.apply()
-
-    def multi_select(self, state):
-        tab = self.tabs.tabText(self.tabs.currentIndex())
-        selected_rows = []
-        for selected_range in self.tables[tab].selectedRanges():
-            selected_rows.extend(range(selected_range.topRow(), selected_range.bottomRow() + 1))
-        
-        for row in selected_rows:
-            btn = list(self._btns[tab].values())[row]
-            btn.setCheckState(state)
-
-    def select_all_btn_handler(self, state):
-        tab = self.tabs.tabText(self.tabs.currentIndex())
-        if state == QtCore.Qt.CheckState.PartiallyChecked:
-            state = QtCore.Qt.CheckState.Checked
-            self.select_all_btns[tab].setCheckState(state)
-
-        if state == QtCore.Qt.CheckState.Unchecked:
-            for orb, btn in self._btns[tab].items():
-                btn.setChecked(False)
-
-        if state == QtCore.Qt.CheckState.Checked:
-            self.reset(tab)
-
-    def apply(self):
-        for column, col_btns in self._btns.items():
-            for orb, btn in col_btns.items():
-                self.parent._orb_selection[column][orb] = btn.isChecked()
-
-    def open(self, *args):
-        super().open()
-
-        # wait until the dialog is done
-        loop = QtCore.QEventLoop()
-        self.finished.connect(loop.quit)
-        loop.exec()
-
-    def accept(self):
-        self.apply()
-        self.parent._update_plot()
-        self.hide()
-
-
 class FragRenameDialog(QtWidgets.QDialog):
     def __init__(self, parent=None):
         super().__init__(parent=parent)
         layout = QtWidgets.QGridLayout(self)
         self.setLayout(layout)
-        layout.addWidget(QtWidgets.QLabel('Rename orbital column name'), 0, 0, 1, 2)
+        title = QtWidgets.QLabel('<b>Rename orbital column name</b>')
+        # title.setStyleSheet('border: none;')
+        layout.addWidget(title, 0, 0, 1, 2)
+        self.setStyleSheet('QDialog{background-color: #f0f0f0;} QLabel{border: none; background-color: none;}')
         self._frag_rename_textedit = QtWidgets.QLineEdit(self)
+        self._frag_rename_textedit.setStyleSheet('background-color: white;')
         layout.addWidget(self._frag_rename_textedit, 1, 0, 1, 2)
         save_btn = QtWidgets.QPushButton('Save')
         save_btn.clicked.connect(self.accept)
@@ -696,7 +416,11 @@ class MplCanvas(FigureCanvas):
             if draw_type == 'single':
                 c1, c2 = ([1, 0, 0], [0, 0, 1]) if orb.occupied else ([1, .5, 0], [0, 1, 1])
                 scene.draw_molecule(orb.molecule)
-                scene.draw_dual_isosurface(orb.cube_file(preambles=[f'source {os.path.join(os.path.split(self.parent.parent._amsbin_loc)[0], "amsbashrc.sh")}']), colorm=c1, colorp=c2)
+                try:
+                    cub = orb.cube_file(preambles=[f'source {os.path.join(os.path.split(self.parent.parent._amsbin_loc)[0], "amsbashrc.sh")}'])
+                except:
+                    QtWidgets.QMessageBox.critical(self, 'Error', 'There was an issue with running densf.\nUse preferences > Set AMS Path to set the AMS installation path.')
+                scene.draw_dual_isosurface(cub, colorm=c1, colorp=c2)
                 scene.draw_text(str(orb))
 
             if draw_type == 'sum':
@@ -704,9 +428,18 @@ class MplCanvas(FigureCanvas):
                 scene.draw_molecule(mol)
 
                 c1, c2 = ([1, 0, 0], [0, 0, 1]) if orb[0].occupied else ([1, .5, 0], [0, 1, 1])
-                scene.draw_dual_isosurface(orb[0].cube_file(preambles=[f'source {os.path.join(os.path.split(self.parent.parent._amsbin_loc)[0], "amsbashrc.sh")}']), colorm=c1, colorp=c2)
+                try:
+                    cub = orb[0].cube_file(preambles=[f'source {os.path.join(os.path.split(self.parent.parent._amsbin_loc)[0], "amsbashrc.sh")}'])
+                except:
+                    QtWidgets.QMessageBox.critical(self, 'Error', 'There was an issue with running densf.\nUse preferences > Set AMS Path to set the AMS installation path.')
+                scene.draw_dual_isosurface(cub, colorm=c1, colorp=c2)
+
                 c1, c2 = ([1, 0, 0], [0, 0, 1]) if orb[1].occupied else ([1, .5, 0], [0, 1, 1])
-                scene.draw_dual_isosurface(orb[1].cube_file(preambles=[f'source {os.path.join(os.path.split(self.parent.parent._amsbin_loc)[0], "amsbashrc.sh")}']), colorm=c1, colorp=c2)
+                try:
+                    cub = orb[1].cube_file(preambles=[f'source {os.path.join(os.path.split(self.parent.parent._amsbin_loc)[0], "amsbashrc.sh")}'])
+                except:
+                    QtWidgets.QMessageBox.critical(self, 'Error', 'There was an issue with running densf.\nUse preferences > Set AMS Path to set the AMS installation path.')
+                scene.draw_dual_isosurface(cub, colorm=c1, colorp=c2)
                 
                 scene.draw_text(str(orb[0]) + ' & ' + str(orb[1]))
 
@@ -714,13 +447,16 @@ class MplCanvas(FigureCanvas):
                 c1, c2 = [0, 1, 0], [1, 0, 1]
                 mol = orb[0].molecule + orb[1].molecule
                 scene.draw_molecule(mol)
-
-                cub1 = orb[0].cube_file(preambles=[f'source {os.path.join(os.path.split(self.parent.parent._amsbin_loc)[0], "amsbashrc.sh")}'], grid_around_mol=mol)
-                cub2 = orb[1].cube_file(preambles=[f'source {os.path.join(os.path.split(self.parent.parent._amsbin_loc)[0], "amsbashrc.sh")}'], grid_around_mol=mol)
+                try:
+                    cub1 = orb[0].cube_file(preambles=[f'source {os.path.join(os.path.split(self.parent.parent._amsbin_loc)[0], "amsbashrc.sh")}'], grid_around_mol=mol)
+                    cub2 = orb[1].cube_file(preambles=[f'source {os.path.join(os.path.split(self.parent.parent._amsbin_loc)[0], "amsbashrc.sh")}'], grid_around_mol=mol)
+                except:
+                    QtWidgets.QMessageBox.critical(self, 'Error', 'There was an issue with running densf.\nUse preferences > Set AMS Path to set the AMS installation path.')
                 cub1.values *= cub2.values
                 scene.draw_dual_isosurface(cub1, colorm=c1, colorp=c2, isovalue=0.03**2)
                 
                 scene.draw_text(str(orb[0]) + ' * ' + str(orb[1]))
+
 
     def _set_orbital_info_box(self):
         self.parent.orbital_info_box.empty()
@@ -846,7 +582,6 @@ class MplCanvas(FigureCanvas):
                 self._fade_unrelated_ints(self._selected_orbitals)
                 self._already_unfaded = False
 
-                self.parent.orbital_draw_button.setEnabled(True)
                 self.parent.orbital_filter_button.setEnabled(True)
                 self.selected_orbital = mo
                 self.fig.canvas.draw_idle()
@@ -859,7 +594,6 @@ class MplCanvas(FigureCanvas):
                     self._selected_orbitals.append(sfo)
                 self._fade_unrelated_ints(self._selected_orbitals)
                 self._already_unfaded = False
-                self.parent.orbital_draw_button.setEnabled(True)
                 self.parent.orbital_filter_button.setEnabled(True)
                 self.selected_orbital = sfo
                 self.fig.canvas.draw_idle()
@@ -881,7 +615,6 @@ class MplCanvas(FigureCanvas):
 
                 self._fade_unrelated_ints(self._selected_orbitals)
                 self._already_unfaded = False
-                self.parent.orbital_draw_button.setEnabled(False)
                 self.parent.orbital_filter_button.setEnabled(False)
                 self.selected_orbital = None
                 self.fig.canvas.draw_idle()
@@ -892,7 +625,6 @@ class MplCanvas(FigureCanvas):
             if not self._already_unfaded:
                 self._already_unfaded = True
                 self._unfade()
-                self.parent.orbital_draw_button.setEnabled(False)
                 self.parent.orbital_filter_button.setEnabled(False)
                 self.selected_orbital = None
                 self.fig.canvas.set_cursor(Cursors.POINTER)
@@ -951,6 +683,13 @@ class MplCanvas(FigureCanvas):
                 action.setIcon(icon)
                 action.triggered.connect(partial(self.draw_orbital, orb=[orb, orb2], draw_type='sum'))
                 menu.addAction(action)
+
+        icon = self.parent.parent._ICONS['extra']
+        action = QtGui.QAction('Other', self)
+        action.setIconVisibleInMenu(True)
+        action.setIcon(icon)
+        action.triggered.connect(partial(self.draw_orbital, draw_type='other'))
+        menu.addAction(action)
 
         self.parent.orbital_draw_button.setMenu(menu)
 
@@ -1214,58 +953,21 @@ class AnalysisWindow(QtWidgets.QWidget):
     def get_figure_file_from_dialog(self):
         file = self.new_figure_filedialog.selectedFiles()[0]
 
-    @property
-    def allowed_spins(self):
-        return [k for k, v in self._spin_selection.items() if v]
-    
-    @property
-    def allowed_irreps(self):
-        return {frag: [k for k, v in frag_irreps.items() if v] for frag, frag_irreps in self._symmetry_selection.items()}
-
     def _update_plot(self):
         self._draw_diagram(
-            allowed_spins=self.allowed_spins,
-            allowed_irreps=self.allowed_irreps,
             oi_thresh=10**(self.slider_OI.value()/slider_resolution),
             pauli_thresh=self.slider_PR.value()/slider_resolution/1000,
             energy_type=self._energytype_selection,
             ylim=self.ylim,
             )
 
-    def _draw_diagram(self, *args, allowed_spins=None, allowed_irreps=None, oi_thresh=None, pauli_thresh=None, ylim=None, energy_type=None):
+    def _draw_diagram(self, *args, oi_thresh=None, pauli_thresh=None, ylim=None, energy_type=None):
         ax = self.plot.axes
         fig = self.plot.fig
         ax.clear()
         ax.yaxis.set_major_formatter('{x: 3.0f}')
-        allowed_mos = self.orbs.mos.filter(symmetry=allowed_irreps['Complex'], spin=allowed_spins)
-        if allowed_mos is None:
-            allowed_mos = []
-
-        allowed_sfos = []
-        for frag in self.orbs.fragments:
-            l = self.orbs.sfos.filter(subspecies=allowed_irreps[frag], spin=allowed_spins, fragment=frag)
-            if l is None:
-                l = []
-            allowed_sfos.extend(l)
-
-        for frag, states in self._orb_selection.items():
-            for orb, enabled in states.items():
-                if isinstance(orb, pyfmo.orbitals.objects.MO):
-                    if enabled and orb not in allowed_mos:
-                        allowed_mos.append(orb)
-
-                    if not enabled and orb in allowed_mos:
-                        allowed_mos.remove(orb)
-
-                if isinstance(orb, pyfmo.orbitals.objects.SFO):
-                    if enabled and orb not in allowed_sfos:
-                        allowed_sfos.append(orb)
-
-                    if not enabled and orb in allowed_sfos:
-                        allowed_sfos.remove(orb)
-
-        print(allowed_sfos)
-
+        allowed_mos = self._orb_selection_dialog.state.allowed_mos()
+        allowed_sfos = self._orb_selection_dialog.state.allowed_sfos()
         self.main_mix.set_oi_threshold(oi_thresh)
         self.main_mix.set_pr_threshold(pauli_thresh)
         self.main_mix.set_enable_oi(self.cbox_OI.isChecked())
@@ -1298,25 +1000,7 @@ class AnalysisWindow(QtWidgets.QWidget):
 
         self.main_mix = pyfmo.analysis.mixing.Mixer2(self.orbs, pr_min_thresh=0.001**2, oi_min_thresh=0.00000001)
 
-        self._spin_selection = {}
-        self._symmetry_selection = {}
         self._energytype_selection = 'energy'
-
-        for spin in self.orbs.sfos.spins:
-            self._spin_selection[spin] = True
-
-        self._spin_selection_dialog = SpinSelectionDialog(self, self._spin_selection)
-
-        for frag in self.orbs.fragments:
-            self._symmetry_selection[frag] = {}
-            for symm in sorted(set([sfo.subspecies for sfo in self.orbs.sfos.filter(fragment=frag)])):
-                self._symmetry_selection[frag][symm] = True
-
-        self._symmetry_selection['Complex'] = {}
-        for symm in sorted(set([mo.symmetry for mo in self.orbs.mos])):
-                self._symmetry_selection['Complex'][symm] = True
-
-        self._symmetry_selection_dialog = SymmSelectionDialog(self, self._symmetry_selection)
 
         self.setAcceptDrops(False)
         if hasattr(self, "_new_page_frame"):
@@ -1366,50 +1050,26 @@ class AnalysisWindow(QtWidgets.QWidget):
         self.info_tabs.tabBar().setStyleSheet('border-radius: 5px; border: 1px solid lightgray; background-color: white')
         self.info_tabs.setFixedSize(300, 500)
         orbital_info_frame = QtWidgets.QFrame()
+        orbital_info_frame.setStyleSheet("""
+            QPushButton {
+                font-size: 12px;
+                border: 1px solid lightgray;
+                border-radius: 5px;
+                padding: 8px;
+                margin: 0px; 
+                background-color: white;
+            }
+            QPushButton:hover {
+                background-color: #f0f0f0;
+                }
+            """)
         orbital_info_layout = QtWidgets.QGridLayout()
         orbital_info_frame.setLayout(orbital_info_layout)
         self.orbital_info_box = Spoilers(self)
         orbital_info_layout.addWidget(self.orbital_info_box, 1, 0, 1, 2)
-        self.orbital_draw_button = QtWidgets.QPushButton()
-        self.orbital_draw_button.setStyleSheet('QPushButton::menu-indicator { image: none; }')
-        menu = QtWidgets.QMenu(self)
-        menu.addAction(QtGui.QAction('MO', self))
-        self.orbital_draw_button.setMenu(menu)
-        self.orbital_draw_button.setText('Draw')
-        self.orbital_draw_button.setEnabled(False)
-        self.orbital_draw_button.setStyleSheet("""
-            QPushButton {
-                font-size: 12px;
-                border: 1px solid lightgray;
-                border-radius: 5px;
-                padding: 8px;
-                margin: 0px; 
-                background-color: white;
-            }
-            QPushButton:hover {
-                background-color: #f0f0f0;
-                }
-            """)
-        self.orbital_filter_button = QtWidgets.QPushButton('Filter')
-        self.orbital_filter_button.clicked.connect(self._set_orbital_filter)
-        self.orbital_filter_button.setEnabled(False)
-        self.orbital_filter_button.setStyleSheet("""
-            QPushButton {
-                font-size: 12px;
-                border: 1px solid lightgray;
-                border-radius: 5px;
-                padding: 8px;
-                margin: 0px; 
-                background-color: white;
-            }
-            QPushButton:hover {
-                background-color: #f0f0f0;
-                }
-            """)
+
         orbital_info_layout.addWidget(QtWidgets.QLabel('<i>Use</i> <b>Shift + Click</b> <i>to select multiple orbitals!</i>'), 0, 0, 1, 2)
         orbital_info_layout.addWidget(self.orbital_info_box, 1, 0, 1, 2)
-        orbital_info_layout.addWidget(self.orbital_draw_button, 2, 0, 1, 1)
-        orbital_info_layout.addWidget(self.orbital_filter_button, 2, 1, 1, 1)
         
         self.info_tabs.addTab(orbital_info_frame, 'Orbitals')
 
@@ -1567,29 +1227,10 @@ class AnalysisWindow(QtWidgets.QWidget):
         slider_layout.setColumnStretch(6, 0)
 
         selector_box = QtWidgets.QFrame()
-        selector_box.setStyleSheet('''
-            QPushButton:hover {
-                background-color: #f0f0f0;
-                }
-            QPushButton {
-                border: 1px solid lightgray;
-                border-radius: 5px;
-                padding: 8px;
-                margin: 0px; 
-                background-color: white;
-                }
-            ''')
+        # selector_box
         selector_layout = QtWidgets.QGridLayout()
         selector_box.setLayout(selector_layout)
         layout.addWidget(selector_box, 1, 1)
-
-        spin_btn = QtWidgets.QPushButton('Spin')
-        spin_btn.clicked.connect(self._spin_selection_dialog.open)
-        selector_layout.addWidget(spin_btn, 0, 0)
-
-        symm_btn = QtWidgets.QPushButton('Irreps')
-        symm_btn.clicked.connect(self._symmetry_selection_dialog.open)
-        selector_layout.addWidget(symm_btn, 0, 1)
 
         etype_btn = QtWidgets.QPushButton('Energy Type')
         etype_btn.clicked.connect(self._energytype_selection_dialog.open)
@@ -1598,6 +1239,26 @@ class AnalysisWindow(QtWidgets.QWidget):
         orb_btn = QtWidgets.QPushButton('Orbitals')
         orb_btn.clicked.connect(self._orb_selection_dialog.open)
         selector_layout.addWidget(orb_btn, 1, 1)
+
+        self.orbital_draw_button = QtWidgets.QPushButton()
+        self.orbital_draw_button.setStyleSheet('QPushButton::menu-indicator { image: none; }')
+
+        menu = QtWidgets.QMenu(self)
+        action = QtGui.QAction('Other', self)
+        action.triggered.connect(partial(self.plot.draw_orbital, draw_type='other'))
+        action.setIconVisibleInMenu(True)
+        icon = self.parent._ICONS['extra']
+        action.setIcon(icon)
+        menu.addAction(action)
+        self.orbital_draw_button.setMenu(menu)
+        self.orbital_draw_button.setText('Draw')
+
+        self.orbital_filter_button = QtWidgets.QPushButton('Filter')
+        self.orbital_filter_button.clicked.connect(self._set_orbital_filter)
+        self.orbital_filter_button.setEnabled(False)
+        selector_layout.addWidget(self.orbital_draw_button, 0, 0)
+        selector_layout.addWidget(self.orbital_filter_button, 0, 1)
+
 
         misc_box = QtWidgets.QFrame()
 
@@ -1631,7 +1292,6 @@ class AnalysisWindow(QtWidgets.QWidget):
         frame.setStyleSheet('QLabel{padding: 2px; font: 10pt} QPushButton{icon-size: 10px;}')
         layout = QtWidgets.QGridLayout()
         frame.setLayout(layout)
-
 
         row = 0
         layout.addWidget(CopyLabel('<b>adf.rkf</b>', self.orbs.reader.path), row, 0, 1, 2)
@@ -1684,8 +1344,6 @@ class AnalysisWindow(QtWidgets.QWidget):
         label = QtWidgets.QLabel(f"{self.orbs.reader.read('Energy', 'Dispersion Energy') * 627.503:.2f} kcal mol<sup>–1</sup>")
         label.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
         layout.addWidget(label, row, 1, 1, 1)
-
-        layout.setSpacing(0)
 
         return frame
 
@@ -1874,6 +1532,18 @@ class PyOrbbApp(QtWidgets.QApplication):
         self.window.resize(1030 + 22 + 12, 698 + 52)
         self.window.layout = QtWidgets.QGridLayout()
         grid_widget = QtWidgets.QWidget()
+        grid_widget.setStyleSheet('''
+            QPushButton:hover {
+                background-color: #f0f0f0;
+                }
+            QPushButton {
+                border: 1px solid lightgray;
+                border-radius: 5px;
+                padding: 4px;
+                margin: 0px; 
+                background-color: white;
+                }
+            ''')
         grid_widget.setLayout(self.window.layout)
         self.window.setCentralWidget(grid_widget)
 
@@ -1896,6 +1566,8 @@ class PyOrbbApp(QtWidgets.QApplication):
                 font-size: 20px;
                 border-radius: 16px;
                 padding: 6px;
+                background-color: none;
+                border: none;
             }
             """)
         add_tab_button.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
@@ -1935,7 +1607,6 @@ class PyOrbbApp(QtWidgets.QApplication):
         self.setStyle('Fusion')
         self._add_analysis_tab()
 
-
         ICON_FOLDER = os.path.join(os.path.split(__file__)[0], '..', 'application', 'icons')
         self._ICONS = {file.removesuffix('.png'): QtGui.QIcon(os.path.join(ICON_FOLDER, file)) for file in os.listdir(ICON_FOLDER)}
         self._PIXMAPS = {file.removesuffix('.png'): QtGui.QPixmap(os.path.join(ICON_FOLDER, file)) for file in os.listdir(ICON_FOLDER)}
@@ -1945,13 +1616,17 @@ class PyOrbbApp(QtWidgets.QApplication):
         '''
         opens a filedialog allowing the user to select the path to densf
         '''
-        path = QtWidgets.QFileDialog.getOpenFileName(caption='Select AMS install location', dir=os.getcwd())[0]
+        if platform.system() == 'Darwin':
+            d = "/Applications" if os.path.exists("/Applications") else os.getcwd()
+            path = QtWidgets.QFileDialog.getOpenFileName(self.window, caption='Select AMS application', dir=d, filter="*.app")[0]
+        else:
+            path = QtWidgets.QFileDialog.getExistingDirectory(caption='Select AMS install location', dir=os.getcwd())[0]
+
         # if it is an app we get the amsbin
         if path.endswith('.app'):
             self._amsbin_loc = os.path.join(path, 'Contents', 'Resources', 'amshome', 'bin')
             save_setting('amsbin', self._amsbin_loc)
             os.environ['AMSBIN'] = self._amsbin_loc
-
 
     def _add_analysis_tab(self, object=None, tabname='new'):
         window = AnalysisWindow(self)
@@ -1974,7 +1649,6 @@ class PyOrbbApp(QtWidgets.QApplication):
         lineedit.show()
         text_change_handler("")
         lineedit.selectAll()
-
 
     def __enter__(self):
         self.__post_init__()
