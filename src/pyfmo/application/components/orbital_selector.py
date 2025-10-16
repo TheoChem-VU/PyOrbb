@@ -1,6 +1,7 @@
 from PySide6 import QtWidgets, QtCore
 from pyfmo.application.components import rich_widgets
 import pyfmo
+import dictfunc
 
 
 class OrbitalSelectionState:
@@ -15,7 +16,7 @@ class OrbitalSelectionState:
         self.irreps = {self.orbs.mos: {}}
 
         for mo in self.orbs.mos:
-            self.orbitals[self.orbs.mos][mo] = None
+            self.orbitals[self.orbs.mos][mo] = True
             self.spins[self.orbs.mos].setdefault(mo.spin, True)
             self.irreps[self.orbs.mos].setdefault(mo.symmetry, True)
 
@@ -24,7 +25,7 @@ class OrbitalSelectionState:
             self.spins[frag] = {}
             self.irreps[frag] = {}
             for sfo in self.orbs.sfos.filter(fragment=frag):
-                self.orbitals[frag][sfo] = None
+                self.orbitals[frag][sfo] = True
                 self.spins[frag].setdefault(sfo.spin, True)
                 self.irreps[frag].setdefault(sfo.subspecies, True)
 
@@ -47,6 +48,14 @@ class OrbitalSelectionState:
 
         return ret
 
+    def allowed_mos(self):
+        ret = []
+        for mo in self.orbs.mos:
+            if self.orbitals[self.orbs.mos][mo] is False:
+                continue
+            ret.append(mo)
+        return ret
+
     def sfo_states(self, frag):
         ret = {}
         for sfo in self.orbs.sfos.filter(fragment=frag):
@@ -66,6 +75,23 @@ class OrbitalSelectionState:
 
         return ret
 
+    def allowed_sfos(self, frag=None):
+        ret = []
+
+        for frag_, orbitals in self.orbitals.items():
+            if frag is not None and frag_ != frag:
+                continue
+
+            if frag_ == self.orbs.mos:
+                continue
+
+            for orb, state in orbitals.items():
+                if state is False:
+                    continue
+
+                ret.append(orb)
+        return ret
+
     def is_enabled(self, orbital: 'MO or SFO'):
         if isinstance(orbital, pyfmo.orbitals.objects.MO):
             return self.mo_states()[orbital]
@@ -77,6 +103,13 @@ class OrbitalSelectionState:
             self.orbitals[self.orbs.mos][orbital] = state
         else:
             self.orbitals[orbital.fragment_unique][orbital] = state
+
+    def copy(self):
+        new = OrbitalSelectionState(self.orbs)
+        new.orbitals = dictfunc.list_to_dict(dictfunc.dict_to_list(self.orbitals))
+        new.spins = dictfunc.list_to_dict(dictfunc.dict_to_list(self.spins))
+        new.irreps = dictfunc.list_to_dict(dictfunc.dict_to_list(self.irreps))
+        return new
 
 
 class OrbitalSelectionTable(QtWidgets.QTableWidget):
@@ -221,6 +254,10 @@ class OrbitalSelectionTab(QtWidgets.QFrame):
         for orb, checkbox in self.table.orbital_checkboxes.items():
             self.parent.state.orbitals[self.state_key][orb] = checkbox.isChecked()
 
+    def reset(self):
+        for orb, state in self.parent.state.orbitals[self.state_key].items():
+            self.table.orbital_checkboxes[orb].setChecked(state)
+
 
 class SpinSelectionDialog(QtWidgets.QDialog):
     def __init__(self, parent):
@@ -249,6 +286,7 @@ class SpinSelectionDialog(QtWidgets.QDialog):
 
     def setup(self):
         spin_state = self.parent.parent.state.spins[self.state_key]
+        print(spin_state)
         for spin, checkbox in self.checkboxes.items():
             checkbox.setChecked(spin_state[spin])
 
@@ -333,7 +371,7 @@ class OrbitalSelectionDialog(QtWidgets.QDialog):
         self.setLayout(layout)
 
         # title of the dialogue
-        layout.addWidget(QtWidgets.QLabel('Select allowed orbitals:\n'), 0, 0, 1, 3)
+        layout.addWidget(QtWidgets.QLabel('<b>Select allowed orbitals:</b>\n'), 0, 0, 1, 3)
 
         # all buttons and tables go into the tabs
         self.tabs = QtWidgets.QTabWidget()
@@ -357,20 +395,21 @@ class OrbitalSelectionDialog(QtWidgets.QDialog):
         layout.addWidget(cancel_btn, 2, 1, 1, 1)
         layout.addWidget(reset_btn, 2, 2, 1, 1)
 
-
     def reset(self, tab=None):
-        ...
-
+        self.state.reset()
+        for system, tab in self.tab_stor.items():
+            tab.reset()
 
     def apply(self):
         for system, tab in self.tab_stor.items():
             tab.update_state()
 
-        for system, states in list(self.parent._orb_selection.items()):
-            for orb in list(states.keys()):
-                self.parent._orb_selection[system][orb] = self.state.is_enabled(orb)
-
     def open(self, *args):
+        self.__old_state = self.state.copy()
+
+        for system, tab in self.tab_stor.items():
+            tab.reset()
+
         super().open()
 
         # wait until the dialog is done
@@ -381,4 +420,8 @@ class OrbitalSelectionDialog(QtWidgets.QDialog):
     def accept(self):
         self.apply()
         self.parent._update_plot()
+        self.hide()
+
+    def reject(self):
+        self.state = self.__old_state
         self.hide()
