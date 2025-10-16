@@ -91,7 +91,6 @@ test_requires = [
 [tool.briefcase.app.pyfmo.macOS]
 universal_build = false
 requires = [
-    "std-nslog",
 ]
 
 [tool.briefcase.app.pyfmo.linux]
