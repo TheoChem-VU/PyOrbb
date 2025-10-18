@@ -414,6 +414,7 @@ class MplCanvas(FigureCanvas):
 
         if self.parent.tcviewer_screen is None or self.parent.tcviewer_screen.isclosed:
             self.parent.tcviewer_screen = tcviewer.screen._ScreenWindow()
+            self.parent.tcviewer_screen.setWindowIcon(self.parent.parent._ICONS['pyorbb'])
             self.parent.tcviewer_screen.__enter__()
             self.parent.tcviewer_screen.setWindowTitle('PyOrbb Viewer')
             self.parent.tcviewer_screen.show()
@@ -1538,7 +1539,6 @@ class PyOrbbApp(QtWidgets.QApplication):
         QtGui.QFontDatabase.addApplicationFont(fontpath)
 
         self.window = QtWidgets.QMainWindow()
-        self.window.setWindowIcon(QtGui.QIcon(os.path.split(__file__)[0] + '/../../../icon_12.png'))
         self.window.resize(1030 + 22 + 12, 698 + 52)
         self.window.layout = QtWidgets.QGridLayout()
         grid_widget = QtWidgets.QWidget()
@@ -1620,7 +1620,7 @@ class PyOrbbApp(QtWidgets.QApplication):
         ICON_FOLDER = os.path.join(os.path.split(__file__)[0], '..', 'application', 'icons')
         self._ICONS = {file.removesuffix('.png'): QtGui.QIcon(os.path.join(ICON_FOLDER, file)) for file in os.listdir(ICON_FOLDER)}
         self._PIXMAPS = {file.removesuffix('.png'): QtGui.QPixmap(os.path.join(ICON_FOLDER, file)) for file in os.listdir(ICON_FOLDER)}
-
+        self.window.setWindowIcon(self._ICONS["pyorbb"])
 
     def AMS_loc_dialogue(self):
         '''
