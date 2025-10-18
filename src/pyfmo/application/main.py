@@ -423,12 +423,11 @@ class MplCanvas(FigureCanvas):
                 c1, c2 = ([1, 0, 0], [0, 0, 1]) if orb.occupied else ([1, .5, 0], [0, 1, 1])
                 scene.draw_molecule(orb.molecule)
                 try:
-                    cub = orb.cube_file(preambles=[f'source {os.path.join(os.path.split(self.parent.parent._amsbin_loc)[0], "amsbashrc.sh")}'])
-                except:
+                    data = orb.vtk_file(gridsize='medium', preambles=preambles)
                 except Exception as e:
                     print("".join(traceback.format_exception(type(e), e, e.__traceback__)))
                     QtWidgets.QMessageBox.critical(self, 'Error', 'There was an issue with running densf.\nUse preferences > Set AMS Path to set the AMS installation path.')
-                scene.draw_dual_isosurface(cub, colorm=c1, colorp=c2)
+                scene.draw_dual_isosurface(data, colorm=c1, colorp=c2)
                 scene.draw_text(str(orb))
 
             if draw_type == 'sum':
@@ -437,8 +436,7 @@ class MplCanvas(FigureCanvas):
 
                 c1, c2 = ([1, 0, 0], [0, 0, 1]) if orb[0].occupied else ([1, .5, 0], [0, 1, 1])
                 try:
-                    cub = orb[0].cube_file(preambles=[f'source {os.path.join(os.path.split(self.parent.parent._amsbin_loc)[0], "amsbashrc.sh")}'])
-                except:
+                    cub = orb[0].vtk_file(preambles=preambles)
                 except Exception as e:
                     print("".join(traceback.format_exception(type(e), e, e.__traceback__)))
                     QtWidgets.QMessageBox.critical(self, 'Error', 'There was an issue with running densf.\nUse preferences > Set AMS Path to set the AMS installation path.')
@@ -446,8 +444,7 @@ class MplCanvas(FigureCanvas):
 
                 c1, c2 = ([1, 0, 0], [0, 0, 1]) if orb[1].occupied else ([1, .5, 0], [0, 1, 1])
                 try:
-                    cub = orb[1].cube_file(preambles=[f'source {os.path.join(os.path.split(self.parent.parent._amsbin_loc)[0], "amsbashrc.sh")}'])
-                except:
+                    cub = orb[1].vtk_file(preambles=preambles)
                 except Exception as e:
                     print("".join(traceback.format_exception(type(e), e, e.__traceback__)))
                     QtWidgets.QMessageBox.critical(self, 'Error', 'There was an issue with running densf.\nUse preferences > Set AMS Path to set the AMS installation path.')
@@ -460,9 +457,8 @@ class MplCanvas(FigureCanvas):
                 mol = orb[0].molecule + orb[1].molecule
                 scene.draw_molecule(mol)
                 try:
-                    cub1 = orb[0].cube_file(preambles=[f'source {os.path.join(os.path.split(self.parent.parent._amsbin_loc)[0], "amsbashrc.sh")}'], grid_around_mol=mol)
-                    cub2 = orb[1].cube_file(preambles=[f'source {os.path.join(os.path.split(self.parent.parent._amsbin_loc)[0], "amsbashrc.sh")}'], grid_around_mol=mol)
-                except:
+                    cub1 = orb[0].vtk_file(preambles=preambles, grid_around_mol=mol)
+                    cub2 = orb[1].vtk_file(preambles=preambles, grid_around_mol=mol)
                 except Exception as e:
                     print("".join(traceback.format_exception(type(e), e, e.__traceback__)))
                     QtWidgets.QMessageBox.critical(self, 'Error', 'There was an issue with running densf.\nUse preferences > Set AMS Path to set the AMS installation path.')
@@ -1614,9 +1610,9 @@ class PyOrbbApp(QtWidgets.QApplication):
 
         # Help menu
         preferenceMenu = menuBar.addMenu("Preferences")
-        open_densfpath = QtGui.QAction("Set AMS Path",self)
-        open_densfpath.triggered.connect(self.AMS_loc_dialogue)
-        preferenceMenu.addAction(open_densfpath)
+        open_ams_path = QtGui.QAction("Set AMS Path",self)
+        open_ams_path.triggered.connect(self.AMS_loc_dialogue)
+        preferenceMenu.addAction(open_ams_path)
         
         self.setStyle('Fusion')
         self._add_analysis_tab()
@@ -1628,19 +1624,19 @@ class PyOrbbApp(QtWidgets.QApplication):
 
     def AMS_loc_dialogue(self):
         '''
-        opens a filedialog allowing the user to select the path to densf
+        opens a filedialog allowing the user to select the path to AMSHOME
         '''
         if platform.system() == 'Darwin':
             d = "/Applications" if os.path.exists("/Applications") else os.getcwd()
             path = QtWidgets.QFileDialog.getOpenFileName(self.window, caption='Select AMS application', dir=d, filter="*.app")[0]
+            self._amsbin_loc = os.path.join(path, 'Contents', 'Resources', 'amshome', 'bin')
         else:
-            path = QtWidgets.QFileDialog.getExistingDirectory(caption='Select AMS install location', dir=os.getcwd())[0]
+            path = QtWidgets.QFileDialog.getExistingDirectory(caption='Select AMS install location', dir=os.getcwd())
+            self._amsbin_loc = os.path.join(path, "bin")
 
         # if it is an app we get the amsbin
-        if path.endswith('.app'):
-            self._amsbin_loc = os.path.join(path, 'Contents', 'Resources', 'amshome', 'bin')
-            save_setting('amsbin', self._amsbin_loc)
-            os.environ['AMSBIN'] = self._amsbin_loc
+        save_setting('amsbin', self._amsbin_loc)
+        os.environ['AMSBIN'] = self._amsbin_loc
 
     def _add_analysis_tab(self, object=None, tabname='new'):
         window = AnalysisWindow(self)
