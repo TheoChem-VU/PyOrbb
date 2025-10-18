@@ -68,7 +68,7 @@ sources = [
 
 requires = [
     "tcviewer>=0.1.9",
-    "git+https://github.com/TheoChem-VU/TCutility.git@Import-restructuring-type-annotations-fixes",
+    "tcutility>=0.16.12",
     "numpy",
     "matplotlib>=3.5.3",
     "networkx>=2.6.3",
