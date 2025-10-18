@@ -65,10 +65,9 @@ icon = "icon_12"
 sources = [
     "src/pyfmo",
 ]
-
 requires = [
     "tcviewer>=0.1.9",
-    "tcutility>=0.16.12",
+    "git+https://github.com/TheoChem-VU/TCutility.git@495-support-for-windows",
     "numpy",
     "matplotlib>=3.5.3",
     "networkx>=2.6.3",
