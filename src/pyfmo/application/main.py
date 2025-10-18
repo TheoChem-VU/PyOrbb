@@ -15,6 +15,7 @@ import tcutility
 from functools import partial
 import pyperclip
 import platform
+import traceback
 
 slider_resolution = 500
 
@@ -424,6 +425,8 @@ class MplCanvas(FigureCanvas):
                 try:
                     cub = orb.cube_file(preambles=[f'source {os.path.join(os.path.split(self.parent.parent._amsbin_loc)[0], "amsbashrc.sh")}'])
                 except:
+                except Exception as e:
+                    print("".join(traceback.format_exception(type(e), e, e.__traceback__)))
                     QtWidgets.QMessageBox.critical(self, 'Error', 'There was an issue with running densf.\nUse preferences > Set AMS Path to set the AMS installation path.')
                 scene.draw_dual_isosurface(cub, colorm=c1, colorp=c2)
                 scene.draw_text(str(orb))
@@ -436,6 +439,8 @@ class MplCanvas(FigureCanvas):
                 try:
                     cub = orb[0].cube_file(preambles=[f'source {os.path.join(os.path.split(self.parent.parent._amsbin_loc)[0], "amsbashrc.sh")}'])
                 except:
+                except Exception as e:
+                    print("".join(traceback.format_exception(type(e), e, e.__traceback__)))
                     QtWidgets.QMessageBox.critical(self, 'Error', 'There was an issue with running densf.\nUse preferences > Set AMS Path to set the AMS installation path.')
                 scene.draw_dual_isosurface(cub, colorm=c1, colorp=c2)
 
@@ -443,6 +448,8 @@ class MplCanvas(FigureCanvas):
                 try:
                     cub = orb[1].cube_file(preambles=[f'source {os.path.join(os.path.split(self.parent.parent._amsbin_loc)[0], "amsbashrc.sh")}'])
                 except:
+                except Exception as e:
+                    print("".join(traceback.format_exception(type(e), e, e.__traceback__)))
                     QtWidgets.QMessageBox.critical(self, 'Error', 'There was an issue with running densf.\nUse preferences > Set AMS Path to set the AMS installation path.')
                 scene.draw_dual_isosurface(cub, colorm=c1, colorp=c2)
                 
@@ -456,6 +463,8 @@ class MplCanvas(FigureCanvas):
                     cub1 = orb[0].cube_file(preambles=[f'source {os.path.join(os.path.split(self.parent.parent._amsbin_loc)[0], "amsbashrc.sh")}'], grid_around_mol=mol)
                     cub2 = orb[1].cube_file(preambles=[f'source {os.path.join(os.path.split(self.parent.parent._amsbin_loc)[0], "amsbashrc.sh")}'], grid_around_mol=mol)
                 except:
+                except Exception as e:
+                    print("".join(traceback.format_exception(type(e), e, e.__traceback__)))
                     QtWidgets.QMessageBox.critical(self, 'Error', 'There was an issue with running densf.\nUse preferences > Set AMS Path to set the AMS installation path.')
                 cub1.values *= cub2.values
                 scene.draw_dual_isosurface(cub1, colorm=c1, colorp=c2, isovalue=0.03**2)
