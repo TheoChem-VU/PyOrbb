@@ -92,13 +92,13 @@ class OrbitalSelectionState:
                 ret.append(orb)
         return ret
 
-    def is_enabled(self, orbital: 'MO or SFO'):
+    def is_enabled(self, orbital):
         if isinstance(orbital, pyfmo.orbitals.objects.MO):
             return self.mo_states()[orbital]
         else:
             return self.sfo_states(orbital.fragment_unique)[orbital]
 
-    def set_state(self, orbital: 'MO or SFO', state):
+    def set_state(self, orbital, state):
         if isinstance(orbital, pyfmo.orbitals.objects.MO):
             self.orbitals[self.orbs.mos][orbital] = state
         else:
@@ -113,7 +113,7 @@ class OrbitalSelectionState:
 
 
 class OrbitalSelectionTable(QtWidgets.QTableWidget):
-    def __init__(self, parent, orbitals: "List[MO] or List[SFO]"):
+    def __init__(self, parent, orbitals):
         self.parent = parent
         self.orbital_checkboxes = {}
         self.orbitals = orbitals

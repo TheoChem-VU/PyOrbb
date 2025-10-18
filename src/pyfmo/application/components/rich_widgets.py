@@ -65,9 +65,6 @@ class HTMLStyle(QtWidgets.QProxyStyle):
         """
         width = size.width()
         height = size.height()
-        if contents_type == self.CT_ComboBox and widget and type(widget) == HTMLComboBox:
-            size = widget.sizeHint()
-            width = size.width() + widget.width_adjust_contents
         return super().sizeFromContents(contents_type,
                 option,
                 QtCore.QSize(width, height),

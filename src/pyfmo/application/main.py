@@ -848,7 +848,7 @@ class SaveFileDialog(QtWidgets.QFileDialog):
     def open(self, title, filters, slot=QtCore.SLOT("get_file_from_dialog()")):
         self.setWindowTitle(title)
         self.setNameFilters(filters)
-        super().open(parent, slot=QtCore.SLOT("get_file_from_dialog()"))
+        super().open(self.parent, slot=QtCore.SLOT("get_file_from_dialog()"))
         return self.selectedFiles()[0]
 
 
