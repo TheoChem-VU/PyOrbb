@@ -406,6 +406,11 @@ class MplCanvas(FigureCanvas):
     def draw_orbital(self, orb=None, draw_type='single'):
         import tcviewer
 
+        if platform.system() == "Windows":
+            preambles = [f'set AMSHOME={os.path.split(self.parent.parent._amsbin_loc)[0]}', f'set AMSBIN={os.path.split(self.parent.parent._amsbin_loc)[0]}/bin']
+        else:
+            preambles = [f'source {os.path.join(os.path.split(self.parent.parent._amsbin_loc)[0], "amsbashrc.sh")}']
+
         if self.parent.tcviewer_screen is None or self.parent.tcviewer_screen.isclosed:
             self.parent.tcviewer_screen = tcviewer.screen._ScreenWindow()
             self.parent.tcviewer_screen.__enter__()
