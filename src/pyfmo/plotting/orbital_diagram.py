@@ -38,7 +38,7 @@ def draw_interaction(sfos, mos, connections,
         degenerate_sfo_threshold = .008
 
     if highlighted_orbitals is None:
-        highlighted_orbitals = sfos
+        highlighted_orbitals = []
 
     if ax is None:
         ax = plt.gca()
