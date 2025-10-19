@@ -128,12 +128,11 @@ class OrbitalSelectionState:
 
 class TableFloatItem(QtWidgets.QTableWidgetItem):
     def __init__(self, value, precision=3):
-        self.value = value
-        self.precision = precision
         super().__init__()
+        self.setData(QtCore.Qt.DisplayRole, round(value, precision))
+        # self.setText(f'{value:> .{precision}f}')
+        # self.setTextAlignment(QtCore.Qt.AlignHCenter)
 
-    def text(self):
-        return f'{self.value:.{self.precision}f}'
 
 class OrbitalSelectionTable(QtWidgets.QTableWidget):
     def __init__(self, parent, orbitals):
@@ -143,17 +142,31 @@ class OrbitalSelectionTable(QtWidgets.QTableWidget):
         is_MO = isinstance(orbitals[0], pyfmo.orbitals.objects.MO)
 
         column_widths = {
-            'Orbital': 155,
-            'Spin': 45,
-            'Occ.': 45,
-            'Gross Pop.': 75,
-            'Symm.': 55,
-            'Subsp.': 55,
-            'Energy (reg.)': 85,
-            'Energy (eff.)': 85,
-            'Rel. Name': 135,
-            'Rel. Name (Symm.)': 135,
-            'Rel. Name (Subsp.)': 135,
+            'Orbital': 150 + 15,
+            'Spin': 40 + 15,
+            'Occ.': 40 + 15,
+            'Gross Pop.': 70 + 15,
+            'Symm.': 50 + 15,
+            'Subsp.': 50 + 15,
+            'Energy (reg.)': 80 + 15,
+            'Energy (eff.)': 80 + 15,
+            'Rel. Name': 130 + 15,
+            'Rel. Name (Symm.)': 130 + 15,
+            'Rel. Name (Subsp.)': 130 + 15,
+        }
+
+        column_tooltips = {
+            'Orbital': None,
+            'Spin': 'Spin state of this orbital',
+            'Occ.': 'Occupation',
+            'Gross Pop.': 'Mulliken gross population',
+            'Symm.': 'Irreducible representation in the symmetry of the complex',
+            'Subsp.': 'Irreducible representation in the symmetry of the fragment',
+            'Energy (reg.)': 'Regular orbital energy',
+            'Energy (eff.)': 'Effective orbital energy',
+            'Rel. Name': 'Relative name over all orbitals',
+            'Rel. Name (Symm.)': 'Relative name over all orbitals with the same complex symmetry',
+            'Rel. Name (Subsp.)': 'Relative name over all orbitals with the same fragment symmetry',
         }
 
         headers = list(column_widths)
@@ -179,6 +192,7 @@ class OrbitalSelectionTable(QtWidgets.QTableWidget):
             orbital_frame = QtWidgets.QFrame()
             layout_ = QtWidgets.QHBoxLayout()
             orbital_frame.setLayout(layout_)
+            orbital_frame.setToolTip(f'ADF-name: {orb}')
             
             self.orbital_checkboxes[orb] = QtWidgets.QCheckBox()
             self.orbital_checkboxes[orb].setToolTip("Check to include this orbital in the analysis")
