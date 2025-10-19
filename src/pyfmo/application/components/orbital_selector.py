@@ -29,6 +29,20 @@ class OrbitalSelectionState:
                 self.spins[frag].setdefault(sfo.spin, True)
                 self.irreps[frag].setdefault(sfo.subspecies, True)
 
+    def disable_all(self, system=None):
+        # to indicate MOs we use the mos object as the key
+        if system is self.orbs.mos:
+            for mo in self.orbs.mos:
+                self.orbitals[self.orbs.mos][mo] = False
+
+        for frag in self.orbs.fragments:
+            if system != frag:
+                continue
+
+            for sfo in self.orbs.sfos.filter(fragment=frag):
+                self.orbitals[frag][sfo] = False
+
+
     def mo_states(self):
         ret = {}
         for mo in self.orbs.mos:
