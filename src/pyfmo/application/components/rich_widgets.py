@@ -239,6 +239,13 @@ class HTMLWidgetHelper(object):
         """
         return self.sizeHint()
 
+class HTMLTableWidgetItem(HTMLWidgetHelper, QtWidgets.QTableWidgetItem):
+    """
+    An HTML-enabled QCheckBox.  All the actual work is done in HTMLWidgetHelper.
+    We're abusing (well, using) Python's multiple inheritance since the same code
+    works well for more than one widget type.
+    """
+
 class HTMLCheckBox(HTMLWidgetHelper, QtWidgets.QCheckBox):
     """
     An HTML-enabled QCheckBox.  All the actual work is done in HTMLWidgetHelper.
