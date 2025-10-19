@@ -2,6 +2,7 @@ from PySide6 import QtWidgets, QtCore
 from pyfmo.application.components import rich_widgets
 import pyfmo
 import dictfunc
+import functools
 
 
 class OrbitalSelectionState:
