@@ -125,6 +125,14 @@ class OrbitalSelectionState:
         new.irreps = dictfunc.list_to_dict(dictfunc.dict_to_list(self.irreps))
         return new
 
+class TableFloatItem(QtWidgets.QTableWidgetItem):
+    def __init__(self, value, precision=3):
+        self.value = value
+        self.precision = precision
+        super().__init__()
+
+    def text(self):
+        return f'{self.value:.{self.precision}f}'
 
 class OrbitalSelectionTable(QtWidgets.QTableWidget):
     def __init__(self, parent, orbitals):
@@ -134,17 +142,17 @@ class OrbitalSelectionTable(QtWidgets.QTableWidget):
         is_MO = isinstance(orbitals[0], pyfmo.orbitals.objects.MO)
 
         column_widths = {
-            'Orbital': 150,
-            'Spin': 40,
-            'Occ.': 40,
-            'Gross Pop.': 70,
-            'Symm.': 50,
-            'Subsp.': 50,
-            'Energy (reg.)': 80,
-            'Energy (eff.)': 80,
-            'Rel. Name': 130,
-            'Rel. Name (Symm.)': 130,
-            'Rel. Name (Subsp.)': 130,
+            'Orbital': 155,
+            'Spin': 45,
+            'Occ.': 45,
+            'Gross Pop.': 75,
+            'Symm.': 55,
+            'Subsp.': 55,
+            'Energy (reg.)': 85,
+            'Energy (eff.)': 85,
+            'Rel. Name': 135,
+            'Rel. Name (Symm.)': 135,
+            'Rel. Name (Subsp.)': 135,
         }
 
         headers = list(column_widths)
@@ -159,6 +167,7 @@ class OrbitalSelectionTable(QtWidgets.QTableWidget):
 
         super().__init__(len(orbitals), len(headers), parent=parent)
 
+        self.setItemDelegate(rich_widgets.HTMLDelegate())
         self.verticalHeader().setDefaultSectionSize(35)
         self.verticalHeader().setVisible(False)
         self.setHorizontalHeaderLabels(headers)
@@ -171,42 +180,61 @@ class OrbitalSelectionTable(QtWidgets.QTableWidget):
             orbital_frame.setLayout(layout_)
             
             self.orbital_checkboxes[orb] = QtWidgets.QCheckBox()
+            self.orbital_checkboxes[orb].setToolTip("Check to include this orbital in the analysis")
             self.orbital_checkboxes[orb].setChecked(self.parent.parent.state.is_enabled(orb))
             self.orbital_checkboxes[orb].checkStateChanged.connect(self.multi_select)
 
+            draw_button = QtWidgets.QPushButton()
+            draw_button.setIcon(self.parent.parent.parent.parent._ICONS["draw"])
+            draw_button.setIconSize(QtCore.QSize(8, 8))
+            draw_button.setToolTip("Click to draw this orbital")
+            draw_button.clicked.connect(functools.partial(self.parent.parent.parent.plot.draw_orbital, orb=orb, draw_type='single'))
+            layout_.addWidget(draw_button, stretch=0)
             layout_.addWidget(self.orbital_checkboxes[orb])
             layout_.addWidget(QtWidgets.QLabel(pyfmo.generate_label(orb, mode='html')))
-
+            layout_.addStretch()
             self.setCellWidget(i, headers.index('Orbital'), orbital_frame)
 
             for j, header in enumerate(headers):
                 if header == 'Spin':
                     spin = {'A': '<i>α</i>', 'B': '<i>β</i>', 'AB': '<i>αβ</i>'}[orb.spin]
-                    label = QtWidgets.QLabel(spin)
+                    item = QtWidgets.QTableWidgetItem()
+                    item.setText(spin)
                 elif header == 'Occ.':
-                    label = QtWidgets.QLabel(str(round(orb.occupation, 3)))
+                    item = TableFloatItem(orb.occupation, 3)
+                    item.setData(QtCore.Qt.DisplayRole, orb.occupation)
                 elif header == 'Gross Pop.':
-                    label = QtWidgets.QLabel(f'{orb.gross_population:.3f}')
+                    item = TableFloatItem(orb.gross_population, 3)
+                    item.setData(QtCore.Qt.DisplayRole, orb.gross_population)
                 elif header == 'Symm.':
-                    label = QtWidgets.QLabel(pyfmo.translate_irrep_label(orb.symmetry, mode='html'))
+                    item = QtWidgets.QTableWidgetItem()
+                    item.setText(pyfmo.translate_irrep_label(orb.symmetry, mode='html'))
                 elif header == 'Subsp.':
-                    label = QtWidgets.QLabel(pyfmo.translate_irrep_label(orb.subspecies, mode='html'))
+                    item = QtWidgets.QTableWidgetItem()
+                    item.setText(pyfmo.translate_irrep_label(orb.subspecies, mode='html'))
                 elif header == 'Rel. Name':
-                    label = QtWidgets.QLabel(orb.relative_name)
+                    item = QtWidgets.QTableWidgetItem()
+                    item.setText(orb.relative_name)
                 elif header == 'Rel. Name (Symm.)':
-                    label = QtWidgets.QLabel(orb.symmetry_relative_name)
+                    item = QtWidgets.QTableWidgetItem()
+                    item.setText(orb.symmetry_relative_name)
                 elif header == 'Rel. Name (Subsp.)':
-                    label = QtWidgets.QLabel(orb.subspecies_relative_name)
+                    item = QtWidgets.QTableWidgetItem()
+                    item.setText(orb.subspecies_relative_name)
                 elif header == 'Energy (reg.)':
-                    label = QtWidgets.QLabel(f'{orb.energy: .2f}')
+                    item = TableFloatItem(float(orb.energy), 2)
+                    item.setData(QtCore.Qt.DisplayRole, float(orb.energy))
                 elif header == 'Energy (eff.)':
-                    label = QtWidgets.QLabel(f'{orb.site_energy: .2f}')
+                    item = TableFloatItem(float(orb.site_energy), 2)
+                    item.setData(QtCore.Qt.DisplayRole, float(orb.site_energy))
                 else:
                     continue
 
-                label.setAlignment(QtCore.Qt.AlignCenter)
-                label.setTextFormat(QtCore.Qt.RichText)
-                self.setCellWidget(i, j, label)
+                item.setTextAlignment(QtCore.Qt.AlignCenter)
+                self.setItem(i, j, item)
+
+        self.setSortingEnabled(True)
+        self.sortItems(headers.index("Energy (reg.)"), QtCore.Qt.AscendingOrder)
 
     def multi_select(self, check_state):
         selected_rows = []
