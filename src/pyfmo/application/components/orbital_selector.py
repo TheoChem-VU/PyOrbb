@@ -202,6 +202,7 @@ class OrbitalSelectionTable(QtWidgets.QTableWidget):
             draw_button = QtWidgets.QPushButton()
             draw_button.setIcon(self.parent.parent.parent.parent._ICONS["draw"])
             draw_button.setIconSize(QtCore.QSize(8, 8))
+            draw_button.setFixedSize(QtCore.QSize(16, 16))
             draw_button.setToolTip("Click to draw this orbital")
             draw_button.clicked.connect(functools.partial(self.parent.parent.parent.plot.draw_orbital, orb=orb, draw_type='single'))
             layout_.addWidget(draw_button, stretch=0)
@@ -217,10 +218,8 @@ class OrbitalSelectionTable(QtWidgets.QTableWidget):
                     item.setText(spin)
                 elif header == 'Occ.':
                     item = TableFloatItem(orb.occupation, 3)
-                    item.setData(QtCore.Qt.DisplayRole, orb.occupation)
                 elif header == 'Gross Pop.':
                     item = TableFloatItem(orb.gross_population, 3)
-                    item.setData(QtCore.Qt.DisplayRole, orb.gross_population)
                 elif header == 'Symm.':
                     item = QtWidgets.QTableWidgetItem()
                     item.setText(pyfmo.translate_irrep_label(orb.symmetry, mode='html'))
@@ -238,18 +237,18 @@ class OrbitalSelectionTable(QtWidgets.QTableWidget):
                     item.setText(orb.subspecies_relative_name)
                 elif header == 'Energy (reg.)':
                     item = TableFloatItem(float(orb.energy), 2)
-                    item.setData(QtCore.Qt.DisplayRole, float(orb.energy))
                 elif header == 'Energy (eff.)':
                     item = TableFloatItem(float(orb.site_energy), 2)
-                    item.setData(QtCore.Qt.DisplayRole, float(orb.site_energy))
                 else:
                     continue
 
+                item.setToolTip(column_tooltips[header])
                 item.setTextAlignment(QtCore.Qt.AlignCenter)
                 self.setItem(i, j, item)
 
         self.setSortingEnabled(True)
         self.sortItems(headers.index("Energy (reg.)"), QtCore.Qt.AscendingOrder)
+        self.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers);
 
     def multi_select(self, check_state):
         selected_rows = []
@@ -282,7 +281,7 @@ class OrbitalSelectionTab(QtWidgets.QFrame):
         super().__init__(parent=parent)
         self.parent = parent
 
-        layout = QtWidgets.QGridLayout()
+        layout = QtWidgets.QVBoxLayout()
         self.setLayout(layout)
 
         self.state_key = state_key
@@ -302,10 +301,16 @@ class OrbitalSelectionTab(QtWidgets.QFrame):
         irrep_select_button = QtWidgets.QPushButton('Irreps')
         irrep_select_button.clicked.connect(self.irrep_selection_dialog.open)
 
-        layout.addWidget(select_all_button, 0, 0, 1, 1)
-        layout.addWidget(spin_select_button, 0, 1, 1, 1)
-        layout.addWidget(irrep_select_button, 0, 2, 1, 1)
-        layout.addWidget(self.table, 1, 0, 1, 3)
+        selection_frame = QtWidgets.QFrame()
+        selection_frame_layout = QtWidgets.QHBoxLayout()
+        selection_frame.setLayout(selection_frame_layout)
+        selection_frame_layout.addWidget(select_all_button)
+        selection_frame_layout.addWidget(spin_select_button)
+        selection_frame_layout.addWidget(irrep_select_button)
+        selection_frame_layout.addStretch()
+
+        layout.addWidget(selection_frame, stretch=0)
+        layout.addWidget(self.table)
 
     def update_state(self):
         for orb, checkbox in self.table.orbital_checkboxes.items():
