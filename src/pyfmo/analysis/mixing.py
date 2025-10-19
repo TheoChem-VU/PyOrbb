@@ -602,11 +602,11 @@ class Mixing:
                 self.connection_colors[conn] = color
 
 
-    def draw_diagram(self, ax=None, ylim=None, simple=False):
+    def draw_diagram(self, ax=None, ylim=None, simple=False, **kwargs):
         if simple:
             pyfmo.plotting.simple_orbital_diagram.draw_interaction(self.sfos, self.mos, self.connections, None, energy_type=self.energy_type, connection_colors=self.connection_colors, ax=ax, ylim=ylim)
         else:
-            pyfmo.plotting.orbital_diagram.draw_interaction(self.sfos, self.mos, self.connections, None, energy_type=self.energy_type, connection_colors=self.connection_colors, ax=ax, ylim=ylim)
+            pyfmo.plotting.orbital_diagram.draw_interaction(self.sfos, self.mos, self.connections, None, energy_type=self.energy_type, connection_colors=self.connection_colors, ax=ax, ylim=ylim, **kwargs)
 
     def draw_sfos(self, overlap=False, screen=None):
         import tcviewer  # noqa: F811
