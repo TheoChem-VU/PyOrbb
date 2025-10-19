@@ -249,17 +249,17 @@ class Mixer2:
 
         for spin in ['A', 'B']:
             for symm in self.orbs.mos.symmetry:
-                allowed_mos = [mo for mo in self.orbs.mos if mo.spin in (spin, 'AB') and mo.symmetry == symm]
-                allowed_mix_mos = [mo for mo in allowed_mos if mo in self.main_mix.mos]
-                N_virt_MO = len([mo for mo in allowed_mix_mos if mo.occupation == 0])
-                N_occ_MO = len([mo for mo in allowed_mix_mos if mo.occupation == max_pop])
+                relevant_mos = [mo for mo in self.orbs.mos if mo.spin in (spin, 'AB') and mo.symmetry == symm]
+                relevant_mix_mos = [mo for mo in relevant_mos if mo in self.main_mix.mos]
+                N_virt_MO = len([mo for mo in relevant_mix_mos if mo.occupation == 0])
+                N_occ_MO = len([mo for mo in relevant_mix_mos if mo.occupation == max_pop])
 
                 # allowed_sfos = [sfo for sfo in self.orbs.sfos]
-                allowed_sfos = [sfo for sfo in self.orbs.sfos if sfo.spin in (spin, 'AB') and sfo.symmetry == symm]
-                allowed_mix_sfos = [sfo for sfo in allowed_sfos if sfo in self.main_mix.sfos]
-                N_elec_SFO = round(sum([sfo.gross_population for sfo in allowed_mix_sfos]))
-                N_virt_SFO = len(allowed_mix_sfos) - N_elec_SFO/max_pop
-                N_occ_SFO = len(allowed_mix_sfos) - N_virt_SFO
+                relevant_sfos = [sfo for sfo in self.orbs.sfos if sfo.spin in (spin, 'AB') and sfo.symmetry == symm]
+                relevant_mix_sfos = [sfo for sfo in relevant_sfos if sfo in self.main_mix.sfos]
+                N_elec_SFO = round(sum([sfo.gross_population for sfo in relevant_mix_sfos]))
+                N_virt_SFO = len(relevant_mix_sfos) - N_elec_SFO/max_pop
+                N_occ_SFO = len(relevant_mix_sfos) - N_virt_SFO
 
                 # checking some requirements
                 missing_occ_MOs = N_occ_MO < N_occ_SFO
@@ -273,7 +273,7 @@ class Mixer2:
                 ## GENERATE CANDIDATE MOs AND SFOs
                 candidate_occ_mos = {}
                 candidate_virt_mos = {}
-                for mo in allowed_mos:
+                for mo in relevant_mos:
                     if mo in self.main_mix.mos:
                         continue
 
@@ -286,10 +286,10 @@ class Mixer2:
                         continue
 
                     highest = 0
-                    for i in range(len(allowed_mix_sfos)):
-                        C1 = allowed_mix_sfos[i].mulliken_contribution(mo, normalized=True)
-                        for j in range(i+1, len(allowed_mix_sfos)):
-                            C2 = allowed_mix_sfos[j].mulliken_contribution(mo, normalized=True)
+                    for i in range(len(relevant_mix_sfos)):
+                        C1 = relevant_mix_sfos[i].mulliken_contribution(mo, normalized=True)
+                        for j in range(i+1, len(relevant_mix_sfos)):
+                            C2 = relevant_mix_sfos[j].mulliken_contribution(mo, normalized=True)
                             if abs(C1 * C2) > highest:
                                 highest = abs(C1*C2)
 
@@ -304,8 +304,8 @@ class Mixer2:
 
                 candidate_occ_sfos = {}
                 candidate_virt_sfos = {}
-                for sfo in allowed_sfos:
-                    if sfo in allowed_mix_sfos:
+                for sfo in relevant_sfos:
+                    if sfo in relevant_mix_sfos:
                         continue
 
                     # skip if we don't need the occupied SFOs
@@ -317,10 +317,10 @@ class Mixer2:
                         continue
 
                     highest = 0
-                    for i in range(len(allowed_mix_mos)):
-                        C1 = sfo.mulliken_contribution(allowed_mix_mos[i], normalized=True)
-                        for j in range(i+1, len(allowed_mix_mos)):
-                            C2 = sfo.mulliken_contribution(allowed_mix_mos[j], normalized=True)
+                    for i in range(len(relevant_mix_mos)):
+                        C1 = sfo.mulliken_contribution(relevant_mix_mos[i], normalized=True)
+                        for j in range(i+1, len(relevant_mix_mos)):
+                            C2 = sfo.mulliken_contribution(relevant_mix_mos[j], normalized=True)
                             if abs(C1 * C2) > highest:
                                 highest = abs(C1*C2)
 
