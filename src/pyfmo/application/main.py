@@ -707,7 +707,7 @@ class MplCanvas(FigureCanvas):
 
         self.parent.orbital_draw_button.setMenu(menu)
         self.parent.orbital_draw_button.setEnabled(len(menu.actions()) > 0)
-        self.parent.orbital_filter_button.setEnabled(len(self._selected_orbitals) > 0)
+        self.parent.orbital_filter_button.setEnabled(len(self._selected_orbitals) > 0 or self.parent.orbital_filter_button._is_checked)
 
 
     def on_plot_hover(self, event):
@@ -982,8 +982,8 @@ class AnalysisWindow(QtWidgets.QWidget):
         fig = self.plot.fig
         ax.clear()
         ax.yaxis.set_major_formatter('{x: 3.0f}')
-        allowed_mos = self._orb_selection_dialog.state.allowed_mos()
-        allowed_sfos = self._orb_selection_dialog.state.allowed_sfos()
+        allowed_mos = self.allowed_mos_override if self.allowed_mos_override is not None else self._orb_selection_dialog.state.allowed_mos()
+        allowed_sfos = self.allowed_sfos_override if self.allowed_sfos_override is not None else self._orb_selection_dialog.state.allowed_sfos()
         self.main_mix.set_oi_threshold(oi_thresh)
         self.main_mix.set_pr_threshold(pauli_thresh)
         self.main_mix.set_enable_oi(self.cbox_OI.isChecked())
@@ -992,7 +992,8 @@ class AnalysisWindow(QtWidgets.QWidget):
         self.main_mix.set_allowed_sfos(allowed_sfos)
         self.main_mix.set_energy_type(energy_type)
         self.main_mix.reset_mixes()
-        self.main_mix.draw_diagram(ax=ax, ylim=ylim)
+
+        self.main_mix.draw_diagram(ax=ax, ylim=ylim, highlighted_orbitals=self.filtered_orbitals)
         if self.new_tick_labels is not None:
             self.plot.axes.set_xticklabels(self.new_tick_labels)
 
@@ -1004,18 +1005,36 @@ class AnalysisWindow(QtWidgets.QWidget):
 
     def _set_orbital_filter(self):
         selected_systems = set([self.orbs.mos if isinstance(orb, pyfmo.orbitals.objects.MO) else orb.fragment_unique for orb in self.plot._selected_orbitals if not isinstance(orb, tuple)])
-        self._orb_selection_dialog.state.reset()
-        for system in selected_systems:
-            self._orb_selection_dialog.state.disable_all(system)
 
-        for orb in self.plot._selected_orbitals:
-            if isinstance(orb, tuple):
-                continue
-            self._orb_selection_dialog.state.set_state(orb, True)
+        self.orbital_filter_button._is_checked = not self.orbital_filter_button._is_checked
 
-        print(self._orb_selection_dialog.state.allowed_mos())
-        print(self._orb_selection_dialog.state.allowed_sfos())
+        if self.orbital_filter_button._is_checked:
+            if self.orbs.mos in selected_systems:
+                self.allowed_mos_override = [orb for orb in self.plot._selected_orbitals if isinstance(orb, pyfmo.orbitals.objects.MO)]
+            else:
+                self.allowed_mos_override = self.orbs.mos.orbitals
+
+            self.allowed_sfos_override = []
+            for fragment in self.orbs.fragments:
+                if fragment in selected_systems:
+                    self.allowed_sfos_override.extend([orb for orb in self.plot._selected_orbitals if isinstance(orb, pyfmo.orbitals.objects.SFO) and orb.fragment_unique == fragment])
+                else:
+                    self.allowed_sfos_override.extend(self.orbs.sfos.filter(fragment=fragment))
+            self.filtered_orbitals = self.plot._selected_orbitals
+        else:
+            self.allowed_mos_override = None
+            self.allowed_sfos_override = None
+            self.filtered_orbitals = None
+
         self._update_plot()
+
+        if self.orbital_filter_button._is_checked:
+            self.orbital_filter_button.setIcon(self.parent._ICONS['checked'])
+        else:
+            self.orbital_filter_button.setIcon(self.parent._ICONS['unchecked'])
+
+        self.orbital_filter_button.setEnabled(len(self.plot._selected_orbitals) > 0 or self.orbital_filter_button._is_checked)
+
 
     def load_analysis(self, file):
         try:
@@ -1279,11 +1298,15 @@ class AnalysisWindow(QtWidgets.QWidget):
         self.orbital_draw_button.setText('Draw')
 
         self.orbital_filter_button = QtWidgets.QPushButton('Filter')
+        self.orbital_filter_button.setIcon(self.parent._ICONS['unchecked'])
         self.orbital_filter_button.clicked.connect(self._set_orbital_filter)
         self.orbital_filter_button.setEnabled(False)
+        self.orbital_filter_button._is_checked = False
+        self.allowed_mos_override = None
+        self.allowed_sfos_override = None
+        self.filtered_orbitals = None
         selector_layout.addWidget(self.orbital_draw_button, 0, 0)
         selector_layout.addWidget(self.orbital_filter_button, 0, 1)
-
 
         misc_box = QtWidgets.QFrame()
 
