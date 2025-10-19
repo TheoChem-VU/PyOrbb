@@ -235,7 +235,7 @@ class ScrollLabel(QtWidgets.QScrollArea):
 
         # setting alignment to the text
         self.label.setAlignment(QtCore.Qt.AlignLeft | QtCore.Qt.AlignTop)
-        self.label.setStyleSheet('padding: 10px; font: 10pt "IBM Plex Mono"')
+        self.label.setStyleSheet('padding: 10px; font: 10px "IBM Plex Mono"')
         self.label.setTextInteractionFlags(QtCore.Qt.TextSelectableByMouse)
 
         # adding label to the layout
@@ -469,6 +469,7 @@ class MplCanvas(FigureCanvas):
                 scene.draw_text(str(orb[0]) + ' * ' + str(orb[1]))
 
 
+
     def _set_orbital_info_box(self):
         self.parent.orbital_info_box.empty()
         for i, orb in enumerate(self._selected_orbitals):
@@ -543,7 +544,7 @@ class MplCanvas(FigureCanvas):
                 title = f"{sfo.fragment_unique}({pyfmo.generate_label(sfo, mode='html')}) ⇒ {pyfmo.generate_label(mo, mode='html')}"
 
             label = QtWidgets.QLabel(s)
-            label.setStyleSheet('padding: 3px; font: 10pt "IBM Plex Mono"')
+            label.setStyleSheet('padding: 3px; font: 10px "IBM Plex Mono"')
             self.parent.orbital_info_box.addSpoiler(title, label, icon)
         # self.parent.orbital_info_box.layout.addStretch(1)
 
@@ -593,7 +594,6 @@ class MplCanvas(FigureCanvas):
                 self._fade_unrelated_ints(self._selected_orbitals)
                 self._already_unfaded = False
 
-                self.parent.orbital_filter_button.setEnabled(True)
                 self.selected_orbital = mo
                 self.fig.canvas.draw_idle()
 
@@ -605,7 +605,6 @@ class MplCanvas(FigureCanvas):
                     self._selected_orbitals.append(sfo)
                 self._fade_unrelated_ints(self._selected_orbitals)
                 self._already_unfaded = False
-                self.parent.orbital_filter_button.setEnabled(True)
                 self.selected_orbital = sfo
                 self.fig.canvas.draw_idle()
 
@@ -626,7 +625,6 @@ class MplCanvas(FigureCanvas):
 
                 self._fade_unrelated_ints(self._selected_orbitals)
                 self._already_unfaded = False
-                self.parent.orbital_filter_button.setEnabled(False)
                 self.selected_orbital = None
                 self.fig.canvas.draw_idle()
 
@@ -636,7 +634,6 @@ class MplCanvas(FigureCanvas):
             if not self._already_unfaded:
                 self._already_unfaded = True
                 self._unfade()
-                self.parent.orbital_filter_button.setEnabled(False)
                 self.selected_orbital = None
                 self.fig.canvas.set_cursor(Cursors.POINTER)
                 self.fig.canvas.draw_idle()
@@ -662,8 +659,14 @@ class MplCanvas(FigureCanvas):
             if isinstance(orb, pyfmo.orbitals.objects.MO):
                 continue
 
+            if isinstance(orb, tuple):
+                continue
+
             for orb2 in self._selected_orbitals[i+1:]:
                 if isinstance(orb2, pyfmo.orbitals.objects.MO):
+                    continue
+
+                if isinstance(orb2, tuple):
                     continue
 
                 if orb.fragment_unique == orb2.fragment_unique:
@@ -681,8 +684,14 @@ class MplCanvas(FigureCanvas):
             if isinstance(orb, pyfmo.orbitals.objects.MO):
                 continue
 
+            if isinstance(orb, tuple):
+                continue
+
             for orb2 in self._selected_orbitals[i+1:]:
                 if isinstance(orb2, pyfmo.orbitals.objects.MO):
+                    continue
+
+                if isinstance(orb2, tuple):
                     continue
 
                 if orb.fragment_unique == orb2.fragment_unique:
@@ -695,14 +704,10 @@ class MplCanvas(FigureCanvas):
                 action.triggered.connect(partial(self.draw_orbital, orb=[orb, orb2], draw_type='sum'))
                 menu.addAction(action)
 
-        icon = self.parent.parent._ICONS['extra']
-        action = QtGui.QAction('Other', self)
-        action.setIconVisibleInMenu(True)
-        action.setIcon(icon)
-        action.triggered.connect(partial(self.draw_orbital, draw_type='other'))
-        menu.addAction(action)
 
         self.parent.orbital_draw_button.setMenu(menu)
+        self.parent.orbital_draw_button.setEnabled(len(menu.actions()) > 0)
+        self.parent.orbital_filter_button.setEnabled(len(self._selected_orbitals) > 0)
 
 
     def on_plot_hover(self, event):
@@ -998,7 +1003,19 @@ class AnalysisWindow(QtWidgets.QWidget):
         fig.canvas.draw_idle()
 
     def _set_orbital_filter(self):
-        orbs = []
+        selected_systems = set([self.orbs.mos if isinstance(orb, pyfmo.orbitals.objects.MO) else orb.fragment_unique for orb in self.plot._selected_orbitals if not isinstance(orb, tuple)])
+        self._orb_selection_dialog.state.reset()
+        for system in selected_systems:
+            self._orb_selection_dialog.state.disable_all(system)
+
+        for orb in self.plot._selected_orbitals:
+            if isinstance(orb, tuple):
+                continue
+            self._orb_selection_dialog.state.set_state(orb, True)
+
+        print(self._orb_selection_dialog.state.allowed_mos())
+        print(self._orb_selection_dialog.state.allowed_sfos())
+        self._update_plot()
 
     def load_analysis(self, file):
         try:
@@ -1036,10 +1053,6 @@ class AnalysisWindow(QtWidgets.QWidget):
         for mo in self.orbs.mos:
             self._orb_selection['Complex'][mo] = True
 
-        # self._orb_selection_dialog = OrbitalSelectionDialog(self, self._orb_selection)
-        self._orb_selection_dialog = orbital_selector.OrbitalSelectionDialog(self, self.orbs)
-
-
         self._analysis_page_frame = QtWidgets.QFrame(self)
         self.central_layout.addWidget(self._analysis_page_frame)
         layout = QtWidgets.QGridLayout(self._analysis_page_frame)
@@ -1059,7 +1072,7 @@ class AnalysisWindow(QtWidgets.QWidget):
         self.info_tabs = QtWidgets.QTabWidget()
         self.info_tabs.setStyleSheet('QTabWidget { border-radius: 5px; border: 1px solid lightgray} QTabWidget::pane { border: 1px solid lightgray; background-color: white;border-radius: 5px; border-top-left-radius: 0px;} QTabWidget::tab-bar {background-color: lightgray; border: 0px;}')
         self.info_tabs.tabBar().setStyleSheet('border-radius: 5px; border: 1px solid lightgray; background-color: white')
-        self.info_tabs.setFixedSize(300, 500)
+        # self.info_tabs.setFixedSize(300, 500)
         orbital_info_frame = QtWidgets.QFrame()
         orbital_info_frame.setStyleSheet("""
             QPushButton {
@@ -1076,6 +1089,8 @@ class AnalysisWindow(QtWidgets.QWidget):
             """)
         orbital_info_layout = QtWidgets.QGridLayout()
         orbital_info_frame.setLayout(orbital_info_layout)
+        orbital_info_frame.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+
         self.orbital_info_box = Spoilers(self)
         orbital_info_layout.addWidget(self.orbital_info_box, 1, 0, 1, 2)
 
@@ -1085,6 +1100,7 @@ class AnalysisWindow(QtWidgets.QWidget):
         self.info_tabs.addTab(orbital_info_frame, 'Orbitals')
 
         system_info_box = Spoilers()
+        system_info_box.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         system_info_box.addSpoiler('General', self._get_general_system_info(), self.parent._ICONS['info'])
         system_info_box.addSpoiler('Complex', self._get_complex_system_info(), self.parent._ICONS['mo'])
         for frag in self.orbs.fragments:
@@ -1093,8 +1109,9 @@ class AnalysisWindow(QtWidgets.QWidget):
         # system_info_box.addSpoiler(self._get_system_info_txt())
         
         self.info_tabs.addTab(system_info_box, 'System')
+        self.info_tabs.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
 
-        layout.addWidget(self.info_tabs, 0, 1, QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
+        layout.addWidget(self.info_tabs, 0, 1)
 
         slider_layout = QtWidgets.QGridLayout()
         slider_box = QtWidgets.QFrame()
@@ -1116,7 +1133,7 @@ class AnalysisWindow(QtWidgets.QWidget):
         self.cbox_OI.checkStateChanged.connect(self._update_plot)
 
         label_OI = QtWidgets.QLabel('τ<sub>oi</sub> =')
-        label_OI.setStyleSheet('QLabel{ font: 16pt}')
+        label_OI.setStyleSheet('QLabel{ font: 12pt}')
         slider_layout.addWidget(label_OI, 0, 2)
 
         inc_oi_btn = QtWidgets.QPushButton('<')
@@ -1161,7 +1178,7 @@ class AnalysisWindow(QtWidgets.QWidget):
             """)
 
         label_value_OI = QtWidgets.QLabel(f'{10**(self.slider_OI.value()/slider_resolution):.2E}')
-        label_value_OI.setStyleSheet('font: 12pt "IBM Plex Mono"')
+        label_value_OI.setStyleSheet('font: 10px "IBM Plex Mono"')
         slider_layout.addWidget(label_value_OI, 0, 3)
         self.slider_OI.valueChanged.connect(lambda value: (self._update_plot(), label_value_OI.setText(f'{10**(value/slider_resolution):.2E}')))
 
@@ -1175,7 +1192,7 @@ class AnalysisWindow(QtWidgets.QWidget):
         self.cbox_PR.checkStateChanged.connect(self._update_plot)
 
         label_PR = QtWidgets.QLabel('τ<sub>pr</sub> =')
-        label_PR.setStyleSheet('QLabel{ font: 16pt}')
+        label_PR.setStyleSheet('QLabel{ font: 12pt}')
         slider_layout.addWidget(label_PR, 1, 2)
 
         self.slider_PR = QtWidgets.QSlider(QtCore.Qt.Horizontal, self._analysis_page_frame)
@@ -1225,7 +1242,7 @@ class AnalysisWindow(QtWidgets.QWidget):
                 }
             """)
         label_value_PR = QtWidgets.QLabel(f'{self.slider_PR.value()/slider_resolution:.3f}')
-        label_value_PR.setStyleSheet('font: 12pt "IBM Plex Mono"')
+        label_value_PR.setStyleSheet('font: 10px "IBM Plex Mono"')
         slider_layout.addWidget(label_value_PR, 1, 3)
         self.slider_PR.valueChanged.connect(lambda value: (self._update_plot(), label_value_PR.setText(f'{value/slider_resolution/1000:.4f}')))
         
@@ -1247,6 +1264,9 @@ class AnalysisWindow(QtWidgets.QWidget):
         etype_btn.clicked.connect(self._energytype_selection_dialog.open)
         selector_layout.addWidget(etype_btn, 1, 0)
 
+        # self._orb_selection_dialog = OrbitalSelectionDialog(self, self._orb_selection)
+        self._orb_selection_dialog = orbital_selector.OrbitalSelectionDialog(self, self.orbs)
+
         orb_btn = QtWidgets.QPushButton('Orbitals')
         orb_btn.clicked.connect(self._orb_selection_dialog.open)
         selector_layout.addWidget(orb_btn, 1, 1)
@@ -1255,12 +1275,6 @@ class AnalysisWindow(QtWidgets.QWidget):
         self.orbital_draw_button.setStyleSheet('QPushButton::menu-indicator { image: none; }')
 
         menu = QtWidgets.QMenu(self)
-        action = QtGui.QAction('Other', self)
-        action.triggered.connect(partial(self.plot.draw_orbital, draw_type='other'))
-        action.setIconVisibleInMenu(True)
-        icon = self.parent._ICONS['extra']
-        action.setIcon(icon)
-        menu.addAction(action)
         self.orbital_draw_button.setMenu(menu)
         self.orbital_draw_button.setText('Draw')
 
@@ -1295,6 +1309,10 @@ class AnalysisWindow(QtWidgets.QWidget):
         save_fig_btn.clicked.connect(self.get_figure_save_file)
         misc_box_layout.addWidget(make_sheet_btn, 0, 0, 1, 1)
         misc_box_layout.addWidget(save_fig_btn, 0, 1, 1, 1)
+
+        layout.setColumnStretch(0, 0)
+        layout.setColumnStretch(1, 1)
+
         self._update_plot()
 
 
@@ -1320,10 +1338,10 @@ class AnalysisWindow(QtWidgets.QWidget):
         label.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
         layout.addWidget(label, row, 1, 1, 1)
 
-        # level of theory
-        row += 1
-        layout.addWidget(QtWidgets.QLabel('<b>Level</b>'), row, 0, 1, 1)
-        layout.addWidget(QtWidgets.QLabel('BLYP-D3(BJ)/TZ2P(None)'), row, 1, 1, 1)
+        # # level of theory
+        # row += 1
+        # layout.addWidget(QtWidgets.QLabel('<b>Level</b>'), row, 0, 1, 1)
+        # layout.addWidget(QtWidgets.QLabel('BLYP-D3(BJ)/TZ2P(None)'), row, 1, 1, 1)
 
         # EDA terms
         row += 1
