@@ -1346,7 +1346,7 @@ class AnalysisWindow(QtWidgets.QWidget):
         frame.setLayout(layout)
 
         row = 0
-        layout.addWidget(CopyLabel('<b>adf.rkf</b>', self.orbs.reader.path), row, 0, 1, 2)
+        layout.addWidget(CopyLabel('<b>adf.rkf path</b>', self.orbs.reader.path), row, 0, 1, 2)
 
         row += 1
         layout.addWidget(QtWidgets.QLabel('<b>Symmetry</b>'), row, 0, 1, 1)
