@@ -144,10 +144,12 @@ def _get_calc_info(reader: plams.KFReader) -> dict:
     if not ret['used_regions']:
         natom = reader.read('Geometry', 'nr of atoms')
         frags = np.array(ret['fragments'])
-        atom_order = np.array(reader.read('Geometry', 'atom order index'))
-        fragment_index = np.array(reader.read('Geometry', 'fragment and atomtype index')) - 1
-        frag_per_atom = frags[fragment_index[natom:]]
-        ret.set('fragments', [f'{frag}:{idx}' for frag, idx in zip(frag_per_atom, atom_order[natom:])])
+        frag_atom_index = np.array(reader.read('Geometry', 'fragment and atomtype index'))
+        frag_atom_index = frag_atom_index[len(frag_atom_index)//2:] - 1
+        atom_types = np.array(reader.read('Geometry', 'atomtype').split())
+
+        fragments = list(set([f'{atom_types[typ]}:{idx+1}' for idx, typ in enumerate(frag_atom_index)]))
+        ret.set('fragments', fragments)
 
     # determine the spin polarization of the complex and fragments
     # if we were given fragoccupations we use those
@@ -166,8 +168,6 @@ def _get_calc_info(reader: plams.KFReader) -> dict:
             subspecies_of_frag = subspecies[frag_index == i]
             for subsp in np.unique(subspecies_of_frag):
                 spin_pols[frag][subsp] = (sum(occs_A[np.logical_and(frag_index == i, subspecies == subsp)]), sum(occs_B[np.logical_and(frag_index == i, subspecies == subsp)]))
-
-    print(spin_pols)
 
     ret.set('sfo_spinpolarizations', spin_pols)
 
