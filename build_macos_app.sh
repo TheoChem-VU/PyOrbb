@@ -6,10 +6,10 @@ sed -i '' "s/%REPLACE_VERSION/$(git describe --tags --abbrev=0 | cut -c 2-)/g" p
 briefcase build -r
 
 cp new_vtk.py build/pyfmo/macos/app/PyOrbb.app/Contents/Resources/app_packages/vtk.py
-cat removed_files.txt | while read line 
-do
-   rm $line
-done
+# cat removed_files.txt | while read line 
+# do
+#    rm $line
+# done
 
 briefcase package --adhoc-sign
 mv dist/PyOrbb*.dmg dist/PyOrbb.dmg
