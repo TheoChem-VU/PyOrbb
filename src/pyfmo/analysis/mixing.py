@@ -268,7 +268,7 @@ class Mixer2:
                 missing_virt_SFOs = N_virt_SFO < N_virt_MO
 
                 if not any([missing_occ_MOs, missing_occ_SFOs, missing_virt_MOs, missing_virt_SFOs]):
-                    return
+                    continue
 
                 ## GENERATE CANDIDATE MOs AND SFOs
                 candidate_occ_mos = {}
