@@ -103,14 +103,13 @@ def _get_molecules(reader):
     return ret
 
 
-def to_excel(orbs: pyfmo.Orbitals, out_file: str = 'pyfmo.xlsx', sfo_energy_type: str = 'energy'):
+def to_excel(orbs: pyfmo.Orbitals, out_file: str = 'pyfmo.xlsx'):
     '''
     Write data about orbitals and general information about the calculation to a nicely formatted excel file.
 
     Args:
         orbs: the orbitals object to write the Excel file for.
         out_file: the path to write the Excel file to.
-        sfo_energy_type: the energy type for the |SFO| objects to use for analysing orbital interactions.
     '''
     workbook = xl.Workbook(out_file)
 
@@ -127,6 +126,7 @@ def to_excel(orbs: pyfmo.Orbitals, out_file: str = 'pyfmo.xlsx', sfo_energy_type
     table_val_fmt = workbook.add_format({'bold': False})
     table_val_float_fmt = workbook.add_format({'bold': False, 'num_format': '0.00'})
     table_val_pctg_fmt = workbook.add_format({'bold': False, 'num_format': '0.0%'})
+    table_val_sci_fmt = workbook.add_format({'bold': False, 'num_format': '0.00E+0'})
     table_title_fmt = workbook.add_format({'bold': True, 'bottom': 6, 'font_size': 16, 'italic': True})
     table_title2_fmt = workbook.add_format({'bold': True, 'bottom': 6, 'font_size': 16})
     table_ast_fmt = workbook.add_format({'top': 1})
@@ -284,7 +284,7 @@ def to_excel(orbs: pyfmo.Orbitals, out_file: str = 'pyfmo.xlsx', sfo_energy_type
         return len(rows) + len(asterisks) + start_row + 1, start_column + len(rows[0]) - 1
 
 
-    def make_table_sheet(sheet_name, sheet_title, rows, header, tab_color=None):
+    def make_table_sheet(sheet_name, sheet_title, rows, header, col_fmts={}, tab_color=None, asterisks=[]):
         sheet = workbook.add_worksheet(sheet_name.replace(':', '')[:31])
         if tab_color is not None:
             sheet.set_tab_color(tab_color)
@@ -299,24 +299,29 @@ def to_excel(orbs: pyfmo.Orbitals, out_file: str = 'pyfmo.xlsx', sfo_energy_type
         for i, row in enumerate(rows):
             for j, val in enumerate(row):
                 if isinstance(val, float):
-                    sheet.write(i + 3, j + 1, val, float_fmt)
-                    val = str(round(val, 2))
+                    fmt = col_fmts.get(j, float_fmt)
+                    sheet.write(i + 3, j + 1, val, fmt)
+                    val = str(round(val, 5))
                 else:
                     sheet.write(i + 3, j + 1, val)
+
                 column_widths[j] = max(column_widths[j], character.text_width(val))
 
         for i, width in enumerate(column_widths, start=1):
             sheet.set_column_pixels(i, i, width + 20)
 
+        for i, asterisk in enumerate(asterisks):
+            sheet.write(4 + i, len(header) + 3, asterisk)
+
+
         sheet.freeze_panes('A4')
         sheet.autofilter(2, 1, 1+len(rows), len(header))
-
 
     # we will write some basic info about the calcualtion in the first sheet
     sheet = workbook.add_worksheet('🛈 Info')
     sheet.set_tab_color('058ED9')
     # write the title cell
-    sheet.write(0, 0, 'PyFMO Analysis', title_fmt)
+    sheet.write(0, 0, 'PyOrbb Analysis', title_fmt)
 
     # write information about the complex
     mols = _get_molecules(orbs.reader)
@@ -352,61 +357,54 @@ def to_excel(orbs: pyfmo.Orbitals, out_file: str = 'pyfmo.xlsx', sfo_energy_type
         next_row, next_col = make_key_value_table(rows, next_row + 2, 1)
 
 
-    mixer = pyfmo.analysis.mixing.Mixer(orbs, energy_type=sfo_energy_type)
-    mixes = mixer.orbital_interactions(N=50)
-    # write information about the mixing
-    rows = [(str(mix.sfos[0]),
-             str(mix.sfos[1]),
-             str(mix.mos[0]),
-             str(mix.mos[1]),
-             mix.strength, 
-             mix.fraction, 
-             abs(mix.sfos[0] @ mix.sfos[1]), 
-             abs(getattr(mix.sfos[0], mix.energy_type) - getattr(mix.sfos[1], mix.energy_type)),
-             abs(mix.sfos[0].mulliken_contribution(mix.mos[0])),
-             abs(mix.sfos[1].mulliken_contribution(mix.mos[0])),
-             abs(mix.sfos[0].mulliken_contribution(mix.mos[1])),
-             abs(mix.sfos[1].mulliken_contribution(mix.mos[1])),
-             all(
-                 [abs(mix.sfos[0].mulliken_contribution(mix.mos[0])) >= 0.02,
-                 abs(mix.sfos[1].mulliken_contribution(mix.mos[0])) >= 0.02,
-                 abs(mix.sfos[0].mulliken_contribution(mix.mos[1])) >= 0.02,
-                 abs(mix.sfos[1].mulliken_contribution(mix.mos[1])) >= 0.02])) for mix in mixes]
-    _, next_col = make_array_table(rows, 
-            'Orbital Interactions',
-            3,
-            next_col + 3,
-            col_fmts={5: table_val_pctg_fmt},
-            header=['SFO1', 'SFO2', 'MO1', 'MO2', 'ΔE⁽²⁾ (kcal mol⁻¹)', 'Frac.*', 'S', 'Δε (eV)**', 'SFO1->MO1', 'SFO2->MO1', 'SFO1->MO2', 'SFO2->MO2', 'Check'],
-            asterisks=[
-                '* Frac. represents the relative amount of orbital interaction explained by this interaction',
-                f'** SFO energy type: {sfo_energy_type}'])
+    mixer = pyfmo.analysis.mixing.Mixer2(orbs, pr_min_thresh=0.001**2, oi_min_thresh=0.00000001)
+    for energy_type in orbs.sfos.energy_types:
+        mixer.set_energy_type(energy_type)
+        rows = []
+        total_strength = sum(mixer.mixes['OI'][energy_type].values())
+        for mix, strength in mixer.mixes['OI'][energy_type].items():
+            rows.append((str(mix.sfos[0]),
+                     str(mix.sfos[1]),
+                     str(mix.mos[0]),
+                     str(mix.mos[1]),
+                     strength, 
+                     strength/total_strength, 
+                     abs(mix.sfos[0] @ mix.sfos[1]), 
+                     abs(getattr(mix.sfos[0], mix.energy_type) - getattr(mix.sfos[1], mix.energy_type)),
+                     abs(mix.sfos[0].mulliken_contribution(mix.mos[0])),
+                     abs(mix.sfos[1].mulliken_contribution(mix.mos[0])),
+                     abs(mix.sfos[0].mulliken_contribution(mix.mos[1])),
+                     abs(mix.sfos[1].mulliken_contribution(mix.mos[1]))))
+
+        energy_label = {'energy': 'regular', 'site_energy': 'effective'}[energy_type]
+        energy_label_short = {'energy': 'reg.', 'site_energy': 'eff.'}[energy_type]
+        make_table_sheet(f'Rᴼᴵ ({energy_label_short})', f'Orbital Interactions ({energy_label} orbital energies)', rows, 
+                header=['SFO1', 'SFO2', 'MO1', 'MO2', 'Ranking', 'Frac.*', 'S', 'Δε (eV)**', 'Contr. SFO1->MO1', 'Contr. SFO2->MO1', 'Contr. SFO1->MO2', 'Contr. SFO2->MO2'],
+                col_fmts={4: table_val_sci_fmt, 5: table_val_pctg_fmt},
+                asterisks=[
+                    '* Frac. represents the relative amount of orbital interaction explained by this interaction',
+                    f'** SFO energy type: {energy_label}'], tab_color='ACF3AE')
 
     # write information about the mixing
-    mixes = mixer.pauli_repulsions(N=50)
-    rows = [(str(mix.sfos[0]),
-             str(mix.sfos[1]),
-             str(mix.mos[0]),
-             str(mix.mos[1]),
-             mix.strength, 
-             mix.fraction,
-             abs(mix.sfos[0] @ mix.sfos[1]),
-             abs(mix.sfos[0].mulliken_contribution(mix.mos[0])),
-             abs(mix.sfos[1].mulliken_contribution(mix.mos[0])),
-             abs(mix.sfos[0].mulliken_contribution(mix.mos[1])),
-             abs(mix.sfos[1].mulliken_contribution(mix.mos[1])),
-             all(
-                 [abs(mix.sfos[0].mulliken_contribution(mix.mos[0])) >= 0.02,
-                 abs(mix.sfos[1].mulliken_contribution(mix.mos[0])) >= 0.02,
-                 abs(mix.sfos[0].mulliken_contribution(mix.mos[1])) >= 0.02,
-                 abs(mix.sfos[1].mulliken_contribution(mix.mos[1])) >= 0.02])) for mix in mixes]
-    _, next_col = make_array_table(rows, 
-            'Pauli Repulsive Interactions',
-            3,
-            next_col + 3,
-            col_fmts={5: table_val_pctg_fmt},
-            header=['SFO1', 'SFO2', 'MO1', 'MO2', 'ΔE⁽⁴⁾ (kcal mol⁻¹)', 'Frac.*', 'S', 'SFO1->MO1', 'SFO2->MO1', 'SFO1->MO2', 'SFO2->MO2', 'Check'],
-            asterisks=['* Frac. represents the relative amount of Pauli repulsion explained by this interaction'])
+    rows = []
+    total_strength = sum(mixer.mixes['PR']['energy'].values())
+    for mix, strength in mixer.mixes['PR']['energy'].items():
+        rows.append((str(mix.sfos[0]),
+                 str(mix.sfos[1]),
+                 str(mix.mos[0]),
+                 str(mix.mos[1]),
+                 strength, 
+                 strength/total_strength,
+                 abs(mix.sfos[0] @ mix.sfos[1]),
+                 abs(mix.sfos[0].mulliken_contribution(mix.mos[0])),
+                 abs(mix.sfos[1].mulliken_contribution(mix.mos[0])),
+                 abs(mix.sfos[0].mulliken_contribution(mix.mos[1])),
+                 abs(mix.sfos[1].mulliken_contribution(mix.mos[1]))))
+
+    make_table_sheet('Rᴾᴿ', 'Pauli Repulsive Interactions', rows, 
+            header=['SFO1', 'SFO2', 'MO1', 'MO2', 'Rᴾᴿ', 'Frac.*', 'S', 'SFO1->MO1', 'SFO2->MO1', 'SFO1->MO2', 'SFO2->MO2'],
+            col_fmts={4: table_val_sci_fmt, 5: table_val_pctg_fmt},
+            asterisks=['* Frac. represents the relative amount of Pauli repulsion explained by this interaction'], tab_color='FA6B84')
 
     has_kinetic = False
     # write a table with MO and SFO energies
