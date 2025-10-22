@@ -196,7 +196,7 @@ class Orbital:
                 job._sfos.append(self)
             else:
                 job._mos.append(self)
-            job.settings.ADFFile = self.parent.parent.kfpath
+            job.settings.ADFFile = '"' + self.parent.parent.kfpath + '"'
             if grid_around_mol is not None:
                 job.grid_around_mol(grid_around_mol, extend=gridextend)
             else:
