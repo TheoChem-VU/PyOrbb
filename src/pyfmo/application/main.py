@@ -449,6 +449,10 @@ class MplCanvas(FigureCanvas):
 
 
     def draw_orbital(self, orb=None, draw_type='single'):
+        if ' ' in orb.parent.parent.kfpath:
+            QtWidgets.QMessageBox.critical(self, 'Error', 'The adf.rkf path contains a space. We will not be able to run Densf properly.\nPlease move the file to a different location.')
+            return
+
         import tcviewer
 
         if platform.system() == "Windows":
