@@ -89,6 +89,7 @@ class Spoilers(QtWidgets.QScrollArea):
     def __init__(self, parent=None):
         # making widget resizable
         super().__init__(parent=parent)
+        self.parent = parent
         self.setWidgetResizable(True)
         self.horizontalScrollBar().setEnabled(False)
         self.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff);
@@ -100,7 +101,10 @@ class Spoilers(QtWidgets.QScrollArea):
         # vertical box layout
         self.layout = QtWidgets.QVBoxLayout(content)
         self.layout.addStretch(1)
-        self.setStyleSheet('background-color: white;')
+        if self.parent.parent.isDarkMode:
+            self.setStyleSheet('background-color: rgb(50, 50, 50);')
+        else:
+            self.setStyleSheet('background-color: white;')
 
     def addSpoiler(self, title, widget, icon=None):
         layout = QtWidgets.QVBoxLayout()
@@ -306,14 +310,54 @@ class ETypeDialog(QtWidgets.QDialog):
 class FragRenameDialog(QtWidgets.QDialog):
     def __init__(self, parent=None):
         super().__init__(parent=parent)
+        self.parent = parent
         layout = QtWidgets.QGridLayout(self)
         self.setLayout(layout)
         title = QtWidgets.QLabel('<b>Rename orbital column name</b>')
-        # title.setStyleSheet('border: none;')
         layout.addWidget(title, 0, 0, 1, 2)
-        self.setStyleSheet('QDialog{background-color: #f0f0f0;} QLabel{border: none; background-color: none;}')
+        if self.parent.parent.parent.isDarkMode:
+            self.setStyleSheet("""
+                QDialog {
+                    background-color: none;
+                    border: 1px solid darkgray;
+                }
+                QPushButton {
+                    font-size: 12px;
+                    border: 1px solid darkgray;
+                    border-radius: 5px;
+                    padding: 2px;
+                    margin: 0px; 
+                    background-color: #3A3A3A;
+                }
+                QPushButton:hover {
+                    background-color: ##656565;
+                    }
+                QLabel: {
+                    border: 0px;
+                }
+                """)
+        else:
+            self.setStyleSheet("""
+                QDialog {
+                    background-color: none;
+                    border: 1px solid lightgray;
+                }
+                QPushButton {
+                    font-size: 12px;
+                    border: 1px solid lightgray;
+                    border-radius: 5px;
+                    padding: 2px;
+                    margin: 0px; 
+                    background-color: white;
+                }
+                QPushButton:hover {
+                    background-color: #f0f0f0;
+                    }
+                QLabel: {
+                    border: none;
+                }
+                """)
         self._frag_rename_textedit = QtWidgets.QLineEdit(self)
-        self._frag_rename_textedit.setStyleSheet('background-color: white;')
         layout.addWidget(self._frag_rename_textedit, 1, 0, 1, 2)
         save_btn = QtWidgets.QPushButton('Save')
         save_btn.clicked.connect(self.accept)
@@ -993,7 +1037,7 @@ class AnalysisWindow(QtWidgets.QWidget):
         self.main_mix.set_energy_type(energy_type)
         self.main_mix.reset_mixes()
 
-        self.main_mix.draw_diagram(ax=ax, ylim=ylim, highlighted_orbitals=self.filtered_orbitals)
+        self.main_mix.draw_diagram(ax=ax, ylim=ylim, highlighted_orbitals=self.filtered_orbitals, use_darkmode=self.parent.isDarkMode)
         if self.new_tick_labels is not None:
             self.plot.axes.set_xticklabels(self.new_tick_labels)
 
@@ -1028,10 +1072,16 @@ class AnalysisWindow(QtWidgets.QWidget):
 
         self._update_plot()
 
-        if self.orbital_filter_button._is_checked:
-            self.orbital_filter_button.setIcon(self.parent._ICONS['checked'])
+        if self.parent.isDarkMode:
+            if self.orbital_filter_button._is_checked:
+                self.orbital_filter_button.setIcon(self.parent._ICONS['checked_dark'])
+            else:
+                self.orbital_filter_button.setIcon(self.parent._ICONS['unchecked_dark'])
         else:
-            self.orbital_filter_button.setIcon(self.parent._ICONS['unchecked'])
+            if self.orbital_filter_button._is_checked:
+                self.orbital_filter_button.setIcon(self.parent._ICONS['checked'])
+            else:
+                self.orbital_filter_button.setIcon(self.parent._ICONS['unchecked'])
 
         self.orbital_filter_button.setEnabled(len(self.plot._selected_orbitals) > 0 or self.orbital_filter_button._is_checked)
 
@@ -1083,29 +1133,90 @@ class AnalysisWindow(QtWidgets.QWidget):
         self.plot = MplCanvas(self)
         self.plot.setFocusPolicy( QtCore.Qt.ClickFocus )
         self.plot.setFocus()
-        plot_container.setStyleSheet('padding: 0px; margin: 0px; border: 1px solid lightgray; border-radius: 5px; background-color: white;')
+        plot_container.setStyleSheet('padding: 0px; margin: 0px; border: 1px solid lightgray; border-radius: 5px; background-color: none;')
         plot_container_layout.addWidget(self.plot, 0)
         layout.addWidget(plot_container, 0, 0, 1, 1, QtCore.Qt.AlignCenter)
 
 
         self.info_tabs = QtWidgets.QTabWidget()
-        self.info_tabs.setStyleSheet('QTabWidget { border-radius: 5px; border: 1px solid lightgray} QTabWidget::pane { border: 1px solid lightgray; background-color: white;border-radius: 5px; border-top-left-radius: 0px;} QTabWidget::tab-bar {background-color: lightgray; border: 0px;}')
-        self.info_tabs.tabBar().setStyleSheet('border-radius: 5px; border: 1px solid lightgray; background-color: white')
+        if self.parent.isDarkMode:
+            self.info_tabs.setStyleSheet("""
+                QTabWidget { 
+                    border-radius: 5px; 
+                    border: 1px solid darkgray
+                    } 
+                QTabWidget::pane { 
+                    border: 1px solid darkgray; 
+                    background-color: rgb(70, 70, 70);
+                    border-radius: 5px; 
+                    border-top-left-radius: 0px;
+                    } 
+                QTabWidget::tab-bar {
+                    background-color: darkgray; 
+                    border: 0px;
+                    }
+                """)
+        else:
+            self.info_tabs.setStyleSheet("""
+                QTabWidget { 
+                    border-radius: 5px; 
+                    border: 1px solid lightgray
+                    } 
+                QTabWidget::pane { 
+                    border: 1px solid lightgray; 
+                    background-color: white;
+                    border-radius: 5px; 
+                    border-top-left-radius: 0px;
+                    } 
+                QTabWidget::tab-bar {
+                    background-color: lightgray; 
+                    border: 0px;
+                    }
+                """)
+        if self.parent.isDarkMode:
+            self.info_tabs.tabBar().setStyleSheet("""
+                border-radius: 5px; 
+                border: 1px solid darkgray; 
+                background-color: #3A3A3A'
+                """)
+        else:
+            self.info_tabs.tabBar().setStyleSheet("""
+                border-radius: 5px; 
+                border: 1px solid lightgray; 
+                background-color: white'
+                """)
+        
+
         # self.info_tabs.setFixedSize(300, 500)
         orbital_info_frame = QtWidgets.QFrame()
-        orbital_info_frame.setStyleSheet("""
-            QPushButton {
-                font-size: 12px;
-                border: 1px solid lightgray;
-                border-radius: 5px;
-                padding: 8px;
-                margin: 0px; 
-                background-color: white;
-            }
-            QPushButton:hover {
-                background-color: #f0f0f0;
+        if self.parent.isDarkMode:
+            orbital_info_frame.setStyleSheet("""
+                QPushButton {
+                    font-size: 12px;
+                    border: 1px solid lightgray;
+                    border-radius: 5px;
+                    padding: 8px;
+                    margin: 0px; 
+                    background-color: #3A3A3A;
                 }
-            """)
+                QPushButton:hover {
+                    background-color: ##656565;
+                    }
+                """)
+        else:
+            orbital_info_frame.setStyleSheet("""
+                QPushButton {
+                    font-size: 12px;
+                    border: 1px solid lightgray;
+                    border-radius: 5px;
+                    padding: 8px;
+                    margin: 0px; 
+                    background-color: white;
+                }
+                QPushButton:hover {
+                    background-color: #f0f0f0;
+                    }
+                """)
         orbital_info_layout = QtWidgets.QGridLayout()
         orbital_info_frame.setLayout(orbital_info_layout)
         orbital_info_frame.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
@@ -1118,7 +1229,7 @@ class AnalysisWindow(QtWidgets.QWidget):
         
         self.info_tabs.addTab(orbital_info_frame, 'Orbitals')
 
-        system_info_box = Spoilers()
+        system_info_box = Spoilers(self)
         system_info_box.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         system_info_box.addSpoiler('General', self._get_general_system_info(), self.parent._ICONS['info'])
         system_info_box.addSpoiler('Complex', self._get_complex_system_info(), self.parent._ICONS['mo'])
@@ -1135,7 +1246,6 @@ class AnalysisWindow(QtWidgets.QWidget):
         slider_layout = QtWidgets.QGridLayout()
         slider_box = QtWidgets.QFrame()
         slider_box.setObjectName('sliderbox')
-        slider_box.setStyleSheet('QWidget#sliderbox{padding: 0px; margin: 0px; border: 1px solid lightgray; border-radius: 5px; background-color: white;}')
         slider_box.setLayout(slider_layout)
         layout.addWidget(slider_box, 1, 0)
 
@@ -1158,19 +1268,48 @@ class AnalysisWindow(QtWidgets.QWidget):
         inc_oi_btn = QtWidgets.QPushButton('<')
         inc_oi_btn.clicked.connect(self._set_next_oi_slider)
         slider_layout.addWidget(inc_oi_btn, 0, 4)
-        inc_oi_btn.setStyleSheet("""
-            QPushButton {
-                font-size: 12px;
-                border: 1px solid lightgray;
-                border-radius: 13px;
-                padding: 8px;
-                margin: 0px; 
-                background-color: white;
-            }
-            QPushButton:hover {
-                background-color: #f0f0f0;
+        if self.parent.isDarkMode:
+            slider_box.setStyleSheet("""
+                QWidget#sliderbox{
+                    padding: 0px; 
+                    margin: 0px; 
+                    border: 1px solid darkgray; 
+                    border-radius: 5px; 
+                    background-color: #3A3A3A;
+                    }
+                QPushButton {
+                    font-size: 12px;
+                    border: 1px solid darkgray;
+                    border-radius: 13px;
+                    padding: 8px;
+                    margin: 0px; 
+                    background-color: #3A3A3A;
                 }
-            """)
+                QPushButton:hover {
+                    background-color: #656565;
+                    }
+                """)
+        else:
+            slider_box.setStyleSheet("""
+                QWidget#sliderbox{
+                    padding: 0px; 
+                    margin: 0px; 
+                    border: 1px solid lightgray; 
+                    border-radius: 5px; 
+                    background-color: white;
+                    }
+                QPushButton {
+                    font-size: 12px;
+                    border: 1px solid lightgray;
+                    border-radius: 13px;
+                    padding: 8px;
+                    margin: 0px; 
+                    background-color: white;
+                }
+                QPushButton:hover {
+                    background-color: #f0f0f0;
+                    }
+                """)
         self.slider_OI = QtWidgets.QSlider(QtCore.Qt.Horizontal, self._analysis_page_frame)
         slider_OI_max = abs(min(min(v.values()) for v in self.main_mix.mixes['OI'].values()))
         self.slider_OI.setMinimum(np.log10(0.00000001) * slider_resolution)
@@ -1182,19 +1321,6 @@ class AnalysisWindow(QtWidgets.QWidget):
         dec_oi_btn = QtWidgets.QPushButton('>')
         dec_oi_btn.clicked.connect(self._set_previous_oi_slider)
         slider_layout.addWidget(dec_oi_btn, 0, 6)
-        dec_oi_btn.setStyleSheet("""
-            QPushButton {
-                font-size: 12px;
-                border: 1px solid lightgray;
-                border-radius: 13px;
-                padding: 8px;
-                margin: 0px; 
-                background-color: white;
-            }
-            QPushButton:hover {
-                background-color: #f0f0f0;
-                }
-            """)
 
         label_value_OI = QtWidgets.QLabel(f'{10**(self.slider_OI.value()/slider_resolution):.2E}')
         label_value_OI.setStyleSheet('font: 10px "IBM Plex Mono"')
@@ -1225,19 +1351,6 @@ class AnalysisWindow(QtWidgets.QWidget):
         inc_pr_btn = QtWidgets.QPushButton('<')
         inc_pr_btn.clicked.connect(self._set_next_pr_slider)
         slider_layout.addWidget(inc_pr_btn, 1, 4)
-        inc_pr_btn.setStyleSheet("""
-            QPushButton {
-                font-size: 12px;
-                border: 1px solid lightgray;
-                border-radius: 13px;
-                padding: 8px;
-                margin: 0px; 
-                background-color: white;
-            }
-            QPushButton:hover {
-                background-color: #f0f0f0;
-                }
-            """)
         self.slider_PR.setMinimum(0.001**2 * 1000 * slider_resolution)
         self.slider_PR.setMaximum(slider_PR_max * 1000 * slider_resolution)
         self.slider_PR.setSliderPosition(slider_PR_max/1.5 * 1000 * slider_resolution)
@@ -1247,19 +1360,6 @@ class AnalysisWindow(QtWidgets.QWidget):
         dec_pr_btn = QtWidgets.QPushButton('>')
         dec_pr_btn.clicked.connect(self._set_previous_pr_slider)
         slider_layout.addWidget(dec_pr_btn, 1, 6)
-        dec_pr_btn.setStyleSheet("""
-            QPushButton {
-                font-size: 12px;
-                border: 1px solid lightgray;
-                border-radius: 13px;
-                padding: 8px;
-                margin: 0px; 
-                background-color: white;
-            }
-            QPushButton:hover {
-                background-color: #f0f0f0;
-                }
-            """)
         label_value_PR = QtWidgets.QLabel(f'{self.slider_PR.value()/slider_resolution:.3f}')
         label_value_PR.setStyleSheet('font: 10px "IBM Plex Mono"')
         slider_layout.addWidget(label_value_PR, 1, 3)
@@ -1298,7 +1398,10 @@ class AnalysisWindow(QtWidgets.QWidget):
         self.orbital_draw_button.setText('Draw')
 
         self.orbital_filter_button = QtWidgets.QPushButton('Filter')
-        self.orbital_filter_button.setIcon(self.parent._ICONS['unchecked'])
+        if self.parent.isDarkMode:
+            self.orbital_filter_button.setIcon(self.parent._ICONS['unchecked_dark'])
+        else:
+            self.orbital_filter_button.setIcon(self.parent._ICONS['unchecked'])
         self.orbital_filter_button.clicked.connect(self._set_orbital_filter)
         self.orbital_filter_button.setEnabled(False)
         self.orbital_filter_button._is_checked = False
@@ -1309,19 +1412,6 @@ class AnalysisWindow(QtWidgets.QWidget):
         selector_layout.addWidget(self.orbital_filter_button, 0, 1)
 
         misc_box = QtWidgets.QFrame()
-
-        misc_box.setStyleSheet('''
-            QPushButton:hover {
-                background-color: #f0f0f0;
-                }
-            QPushButton {
-                border: 1px solid lightgray;
-                border-radius: 5px;
-                padding: 8px;
-                margin: 0px; 
-                background-color: white;
-                }
-            ''')
         misc_box_layout = QtWidgets.QGridLayout()
         misc_box.setLayout(misc_box_layout)
         layout.addWidget(misc_box, 2, 0)
@@ -1553,24 +1643,44 @@ class AnalysisWindow(QtWidgets.QWidget):
         label.setTextFormat(QtCore.Qt.RichText)
 
         self._new_page_frame.setObjectName('ParentWidget')
-        self._new_page_frame.setStyleSheet("""
-            QWidget#ParentWidget {
-                border: 3px dashed gray;
-                margin: 4px;
-                padding: 80px;
-                border-radius: 10px;
-                background-color: transparent;
-            }
-            QPushButton:hover {
-                background-color: #f0f0f0;
-            }
-            QPushButton {
-                font-size: 20px;
-                border: 1px solid gray;
-                border-radius: 10px;
-                padding: 8px;
-            }
-        """)
+        if self.parent.isDarkMode:
+            self._new_page_frame.setStyleSheet("""
+                QWidget#ParentWidget {
+                    border: 3px dashed gray;
+                    margin: 4px;
+                    padding: 80px;
+                    border-radius: 10px;
+                    background-color: transparent;
+                }
+                QPushButton:hover {
+                    background-color: #656565;
+                }
+                QPushButton {
+                    font-size: 20px;
+                    border: 1px solid gray;
+                    border-radius: 10px;
+                    padding: 8px;
+                }
+            """)
+        else:
+            self._new_page_frame.setStyleSheet("""
+                QWidget#ParentWidget {
+                    border: 3px dashed gray;
+                    margin: 4px;
+                    padding: 80px;
+                    border-radius: 10px;
+                    background-color: transparent;
+                }
+                QPushButton:hover {
+                    background-color: #f0f0f0;
+                }
+                QPushButton {
+                    font-size: 20px;
+                    border: 1px solid gray;
+                    border-radius: 10px;
+                    padding: 8px;
+                }
+            """)
         layout.addWidget(button, alignment=QtCore.Qt.AlignCenter)
 
 
@@ -1583,18 +1693,33 @@ class PyOrbbApp(QtWidgets.QApplication):
         self.window.resize(1030 + 22 + 12, 698 + 52)
         self.window.layout = QtWidgets.QGridLayout()
         grid_widget = QtWidgets.QWidget()
-        grid_widget.setStyleSheet('''
-            QPushButton:hover {
-                background-color: #f0f0f0;
-                }
-            QPushButton {
-                border: 1px solid lightgray;
-                border-radius: 5px;
-                padding: 4px;
-                margin: 0px; 
-                background-color: white;
-                }
-            ''')
+        if self.isDarkMode:
+            grid_widget.setStyleSheet('''
+                QPushButton:hover {
+                    background-color: #656565;
+                    }
+                QPushButton {
+                    border: 1px solid darkgray;
+                    border-radius: 5px;
+                    padding: 4px;
+                    margin: 0px; 
+                    background-color: #3A3A3A;
+                    }
+                ''')
+        else:
+            grid_widget.setStyleSheet('''
+                QPushButton:hover {
+                    background-color: #f0f0f0;
+                    }
+                QPushButton {
+                    border: 1px solid lightgray;
+                    border-radius: 5px;
+                    padding: 4px;
+                    margin: 0px; 
+                    background-color: white;
+                    }
+                ''')
+
         grid_widget.setLayout(self.window.layout)
         self.window.setCentralWidget(grid_widget)
 
@@ -1662,6 +1787,12 @@ class PyOrbbApp(QtWidgets.QApplication):
         self._ICONS = {file.removesuffix('.png'): QtGui.QIcon(os.path.join(ICON_FOLDER, file)) for file in os.listdir(ICON_FOLDER)}
         self._PIXMAPS = {file.removesuffix('.png'): QtGui.QPixmap(os.path.join(ICON_FOLDER, file)) for file in os.listdir(ICON_FOLDER)}
         self.window.setWindowIcon(self._ICONS["pyorbb"])
+
+
+    @property
+    def isDarkMode(self):
+        return QtGui.QGuiApplication.styleHints().colorScheme() == QtCore.Qt.ColorScheme.Dark
+
 
     def AMS_loc_dialogue(self):
         '''

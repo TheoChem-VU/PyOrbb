@@ -37,7 +37,6 @@ class Mixer2:
         self._get_pauli_repulsions()
         self.set_energy_type('energy')
 
-
     def _prepare(self):
         '''
         Prepare the data used to construct the mixing situations.

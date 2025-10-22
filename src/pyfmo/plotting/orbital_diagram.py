@@ -14,7 +14,8 @@ def draw_interaction(sfos, mos, connections,
         draw_mo_labels=False,
         draw_sfo_labels=True,
         alpha_range=(0.1, 1),
-        highlighted_orbitals=None):
+        highlighted_orbitals=None,
+        use_darkmode=False):
     arrow_length        = .3 / 4.8280888207
     arrow_thickness     = .35
     arrow_width         = .005
@@ -26,6 +27,22 @@ def draw_interaction(sfos, mos, connections,
     level_width         = .08
     level_thickness     = 3
     highlight_width     = 2
+
+    if use_darkmode: 
+        highlight_color = '#36B8FF'
+        level_color = '#BCBCBC'
+        label_color = 'lightgrey'
+        axis_label_color = 'white'
+        spine_color = 'white'
+        
+        ax.set_facecolor('#3d3d3d')
+        ax.get_figure().patch.set_facecolor('#3d3d3d')
+    else:
+        highlight_color = '#36B8FF'
+        level_color = 'k'
+        label_color = 'grey'
+        axis_label_color = 'black'
+        spine_color = 'k'
 
     if draw_mo_labels:
         degenerate_mo_threshold = .15
@@ -112,10 +129,14 @@ def draw_interaction(sfos, mos, connections,
 
 
     ax.set_title(title)
-    ax.set_ylabel('Orbital Energy / eV')
-    ax.set_xticks(xtick_pos, xtick_label)
+    ax.set_ylabel('Orbital Energy / eV', color=axis_label_color)
+    ax.set_xticks(xtick_pos, xtick_label, color=spine_color)
     ax.spines[['top', 'bottom', 'right']].set_visible(False)
-    ax.tick_params('x', labelsize=12, labelcolor='grey')
+    ax.spines['left'].set_color(spine_color)
+    ax.yaxis.label.set_color(spine_color)
+    ax.tick_params(axis='y', colors=spine_color)
+
+    ax.tick_params('x', labelsize=12, labelcolor=label_color)
     ax.tick_params(bottom = False)
     for orb in poss:
         E = orb.energy
@@ -129,13 +150,13 @@ def draw_interaction(sfos, mos, connections,
         if orb in highlighted_orbitals:
             ax.plot([poss[orb]-level_width/2, poss[orb]+level_width/2], 
                     [E, E], 
-                    c='#36B8FF', 
+                    c=highlight_color, 
                     linewidth=level_thickness + highlight_width, 
                     gid=f'{"MO" if is_MO else "SFO"}_{orb}')
 
         ax.plot([poss[orb]-level_width/2, poss[orb]+level_width/2], 
                 [E, E], 
-                c='k', 
+                c=level_color, 
                 linewidth=level_thickness, 
                 gid=f'{"MO" if is_MO else "SFO"}_{orb}')
 
@@ -147,7 +168,8 @@ def draw_interaction(sfos, mos, connections,
                      va='top',
                      size=8,
                      gid=f'{"TEXTMO" if is_MO else "TEXTSFO"}_{orb}',
-                     fontname='monospace')
+                     fontname='monospace',
+                     color=level_color)
 
         if not orb.occupied:
             continue
@@ -184,7 +206,7 @@ def draw_interaction(sfos, mos, connections,
             #              width=arrow_width, 
             #              head_width=arrow_head_width, 
             #              head_length=arrow_head_length * energy_span, 
-            #              color='#36B8FF', 
+            #              color=highlight_color, 
             #              overhang=arrow_overhang, 
             #              length_includes_head=True,
             #              linewidth=arrow_thickness + highlight_width,
@@ -197,7 +219,7 @@ def draw_interaction(sfos, mos, connections,
                      width=arrow_width, 
                      head_width=arrow_head_width, 
                      head_length=arrow_head_length * energy_span, 
-                     color='k', 
+                     color=level_color, 
                      overhang=arrow_overhang, 
                      length_includes_head=True,
                      linewidth=arrow_thickness,
@@ -215,5 +237,5 @@ def draw_interaction(sfos, mos, connections,
             psfo -= level_width/2
             pmo  += level_width/2
 
-        c = connection_colors.get((sfo, mo), 'k')
-        ax.plot([psfo, pmo], [getattr(sfo, energy_type), mo.energy], c=c, linewidth=1, alpha=np.clip(sfo.mulliken_contribution(mo), *alpha_range), gid=f'MIX_{sfo} -> {mo}', zorder=-10)
+        c = connection_colors.get((sfo, mo), level_color)
+        ax.plot([psfo, pmo], [getattr(sfo, energy_type), mo.energy], c=c, linewidth=1.5, alpha=np.clip(sfo.mulliken_contribution(mo), *alpha_range), gid=f'MIX_{sfo} -> {mo}', zorder=-10)
