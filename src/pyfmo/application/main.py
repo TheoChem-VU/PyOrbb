@@ -449,7 +449,12 @@ class MplCanvas(FigureCanvas):
 
 
     def draw_orbital(self, orb=None, draw_type='single'):
-        if ' ' in orb.parent.parent.kfpath:
+        if isinstance(orb, tuple):
+            kfpath = orb[0].parent.parent.kfpath
+        else:
+            kfpath = orb.parent.parent.kfpath
+
+        if ' ' in kfpath:
             QtWidgets.QMessageBox.critical(self, 'Error', 'The adf.rkf path contains a space. We will not be able to run Densf properly.\nPlease move the file to a different location.')
             return
 
@@ -691,6 +696,9 @@ class MplCanvas(FigureCanvas):
         # set up the menu for the pushbutton
         menu = QtWidgets.QMenu(self)
         for orb in self._selected_orbitals:
+            if isinstance(orb, tuple):
+                continue
+                
             if isinstance(orb, pyfmo.orbitals.objects.SFO):
                 icon = self.parent.parent._ICONS['sfo']
             else:
