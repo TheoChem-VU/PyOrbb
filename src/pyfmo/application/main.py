@@ -449,7 +449,7 @@ class MplCanvas(FigureCanvas):
 
 
     def draw_orbital(self, orb=None, draw_type='single'):
-        if isinstance(orb, tuple):
+        if hasattr(orb, '__len__'):
             kfpath = orb[0].parent.parent.kfpath
         else:
             kfpath = orb.parent.parent.kfpath
@@ -698,7 +698,7 @@ class MplCanvas(FigureCanvas):
         for orb in self._selected_orbitals:
             if isinstance(orb, tuple):
                 continue
-                
+
             if isinstance(orb, pyfmo.orbitals.objects.SFO):
                 icon = self.parent.parent._ICONS['sfo']
             else:
