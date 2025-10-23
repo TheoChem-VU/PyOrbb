@@ -169,7 +169,7 @@ class Orbital:
         # we only generate one, so we simply return the first element
         return grid.from_cub_file(job.output_cub_paths[self])
 
-    def vtk_file(self, gridsize: str = 'fine', overwrite: bool = False, preambles=[], grid_around_mol=None, gridextend=6):
+    def vtk_file(self, gridsize: str = 'medium', overwrite: bool = False, preambles=[], grid_around_mol=None, gridextend=6):
         '''
         Generate a cube-file for this |Orbital| with a certain grid-size.
 

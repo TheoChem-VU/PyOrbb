@@ -477,7 +477,7 @@ class MplCanvas(FigureCanvas):
                 c1, c2 = ([1, 0, 0], [0, 0, 1]) if orb.occupied else ([1, .5, 0], [0, 1, 1])
                 scene.draw_molecule(orb.molecule)
                 try:
-                    data = orb.vtk_file(gridsize='medium', preambles=preambles)
+                    data = orb.vtk_file(preambles=preambles)
                 except Exception as e:
                     print("".join(traceback.format_exception(type(e), e, e.__traceback__)))
                     QtWidgets.QMessageBox.critical(self, 'Error', 'There was an issue with running densf.\nUse preferences > Set AMS Path to set the AMS installation path.')
