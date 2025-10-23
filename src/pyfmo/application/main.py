@@ -1049,7 +1049,7 @@ class AnalysisWindow(QtWidgets.QWidget):
         self.main_mix.set_energy_type(energy_type)
         self.main_mix.reset_mixes()
 
-        self.main_mix.draw_diagram(ax=ax, ylim=ylim, highlighted_orbitals=self.filtered_orbitals, use_darkmode=self.parent.isDarkMode)
+        self.main_mix.draw_diagram(ax=ax, ylim=ylim, highlighted_orbitals=self.filtered_orbitals, use_darkmode=False)
         if self.new_tick_labels is not None:
             self.plot.axes.set_xticklabels(self.new_tick_labels)
 
@@ -1145,7 +1145,10 @@ class AnalysisWindow(QtWidgets.QWidget):
         self.plot = MplCanvas(self)
         self.plot.setFocusPolicy( QtCore.Qt.ClickFocus )
         self.plot.setFocus()
-        plot_container.setStyleSheet('padding: 0px; margin: 0px; border: 1px solid lightgray; border-radius: 5px; background-color: none;')
+        if self.parent.isDarkMode:
+            plot_container.setStyleSheet('QFrame{padding: 0px; margin: 0px; border: 1px solid darkgray; border-radius: 5px; background-color: white;} QDialog{padding: 0px; margin: 0px; border: 1px solid darkgray; border-radius: 5px; background-color: none;} QLabel{padding: 0px; margin: 0px; border: none; border-radius: 5px; background-color: none;}')
+        else:
+            plot_container.setStyleSheet('QFrame{padding: 0px; margin: 0px; border: 1px solid lightgray; border-radius: 5px; background-color: white;} QDialog{padding: 0px; margin: 0px; border: 1px solid lightgray; border-radius: 5px; background-color: white;} QLabel{padding: 0px; margin: 0px; border: none; border-radius: 5px; background-color: none;}')
         plot_container_layout.addWidget(self.plot, 0)
         layout.addWidget(plot_container, 0, 0, 1, 1, QtCore.Qt.AlignCenter)
 
