@@ -693,6 +693,11 @@ class MplCanvas(FigureCanvas):
                 self.fig.canvas.set_cursor(Cursors.POINTER)
                 self.fig.canvas.draw_idle()
 
+        if event.button == 3:
+            self.parent.ylim = None
+            self.previous_mouse_pos = None
+            self.parent._update_plot()
+
         self._set_orbital_info_box()
 
         # set up the menu for the pushbutton
