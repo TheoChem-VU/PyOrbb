@@ -442,10 +442,12 @@ class MplCanvas(FigureCanvas):
 
         self.fig.canvas.mpl_connect('motion_notify_event', self.on_plot_hover)
         self.fig.canvas.mpl_connect('button_press_event', self.on_plot_click)
+        self.fig.canvas.mpl_connect('scroll_event', self.on_scroll)
         self._selected_orbitals = []
         self._frag_rename_dialog = FragRenameDialog(self)
         self._yaxis_dialog = YAxisDialog(self)
         self._already_unfaded = True
+        self.previous_mouse_pos = None
 
 
     def draw_orbital(self, orb=None, draw_type='single'):
@@ -785,6 +787,24 @@ class MplCanvas(FigureCanvas):
         else:
             self.fig.canvas.set_cursor(Cursors.POINTER)
 
+        if event.button == 1:
+            if self.parent.ylim is None:
+                self.parent.ylim = self.axes.get_ylim()
+
+            mouse_pos = event.ydata
+            if self.previous_mouse_pos is not None:
+                dy = mouse_pos - self.previous_mouse_pos
+                self.parent.ylim = self.parent.ylim[0] - dy, self.parent.ylim[1] - dy
+                self.parent._update_plot()
+                self.previous_mouse_pos = mouse_pos - dy
+
+            else:
+                self.previous_mouse_pos = mouse_pos
+
+
+        elif event.button is None:
+            self.previous_mouse_pos = None
+
 
     def _unfade(self):
         artists = self.axes.get_children()
@@ -898,6 +918,17 @@ class MplCanvas(FigureCanvas):
             self.axes.draw_artist(artist)
 
         self.fig.canvas.draw_idle()
+
+    def on_scroll(self, event):
+        if self.parent.ylim is None:
+            self.parent.ylim = self.axes.get_ylim()
+        dy = self.parent.ylim[1] - self.parent.ylim[0]
+        mousey = event.ydata
+        f = (mousey - self.parent.ylim[0]) / dy
+        change = event.step * dy * 0.001
+        new_dy = dy + change
+        self.parent.ylim = (mousey - new_dy * f, mousey + new_dy * (1 - f))
+        self.parent._update_plot()
 
 
 class SaveFileDialog(QtWidgets.QFileDialog):
@@ -1036,6 +1067,7 @@ class AnalysisWindow(QtWidgets.QWidget):
     def _draw_diagram(self, *args, oi_thresh=None, pauli_thresh=None, ylim=None, energy_type=None):
         ax = self.plot.axes
         fig = self.plot.fig
+
         ax.clear()
         ax.yaxis.set_major_formatter('{x: 3.0f}')
         allowed_mos = self.allowed_mos_override if self.allowed_mos_override is not None else self._orb_selection_dialog.state.allowed_mos()
