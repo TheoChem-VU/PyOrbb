@@ -1516,6 +1516,12 @@ class AnalysisWindow(QtWidgets.QWidget):
         layout.addWidget(label, row, 1, 1, 1)
 
         row += 1
+        layout.addWidget(QtWidgets.QLabel('<b>Δ<i>V</i><sub>elstat</sub></b>'), row, 0, 1, 1)
+        label = QtWidgets.QLabel(f"{self.orbs.reader.read('Energy', 'elstat') * 627.503:.2f} kcal mol<sup>–1</sup>")
+        label.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
+        layout.addWidget(label, row, 1, 1, 1)
+
+        row += 1
         layout.addWidget(QtWidgets.QLabel('<b>Δ<i>E</i><sub>Pauli</sub></b>'), row, 0, 1, 1)
         label = QtWidgets.QLabel(f"{self.orbs.reader.read('Energy', 'Pauli Total') * 627.503:.2f} kcal mol<sup>–1</sup>")
         label.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
@@ -1524,12 +1530,6 @@ class AnalysisWindow(QtWidgets.QWidget):
         row += 1
         layout.addWidget(QtWidgets.QLabel('<b>Δ<i>E</i><sub>oi</sub></b>'), row, 0, 1, 1)
         label = QtWidgets.QLabel(f"{self.orbs.reader.read('Energy', 'Orb.Int. Total') * 627.503:.2f} kcal mol<sup>–1</sup>")
-        label.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
-        layout.addWidget(label, row, 1, 1, 1)
-
-        row += 1
-        layout.addWidget(QtWidgets.QLabel('<b>Δ<i>V</i><sub>elstat</sub></b>'), row, 0, 1, 1)
-        label = QtWidgets.QLabel(f"{self.orbs.reader.read('Energy', 'elstat') * 627.503:.2f} kcal mol<sup>–1</sup>")
         label.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
         layout.addWidget(label, row, 1, 1, 1)
 
