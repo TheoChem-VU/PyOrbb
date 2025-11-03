@@ -97,6 +97,7 @@ class Spoilers(QtWidgets.QScrollArea):
         # making qwidget object
         content = QtWidgets.QWidget(self)
         self.setWidget(content)
+        self.spoilers = {}
 
         # vertical box layout
         self.layout = QtWidgets.QVBoxLayout(content)
@@ -113,7 +114,17 @@ class Spoilers(QtWidgets.QScrollArea):
         layout.addWidget(widget)
         spoiler = Spoiler(self, title, icon=icon)
         spoiler.setContentLayout(layout)
+        self.spoilers[title] = spoiler
         self.layout.insertWidget(self.layout.count() - 1, spoiler)
+
+    def renameSpoiler(self, old_title, new_title):
+        # self.spoilers[old_title].toggleButton.setText(new_title)
+        pixmap = latex_renderer.convert_to_QPixMap("  " + new_title, darkmode=self.parent.parent.isDarkMode, fs=10)
+        self.spoilers[old_title].toggleButton.setPixmap(pixmap)
+        # self.spoilers[old_title].toggleButton.__lbl.setFixedHeight(pixmap.height())
+        # self.spoilers[old_title].toggleButton.setIconSize(pixmap.height()//4, pixmap.width()//4)
+        self.spoilers[old_title].toggleButton.update()
+        self.spoilers[new_title] = self.spoilers.pop(old_title)
 
     def empty(self):
         for i in range(self.layout.count()):
