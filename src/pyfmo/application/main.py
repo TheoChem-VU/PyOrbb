@@ -1032,6 +1032,8 @@ class AnalysisWindow(QtWidgets.QWidget):
         self.open_rkf_filedialog.setFilter(QtCore.QDir.Filter.Files)
         self.open_rkf_filedialog.setNameFilters({"RKF file (*.rkf)", "Any file (*)"})
 
+        self._loaded_analysis = False
+
         self.errordialog = QtWidgets.QErrorMessage(self)
         self.central_layout = QtWidgets.QVBoxLayout(self)
 
@@ -1065,8 +1067,14 @@ class AnalysisWindow(QtWidgets.QWidget):
             e.accept()
             for url in e.mimeData().urls():
                 fname = str(url.toLocalFile())
-                self.load_analysis(fname)
-                return
+                print(self._loaded_analysis)
+                if not self._loaded_analysis:
+                    self.load_analysis(fname)
+                    return
+                else:
+                    window = self.parent._add_analysis_tab()
+                    window.load_analysis(fname)
+
         else:
             e.ignore()
 
@@ -1178,7 +1186,7 @@ class AnalysisWindow(QtWidgets.QWidget):
 
         self._energytype_selection = 'energy'
 
-        self.setAcceptDrops(False)
+        self.setAcceptDrops(True)
         if hasattr(self, "_new_page_frame"):
             self._new_page_frame.hide()
             self.central_layout.removeWidget(self._new_page_frame)
@@ -1509,6 +1517,7 @@ class AnalysisWindow(QtWidgets.QWidget):
         layout.setColumnStretch(1, 1)
 
         self._update_plot()
+        self._loaded_analysis = True
 
 
     def _get_general_system_info(self):
@@ -1832,6 +1841,7 @@ class PyOrbbApp(QtWidgets.QApplication):
 
         tab_shape = QtWidgets.QTabBar.Shape.RoundedNorth
         self.tabs.tabBar().setShape(tab_shape)
+        self.tabs.tabCloseRequested.connect(self.unclose_last_tab)
         self.tabs.setCornerWidget(add_tab_button, QtCore.Qt.TopLeftCorner)
 
         self.window.layout.addWidget(self.tabs, 0, 0, 1, 1)
@@ -1870,6 +1880,9 @@ class PyOrbbApp(QtWidgets.QApplication):
         self._PIXMAPS = {file.removesuffix('.png'): QtGui.QPixmap(os.path.join(ICON_FOLDER, file)) for file in os.listdir(ICON_FOLDER)}
         self.window.setWindowIcon(self._ICONS["pyorbb"])
 
+    def unclose_last_tab(self, index):
+        if self.tabs.count() == 1:
+            self._add_analysis_tab()
 
     @property
     def isDarkMode(self):
@@ -1897,6 +1910,7 @@ class PyOrbbApp(QtWidgets.QApplication):
         window.setup_new()
         idx = self.tabs.addTab(window, tabname)
         self.tabs.setCurrentIndex(idx)
+        return window
 
     def _edit_tab_title(self, index):
         def text_change_handler(arg):
