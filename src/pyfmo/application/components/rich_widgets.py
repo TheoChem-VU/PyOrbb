@@ -271,20 +271,35 @@ class HTMLToolButton(QtWidgets.QToolButton):
             self.__lbl.setText(text)
         self.__lyt = QtWidgets.QHBoxLayout()
         self.__lyt.setContentsMargins(0, 0, 0, 0)
-        self.__lyt.setSpacing(0)
+        # self.__lyt.setSpacing(0)
         self.setLayout(self.__lyt)
         self.__lbl.setAttribute(QtCore.Qt.WA_TranslucentBackground)
         self.__lbl.setAttribute(QtCore.Qt.WA_TransparentForMouseEvents)
-        self.__lbl.setSizePolicy(
+        self.setSizePolicy(
             QtWidgets.QSizePolicy.Expanding,
-            QtWidgets.QSizePolicy.Expanding,
+            QtWidgets.QSizePolicy.Minimum,
         )
+        self.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.__lbl.setTextFormat(QtCore.Qt.RichText)
         self.__lyt.addWidget(self.__lbl)
+        self.setStyleSheet("""
+            QToolButton {
+                border: none;
+            }
+            QToolButton::menu-button {
+                subcontrol-position: bottom;
+                subcontrol-origin: margin;
+                background: red;
+            };""")
         return
 
     def setText(self, text):
         self.__lbl.setText(text)
+        self.updateGeometry()
+        return
+
+    def setPixmap(self, pixmap):
+        self.__lbl.setPixmap(pixmap)
         self.updateGeometry()
         return
 
@@ -295,19 +310,67 @@ class HTMLToolButton(QtWidgets.QToolButton):
         s.setHeight(w.height())
         return s
 
-class HTMLToolButton(QtWidgets.QToolButton):
-    def __init__(self, parent=None):
-        super().__init__(parent)
-        self.setStyle(HTMLStyle())
-        # self.__lbl = QtWidgets.QLabel()
 
-    # def setText(self, text):
-    #     self.__lbl.setText(text)
-    #     super().setText(text)
 
-    # def sizeHint(self):
-    #     print( self.__lbl.sizeHint(), super().sizeHint())
-    #     s = self.__lbl.sizeHint()
-    #     s.setHeight(19)
-    #     s.setWidth(s.width()*3)
-    #     return s
+class HTMLPushButton(QtWidgets.QPushButton):
+    def __init__(self, text=None, parent=None):
+        if parent is not None:
+            super().__init__(parent)
+        else:
+            super().__init__()
+        self.__lbl = QtWidgets.QLabel()
+        if text is not None:
+            self.__lbl.setText(text)
+        self.__lyt = QtWidgets.QHBoxLayout()
+        self.__lyt.setContentsMargins(0, 0, 0, 0)
+        # self.__lyt.setSpacing(0)
+        self.setLayout(self.__lyt)
+        self.__lbl.setAttribute(QtCore.Qt.WA_TranslucentBackground)
+        self.__lbl.setAttribute(QtCore.Qt.WA_TransparentForMouseEvents)
+        self.setSizePolicy(
+            QtWidgets.QSizePolicy.Expanding,
+            QtWidgets.QSizePolicy.Minimum,
+        )
+        self.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.__lbl.setTextFormat(QtCore.Qt.RichText)
+        self.__lyt.addWidget(self.__lbl)
+        return
+
+    def setText(self, text):
+        self.__lbl.setText(text)
+        self.updateGeometry()
+        return
+
+    def setPixmap(self, pixmap):
+        self.__lbl.setPixmap(pixmap)
+        self.updateGeometry()
+        return
+
+    def sizeHint(self):
+        s = QtWidgets.QPushButton.sizeHint(self)
+        w = self.__lbl.sizeHint()
+        s.setWidth(w.width())
+        s.setHeight(w.height())
+        return s
+
+# class HTMLToolButton(QtWidgets.QToolButton):
+#     def __init__(self, parent=None):
+#         super().__init__(parent)
+#         self.setStyle(HTMLStyle())
+#         self.__lbl = QtWidgets.QLabel()
+
+#     # def setText(self, text):
+#     #     self.__lbl.setText(text)
+#     #     super().setText(text)
+
+#     # def sizeHint(self):
+#     #     print( self.__lbl.sizeHint(), super().sizeHint())
+#     #     s = self.__lbl.sizeHint()
+#     #     s.setHeight(19)
+#     #     s.setWidth(s.width()*3)
+#     #     return s
+
+#     def setPixmap(self, pixmap):
+#         self.__lbl.setPixmap(pixmap)
+#         self.updateGeometry()
+#         return
