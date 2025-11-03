@@ -166,7 +166,7 @@ def draw_interaction(sfos, mos, connections,
                      orb_name,
                      ha='center',
                      va='top',
-                     size=8,
+                     size=9,
                      gid=f'{"TEXTMO" if is_MO else "TEXTSFO"}_{orb}',
                      fontname='monospace',
                      color=level_color)
