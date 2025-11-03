@@ -81,7 +81,6 @@ def convert_to_QIcon(text, prefix_icon=None, fs=9, darkmode=False, scale=2):
     return QtGui.QIcon(ImageQt.toqpixmap(result))
 
 
-
 def convert_to_QPixmap_with_prefix_icon(text, prefix_icon=None, fs=9, darkmode=False, scale=2):
     qpixmap = convert_to_QPixMap(text, fs=fs, darkmode=darkmode, scale=scale)
     qicon = QtGui.QIcon(qpixmap)
@@ -91,7 +90,6 @@ def convert_to_QPixmap_with_prefix_icon(text, prefix_icon=None, fs=9, darkmode=F
 
     prefix_icon_image = ImageQt.fromqimage(prefix_icon.pixmap(prefix_icon.actualSize(QtCore.QSize(1024, 1024))).toImage())
     image = ImageQt.fromqimage(qicon.pixmap(qicon.actualSize(QtCore.QSize(1024, 1024))).toImage())
-
 
     (width1, height1) = prefix_icon_image.size
     (width2, height2) = image.size
