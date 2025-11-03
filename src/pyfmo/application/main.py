@@ -155,23 +155,26 @@ class Spoiler(QtWidgets.QWidget):
         self.animationDuration = animationDuration
         self.toggleAnimation = QtCore.QParallelAnimationGroup()
         self.contentArea = QtWidgets.QScrollArea(self)
-        # self.headerLine = QtWidgets.QFrame(self)
-        # toggleLayout = QtWidgets.QHBoxLayout()
-        # toggleFrame = 
         self.toggleButton = rich_widgets.HTMLToolButton(self)
         # self.toggleButton = QtWidgets.QToolButton(self)
-        # self.toggleButton.setStyle(rich_widgets.HTMLStyle())
         self.mainLayout = QtWidgets.QVBoxLayout()
         titleLayout = QtWidgets.QHBoxLayout()
         titleFrame = QtWidgets.QFrame()
         titleFrame.setLayout(titleLayout)
 
         toggleButton = self.toggleButton
-        toggleButton.setStyleSheet("QToolButton { border: none; font-weight: bold; font-size: 20px; text-align: left top}")
+        # toggleButton.setStyleSheet("QToolButton { border: none; font-weight: bold; font-size: 20px; text-align: left top}")
 
-        toggleButton.setToolButtonStyle(QtCore.Qt.ToolButtonTextBesideIcon)
-        toggleButton.setArrowType(QtCore.Qt.RightArrow)
-        toggleButton.setText(f'{title}')
+        toggleButton.setToolButtonStyle(QtCore.Qt.ToolButtonFollowStyle)
+        toggleButton.setArrowType(QtCore.Qt.NoArrow)
+        # toggleButton.setText(f'{title}')
+
+        pixmap = latex_renderer.convert_to_QPixMap("  " + title, darkmode=parent.parent.parent.isDarkMode, fs=10)
+        toggleButton.setPixmap(pixmap)
+
+        # parent.parent.setWindowIcon(icon)
+        # toggleButton.setIconSize(pixmap.size())
+
         toggleButton.setCheckable(True)
         toggleButton.setChecked(False)
 
@@ -194,9 +197,9 @@ class Spoiler(QtWidgets.QWidget):
         if icon is not None:
             icon_lab = QtWidgets.QLabel()
             icon_lab.setPixmap(icon.pixmap(20, 20))
-            titleLayout.addWidget(icon_lab)
-        titleLayout.addWidget(self.toggleButton)
-        titleLayout.addStretch()
+            titleLayout.addWidget(icon_lab, stretch=0)
+        titleLayout.addWidget(self.toggleButton, stretch=1)
+        # titleLayout.addStretch()
 
         mainLayout.addWidget(titleFrame)
         mainLayout.addWidget(self.contentArea)
@@ -206,7 +209,7 @@ class Spoiler(QtWidgets.QWidget):
         def start_animation(checked):
             arrow_type = QtCore.Qt.DownArrow if checked else QtCore.Qt.RightArrow
             direction = QtCore.QAbstractAnimation.Forward if checked else QtCore.QAbstractAnimation.Backward
-            toggleButton.setArrowType(arrow_type)
+            # toggleButton.setArrowType(arrow_type)
             self.toggleAnimation.setDirection(direction)
             self.toggleAnimation.start()
 
@@ -568,7 +571,7 @@ class MplCanvas(FigureCanvas):
                 s += '\n─────────────────── ──────── ───────'
                 for mo in sorted(submix.mos, key=lambda mo: -abs(orb.mulliken_contribution(mo))):
                     s += f'\n{str(mo):19.19} {orb.mulliken_contribution(mo): 8.2%} {orb.coefficient(mo): 7.4f}'
-                title = f"{orb.fragment_unique}({pyfmo.generate_label(orb, mode='html')})"
+                title = f"{orb.fragment_unique}({pyfmo.generate_label(orb, mode='latex')})"
 
             if isinstance(orb, pyfmo.orbitals.objects.MO):
                 icon = self.parent.parent._ICONS['mo']
@@ -585,7 +588,7 @@ class MplCanvas(FigureCanvas):
                 s += '\n─────────────────── ──────── ───────'
                 for sfo in sorted(submix.sfos, key=lambda sfo: -abs(sfo.mulliken_contribution(orb))):
                     s += f'\n{str(sfo):19.19} {sfo.mulliken_contribution(orb): 8.2%} {sfo.coefficient(orb): 7.4f}'
-                title = pyfmo.generate_label(orb, mode='html')
+                title = pyfmo.generate_label(orb, mode='latex')
 
             if isinstance(orb, tuple):
                 sfo, mo = orb
@@ -607,7 +610,7 @@ class MplCanvas(FigureCanvas):
                     is_bonding = ((sfo @ sfo2) * sfo.coefficient(mo) * sfo2.coefficient(mo)) >= 0
                     s += f'\n{str(sfo2):19.19} {"   Yes  " if is_bonding else "    No    "}'
                 orb = f'{sfo} ⇒ {mo}'
-                title = f"{sfo.fragment_unique}({pyfmo.generate_label(sfo, mode='html')}) ⇒ {pyfmo.generate_label(mo, mode='html')}"
+                title = f"{sfo.fragment_unique}({pyfmo.generate_label(sfo, mode='latex')}) ⇒ {pyfmo.generate_label(mo, mode='latex')}"
 
             label = QtWidgets.QLabel(s)
             label.setStyleSheet('padding: 3px; font: 10px "IBM Plex Mono"')
@@ -630,6 +633,10 @@ class MplCanvas(FigureCanvas):
                     self.parent.new_tick_labels.append(artist.get_text())
                     continue
                 new_txt = self._frag_rename_dialog.open(artist.get_text())
+
+                self.parent.system_info_box.renameSpoiler(artist.get_text(), new_txt)
+                self.parent._orb_selection_dialog.renameTab(artist.get_text(), new_txt)
+                self.parent.orbs.rename_fragment(artist.get_text(), new_txt)
                 self.parent.new_tick_labels.append(new_txt)
 
             self.axes.set_xticklabels(self.parent.new_tick_labels)
@@ -719,14 +726,14 @@ class MplCanvas(FigureCanvas):
 
             if isinstance(orb, pyfmo.orbitals.objects.SFO):
                 icon = self.parent.parent._ICONS['sfo']
+                orb_lab = f'{orb.fragment_unique}({pyfmo.generate_label(orb, mode="latex")})'
             else:
                 icon = self.parent.parent._ICONS['mo']
+                orb_lab = pyfmo.generate_label(orb, mode='latex')
 
-            action = QtGui.QAction(str(orb), self)
-            action.setIconVisibleInMenu(True)
-            action.setIcon(icon)
-            action.triggered.connect(partial(self.draw_orbital, orb=orb, draw_type='single'))
-            menu.addAction(action)
+            func = partial(self.draw_orbital, orb=orb, draw_type='single')
+            widg = action_widget.DrawAction(self, orb_lab, icon, func)
+            menu.addAction(widg)
 
         # add the overlap actions
         for i, orb in enumerate(self._selected_orbitals):
@@ -747,11 +754,18 @@ class MplCanvas(FigureCanvas):
                     continue
 
                 icon = self.parent.parent._ICONS['overlap']
-                action = QtGui.QAction(f'{orb} * {orb2}', self)
-                action.setIconVisibleInMenu(True)
-                action.setIcon(icon)
-                action.triggered.connect(partial(self.draw_orbital, orb=[orb, orb2], draw_type='overlap'))
-                menu.addAction(action)
+
+                func = partial(self.draw_orbital, orb=[orb, orb2], draw_type='overlap')
+                orb_lab1 = pyfmo.generate_label(orb, mode='latex')
+                orb_lab2 = pyfmo.generate_label(orb2, mode='latex')
+                widg = action_widget.DrawAction(self, f'{orb.fragment_unique}({orb_lab1}) * {orb2.fragment_unique}({orb_lab2})', icon, func)
+                menu.addAction(widg)
+
+                # action = QtGui.QAction(f'{orb} * {orb2}', self)
+                # action.setIconVisibleInMenu(True)
+                # action.setIcon(icon)
+                # action.triggered.connect()
+                # menu.addAction(action)
 
         # add the sum actions
         for i, orb in enumerate(self._selected_orbitals):
@@ -772,11 +786,17 @@ class MplCanvas(FigureCanvas):
                     continue
 
                 icon = self.parent.parent._ICONS['sum']
-                action = QtGui.QAction(f'{orb}, {orb2}', self)
-                action.setIconVisibleInMenu(True)
-                action.setIcon(icon)
-                action.triggered.connect(partial(self.draw_orbital, orb=[orb, orb2], draw_type='sum'))
-                menu.addAction(action)
+                # action = QtGui.QAction(f'{orb}, {orb2}', self)
+                # action.setIconVisibleInMenu(True)
+                # action.setIcon(icon)
+                # action.triggered.connect(partial(self.draw_orbital, orb=[orb, orb2], draw_type='sum'))
+                # menu.addAction(action)
+
+                func = partial(self.draw_orbital, orb=[orb, orb2], draw_type='sum')
+                orb_lab1 = pyfmo.generate_label(orb, mode='latex')
+                orb_lab2 = pyfmo.generate_label(orb2, mode='latex')
+                widg = action_widget.DrawAction(self, f'{orb.fragment_unique}({orb_lab1}), {orb2.fragment_unique}({orb_lab2})', icon, func)
+                menu.addAction(widg)
 
 
         self.parent.orbital_draw_button.setMenu(menu)
