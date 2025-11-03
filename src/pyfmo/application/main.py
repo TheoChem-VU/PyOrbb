@@ -1,6 +1,6 @@
 from PySide6 import QtWidgets, QtCore, QtGui
 import pyfmo
-from .components import orbital_selector, rich_widgets
+from .components import orbital_selector, rich_widgets, latex_renderer, action_widget
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qtagg import FigureCanvas
 from matplotlib.backend_tools import Cursors
