@@ -1215,16 +1215,16 @@ class AnalysisWindow(QtWidgets.QWidget):
         plot_container_layout = QtWidgets.QVBoxLayout()
         plot_container = QtWidgets.QFrame()
         plot_container.setLayout(plot_container_layout)
-        plot_container.setFixedSize(700, 500)
+        plot_container.resize(700, 500)
 
         self.plot = MplCanvas(self)
-        self.plot.setFocusPolicy( QtCore.Qt.ClickFocus )
+        # self.plot.setFocusPolicy(QtCore.Qt.ClickFocus)
         self.plot.setFocus()
         if self.parent.isDarkMode:
             plot_container.setStyleSheet('QFrame{padding: 0px; margin: 0px; border: 1px solid darkgray; border-radius: 5px; background-color: white;} QDialog{padding: 0px; margin: 0px; border: 1px solid darkgray; border-radius: 5px; background-color: none;} QLabel{padding: 0px; margin: 0px; border: none; border-radius: 5px; background-color: none;}')
         else:
             plot_container.setStyleSheet('QFrame{padding: 0px; margin: 0px; border: 1px solid lightgray; border-radius: 5px; background-color: white;} QDialog{padding: 0px; margin: 0px; border: 1px solid lightgray; border-radius: 5px; background-color: white;} QLabel{padding: 0px; margin: 0px; border: none; border-radius: 5px; background-color: none;}')
-        plot_container_layout.addWidget(self.plot, 0)
+        plot_container_layout.addWidget(self.plot)
         layout.addWidget(plot_container, 0, 0, 1, 1, QtCore.Qt.AlignCenter)
 
 
@@ -1481,6 +1481,7 @@ class AnalysisWindow(QtWidgets.QWidget):
         selector_layout.addWidget(orb_btn, 1, 1)
 
         self.orbital_draw_button = QtWidgets.QPushButton()
+        self.orbital_draw_button.setEnabled(False)
         self.orbital_draw_button.setStyleSheet('QPushButton::menu-indicator { image: none; }')
 
         menu = QtWidgets.QMenu(self)
@@ -1541,11 +1542,6 @@ class AnalysisWindow(QtWidgets.QWidget):
         label = QtWidgets.QLabel(str(len(self.orbs.fragments)))
         label.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
         layout.addWidget(label, row, 1, 1, 1)
-
-        # # level of theory
-        # row += 1
-        # layout.addWidget(QtWidgets.QLabel('<b>Level</b>'), row, 0, 1, 1)
-        # layout.addWidget(QtWidgets.QLabel('BLYP-D3(BJ)/TZ2P(None)'), row, 1, 1, 1)
 
         # EDA terms
         row += 1
