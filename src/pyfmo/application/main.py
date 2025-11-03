@@ -828,12 +828,11 @@ class MplCanvas(FigureCanvas):
                 self.parent.ylim = self.axes.get_ylim()
 
             mouse_pos = event.ydata
-            if self.previous_mouse_pos is not None:
+            if self.previous_mouse_pos is not None and mouse_pos is not None:
                 dy = mouse_pos - self.previous_mouse_pos
                 self.parent.ylim = self.parent.ylim[0] - dy, self.parent.ylim[1] - dy
                 self.parent._update_plot()
                 self.previous_mouse_pos = mouse_pos - dy
-
             else:
                 self.previous_mouse_pos = mouse_pos
 
