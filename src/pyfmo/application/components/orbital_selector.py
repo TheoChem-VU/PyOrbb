@@ -1,5 +1,5 @@
 from PySide6 import QtWidgets, QtCore
-from pyfmo.application.components import rich_widgets
+from pyfmo.application.components import rich_widgets, latex_renderer
 import pyfmo
 import dictfunc
 import functools
@@ -348,7 +348,6 @@ class SpinSelectionDialog(QtWidgets.QDialog):
 
     def setup(self):
         spin_state = self.parent.parent.state.spins[self.state_key]
-        print(spin_state)
         for spin, checkbox in self.checkboxes.items():
             checkbox.setChecked(spin_state[spin])
 
@@ -367,6 +366,23 @@ class SpinSelectionDialog(QtWidgets.QDialog):
                 table_checkbox.setChecked(checkbox.isChecked())
 
         self.hide()
+
+
+class TabButton(QtWidgets.QFrame):
+    def __init__(self, parent, text):
+        super().__init__(parent)
+        self.parent = parent
+        self.text = text
+
+        self.layout = QtWidgets.QHBoxLayout(self)
+        self.setLayout(self.layout)
+
+        pixmap = latex_renderer.convert_to_QPixMap(text)
+        self._lbl = QtWidgets.QLabel(self)
+        self._lbl.setPixmap(pixmap)
+        self.layout.addWidget(self._lbl)
+        self.layout.setContentsMargins(0, 0, 0, 0)
+
 
 class IrrepSelectionDialog(QtWidgets.QDialog):
     def __init__(self, parent):
@@ -441,13 +457,15 @@ class OrbitalSelectionDialog(QtWidgets.QDialog):
         self.tab_indices = {}
         # add a tab for the MOs
         self.tab_stor = {orbs.mos: OrbitalSelectionTab(self, orbs.mos.orbitals, orbs.mos)}
-        self.tabs.addTab(self.tab_stor[orbs.mos], self.parent.parent._ICONS['mo'], 'Complex')
+
+        self.addTab(self.tab_stor[orbs.mos], self.parent.parent._ICONS['mo'], "Complex")
         self.tab_indices["Complex"] = 0
+
         # and for each fragment
         for i, fragment in enumerate(orbs.fragments):
             self.tab_indices[fragment] = i + 1
             self.tab_stor[fragment] = OrbitalSelectionTab(self, orbs.sfos.filter(fragment=fragment), fragment)
-            self.tabs.addTab(self.tab_stor[fragment], self.parent.parent._ICONS['sfo'], fragment)
+            self.addTab(self.tab_stor[fragment], self.parent.parent._ICONS['sfo'], fragment)
 
         # some standard buttons
         save_btn = QtWidgets.QPushButton('Save')
@@ -460,9 +478,17 @@ class OrbitalSelectionDialog(QtWidgets.QDialog):
         layout.addWidget(cancel_btn, 2, 1, 1, 1)
         layout.addWidget(reset_btn, 2, 2, 1, 1)
 
+    def addTab(self, widget, icon, text):
+        index = self.tabs.addTab(widget, icon, "")
+        btn = TabButton(self, text)
+        self.tabs.tabBar().setTabButton(index, QtWidgets.QTabBar.RightSide, btn)
+
     def renameTab(self, old_name, new_name):
         index = self.tab_indices.pop(old_name)
-        self.tabs.tabBar().setTabText(index, new_name)
+
+        pixmap = latex_renderer.convert_to_QPixMap(new_name)
+
+        self.tabs.tabBar().tabButton(index, QtWidgets.QTabBar.RightSide)._lbl.setPixmap(pixmap)
         self.tab_indices[new_name] = index
 
     def reset(self, tab=None):
