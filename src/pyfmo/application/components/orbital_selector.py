@@ -438,11 +438,14 @@ class OrbitalSelectionDialog(QtWidgets.QDialog):
         # all buttons and tables go into the tabs
         self.tabs = QtWidgets.QTabWidget()
         layout.addWidget(self.tabs, 1, 0, 1, 3)
+        self.tab_indices = {}
         # add a tab for the MOs
         self.tab_stor = {orbs.mos: OrbitalSelectionTab(self, orbs.mos.orbitals, orbs.mos)}
         self.tabs.addTab(self.tab_stor[orbs.mos], self.parent.parent._ICONS['mo'], 'Complex')
+        self.tab_indices["Complex"] = 0
         # and for each fragment
-        for fragment in orbs.fragments:
+        for i, fragment in enumerate(orbs.fragments):
+            self.tab_indices[fragment] = i + 1
             self.tab_stor[fragment] = OrbitalSelectionTab(self, orbs.sfos.filter(fragment=fragment), fragment)
             self.tabs.addTab(self.tab_stor[fragment], self.parent.parent._ICONS['sfo'], fragment)
 
@@ -456,6 +459,11 @@ class OrbitalSelectionDialog(QtWidgets.QDialog):
         layout.addWidget(save_btn, 2, 0, 1, 1)
         layout.addWidget(cancel_btn, 2, 1, 1, 1)
         layout.addWidget(reset_btn, 2, 2, 1, 1)
+
+    def renameTab(self, old_name, new_name):
+        index = self.tab_indices.pop(old_name)
+        self.tabs.tabBar().setTabText(index, new_name)
+        self.tab_indices[new_name] = index
 
     def reset(self, tab=None):
         self.state.reset()
