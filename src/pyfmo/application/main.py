@@ -1319,16 +1319,16 @@ class AnalysisWindow(QtWidgets.QWidget):
         
         self.info_tabs.addTab(orbital_info_frame, 'Orbitals')
 
-        system_info_box = Spoilers(self)
-        system_info_box.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
-        system_info_box.addSpoiler('General', self._get_general_system_info(), self.parent._ICONS['info'])
-        system_info_box.addSpoiler('Complex', self._get_complex_system_info(), self.parent._ICONS['mo'])
+        self.system_info_box = Spoilers(self)
+        self.system_info_box.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+        self.system_info_box.addSpoiler('General', self._get_general_system_info(), self.parent._ICONS['info'])
+        self.system_info_box.addSpoiler('Complex', self._get_complex_system_info(), self.parent._ICONS['mo'])
         for frag in self.orbs.fragments:
-            system_info_box.addSpoiler(frag, self._get_fragment_system_info(frag), self.parent._ICONS['sfo'])
+            self.system_info_box.addSpoiler(frag, self._get_fragment_system_info(frag), self.parent._ICONS['sfo'])
 
-        # system_info_box.addSpoiler(self._get_system_info_txt())
+        # self.system_info_box.addSpoiler(self._get_system_info_txt())
         
-        self.info_tabs.addTab(system_info_box, 'System')
+        self.info_tabs.addTab(self.system_info_box, 'System')
         self.info_tabs.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
 
         layout.addWidget(self.info_tabs, 0, 1)
