@@ -1352,10 +1352,12 @@ class AnalysisWindow(QtWidgets.QWidget):
         self.cbox_OI.checkStateChanged.connect(self._update_plot)
 
         label_OI = QtWidgets.QLabel('τ<sub>oi</sub> =')
+        label_OI.setToolTip('The threshold value for Orbital Interactions')
         label_OI.setStyleSheet('QLabel{ font: 12pt}')
         slider_layout.addWidget(label_OI, 0, 2)
 
         inc_oi_btn = QtWidgets.QPushButton('<')
+        inc_oi_btn.setToolTip('Add next Orbital Interaction')
         inc_oi_btn.clicked.connect(self._set_next_oi_slider)
         slider_layout.addWidget(inc_oi_btn, 0, 4)
         if self.parent.isDarkMode:
@@ -1409,10 +1411,12 @@ class AnalysisWindow(QtWidgets.QWidget):
         slider_layout.addWidget(self.slider_OI, 0, 5)
 
         dec_oi_btn = QtWidgets.QPushButton('>')
+        dec_oi_btn.setToolTip('Remove weakest Orbital Interaction')
         dec_oi_btn.clicked.connect(self._set_previous_oi_slider)
         slider_layout.addWidget(dec_oi_btn, 0, 6)
 
         label_value_OI = QtWidgets.QLabel(f'{10**(self.slider_OI.value()/slider_resolution):.2E}')
+        label_value_OI.setToolTip('The threshold value for Orbital Interactions')
         label_value_OI.setStyleSheet('font: 10px "IBM Plex Mono"')
         slider_layout.addWidget(label_value_OI, 0, 3)
         self.slider_OI.valueChanged.connect(lambda value: (self._update_plot(), label_value_OI.setText(f'{10**(value/slider_resolution):.2E}')))
@@ -1427,6 +1431,7 @@ class AnalysisWindow(QtWidgets.QWidget):
         self.cbox_PR.checkStateChanged.connect(self._update_plot)
 
         label_PR = QtWidgets.QLabel('τ<sub>pr</sub> =')
+        label_PR.setToolTip('The threshold value for Pauli Repulsions')
         label_PR.setStyleSheet('QLabel{ font: 12pt}')
         slider_layout.addWidget(label_PR, 1, 2)
 
@@ -1439,6 +1444,7 @@ class AnalysisWindow(QtWidgets.QWidget):
             slider_PR_max = abs(max(max(v.values()) for v in self.main_mix.mixes['PR'].values()))
 
         inc_pr_btn = QtWidgets.QPushButton('<')
+        inc_pr_btn.setToolTip('Show next Pauli Repulsion')
         inc_pr_btn.clicked.connect(self._set_next_pr_slider)
         slider_layout.addWidget(inc_pr_btn, 1, 4)
         self.slider_PR.setMinimum(0.001**2 * 1000 * slider_resolution)
@@ -1448,10 +1454,12 @@ class AnalysisWindow(QtWidgets.QWidget):
         slider_layout.addWidget(self.slider_PR, 1, 5)
 
         dec_pr_btn = QtWidgets.QPushButton('>')
+        dec_pr_btn.setToolTip('Remove weakest Pauli Repulsion')
         dec_pr_btn.clicked.connect(self._set_previous_pr_slider)
         slider_layout.addWidget(dec_pr_btn, 1, 6)
         label_value_PR = QtWidgets.QLabel(f'{self.slider_PR.value()/slider_resolution:.3f}')
         label_value_PR.setStyleSheet('font: 10px "IBM Plex Mono"')
+        label_value_PR.setToolTip('The threshold value for Pauli Repulsions')
         slider_layout.addWidget(label_value_PR, 1, 3)
         self.slider_PR.valueChanged.connect(lambda value: (self._update_plot(), label_value_PR.setText(f'{value/slider_resolution/1000:.4f}')))
         
