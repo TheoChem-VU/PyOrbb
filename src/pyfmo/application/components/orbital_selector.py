@@ -485,10 +485,8 @@ class OrbitalSelectionDialog(QtWidgets.QDialog):
 
     def renameTab(self, old_name, new_name):
         index = self.tab_indices.pop(old_name)
-
-        pixmap = latex_renderer.convert_to_QPixMap(new_name)
-
-        self.tabs.tabBar().tabButton(index, QtWidgets.QTabBar.RightSide)._lbl.setPixmap(pixmap)
+        new_btn = TabButton(self, new_name)
+        self.tabs.tabBar().setTabButton(index, QtWidgets.QTabBar.RightSide, new_btn)
         self.tab_indices[new_name] = index
 
     def reset(self, tab=None):
