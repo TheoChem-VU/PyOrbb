@@ -1790,10 +1790,9 @@ class WindowTabs(QtWidgets.QTabWidget):
         super().__init__(parent)
         self.parent = parent
         self.setMovable(True)
-        self.setTabsClosable(True)
         self.setMouseTracking(True)
-
         self.setTabBar(WindowTabBar(self))
+        self.setTabsClosable(True)
 
 
 class WindowTabBar(QtWidgets.QTabBar):
@@ -1930,8 +1929,7 @@ class WindowTabBar(QtWidgets.QTabBar):
                     window.tabs.removeTab(0)
 
                 if self.parent.parent.tabs.count() == 0:
-                    self.parent.parent.destroy()
-                    QtWidgets.QApplication.instance().windows.remove(self.parent.parent)
+                    QtWidgets.QApplication.instance().remove_window(self.parent.parent)
 
 
 class PyOrbbWindow(QtWidgets.QMainWindow):
@@ -1996,7 +1994,7 @@ class PyOrbbWindow(QtWidgets.QMainWindow):
 
         tab_shape = QtWidgets.QTabBar.Shape.RoundedNorth
         self.tabs.tabBar().setShape(tab_shape)
-        self.tabs.tabCloseRequested.connect(self.unclose_last_tab)
+        self.tabs.tabCloseRequested.connect(self.close_window_on_last_tab)
         self.tabs.setCornerWidget(add_tab_button, QtCore.Qt.TopLeftCorner)
 
         self.layout.addWidget(self.tabs, 0, 0, 1, 1)
@@ -2045,9 +2043,9 @@ class PyOrbbWindow(QtWidgets.QMainWindow):
     def _set_plot_font(self):
         self.plot_settings.open()
 
-    def unclose_last_tab(self, index):
+    def close_window_on_last_tab(self, index):
         if self.tabs.count() == 1:
-            self._add_analysis_tab()
+            QtWidgets.QApplication.instance().remove_window(self)
 
     @property
     def isDarkMode(self):
@@ -2098,16 +2096,15 @@ class PyOrbbApp(QtWidgets.QApplication):
     def __post_init__(self):
         fontpath = os.path.split(__file__)[0] + '/../cli_scripts/ibm_plex_mono/IBMPlexMono-Regular.ttf'
         QtGui.QFontDatabase.addApplicationFont(fontpath)
-
-        self.windows = [PyOrbbWindow()]
-        self.windows[0].show()
         self.setStyle('Fusion')
+        self.windows = []
 
     def __enter__(self):
         self.__post_init__()
         return self
 
     def __exit__(self, *args):
+        self.add_window()
         self.exec()
         self.shutdown()
 
@@ -2116,3 +2113,7 @@ class PyOrbbApp(QtWidgets.QApplication):
         self.windows.append(win)
         win.show()
         return win
+
+    def remove_window(self, window):
+        self.windows.remove(window)
+        window.close()
