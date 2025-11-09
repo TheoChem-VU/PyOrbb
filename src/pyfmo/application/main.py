@@ -550,7 +550,7 @@ class MplCanvas(FigureCanvas):
                 s += f'Name         {pyfmo.generate_label(orb, mode="html", use_formatting=False)} ({orb.relative_name})'
                 s += f'\nSymm.        {pyfmo.translate_irrep_label(orb.symmetry, mode="html", use_formatting=False)} ({orb.symmetry_relative_name})'
                 s += f'\nSubsp.       {pyfmo.translate_irrep_label(orb.subspecies, mode="html", use_formatting=False)} ({orb.subspecies_relative_name})'
-                s += f'\nFragment     {orb.fragment_unique}'
+                s += f'\nFragment     {orb.fragment}'
                 s += f'\nEnergy      {getattr(orb, self.parent._energytype_selection): .2f} eV'
                 s += f'\nOccupation  {orb.occupation: .2f}'
                 s += f'\nPop.        {orb.gross_population: .3f}'
@@ -563,7 +563,7 @@ class MplCanvas(FigureCanvas):
                 for sfo2 in sorted(submix.sfos, key=lambda sfo_: -abs(orb @ sfo_)):
                     if sfo2 == orb:
                         continue
-                    if sfo2.fragment_unique == orb.fragment_unique:
+                    if sfo2.fragment == orb.fragment:
                         continue
                     s += f'\n{str(sfo2):19.19} {orb @ sfo2: 5.3f} {abs(getattr(orb, self.parent._energytype_selection) - getattr(sfo2, self.parent._energytype_selection)): 8.2f}'
                 
@@ -571,7 +571,7 @@ class MplCanvas(FigureCanvas):
                 s += '\n─────────────────── ──────── ───────'
                 for mo in sorted(submix.mos, key=lambda mo: -abs(orb.mulliken_contribution(mo))):
                     s += f'\n{str(mo):19.19} {orb.mulliken_contribution(mo): 8.2%} {orb.coefficient(mo): 7.4f}'
-                title = f"{orb.fragment_unique}({pyfmo.generate_label(orb, mode='latex')})"
+                title = f"{orb.fragment}({pyfmo.generate_label(orb, mode='latex')})"
 
             if isinstance(orb, pyfmo.orbitals.objects.MO):
                 icon = self.parent.parent._ICONS['mo']
@@ -593,7 +593,7 @@ class MplCanvas(FigureCanvas):
             if isinstance(orb, tuple):
                 sfo, mo = orb
                 icon = self.parent.parent._ICONS['mix']
-                connected_sfos = [conn[0] for conn in self.parent.main_mix.connections if conn[1] == mo and conn[0].fragment_unique != sfo.fragment_unique]
+                connected_sfos = [conn[0] for conn in self.parent.main_mix.connections if conn[1] == mo and conn[0].fragment != sfo.fragment]
                 s += 'SFO'
                 s += f'\n  Name     {pyfmo.generate_label(sfo, mode="html", use_formatting=False)} ({sfo.relative_name})'
                 s += f'\n  Symm.    {pyfmo.translate_irrep_label(sfo.symmetry, mode="html", use_formatting=False)} {sfo.symmetry_relative_name}\n'
@@ -610,7 +610,7 @@ class MplCanvas(FigureCanvas):
                     is_bonding = ((sfo @ sfo2) * sfo.coefficient(mo) * sfo2.coefficient(mo)) >= 0
                     s += f'\n{str(sfo2):19.19} {"   Yes  " if is_bonding else "    No    "}'
                 orb = f'{sfo} ⇒ {mo}'
-                title = f"{sfo.fragment_unique}({pyfmo.generate_label(sfo, mode='latex')}) ⇒ {pyfmo.generate_label(mo, mode='latex')}"
+                title = f"{sfo.fragment}({pyfmo.generate_label(sfo, mode='latex')}) ⇒ {pyfmo.generate_label(mo, mode='latex')}"
 
             label = QtWidgets.QLabel(s)
             label.setStyleSheet('padding: 3px; font: 10px "IBM Plex Mono"')
@@ -662,6 +662,9 @@ class MplCanvas(FigureCanvas):
             s = ''
             if gid.startswith('MO_'):
                 mo = self.parent.orbs.mos[gid[3:]]
+                if isinstance(mo, list):
+                    mo = mo[0]
+
                 if mo not in self._selected_orbitals:
                     self._selected_orbitals.append(mo)
                 self._fade_unrelated_ints(self._selected_orbitals)
@@ -674,6 +677,9 @@ class MplCanvas(FigureCanvas):
 
             if gid.startswith('SFO_'):
                 sfo = self.parent.orbs.sfos[gid[4:]]
+                if isinstance(sfo, list):
+                    sfo = sfo[0]
+
                 if sfo not in self._selected_orbitals:
                     self._selected_orbitals.append(sfo)
                 self._fade_unrelated_ints(self._selected_orbitals)
@@ -726,7 +732,7 @@ class MplCanvas(FigureCanvas):
 
             if isinstance(orb, pyfmo.orbitals.objects.SFO):
                 icon = self.parent.parent._ICONS['sfo']
-                orb_lab = f'{orb.fragment_unique}({pyfmo.generate_label(orb, mode="latex")})'
+                orb_lab = f'{orb.fragment}({pyfmo.generate_label(orb, mode="latex")})'
             else:
                 icon = self.parent.parent._ICONS['mo']
                 orb_lab = pyfmo.generate_label(orb, mode='latex')
@@ -750,7 +756,7 @@ class MplCanvas(FigureCanvas):
                 if isinstance(orb2, tuple):
                     continue
 
-                if orb.fragment_unique == orb2.fragment_unique:
+                if orb.fragment == orb2.fragment:
                     continue
 
                 icon = self.parent.parent._ICONS['overlap']
@@ -758,7 +764,7 @@ class MplCanvas(FigureCanvas):
                 func = partial(self.draw_orbital, orb=[orb, orb2], draw_type='overlap')
                 orb_lab1 = pyfmo.generate_label(orb, mode='latex')
                 orb_lab2 = pyfmo.generate_label(orb2, mode='latex')
-                widg = action_widget.DrawAction(self, f'{orb.fragment_unique}({orb_lab1}) * {orb2.fragment_unique}({orb_lab2})', icon, func)
+                widg = action_widget.DrawAction(self, f'{orb.fragment}({orb_lab1}) * {orb2.fragment}({orb_lab2})', icon, func)
                 menu.addAction(widg)
 
                 # action = QtGui.QAction(f'{orb} * {orb2}', self)
@@ -782,7 +788,7 @@ class MplCanvas(FigureCanvas):
                 if isinstance(orb2, tuple):
                     continue
 
-                if orb.fragment_unique == orb2.fragment_unique:
+                if orb.fragment == orb2.fragment:
                     continue
 
                 icon = self.parent.parent._ICONS['sum']
@@ -795,7 +801,7 @@ class MplCanvas(FigureCanvas):
                 func = partial(self.draw_orbital, orb=[orb, orb2], draw_type='sum')
                 orb_lab1 = pyfmo.generate_label(orb, mode='latex')
                 orb_lab2 = pyfmo.generate_label(orb2, mode='latex')
-                widg = action_widget.DrawAction(self, f'{orb.fragment_unique}({orb_lab1}), {orb2.fragment_unique}({orb_lab2})', icon, func)
+                widg = action_widget.DrawAction(self, f'{orb.fragment}({orb_lab1}), {orb2.fragment}({orb_lab2})', icon, func)
                 menu.addAction(widg)
 
 
@@ -1067,7 +1073,6 @@ class AnalysisWindow(QtWidgets.QWidget):
             e.accept()
             for url in e.mimeData().urls():
                 fname = str(url.toLocalFile())
-                print(self._loaded_analysis)
                 if not self._loaded_analysis:
                     self.load_analysis(fname)
                     return
@@ -1135,7 +1140,7 @@ class AnalysisWindow(QtWidgets.QWidget):
         fig.canvas.draw_idle()
 
     def _set_orbital_filter(self):
-        selected_systems = set([self.orbs.mos if isinstance(orb, pyfmo.orbitals.objects.MO) else orb.fragment_unique for orb in self.plot._selected_orbitals if not isinstance(orb, tuple)])
+        selected_systems = set([self.orbs.mos if isinstance(orb, pyfmo.orbitals.objects.MO) else orb.fragment for orb in self.plot._selected_orbitals if not isinstance(orb, tuple)])
 
         self.orbital_filter_button._is_checked = not self.orbital_filter_button._is_checked
 
@@ -1148,7 +1153,7 @@ class AnalysisWindow(QtWidgets.QWidget):
             self.allowed_sfos_override = []
             for fragment in self.orbs.fragments:
                 if fragment in selected_systems:
-                    self.allowed_sfos_override.extend([orb for orb in self.plot._selected_orbitals if isinstance(orb, pyfmo.orbitals.objects.SFO) and orb.fragment_unique == fragment])
+                    self.allowed_sfos_override.extend([orb for orb in self.plot._selected_orbitals if isinstance(orb, pyfmo.orbitals.objects.SFO) and orb.fragment == fragment])
                 else:
                     self.allowed_sfos_override.extend(self.orbs.sfos.filter(fragment=fragment))
             self.filtered_orbitals = self.plot._selected_orbitals
