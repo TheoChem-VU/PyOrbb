@@ -12,9 +12,9 @@ class DrawAction(QtWidgets.QWidgetAction):
 
     def createWidget(self, parent): 
         action_widget = QtWidgets.QWidget(parent)
-        action_widget.setStyleSheet("margin: 2px; padding: 3px")
+        action_widget.setStyleSheet("margin: 5px; padding: 5px")
         action_layout = QtWidgets.QHBoxLayout(parent)
-        action_layout.setContentsMargins(0, 0, 0, 0)
+        action_layout.setContentsMargins(2, 2, 2, 2)
         action_widget.setLayout(action_layout)
 
         icon_pixmap = self.icon.pixmap(self.icon.actualSize(QtCore.QSize(20, 20)))
@@ -26,11 +26,11 @@ class DrawAction(QtWidgets.QWidgetAction):
         action_btn = rich_widgets.HTMLPushButton("", parent)
 
         if darkmode:
-            action_btn.setStyleSheet("QPushButton{border: none; background-color: none;} QPushButton:hover {background-color: #656565;}")
+            action_widget.setStyleSheet("QWidget{border: none; background-color: none;} QWidget:hover {background-color: #656565;}")
         else:
-            action_btn.setStyleSheet("QPushButton{border: none; background-color: none;} QPushButton:hover {background-color: #f0f0f0;}")
+            action_widget.setStyleSheet("QWidget{border: none; background-color: none;} QWidget:hover {background-color: #f0f0f0;}")
         action_layout.addWidget(action_btn)
         action_btn.setPixmap(latex_renderer.convert_to_QPixMap(str(self.text), darkmode=darkmode))
+        self.triggered.connect(self.func)
         action_btn.clicked.connect(self.func)
-
         return action_widget
