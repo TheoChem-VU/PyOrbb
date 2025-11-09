@@ -1929,6 +1929,7 @@ class WindowTabBar(QtWidgets.QTabBar):
                 # a new window will have by default one tab open already
                 if new_window:
                     window.tabs.removeTab(0)
+                    window.move(event.globalPos())
 
                 if self.parent.parent.tabs.count() == 0:
                     QtWidgets.QApplication.instance().remove_window(self.parent.parent)
