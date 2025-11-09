@@ -1784,14 +1784,160 @@ class AnalysisWindow(QtWidgets.QWidget):
         layout.addWidget(button, alignment=QtCore.Qt.AlignCenter)
 
 
-class PyOrbbApp(QtWidgets.QApplication):
-    def __post_init__(self):
-        fontpath = os.path.split(__file__)[0] + '/../cli_scripts/ibm_plex_mono/IBMPlexMono-Regular.ttf'
-        QtGui.QFontDatabase.addApplicationFont(fontpath)
+class WindowTabs(QtWidgets.QTabWidget):
+    def __init__(self, parent):
+        super().__init__(parent)
+        self.parent = parent
+        self.setMovable(True)
+        self.setTabsClosable(True)
+        self.setMouseTracking(True)
 
-        self.window = QtWidgets.QMainWindow()
-        self.window.resize(1030 + 22 + 12, 698 + 52)
-        self.window.layout = QtWidgets.QGridLayout()
+        self.setTabBar(WindowTabBar(self))
+
+
+class WindowTabBar(QtWidgets.QTabBar):
+    def __init__(self, parent):
+        self.parent = parent
+        super().__init__(parent)
+
+        self.setMovable(True)
+        self.setMouseTracking(True)
+
+        self.dragStartPos = QtCore.QPoint()
+        self.dragDropedPos = QtCore.QPoint()
+        self.mouseCursor = QtGui.QCursor()
+        self.dragInitiated = False
+        self.dragLabel = None
+        self.mouseCrossedWindowTime = 0
+        self.targetLabelShrinkage = None
+        self.labelShrinkage = 100
+        self.timerID = None
+        self.mouseLeftWindow = False
+        self.mouseLeftTabBar = False
+
+    def sizeHint(self):
+        sh = super().sizeHint()
+        parent_sh = self.parent.sizeHint()
+        sh.setWidth(parent_sh.width())
+        return sh
+
+    def timerEvent(self, event=None):
+        pixmap = self.parentWidget().grab()
+
+        time_since_crossed = perf_counter() - self.mouseCrossedWindowTime
+        self.labelShrinkage = self.labelShrinkage + (self.targetLabelShrinkage - self.labelShrinkage) * time_since_crossed * 2
+
+        pixmap = pixmap.scaled(pixmap.width()/self.labelShrinkage, pixmap.height()/self.labelShrinkage)
+        rect = pixmap.rect()
+
+        # make the pixmap transparent
+        painter = QtGui.QPainter()
+        painter.begin(pixmap)
+        painter.setCompositionMode(QtGui.QPainter.CompositionMode_DestinationIn)
+        painter.fillRect(pixmap.rect(), QtGui.QColor(0, 0, 0, 100))
+        painter.end()
+        self.dragLabel.setPixmap(pixmap)
+        self.dragLabel.updateGeometry()
+
+        # this removes the window frame
+        self.dragLabel.setWindowFlags(QtCore.Qt.CustomizeWindowHint)
+        self.dragLabel.show()
+
+
+    def mouseMoveEvent(self, event):
+        super().mouseMoveEvent(event)
+
+        event.accept()
+
+        if event.buttons() == QtCore.Qt.MouseButton.LeftButton:
+            self.dragInitiated = True
+            # Convert the move event into a drag
+            #Create the appearance of dragging the tab content
+            if self.dragLabel is None:
+                self.dragLabel = QtWidgets.QLabel()
+                # this makes the label transparent to mouse
+                self.dragLabel.setAttribute(QtCore.Qt.WA_TransparentForMouseEvents, True);
+                self.timerID = self.startTimer(10)
+        else:
+            self.dragInitiated = False
+            self.mouseLeftTabBar = False
+            self.mouseLeftWindow = False
+            if self.timerID is not None:
+                self.killTimer(self.timerID)
+                self.timerID = None
+            return
+
+        if self.dragInitiated:
+            # if the mouse has left the tabbar:
+            if not self.rect().contains(event.pos()):
+                # if the mouse left the window
+                if not self.parent.parent.rect().contains(event.pos()):
+                    if self.targetLabelShrinkage != 6:
+                        self.targetLabelShrinkage = 6
+                        self.mouseCrossedWindowTime = perf_counter()
+                        self.mouseLeftTabBar = True
+                        self.mouseLeftWindow = True
+                else:
+                    if self.targetLabelShrinkage != 3:
+                        self.targetLabelShrinkage = 3
+                        self.mouseCrossedWindowTime = perf_counter()
+                        self.mouseLeftTabBar = True
+                        self.mouseLeftWindow = False
+            else:
+                if self.targetLabelShrinkage != 3:
+                    self.mouseLeftTabBar = False
+                    self.mouseLeftWindow = False
+                    self.targetLabelShrinkage = 3
+                    self.mouseCrossedWindowTime = perf_counter()
+
+            self.dragLabel.move(event.globalPos())
+
+    def mouseReleaseEvent(self, event):
+        super().mouseReleaseEvent(event)
+        # if self.dragLabel is not None:
+            # self.dragLabel.hide()
+        self.dragLabel = None
+        self.targetLabelShrinkage = 100
+        self.labelShrinkage = 100
+        self.dragInitiated = False
+
+        if self.timerID is not None:
+            self.killTimer(self.timerID)
+            self.timerID = None
+
+        if self.mouseLeftWindow:
+            # if the mouse is out of this window we check fi we need to make a new window
+            # or add it to an existing one
+            new_window = False
+            if self.mouseLeftWindow:
+                for window in QtWidgets.QApplication.instance().windows:
+                    rect = window.rect()
+
+                    if window.rect().contains(window.mapFromGlobal(event.globalPos())):
+                        break
+                else:
+                    new_window = True
+                    window = QtWidgets.QApplication.instance().add_window()
+
+                index = self.parent.currentIndex()
+                widg = self.parent.widget(index)
+                new_idx = window.tabs.addTab(widg, self.parent.tabText(index))
+                window.tabs.setCurrentIndex(new_idx)
+                widg.setEnabled(True)
+                # a new window will have by default one tab open already
+                if new_window:
+                    window.tabs.removeTab(0)
+
+                if self.parent.parent.tabs.count() == 0:
+                    self.parent.parent.destroy()
+                    QtWidgets.QApplication.instance().windows.remove(self.parent.parent)
+
+
+class PyOrbbWindow(QtWidgets.QMainWindow):
+    def __init__(self):
+        super().__init__()
+        self.resize(1030 + 22 + 12, 698 + 52)
+        self.layout = QtWidgets.QGridLayout()
         grid_widget = QtWidgets.QWidget()
         if self.isDarkMode:
             grid_widget.setStyleSheet('''
@@ -1820,8 +1966,8 @@ class PyOrbbApp(QtWidgets.QApplication):
                     }
                 ''')
 
-        grid_widget.setLayout(self.window.layout)
-        self.window.setCentralWidget(grid_widget)
+        grid_widget.setLayout(self.layout)
+        self.setCentralWidget(grid_widget)
 
         # try to get the densf path from the environment
         # this will be None if it could not be found
@@ -1829,12 +1975,11 @@ class PyOrbbApp(QtWidgets.QApplication):
         if 'AMSBIN' not in os.environ:
             os.environ['AMSBIN'] = self._amsbin_loc
 
-        self.window.setWindowTitle("PyOrbb Analysis Tool")
+        self.setWindowTitle("PyOrbb Analysis Tool")
 
-        self.tabs = QtWidgets.QTabWidget()
-        self.tabs.setTabsClosable(True)
+        self.tabs = WindowTabs(self)
+        # self.tabs.tabBar().mouseMoveEvent.connect(self.moveTab)
         add_tab_button = QtWidgets.QPushButton('+')
-        # add_tab_button.setFlat(True)
         add_tab_button.resize(50, 50)
         add_tab_button.clicked.connect(self._add_analysis_tab)
         add_tab_button.setStyleSheet("""
@@ -1853,18 +1998,21 @@ class PyOrbbApp(QtWidgets.QApplication):
         self.tabs.tabCloseRequested.connect(self.unclose_last_tab)
         self.tabs.setCornerWidget(add_tab_button, QtCore.Qt.TopLeftCorner)
 
-        self.window.layout.addWidget(self.tabs, 0, 0, 1, 1)
+        self.layout.addWidget(self.tabs, 0, 0, 1, 1)
         self.tabs.tabCloseRequested.connect(self.tabs.removeTab)
         self.tabs.tabBarDoubleClicked.connect(self._edit_tab_title)
 
         # File menu
-        menuBar = self.window.menuBar()
+        menuBar = self.menuBar()
         fileMenu = menuBar.addMenu("File")
-        fileMenu.addAction("New")
+        fileMenu.addAction("New PyOrbb window")
+        fileMenu.triggered.connect(QtWidgets.QApplication.instance().add_window)
 
-        save = QtGui.QAction("Save",self)
-        save.setShortcut("Ctrl+S")
-        fileMenu.addAction(save)
+        plot_menu = menuBar.addMenu("Plot")
+        font_action = QtGui.QAction("Select Font", self)
+        font_action.triggered.connect(self._set_plot_font)
+        plot_menu.addAction(font_action)
+
 
         quit = QtGui.QAction("&Quit", self)
         quit.setShortcut("Ctrl+Q")
@@ -1877,17 +2025,24 @@ class PyOrbbApp(QtWidgets.QApplication):
 
         # Help menu
         preferenceMenu = menuBar.addMenu("Preferences")
-        open_ams_path = QtGui.QAction("Set AMS Path",self)
+        open_ams_path = QtGui.QAction("Set AMS Path", self)
         open_ams_path.triggered.connect(self.AMS_loc_dialogue)
         preferenceMenu.addAction(open_ams_path)
         
-        self.setStyle('Fusion')
         self._add_analysis_tab()
 
         ICON_FOLDER = os.path.join(os.path.split(__file__)[0], '..', 'application', 'icons')
         self._ICONS = {file.removesuffix('.png'): QtGui.QIcon(os.path.join(ICON_FOLDER, file)) for file in os.listdir(ICON_FOLDER)}
         self._PIXMAPS = {file.removesuffix('.png'): QtGui.QPixmap(os.path.join(ICON_FOLDER, file)) for file in os.listdir(ICON_FOLDER)}
-        self.window.setWindowIcon(self._ICONS["pyorbb"])
+        self.setWindowIcon(self._ICONS["pyorbb"])
+
+        self.plot_settings = settings.SettingsDialog(self)
+
+    def moveTab(self, event):
+        print(event)
+
+    def _set_plot_font(self):
+        self.plot_settings.open()
 
     def unclose_last_tab(self, index):
         if self.tabs.count() == 1:
@@ -1904,7 +2059,7 @@ class PyOrbbApp(QtWidgets.QApplication):
         '''
         if platform.system() == 'Darwin':
             d = "/Applications" if os.path.exists("/Applications") else os.getcwd()
-            path = QtWidgets.QFileDialog.getOpenFileName(self.window, caption='Select AMS application', dir=d, filter="*.app")[0]
+            path = QtWidgets.QFileDialog.getOpenFileName(self, caption='Select AMS application', dir=d, filter="*.app")[0]
             self._amsbin_loc = os.path.join(path, 'Contents', 'Resources', 'amshome', 'bin')
         else:
             path = QtWidgets.QFileDialog.getExistingDirectory(caption='Select AMS install location', dir=os.getcwd())
@@ -1937,12 +2092,26 @@ class PyOrbbApp(QtWidgets.QApplication):
         text_change_handler("")
         lineedit.selectAll()
 
+
+class PyOrbbApp(QtWidgets.QApplication):
+    def __post_init__(self):
+        fontpath = os.path.split(__file__)[0] + '/../cli_scripts/ibm_plex_mono/IBMPlexMono-Regular.ttf'
+        QtGui.QFontDatabase.addApplicationFont(fontpath)
+
+        self.windows = [PyOrbbWindow()]
+        self.windows[0].show()
+        self.setStyle('Fusion')
+
     def __enter__(self):
         self.__post_init__()
         return self
 
     def __exit__(self, *args):
-        self.window.show()
         self.exec()
         self.shutdown()
 
+    def add_window(self):
+        win = PyOrbbWindow()
+        self.windows.append(win)
+        win.show()
+        return win
