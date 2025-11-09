@@ -161,6 +161,7 @@ class Orbital:
                 job._mos.append(self)
             job.settings.ADFFile = self.parent.parent.kfpath
             job.cube_file_prefix = f"{self.parent.parent.kfpath}.densf/"
+            os.makedirs(job.cube_file_prefix, exist_ok=True)
             if grid_around_mol is not None:
                 job.grid_around_mol(grid_around_mol, extend=gridextend)
             else:
@@ -199,6 +200,7 @@ class Orbital:
                 job._mos.append(self)
             job.settings.ADFFile = self.parent.parent.kfpath
             job.cube_file_prefix = f"{self.parent.parent.kfpath}.densf/"
+            os.makedirs(job.cube_file_prefix, exist_ok=True)
             if grid_around_mol is not None:
                 job.grid_around_mol(grid_around_mol, extend=gridextend)
             else:
