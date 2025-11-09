@@ -111,13 +111,13 @@ class OrbitalSelectionState:
         if isinstance(orbital, pyfmo.orbitals.objects.MO):
             return self.mo_states()[orbital]
         else:
-            return self.sfo_states(orbital.fragment_unique)[orbital]
+            return self.sfo_states(orbital.fragment)[orbital]
 
     def set_state(self, orbital, state):
         if isinstance(orbital, pyfmo.orbitals.objects.MO):
             self.orbitals[self.orbs.mos][orbital] = state
         else:
-            self.orbitals[orbital.fragment_unique][orbital] = state
+            self.orbitals[orbital.fragment][orbital] = state
 
     def copy(self):
         new = OrbitalSelectionState(self.orbs)
