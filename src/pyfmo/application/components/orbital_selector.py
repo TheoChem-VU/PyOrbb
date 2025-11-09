@@ -15,6 +15,7 @@ class OrbitalSelectionState:
         self.orbitals = {self.orbs.mos: {}}
         self.spins = {self.orbs.mos: {}}
         self.irreps = {self.orbs.mos: {}}
+        self.select_all_buttons = {self.orbs.mos: True}
 
         for mo in self.orbs.mos:
             self.orbitals[self.orbs.mos][mo] = True
@@ -29,6 +30,7 @@ class OrbitalSelectionState:
                 self.orbitals[frag][sfo] = True
                 self.spins[frag].setdefault(sfo.spin, True)
                 self.irreps[frag].setdefault(sfo.subspecies, True)
+            self.select_all_buttons[frag] = True
 
     def disable_all(self, system=None):
         # to indicate MOs we use the mos object as the key
@@ -42,7 +44,6 @@ class OrbitalSelectionState:
 
             for sfo in self.orbs.sfos.filter(fragment=frag):
                 self.orbitals[frag][sfo] = False
-
 
     def mo_states(self):
         ret = {}
@@ -124,6 +125,7 @@ class OrbitalSelectionState:
         new.orbitals = dictfunc.list_to_dict(dictfunc.dict_to_list(self.orbitals))
         new.spins = dictfunc.list_to_dict(dictfunc.dict_to_list(self.spins))
         new.irreps = dictfunc.list_to_dict(dictfunc.dict_to_list(self.irreps))
+        new.select_all_buttons = dictfunc.list_to_dict(dictfunc.dict_to_list(self.select_all_buttons))
         return new
 
 class TableFloatItem(QtWidgets.QTableWidgetItem):
@@ -263,10 +265,13 @@ class OrbitalSelectionTable(QtWidgets.QTableWidget):
         if check_state == QtCore.Qt.CheckState.Unchecked:
             for orb in self.orbitals:
                 self.parent.parent.state.set_state(orb, False)
+            self.parent.parent.state.select_all_buttons[self.parent.state_key] = False
 
         if check_state == QtCore.Qt.CheckState.Checked:
             for orb in self.orbitals:
                 self.parent.parent.state.set_state(orb, None)
+
+            self.parent.parent.state.select_all_buttons[self.parent.state_key] = True
 
         self.reset_checkboxes()
 
@@ -289,9 +294,9 @@ class OrbitalSelectionTab(QtWidgets.QFrame):
         # each tabs has a table
         self.table = OrbitalSelectionTable(self, orbitals)
         # a select all checkbox
-        select_all_button = QtWidgets.QCheckBox('Select All')
-        select_all_button.setChecked(True)
-        select_all_button.checkStateChanged.connect(self.table.select_all_button_handler)
+        self.select_all_button = QtWidgets.QCheckBox('Select All')
+        self.select_all_button.setChecked(True)
+        self.select_all_button.checkStateChanged.connect(self.table.select_all_button_handler)
 
         # and a spins and irreps selection button
         self.spin_selection_dialog = SpinSelectionDialog(self)
@@ -304,7 +309,7 @@ class OrbitalSelectionTab(QtWidgets.QFrame):
         selection_frame = QtWidgets.QFrame()
         selection_frame_layout = QtWidgets.QHBoxLayout()
         selection_frame.setLayout(selection_frame_layout)
-        selection_frame_layout.addWidget(select_all_button)
+        selection_frame_layout.addWidget(self.select_all_button)
         selection_frame_layout.addWidget(spin_select_button)
         selection_frame_layout.addWidget(irrep_select_button)
         selection_frame_layout.addStretch()
@@ -319,6 +324,8 @@ class OrbitalSelectionTab(QtWidgets.QFrame):
     def reset(self):
         for orb, state in self.parent.state.orbitals[self.state_key].items():
             self.table.orbital_checkboxes[orb].setChecked(state)
+
+        self.select_all_button.setChecked(self.parent.state.select_all_buttons[self.state_key])
 
 
 class SpinSelectionDialog(QtWidgets.QDialog):
