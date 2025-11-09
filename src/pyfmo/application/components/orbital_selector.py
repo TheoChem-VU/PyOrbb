@@ -498,13 +498,13 @@ class OrbitalSelectionDialog(QtWidgets.QDialog):
         for system, tab in self.tab_stor.items():
             tab.update_state()
 
-    def open(self, *args):
+    def exec(self, *args):
         self.__old_state = self.state.copy()
 
         for system, tab in self.tab_stor.items():
             tab.reset()
 
-        super().open()
+        super().exec()
 
         # wait until the dialog is done
         loop = QtCore.QEventLoop()
