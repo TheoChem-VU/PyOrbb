@@ -16,6 +16,7 @@ from functools import partial
 import pyperclip
 import platform
 import traceback
+from time import perf_counter
 
 slider_resolution = 500
 
