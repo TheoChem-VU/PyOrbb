@@ -1822,7 +1822,9 @@ class WindowTabBar(QtWidgets.QTabBar):
         return sh
 
     def timerEvent(self, event=None):
-        pixmap = self.parentWidget().grab()
+        index = self.parent.currentIndex()
+        widg = self.parent.widget(index)
+        pixmap = widg.grab()
 
         time_since_crossed = perf_counter() - self.mouseCrossedWindowTime
         self.labelShrinkage = self.labelShrinkage + (self.targetLabelShrinkage - self.labelShrinkage) * time_since_crossed * 2
