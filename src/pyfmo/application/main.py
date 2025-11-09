@@ -1484,14 +1484,14 @@ class AnalysisWindow(QtWidgets.QWidget):
         layout.addWidget(selector_box, 1, 1)
 
         etype_btn = QtWidgets.QPushButton('Energy Type')
-        etype_btn.clicked.connect(self._energytype_selection_dialog.open)
+        etype_btn.clicked.connect(self._energytype_selection_dialog.exec)
         selector_layout.addWidget(etype_btn, 1, 0)
 
         # self._orb_selection_dialog = OrbitalSelectionDialog(self, self._orb_selection)
         self._orb_selection_dialog = orbital_selector.OrbitalSelectionDialog(self, self.orbs)
 
         orb_btn = QtWidgets.QPushButton('Orbitals')
-        orb_btn.clicked.connect(self._orb_selection_dialog.open)
+        orb_btn.clicked.connect(self._orb_selection_dialog.exec)
         selector_layout.addWidget(orb_btn, 1, 1)
 
         self.orbital_draw_button = QtWidgets.QPushButton()
