@@ -5,6 +5,7 @@ import os
 from typing import List, Dict
 import math
 import platformdirs
+import re
 
 ensure_list = lambda x: [x] if not isinstance(x, (list, tuple, set)) else list(x)  # noqa: E731
 
@@ -910,25 +911,24 @@ class OrbitalSelector:
             decoded['index'] = key
             return decoded
 
-        # get spin from the key
-        decoded['orbname'] = key
-        for spin_part in ['_A', '_B', '_AB']:
-            # extract both spin and orbname here
-            if key.endswith(spin_part):
-                decoded['spin'] = spin_part[1:]
-                decoded['orbname'] = key[:-len(spin_part)]
+        # in case we have a SFO we need a fragment name
+        sfo_regex = re.compile(r'(.+)\((\d+.+)\)_?([AB]?)')
+        sfo_regex_result = sfo_regex.findall(key)
+        if sfo_regex_result != []:
+            decoded['fragment'], decoded['orbname'], decoded['spin'] = sfo_regex_result[0]
+            if decoded['spin'] == '':
+                decoded['spin'] = 'AB'
+            return {k: v for k, v in decoded.items() if v is not None}
 
-        # split orbname into fragment name and orbname 
-        if '(' in decoded['orbname']:
-            decoded['fragment'], decoded['orbname'] = decoded['orbname'].split('(')
-            decoded['orbname'] = decoded['orbname'].strip(')')
+        # if the SFO regex fails we try the MO regex
+        mo_regex = re.compile(r'(\d+.+)_?([AB]?)')
+        mo_regex_result = mo_regex.findall(key)
+        if mo_regex_result != []:
+            decoded['orbname'], decoded['spin'] = mo_regex_result[0]
+            if decoded['spin'] == '':
+                decoded['spin'] = 'AB'
 
-        # split off the symmetry of the orbital
-        if ' ' in decoded['orbname']:
-            decoded['orbname'], decoded['symmetry'] = decoded['orbname'].split()
-
-        return {k: v for k, v in decoded.items() if v is not None}
-
+            return {k: v for k, v in decoded.items() if v is not None}
 
     def filter(self, 
             index: int or List[int] = None, 
