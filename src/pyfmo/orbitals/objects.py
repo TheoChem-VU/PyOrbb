@@ -922,7 +922,7 @@ class OrbitalSelector:
             return {k: v for k, v in decoded.items() if v is not None}
 
         # if the SFO regex fails we try the MO regex
-        mo_regex = re.compile(r'(\d+.+)_?([AB]?)')
+        mo_regex = re.compile(r'(\d+[^_]+)_?([AB]?)')
         mo_regex_result = mo_regex.findall(key)
         if mo_regex_result != []:
             decoded['orbname'], decoded['spin'] = mo_regex_result[0]
