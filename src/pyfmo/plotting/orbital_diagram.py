@@ -74,9 +74,9 @@ def draw_interaction(sfos, mos, connections,
         ax.set_ylim(*ylim, auto=False)
 
 
-    frags = sorted(set(sfo.fragment_unique for sfo in sfos))
+    frags = sorted(set(sfo.fragment for sfo in sfos))
     ax.set_xlim(-1, len(frags), auto=False)
-    sep_orbs = {frag: [sfo for sfo in sfos if sfo.fragment_unique == frag] for frag in frags}
+    sep_orbs = {frag: [sfo for sfo in sfos if sfo.fragment == frag] for frag in frags}
     sep_orbs['mo'] = mos
     poss = {}
 
@@ -121,11 +121,11 @@ def draw_interaction(sfos, mos, connections,
     for orb in poss:
         if orb not in sfos:
             continue
-        if orb.fragment_unique in xtick_label:
+        if orb.fragment in xtick_label:
             continue
 
         xtick_pos.append(poss[orb])
-        xtick_label.append(orb.fragment_unique)
+        xtick_label.append(orb.fragment)
 
 
     ax.set_title(title)

@@ -29,8 +29,8 @@ class Orbital:
         The relative name of the orbital. E.g. HOMO or HOMO-1
         '''
         orbitals = [orb for orb in self.parent.orbitals if orb.spin == self.spin and orb.spin_total_occupation == self.spin_total_occupation]
-        if hasattr(self, 'fragment_unique'):
-            orbitals = [orb for orb in orbitals if orb.fragment_unique == self.fragment_unique]
+        if hasattr(self, 'fragment'):
+            orbitals = [orb for orb in orbitals if orb.fragment == self.fragment]
 
         energies = sorted([orb.energy for orb in orbitals])
         order = energies.index(self.energy) + self.degeneracy_index
@@ -56,8 +56,8 @@ class Orbital:
         E.g. the overall HOMO-2 could be the HOMO of its irreducible representation.
         '''
         orbitals = [orb for orb in self.parent.orbitals if orb.spin == self.spin and orb.spin_total_occupation == self.spin_total_occupation and orb.symmetry == self.symmetry]
-        if hasattr(self, 'fragment_unique'):
-            orbitals = [orb for orb in orbitals if orb.fragment_unique == self.fragment_unique]
+        if hasattr(self, 'fragment'):
+            orbitals = [orb for orb in orbitals if orb.fragment == self.fragment]
 
         energies = sorted([orb.energy for orb in orbitals])
         order = energies.index(self.energy) + self.degeneracy_index
@@ -127,8 +127,8 @@ class Orbital:
     @functools.cached_property
     def spin_match_orbs(self) -> "Orbital":
         matching_orbs = [orb for orb in self.parent.orbitals if orb.name == self.name]
-        if hasattr(self, 'fragment_unique'):
-            matching_orbs = [orb for orb in matching_orbs if orb.fragment_unique == self.fragment_unique]
+        if hasattr(self, 'fragment'):
+            matching_orbs = [orb for orb in matching_orbs if orb.fragment == self.fragment]
 
         return [orb for orb in matching_orbs if orb != self]
 
@@ -588,7 +588,7 @@ class SFO(Orbital):
         name = ''
 
         if frag_name:
-            name += self.fragment_unique + '('
+            name += self.fragment + '('
 
         if relative_name:
             name += self.relative_name
@@ -610,8 +610,8 @@ class SFO(Orbital):
         E.g. the overall HOMO-2 could be the HOMO of its irreducible representation.
         '''
         orbitals = [orb for orb in self.parent.orbitals if orb.spin == self.spin and orb.spin_total_occupation == self.spin_total_occupation and orb.subspecies == self.subspecies]
-        if hasattr(self, 'fragment_unique'):
-            orbitals = [orb for orb in orbitals if orb.fragment_unique == self.fragment_unique]
+        if hasattr(self, 'fragment'):
+            orbitals = [orb for orb in orbitals if orb.fragment == self.fragment]
 
         energies = sorted([orb.energy for orb in orbitals])
         order = energies.index(self.energy) + self.degeneracy_index
@@ -674,8 +674,7 @@ class Orbitals:
         for sfo_idx in range(self.data['SFOs']['number']):
             for spin_idx, sfo_spin in enumerate(self.data['calc_info']['sfo_spins']):
                 symlabel = self.data['SFOs']['symlabel'][sfo_idx]
-                frag = self.data['calc_info']['fragments'][self.data['SFOs']['fragment_index'][sfo_idx] - 1].split(':')[0]
-                # unique_frag = self.data['calc_info']['fragments'][self.data['SFOs']['fragment_index'][sfo_idx] - 1].split(':')[0]
+                frag = self.data['SFOs']['fragment_types'][sfo_idx]
 
                 if not sfo_mo_spin_match:
                     if self.data['calc_info']['unrestricted_mos']:
@@ -694,8 +693,9 @@ class Orbitals:
                     'subspecies': self.data['SFOs']['subspecies'][sfo_idx],
                     'symmetry': symlabel,
                     'symmetry_index': self.data['SFOs']['symmetry_index'][sfo_idx] + 1 + self.data['MOs']['nfrozencores'][symlabel],
+                    'densf_index': self.data['SFOs']['symmetry_index'][sfo_idx] + 1,
                     'fragment': frag,
-                    'fragment_unique': self.data['SFOs']['fragment_unique']['total'][sfo_idx],
+                    # 'fragment_unique': self.data['SFOs']['fragment_unique']['total'][sfo_idx],
                     'fragment_index': self.data['SFOs']['fragment_index'][sfo_idx],
                     'spin': sfo_spin,
                     'energy': self.data['SFOs']['energy'][sfo_spin][sfo_idx] * 27.2114079527,
@@ -703,11 +703,14 @@ class Orbitals:
                     'occupied': int(self.data['SFOs']['occupation'][sfo_spin][sfo_idx]) > 0,
                     'gross_population': gross_pop,
                     'gross_spin': gross_spin,
-                    'molecule': self.data['molecules'][self.data['SFOs']['fragment_unique']['total'][sfo_idx]],
+                    'molecule': self.data['molecules'][frag],
                 }
-                frag_unique = str(self.data['SFOs']['fragment_unique']['total'][sfo_idx])
-                if symlabel in self.data['calc_info']['sfo_spinpolarizations'][frag_unique]:
-                    occs = self.data['calc_info']['sfo_spinpolarizations'][frag_unique][symlabel]
+                if 'adf_names_fixed_principal' in self.data['SFOs']:
+                    data['name'] = self.data['SFOs']['adf_names_fixed_principal'][sfo_spin][sfo_idx].removesuffix('_AB').removesuffix('_A').removesuffix('_B')
+
+                # frag_unique = str(self.data['SFOs']['fragment_unique']['total'][sfo_idx])
+                if symlabel in self.data['calc_info']['sfo_spinpolarizations'][frag]:
+                    occs = self.data['calc_info']['sfo_spinpolarizations'][frag][symlabel]
                     spinpol = occs[0] - occs[1]
                     data['spin_pol'] = spinpol
                 else:
@@ -755,7 +758,7 @@ class Orbitals:
     def molecule(self):
         mol = plams.Molecule()
         for frag in self.fragments:
-            sfo = [sfo for sfo in self.sfos if sfo.fragment_unique == frag][0]
+            sfo = [sfo for sfo in self.sfos if sfo.fragment == frag][0]
             mol += sfo.molecule
         return mol
 
@@ -783,12 +786,12 @@ class Orbitals:
             if sfo.fragment == old:
                 sfo.fragment = new
             # ``fragment_unique`` can contain ':'
-            if sfo.fragment_unique.split(':')[0] == old:
-                if ':' not in sfo.fragment_unique:
-                    sfo.fragment_unique = new
-                    continue
-                unique_part = sfo.fragment_unique.split(':')[1]
-                sfo.fragment_unique = f'{new}:{unique_part}'
+            # if sfo.fragment_unique.split(':')[0] == old:
+            #     if ':' not in sfo.fragment_unique:
+            #         sfo.fragment_unique = new
+            #         continue
+            #     unique_part = sfo.fragment_unique.split(':')[1]
+            #     sfo.fragment_unique = f'{new}:{unique_part}'
 
 
 class OrbitalSelector:
@@ -853,7 +856,7 @@ class OrbitalSelector:
         Decode a key into the relevant parts.
         Keys are given in the following format:
 
-            {fragname}[:{fragment_index}]({orbname}[_{spin}][ {symmetry}])
+            {fragname}({orbname}[_{spin}][ {symmetry}])
 
         Where [:fragment_index], [_{spin}], and [ {symmetry}] are optional.
 
@@ -862,7 +865,7 @@ class OrbitalSelector:
 
         Returns:
             A dictionary containing ``index``,  ``fragment``,
-            ``fragment_index``, ``orbname``, ``spin``, ``symmetry``.
+            ``orbname``, ``spin``, ``symmetry``.
 
         Examples:
             Decode a key specifying an MO.
@@ -892,12 +895,11 @@ class OrbitalSelector:
             .. code-block:: python
 
                 >>> SFOs.decode_key('C:4(1P:x)')
-                {'fragment': 'C', 'fragment_index': 4, 'orbname': '1P:x'}
+                {'fragment': 'C:4', 'orbname': '1P:x'}
         '''
         decoded = {
             'index': None,
             'fragment': None,
-            'fragment_index': None,
             'orbname': None,
             'spin': None,
             'symmetry': None,
@@ -925,11 +927,6 @@ class OrbitalSelector:
         if ' ' in decoded['orbname']:
             decoded['orbname'], decoded['symmetry'] = decoded['orbname'].split()
 
-        # extract fragment index from fragment name if present
-        if decoded['fragment'] is not None and ':' in decoded['fragment']:
-            decoded['fragment'], decoded['fragment_index'] = decoded['fragment'].split(':')
-            decoded['fragment_index'] = int(decoded['fragment_index'])
-        
         return {k: v for k, v in decoded.items() if v is not None}
 
 
@@ -1025,7 +1022,7 @@ class OrbitalSelector:
         # this ensures that if we select for instance "C(1P:x)" we match ALL carbons
         # if we match "C:1(1P:x)" we match only the first carbon
         if fragment is not None:
-            orbs = [orb for orb in orbs if orb.fragment_unique in ensure_list(fragment) or orb.fragment in ensure_list(fragment)]
+            orbs = [orb for orb in orbs if orb.fragment in ensure_list(fragment)]
 
         if fragment_index is not None:
             orbs = [orb for orb in orbs if orb.fragment_index in ensure_list(fragment_index)]
@@ -1107,8 +1104,8 @@ class SFOs(OrbitalSelector):
         '''
         frags = []
         for sfo in self.orbitals:
-            if sfo.fragment_unique not in frags:
-                frags.append(sfo.fragment_unique)
+            if sfo.fragment not in frags:
+                frags.append(sfo.fragment)
         return frags
 
     @property

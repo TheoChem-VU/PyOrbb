@@ -2,9 +2,49 @@ import numpy as np
 from math import sqrt
 from scm import plams
 from pyfmo.nested_dict import NestedDict
-
+from pyfmo.orbitals import fragments
 
 ensure_list = lambda x: [x] if not isinstance(x, (list, tuple, set)) else list(x)  # noqa: E731
+
+
+def _first_principal_numbers(nfrozen_cores):
+    aufbau = [
+        "S", 
+        "S", 
+        "P", "P", "P", 
+        "S", 
+        "P", "P", "P", 
+        "D", "D", "D", "D", "D", 
+        "S", 
+        "P", "P", "P",  
+        "D", "D", "D", "D", "D", 
+        "F", "F", "F", "F", "F", "F", "F",
+        "S",
+        "P", "P", "P", 
+        "D", "D", "D", "D", "D", 
+        "S",
+        "F", "F", "F", "F", "F", "F", "F", 
+        "P", "P", "P", 
+        "D", "D", "D", "D", "D", 
+        "S", 
+        "P", "P", "P",
+    ]
+
+    S = 1
+    P = 2
+    D = 3
+    F = 4
+    for typ in aufbau[:nfrozen_cores]:
+        if typ == 'S':
+            S += 1
+        if typ == 'P':
+            P += 1/3
+        if typ == 'D':
+            D += 1/5
+        if typ == 'F':
+            F += 1/7
+
+    return {'S': round(S), 'P': round(P), 'D': round(D), 'F': round(F)}
 
 
 def _get_fragoccupations(reader: plams.KFReader) -> dict:
@@ -53,65 +93,6 @@ def _get_fragoccupations(reader: plams.KFReader) -> dict:
             data[frag][irrep] = (Na, Nb)
 
     return data
-
-def _get_molecules(reader: plams.KFReader) -> dict:
-    '''
-    Method used to get molecules involved in this calculation.
-    This includes the main molecule (i.e. all atoms) as well as the separate fragment molecules.
-
-    Args:
-        reader: the reader object to obtain the molecules for.
-
-    Returns:
-        A dictionary containing the ``complex`` molecule which has all atoms, 
-        the ``{fragment}`` molecules which only contain atoms belonging to the fragment.
-    '''
-    # check if we used fragments
-    used_regions = reader.read('Geometry', 'nr of fragments') != reader.read('Geometry', 'nr of atoms')
-
-    # obtain indices for each fragment and their names
-    fragment_indices = np.atleast_1d(reader.read('Geometry', 'fragment and atomtype index'))
-    # fragment and atomtype index contains two combined lists. The second half is what we need
-    fragment_indices = fragment_indices[len(fragment_indices)//2:]
-    fragment_types = np.atleast_1d(reader.read('Geometry', 'fragmenttype').split())
-
-    # if we did not use regions we have to give each fragment a unique name
-    # e.g. for a C2H2 molecule we get C:1, C:2, H:3, H:4
-    if not used_regions:
-        fragment_uniques = [f'{fragment_types[frag_idx-1]}:{idx+1}' for idx, frag_idx in enumerate(fragment_indices)]
-        fragment_uniques = np.array(sorted(set(fragment_uniques), key=lambda fu: int(fu.split(':')[1])))
-    else:
-    # if regions were used the fragment names are already unique
-        fragment_uniques = np.array(fragment_types)
-
-    # convert coordinates from bohr to angstrom
-    coords = np.array(reader.read('Geometry', 'xyz')).reshape(-1, 3) * 0.529177249
-    atoms = np.array(reader.read('Geometry', 'atomtype').split())
-
-    # the atoms are not ordered like the input molecule
-    # so we have to reorder them again
-    order_index = np.array(ensure_list(reader.read('Geometry', 'atom order index'))[:coords.shape[0]]) - 1
-    fragment_index = np.array(ensure_list(reader.read('Geometry', 'fragment and atomtype index'))[:coords.shape[0]]) - 1
-    symbol_index = np.array(ensure_list(reader.read('Geometry', 'fragment and atomtype index'))[coords.shape[0]:]) - 1
-
-    # reordering here
-    coords = coords[order_index]
-    atoms = atoms[symbol_index][order_index]
-    fragment = fragment_uniques[fragment_index][order_index]
-
-    # build the molecules
-    ret = {'complex': plams.Molecule()}
-    # the complex contains all atoms
-    [ret['complex'].add_atom(plams.Atom(symbol=atom, coords=coord)) for atom, coord in zip(atoms, coords)]
-    # and separate out the fragment molecules
-    for name in fragment_uniques:
-        ret[name] = plams.Molecule()
-
-        for atom, frag in zip(ret['complex'], fragment):
-            if frag != name:
-                continue
-            ret[name].add_atom(plams.Atom(symbol=atom.symbol, coords=atom.coords))
-    return ret
 
 
 def _get_calc_info(reader: plams.KFReader) -> dict:
@@ -337,50 +318,72 @@ def read_data(reader: plams.KFReader, SCF0_reader: plams.KFReader = None, output
 
     ret.set('calc_info', _get_calc_info(reader))
 
-    ret.set('molecules', _get_molecules(reader))
+    ret.set('fragment_data', fragments.get_fragments_data(reader))
+    molecules = ret['fragment_data']['fragment_molecules']
+    molecules['complex'] = ret['fragment_data']['complex_molecule']
+    ret.set('molecules', molecules)
+
+    # if we used atomic basis we always have zero spinpol
+    for frag in ret['fragment_data']['fragment_names']:
+        ret['calc_info']['sfo_spinpolarizations'][frag] = {}
+
 
     ret.set('SFOs', 'number', reader.read('SFOs', 'number'))
     # the name of the fragment
-    ret.set('SFOs', 'fragment_types', np.atleast_1d(reader.read('SFOs', 'fragtype').split()))
     ret.set('SFOs', 'fragment_index', np.atleast_1d(reader.read('SFOs', 'fragment')))
-
+    # we use the fragment data to map the sfo fragment index to the fragment name
+    ret.set('SFOs', 'fragment_types', [ret['fragment_data']['sfo_fragtype_to_fragname_map'][i] for i in ret['SFOs']['fragment_index']])
     # the symmlabel of the SFO
     ret.set('SFOs', 'subspecies', np.atleast_1d(reader.read('SFOs', 'subspecies').split()))
-    ret.set('SFOs', 'subspecies_fixed', [])
     # index of the SFO in its symmlabel
     ret.set('SFOs', 'symmetry_index', np.atleast_1d(reader.read('SFOs', 'isfo')) - 1)
-
-    # some symmetry species can have a subspecies
-    # for example, C(3V) symmetry has the E1:1 and E1:2 symmetry species
-    # however, ADF only reports for one of the (general E1 label)
-    subspecies_visited_symm_index = {}
-    for subsp, isfo in zip(ret['SFOs']['subspecies'], ret['SFOs']['symmetry_index']):
-        subspecies_visited_symm_index.setdefault(subsp, [])
-        if isfo in subspecies_visited_symm_index[subsp]:
-            if ret['calc_info']['used_regions']:
-                n = int(subsp.split(':')[1])
-                subsp = subsp.split(':')[0] + ':' + str(n + 1)
-                subspecies_visited_symm_index.setdefault(subsp, [])
-            else:
-                subsp = str(subspecies_visited_symm_index[subsp].count(isfo)) + subsp.split(':')[0]
-                subspecies_visited_symm_index.setdefault(subsp, [])
-
-        subspecies_visited_symm_index[subsp].append(isfo)
-        ret['SFOs']['subspecies_fixed'].append(subsp)
 
     # the index of the SFO in its symlabel
     ret.set('SFOs', 'ifo', np.atleast_1d(reader.read('SFOs', 'ifo')) - 1)
     ret.set('SFOs', 'spin', [spin for spin in ret['calc_info']['sfo_spins'] for _ in range(ret['SFOs']['number'])])
 
-    # construct unique names for the fragments
+    ret.set('SFOs', 'subspecies_fixed', [])
+
+    # some symmetry species can have a subspecies
+    # for example, C(3V) symmetry has the E1:1 and E1:2 symmetry species
+    # however, ADF only reports for one of the (general E1 label)
     if ret['calc_info']['used_regions']:
-        # if regions were used the fragments are already unique
-        ret.set('SFOs', 'fragment_unique', {spin: ret['SFOs']['fragment_types'] for spin in ret['calc_info']['sfo_spins']})
+        subspecies_visited_symm_index = {}
+        for subsp, isfo in zip(ret['SFOs']['subspecies'], ret['SFOs']['symmetry_index']):
+            subspecies_visited_symm_index.setdefault(subsp, [])
+            if isfo in subspecies_visited_symm_index[subsp]:
+                n = int(subsp.split(':')[1])
+                subsp = subsp.split(':')[0] + ':' + str(n + 1)
+                subspecies_visited_symm_index.setdefault(subsp, [])
+            subspecies_visited_symm_index[subsp].append(int(isfo))
+            ret['SFOs']['subspecies_fixed'].append(subsp)
     else:
-        # if no regions were specified we append ``:{atom_idx}`` to the atom symbol to obtain unique names
-        ret.set('SFOs', 'fragment_unique', {spin: [f'{frag_name}:{frag_idx}' for frag_name, frag_idx in zip(ret['SFOs']['fragment_types'], ret['SFOs']['fragment_index'])] for spin in ret['calc_info']['sfo_spins']})
-    ret.set('SFOs', 'fragment_unique', 'total', _compose_vector(ret['SFOs']['fragment_unique'], ret['calc_info']['sfo_spins']))
-    
+        # if we have atomic fragments we might have SFOs with the same name for the same fragment
+        # we should give these unique names as well
+        # first get the total number of SFOs that have the same subspecies and fragment
+        total_counts = {}
+        for subsp, ifo, frag in zip(ret['SFOs']['subspecies'], ret['SFOs']['ifo'], ret['SFOs']['fragment_types']):
+            total_counts.setdefault(str(frag), {})
+            total_counts[str(frag)].setdefault(str(subsp), {})
+            total_counts[str(frag)][str(subsp)].setdefault(int(ifo), 0)
+            total_counts[str(frag)][str(subsp)][int(ifo)] += 1
+
+        counts = {}
+        # then loop again and set the fixed subspecies
+        for subsp, ifo, frag in zip(ret['SFOs']['subspecies'], ret['SFOs']['ifo'], ret['SFOs']['fragment_types']):
+            # if there is only one SFO with this subspecies for this fragment
+            # we simply set the subspecies as its corrected name
+            if total_counts[frag][subsp][ifo] == 1:
+                ret['SFOs']['subspecies_fixed'].append(subsp)
+                continue
+            # otherwise we count which SFO we are at and use that
+            # to name the SFO subspecies
+            counts.setdefault(str(frag), {})
+            counts[str(frag)].setdefault(str(subsp), {})
+            counts[str(frag)][str(subsp)].setdefault(int(ifo), 0)
+            counts[str(frag)][str(subsp)][int(ifo)] += 1
+            ret['SFOs']['subspecies_fixed'].append(f'{subsp}/{counts[frag][subsp][ifo]}')
+
     # read basic information about the sfos here
     for sfo_spin in ret['calc_info']['sfo_spins']:
         ret.set('SFOs', 'energy', sfo_spin, np.atleast_1d(_read_spin_indep('SFOs', 'escale', sfo_spin)))
@@ -418,13 +421,27 @@ def read_data(reader: plams.KFReader, SCF0_reader: plams.KFReader = None, output
 
     ret.set('SFOs', 'adf_names', 'total', _compose_vector(ret['SFOs']['adf_names'], ret['calc_info']['sfo_spins']))
     # construct here the unique names, e.g. ``NH3(4E1:1)`` that contains both the SFO orbital name and its fragment name
-    ret.set('SFOs', 'unique_names', {spin: [f'{frag}({name})' for frag, name in zip(ret['SFOs']['fragment_unique'][spin], ret['SFOs']['adf_names'][spin])] for spin in ret['calc_info']['sfo_spins']})
-    ret.set('SFOs', 'unique_names', 'total', _compose_vector(ret['SFOs']['unique_names'], ret['calc_info']['sfo_spins']))
+    # ret.set('SFOs', 'unique_names', {spin: [f'{frag}({name})' for frag, name in zip(ret['SFOs']['fragment_unique'][spin], ret['SFOs']['adf_names'][spin])] for spin in ret['calc_info']['sfo_spins']})
+    # ret.set('SFOs', 'unique_names', 'total', _compose_vector(ret['SFOs']['unique_names'], ret['calc_info']['sfo_spins']))
 
     # read the matrix data such as overlaps, coefficients, etc.
     # we correct for the number of frozen cores later
     ret.set('MOs', 'nfrozencores', {symlabel: ncbs for symlabel, ncbs in zip(ret['calc_info']['symlabels'], ensure_list(reader.read('Symmetry', 'ncbs')))})
     ret.set('MOs', 'nfrozencores', 'total', sum(ret['MOs']['nfrozencores'].values()))
+
+    charge_diff = np.atleast_1d(reader.read('Geometry', 'atomtype total charge')) - np.atleast_1d(reader.read('Geometry', 'atomtype effective charge'))
+    charge_diff = {atomtype: charge_diff[i] for i, atomtype in enumerate(reader.read('Geometry', 'atomtype').split())}
+    # also get the frozencores per atom
+    ret.set('MOs', 'nfrozencores_atom', {atomtype: int(diff/2) for atomtype, diff in charge_diff.items()})
+
+    if not ret['calc_info']['used_regions']:
+        atomtypes = np.atleast_1d(reader.read('SFOs', 'fragtype').split())
+        first_principal = {atomtype: _first_principal_numbers(ret['MOs']['nfrozencores_atom'][atomtype]) for atomtype in np.unique(atomtypes)}
+        for spin in ret['calc_info']['sfo_spins']:
+            if spin == 'AB':
+                ret.set('SFOs', 'adf_names_fixed_principal', spin, [f'{index + first_principal[atomtype][symlabel.split(":")[0].split("/")[0]]}{symlabel}' for index, atomtype, symlabel in zip(ret['SFOs']['ifo'], atomtypes, ret['SFOs']['subspecies_fixed'])])
+            else:
+                ret.set('SFOs', 'adf_names_fixed_principal', spin, [f'{index + first_principal[atomtype][symlabel.split(":")[0].split("/")[0]]}{symlabel}_{spin}' for index, atomtype, symlabel in zip(ret['SFOs']['ifo'], atomtypes, ret['SFOs']['subspecies_fixed'])])
 
     for symlabel in ret['calc_info']['symlabels']:
         for sfo_spin in ret['calc_info']['sfo_spins']:
