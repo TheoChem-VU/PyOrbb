@@ -377,7 +377,7 @@ class TabButton(QtWidgets.QFrame):
         self.layout = QtWidgets.QHBoxLayout(self)
         self.setLayout(self.layout)
 
-        pixmap = latex_renderer.convert_to_QPixMap(text)
+        pixmap = latex_renderer.convert_to_QPixMap(text, darkmode=self.parent.parent.parent.isDarkMode)
         self._lbl = QtWidgets.QLabel(self)
         self._lbl.setPixmap(pixmap)
         self.layout.addWidget(self._lbl)
