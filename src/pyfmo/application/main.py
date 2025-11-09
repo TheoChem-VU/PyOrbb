@@ -1500,7 +1500,7 @@ class AnalysisWindow(QtWidgets.QWidget):
 
         menu = QtWidgets.QMenu(self)
         self.orbital_draw_button.setMenu(menu)
-        self.orbital_draw_button.setText('Draw')
+        self.orbital_draw_button.setText('Draw Orbitals')
 
         self.orbital_filter_button = QtWidgets.QPushButton('Filter')
         if self.parent.isDarkMode:
