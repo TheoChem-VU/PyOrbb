@@ -830,7 +830,9 @@ class MplCanvas(FigureCanvas):
         else:
             self.fig.canvas.set_cursor(Cursors.POINTER)
 
-        if event.button == 1:
+        # we have to use QT's mousebutton detection systems instead of pyplot as
+        # they can be inconsistent
+        if QtWidgets.QApplication.instance().mouseButtons() == QtCore.Qt.LeftButton:
             if self.parent.ylim is None:
                 self.parent.ylim = self.axes.get_ylim()
 
@@ -1914,7 +1916,6 @@ class WindowTabBar(QtWidgets.QTabBar):
             if self.mouseLeftWindow:
                 for window in QtWidgets.QApplication.instance().windows:
                     rect = window.rect()
-
                     if window.rect().contains(window.mapFromGlobal(event.globalPos())):
                         break
                 else:
