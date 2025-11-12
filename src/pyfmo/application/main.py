@@ -1429,8 +1429,14 @@ class AnalysisWindow(QtWidgets.QWidget):
         slider_layout.addWidget(label_value_OI, 0, 3)
         self.slider_OI.valueChanged.connect(lambda value: (self._update_plot(), label_value_OI.setText(f'{10**(value/slider_resolution):.2E}')))
 
+        has_PR = len(self.main_mix.mixes['PR']['energy']) > 0
+
         self.PR_is_empty_label = QtWidgets.QLabel('⚠️')
-        self.PR_is_empty_label.setToolTip('Could not find any Pauli Repulsions for these settings.')
+        if has_PR:
+            self.PR_is_empty_label.setToolTip('Could not find any Pauli Repulsions for these settings.')
+        else:
+            self.PR_is_empty_label.setToolTip('This system has no Pauli Repulsive interactions.')
+
         slider_layout.addWidget(self.PR_is_empty_label, 1, 0)
 
         self.cbox_PR = QtWidgets.QCheckBox('Show PR')
@@ -1445,12 +1451,11 @@ class AnalysisWindow(QtWidgets.QWidget):
 
         self.slider_PR = QtWidgets.QSlider(QtCore.Qt.Horizontal, self._analysis_page_frame)
         # slider_PR_max = max(max(mix.xiaobo_value() for mix in mixes) for mixes in self.pauli_mixes.values())
-        if len(self.main_mix.mixes['PR']) == 0:
+        if not has_PR:
             slider_PR_max = 0.001**2
         else:
             # slider_PR_max = max(self.main_mix.mixes['PR'].values())
             slider_PR_max = abs(max(max(v.values()) for v in self.main_mix.mixes['PR'].values()))
-
         inc_pr_btn = QtWidgets.QPushButton('<')
         inc_pr_btn.setToolTip('Show next Pauli Repulsion')
         inc_pr_btn.clicked.connect(self._set_next_pr_slider)
@@ -1471,6 +1476,14 @@ class AnalysisWindow(QtWidgets.QWidget):
         slider_layout.addWidget(label_value_PR, 1, 3)
         self.slider_PR.valueChanged.connect(lambda value: (self._update_plot(), label_value_PR.setText(f'{value/slider_resolution/1000:.4f}')))
         
+        if not has_PR:
+            self.cbox_PR.setEnabled(False)
+            label_PR.setEnabled(False)
+            label_value_PR.setEnabled(False)
+            inc_pr_btn.setEnabled(False)
+            self.slider_PR.setEnabled(False)
+            dec_pr_btn.setEnabled(False)
+
         slider_layout.setColumnStretch(0, 0)
         slider_layout.setColumnStretch(1, 0)
         slider_layout.setColumnStretch(2, 0)
