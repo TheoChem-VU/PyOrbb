@@ -15,18 +15,22 @@ def draw_interaction(sfos, mos, connections,
         draw_sfo_labels=True,
         alpha_range=(0.1, 1),
         highlighted_orbitals=None,
-        use_darkmode=False):
-    arrow_length        = .3 / 4.8280888207
-    arrow_thickness     = .35
-    arrow_width         = .005
-    arrow_head_width    = .025
-    arrow_head_length   = .1 / 4.8280888207
-    arrow_overhang      = .4
-    arrow_spacing       = .012
+        use_darkmode=False,
+        font="Aptos",
+        fontsize=9,
+        **kwargs):
 
-    level_width         = .08
-    level_thickness     = 3
-    highlight_width     = 2
+    arrow_length        = kwargs.get('arrow_length', .3 / 4.8280888207)
+    arrow_thickness     = kwargs.get('arrow_thickness', .35)
+    arrow_width         = kwargs.get('arrow_width', .005)
+    arrow_head_width    = kwargs.get('arrow_head_width', .025)
+    arrow_head_length   = kwargs.get('arrow_head_length', .1 / 4.8280888207)
+    arrow_overhang      = kwargs.get('arrow_overhang', .4)
+    arrow_spacing       = kwargs.get('arrow_spacing', .012)
+
+    level_width         = kwargs.get('level_width', .08)
+    level_thickness     = kwargs.get('level_thickness', 3)
+    highlight_thickness = kwargs.get('highlight_thickness', 2)
 
     if use_darkmode: 
         highlight_color = '#36B8FF'
@@ -148,10 +152,10 @@ def draw_interaction(sfos, mos, connections,
         is_MO = orb in mos
         # if our orbital is highlighted we draw an extra plot around it with a different color
         if orb in highlighted_orbitals:
-            ax.plot([poss[orb]-level_width/2, poss[orb]+level_width/2], 
-                    [E, E], 
-                    c=highlight_color, 
-                    linewidth=level_thickness + highlight_width, 
+            ax.plot([poss[orb]-level_width/2, poss[orb]+level_width/2],
+                    [E, E],
+                    c=highlight_color,
+                    linewidth=level_thickness + highlight_thickness,
                     gid=f'{"MO" if is_MO else "SFO"}_{orb}')
 
         ax.plot([poss[orb]-level_width/2, poss[orb]+level_width/2], 
@@ -209,7 +213,7 @@ def draw_interaction(sfos, mos, connections,
             #              color=highlight_color, 
             #              overhang=arrow_overhang, 
             #              length_includes_head=True,
-            #              linewidth=arrow_thickness + highlight_width,
+            #              linewidth=arrow_thickness + highlight_thickness,
             #              gid=f'{"ARROWMO" if is_MO else "ARROWSFO"}_{orb}')
 
             ax.arrow(poss[orb]+offset_x, 
