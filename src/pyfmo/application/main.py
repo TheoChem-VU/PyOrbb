@@ -1,6 +1,6 @@
 from PySide6 import QtWidgets, QtCore, QtGui
 import pyfmo
-from .components import orbital_selector, rich_widgets, latex_renderer, action_widget
+from .components import orbital_selector, rich_widgets, latex_renderer, action_widget, settings
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qtagg import FigureCanvas
 from matplotlib.backend_tools import Cursors
@@ -2025,9 +2025,6 @@ class PyOrbbWindow(QtWidgets.QMainWindow):
         fileMenu.triggered.connect(QtWidgets.QApplication.instance().add_window)
 
         plot_menu = menuBar.addMenu("Plot")
-        font_action = QtGui.QAction("Select Font", self)
-        font_action.triggered.connect(self._set_plot_font)
-        plot_menu.addAction(font_action)
 
 
         quit = QtGui.QAction("&Quit", self)
@@ -2040,11 +2037,14 @@ class PyOrbbWindow(QtWidgets.QMainWindow):
         editMenu.addAction("Paste")
 
         # Help menu
-        preferenceMenu = menuBar.addMenu("Preferences")
-        open_ams_path = QtGui.QAction("Set AMS Path", self)
-        open_ams_path.triggered.connect(self.AMS_loc_dialogue)
-        preferenceMenu.addAction(open_ams_path)
-        
+        preferenceMenu = menuBar.addMenu('Preferences')
+
+        settings_action = preferenceMenu.addAction("Open Settings")
+        settings_action.triggered.connect(self._open_settings)
+
+        ams_path_action = preferenceMenu.addAction("Set AMS Path")
+        ams_path_action.triggered.connect(self.AMS_loc_dialogue)
+
         self._add_analysis_tab()
 
         ICON_FOLDER = os.path.join(os.path.split(__file__)[0], '..', 'application', 'icons')
@@ -2052,13 +2052,13 @@ class PyOrbbWindow(QtWidgets.QMainWindow):
         self._PIXMAPS = {file.removesuffix('.png'): QtGui.QPixmap(os.path.join(ICON_FOLDER, file)) for file in os.listdir(ICON_FOLDER)}
         self.setWindowIcon(self._ICONS["pyorbb"])
 
-        self.plot_settings = settings.SettingsDialog(self)
+        self.settings_dialog = settings.SettingsDialog(self)
 
     def moveTab(self, event):
         print(event)
 
-    def _set_plot_font(self):
-        self.plot_settings.open()
+    def _open_settings(self):
+        self.settings_dialog.open()
 
     def close_window_on_last_tab(self, index):
         if self.tabs.count() == 1:
@@ -2116,6 +2116,10 @@ class PyOrbbApp(QtWidgets.QApplication):
         self.setStyle('Fusion')
         self.windows = []
 
+        ICON_FOLDER = os.path.join(os.path.split(__file__)[0], '..', 'application', 'icons')
+        self._ICONS = {file.removesuffix('.png'): QtGui.QIcon(os.path.join(ICON_FOLDER, file)) for file in os.listdir(ICON_FOLDER)}
+        self._PIXMAPS = {file.removesuffix('.png'): QtGui.QPixmap(os.path.join(ICON_FOLDER, file)) for file in os.listdir(ICON_FOLDER)}
+
     def __enter__(self):
         self.__post_init__()
         return self
@@ -2134,3 +2138,8 @@ class PyOrbbApp(QtWidgets.QApplication):
     def remove_window(self, window):
         self.windows.remove(window)
         window.close()
+
+    @property
+    def isDarkMode(self):
+        return QtGui.QGuiApplication.styleHints().colorScheme() == QtCore.Qt.ColorScheme.Dark
+
