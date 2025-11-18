@@ -83,6 +83,34 @@ class SpinBox(SettingSelectionWidget):
         self.setValue(self.default)
 
 
+class FloatLineEdit(SettingSelectionWidget):
+    def __init__(self, parent, default=None):
+        super().__init__(parent)
+        self.parent = parent
+        self.layout = QtWidgets.QHBoxLayout(self)
+        self.setLayout(self.layout)
+
+        self._lineedit = QtWidgets.QLineEdit(self)
+        # validator = QtGui.QDoubleValidator()
+        # validator.setNotation(QtGui.QDoubleValidator.Notation.StandardNotation)
+        # self._lineedit.setValidator(validator)
+        self.layout.addWidget(self._lineedit)
+        self.default = default
+        self.reset()
+
+    def setValue(self, val):
+        self._lineedit.setText(str(val))
+
+    def value(self):
+        print(self._lineedit.text())
+        return float(self._lineedit.text())
+
+    def reset(self):
+        if self.default is None:
+            return
+        self.setValue(self.default)
+
+
 class SettingsTab(QtWidgets.QWidget):
     def __init__(self, parent=None):
         super().__init__(parent=parent)
@@ -106,22 +134,27 @@ class SettingsTab(QtWidgets.QWidget):
             minval=0, 
             maxval=1, 
             stepsize=0.01,
-            decimals=4):
-        sb = SpinBox(self, minval, maxval, stepsize, decimals, default=default)
+            decimals=4,
+            use_spinbox=False):
+        if use_spinbox:
+            setting_widget = SpinBox(self, minval, maxval, stepsize, decimals, default=default)
+        else:
+            setting_widget = FloatLineEdit(self, default)
+
         reset_btn = QtWidgets.QPushButton(self)
-        reset_btn.clicked.connect(sb.reset)
+        reset_btn.clicked.connect(setting_widget.reset)
         if QtWidgets.QApplication.instance().isDarkMode:
             reset_btn.setIcon(QtWidgets.QApplication.instance()._ICONS['reset_dark'])
         else:
             reset_btn.setIcon(QtWidgets.QApplication.instance()._ICONS['reset'])
 
-        self.get_funcs[variable_name] = sb.value
-        self.set_funcs[variable_name] = sb.setValue
-        self.reset_funcs[variable_name] = sb.reset
+        self.get_funcs[variable_name] = setting_widget.value
+        self.set_funcs[variable_name] = setting_widget.setValue
+        self.reset_funcs[variable_name] = setting_widget.reset
 
         layout = QtWidgets.QHBoxLayout(self)
         layout.addWidget(QtWidgets.QLabel(name))
-        layout.addWidget(sb)
+        layout.addWidget(setting_widget)
         layout.addWidget(reset_btn)
         layout.setStretch(0, 1)
         layout.setStretch(1, 0)
@@ -215,6 +248,8 @@ class SettingsSection(QtWidgets.QWidget):
 
 
 class SettingsDialog(QtWidgets.QDialog):
+    settingsChanged = QtCore.Signal()
+
     def __init__(self, parent, title="Select Settings"):
         super().__init__(parent)
         self.parent = parent
@@ -254,6 +289,9 @@ class SettingsDialog(QtWidgets.QDialog):
         buttons_frame = QtWidgets.QFrame()
         buttons_layout = QtWidgets.QHBoxLayout()
         buttons_frame.setLayout(buttons_layout)
+
+        apply_button = QtWidgets.QPushButton('Apply')
+        apply_button.clicked.connect(self.apply)
 
         save_button = QtWidgets.QPushButton('Save')
         save_button.clicked.connect(self.save)
