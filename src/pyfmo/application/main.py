@@ -1,6 +1,6 @@
 from PySide6 import QtWidgets, QtCore, QtGui
 import pyfmo
-from .components import orbital_selector, rich_widgets, latex_renderer, action_widget, settings
+from .components import orbital_selector, rich_widgets, latex_renderer, action_widget, settings, editable_tabs
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qtagg import FigureCanvas
 from matplotlib.backend_tools import Cursors
@@ -1800,155 +1800,6 @@ class AnalysisWindow(QtWidgets.QWidget):
         layout.addWidget(button, alignment=QtCore.Qt.AlignCenter)
 
 
-class WindowTabs(QtWidgets.QTabWidget):
-    def __init__(self, parent):
-        super().__init__(parent)
-        self.parent = parent
-        self.setMovable(True)
-        self.setMouseTracking(True)
-        self.setTabBar(WindowTabBar(self))
-        self.setTabsClosable(True)
-
-
-class WindowTabBar(QtWidgets.QTabBar):
-    def __init__(self, parent):
-        self.parent = parent
-        super().__init__(parent)
-
-        self.setMovable(True)
-        self.setMouseTracking(True)
-
-        self.dragStartPos = QtCore.QPoint()
-        self.dragDropedPos = QtCore.QPoint()
-        self.mouseCursor = QtGui.QCursor()
-        self.dragInitiated = False
-        self.dragLabel = None
-        self.mouseCrossedWindowTime = 0
-        self.targetLabelShrinkage = None
-        self.labelShrinkage = 100
-        self.timerID = None
-        self.mouseLeftWindow = False
-        self.mouseLeftTabBar = False
-
-    def sizeHint(self):
-        sh = super().sizeHint()
-        parent_sh = self.parent.sizeHint()
-        sh.setWidth(parent_sh.width())
-        return sh
-
-    def timerEvent(self, event=None):
-        index = self.parent.currentIndex()
-        widg = self.parent.widget(index)
-        pixmap = widg.grab()
-
-        time_since_crossed = perf_counter() - self.mouseCrossedWindowTime
-        self.labelShrinkage = self.labelShrinkage + (self.targetLabelShrinkage - self.labelShrinkage) * time_since_crossed * 2
-
-        pixmap = pixmap.scaled(pixmap.width()/self.labelShrinkage, pixmap.height()/self.labelShrinkage)
-        rect = pixmap.rect()
-
-        # make the pixmap transparent
-        painter = QtGui.QPainter()
-        painter.begin(pixmap)
-        painter.setCompositionMode(QtGui.QPainter.CompositionMode_DestinationIn)
-        painter.fillRect(pixmap.rect(), QtGui.QColor(0, 0, 0, 100))
-        painter.end()
-        self.dragLabel.setPixmap(pixmap)
-        self.dragLabel.updateGeometry()
-
-        # this removes the window frame
-        self.dragLabel.setWindowFlags(QtCore.Qt.CustomizeWindowHint)
-        self.dragLabel.show()
-
-
-    def mouseMoveEvent(self, event):
-        super().mouseMoveEvent(event)
-
-        event.accept()
-
-        if event.buttons() == QtCore.Qt.MouseButton.LeftButton:
-            self.dragInitiated = True
-            # Convert the move event into a drag
-            #Create the appearance of dragging the tab content
-            if self.dragLabel is None:
-                self.dragLabel = QtWidgets.QLabel()
-                # this makes the label transparent to mouse
-                self.dragLabel.setAttribute(QtCore.Qt.WA_TransparentForMouseEvents, True);
-                self.timerID = self.startTimer(10)
-        else:
-            self.dragInitiated = False
-            self.mouseLeftTabBar = False
-            self.mouseLeftWindow = False
-            if self.timerID is not None:
-                self.killTimer(self.timerID)
-                self.timerID = None
-            return
-
-        if self.dragInitiated:
-            # if the mouse has left the tabbar:
-            if not self.rect().contains(event.pos()):
-                # if the mouse left the window
-                if not self.parent.parent.rect().contains(event.pos()):
-                    if self.targetLabelShrinkage != 6:
-                        self.targetLabelShrinkage = 6
-                        self.mouseCrossedWindowTime = perf_counter()
-                        self.mouseLeftTabBar = True
-                        self.mouseLeftWindow = True
-                else:
-                    if self.targetLabelShrinkage != 3:
-                        self.targetLabelShrinkage = 3
-                        self.mouseCrossedWindowTime = perf_counter()
-                        self.mouseLeftTabBar = True
-                        self.mouseLeftWindow = False
-            else:
-                if self.targetLabelShrinkage != 3:
-                    self.mouseLeftTabBar = False
-                    self.mouseLeftWindow = False
-                    self.targetLabelShrinkage = 3
-                    self.mouseCrossedWindowTime = perf_counter()
-
-            self.dragLabel.move(event.globalPos())
-
-    def mouseReleaseEvent(self, event):
-        super().mouseReleaseEvent(event)
-        # if self.dragLabel is not None:
-            # self.dragLabel.hide()
-        self.dragLabel = None
-        self.targetLabelShrinkage = 100
-        self.labelShrinkage = 100
-        self.dragInitiated = False
-
-        if self.timerID is not None:
-            self.killTimer(self.timerID)
-            self.timerID = None
-
-        if self.mouseLeftWindow:
-            # if the mouse is out of this window we check fi we need to make a new window
-            # or add it to an existing one
-            new_window = False
-            if self.mouseLeftWindow:
-                for window in QtWidgets.QApplication.instance().windows:
-                    rect = window.rect()
-                    if window.rect().contains(window.mapFromGlobal(event.globalPos())):
-                        break
-                else:
-                    new_window = True
-                    window = QtWidgets.QApplication.instance().add_window()
-
-                index = self.parent.currentIndex()
-                widg = self.parent.widget(index)
-                new_idx = window.tabs.addTab(widg, self.parent.tabText(index))
-                window.tabs.setCurrentIndex(new_idx)
-                widg.setEnabled(True)
-                # a new window will have by default one tab open already
-                if new_window:
-                    window.tabs.removeTab(0)
-                    window.move(event.globalPos())
-
-                if self.parent.parent.tabs.count() == 0:
-                    QtWidgets.QApplication.instance().remove_window(self.parent.parent)
-
-
 class PyOrbbWindow(QtWidgets.QMainWindow):
     def __init__(self):
         super().__init__()
@@ -1993,8 +1844,7 @@ class PyOrbbWindow(QtWidgets.QMainWindow):
 
         self.setWindowTitle("PyOrbb Analysis Tool")
 
-        self.tabs = WindowTabs(self)
-        # self.tabs.tabBar().mouseMoveEvent.connect(self.moveTab)
+        self.tabs = editable_tabs.WindowTabs(self)
         add_tab_button = QtWidgets.QPushButton('+')
         add_tab_button.resize(50, 50)
         add_tab_button.clicked.connect(self._add_analysis_tab)
@@ -2015,8 +1865,6 @@ class PyOrbbWindow(QtWidgets.QMainWindow):
         self.tabs.setCornerWidget(add_tab_button, QtCore.Qt.TopLeftCorner)
 
         self.layout.addWidget(self.tabs, 0, 0, 1, 1)
-        self.tabs.tabCloseRequested.connect(self.tabs.removeTab)
-        self.tabs.tabBarDoubleClicked.connect(self._edit_tab_title)
 
         # File menu
         menuBar = self.menuBar()
@@ -2025,7 +1873,6 @@ class PyOrbbWindow(QtWidgets.QMainWindow):
         fileMenu.triggered.connect(QtWidgets.QApplication.instance().add_window)
 
         plot_menu = menuBar.addMenu("Plot")
-
 
         quit = QtGui.QAction("&Quit", self)
         quit.setShortcut("Ctrl+Q")
@@ -2054,14 +1901,11 @@ class PyOrbbWindow(QtWidgets.QMainWindow):
 
         self.settings_dialog = settings.SettingsDialog(self)
 
-    def moveTab(self, event):
-        print(event)
-
     def _open_settings(self):
         self.settings_dialog.open()
 
     def close_window_on_last_tab(self, index):
-        if self.tabs.count() == 1:
+        if self.tabs.count() == 0:
             QtWidgets.QApplication.instance().remove_window(self)
 
     @property
@@ -2091,22 +1935,6 @@ class PyOrbbWindow(QtWidgets.QMainWindow):
         idx = self.tabs.addTab(window, tabname)
         self.tabs.setCurrentIndex(idx)
         return window
-
-    def _edit_tab_title(self, index):
-        def text_change_handler(arg):
-            self.tabs.tabBar().setTabText(index, lineedit.text())
-            rect = self.tabs.tabBar().tabRect(index)
-            rect.adjust(34, 0.5, 1, 0.5)
-            lineedit.setGeometry(rect)
-
-        lineedit = QtWidgets.QLineEdit(parent=self.tabs)
-        lineedit.textChanged.connect(text_change_handler)
-        lineedit.editingFinished.connect(lambda: lineedit.hide())
-        lineedit.setText(self.tabs.tabText(index))
-        lineedit.setStyleSheet("border: 0px; background-color: rgba(0,0,0,0);")
-        lineedit.show()
-        text_change_handler("")
-        lineedit.selectAll()
 
 
 class PyOrbbApp(QtWidgets.QApplication):
