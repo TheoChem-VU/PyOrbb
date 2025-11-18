@@ -28,35 +28,6 @@ def mol2xyz(mol):
         s += f'{atom.symbol:2} {atom.coords[0]} {atom.coords[1]} {atom.coords[2]}\n'
     return s
 
-def load_setting(key, default=None):
-    d = platformdirs.user_config_dir('PyOrbb', 'TheoCheM', ensure_exists=True)
-    if not os.path.exists(os.path.join(d, 'settings.json')):
-        return
-
-    with open(os.path.join(d, 'settings.json')) as jf:
-        data = json.loads(jf.read())
-
-    return data.get(key, None)
-
-def save_setting(key, value):
-    d = platformdirs.user_config_dir('PyOrbb', 'TheoCheM', ensure_exists=True)
-    if not os.path.exists(os.path.join(d, 'settings.json')):
-        data = {}
-    else:
-        with open(os.path.join(d, 'settings.json')) as jf:
-            data = json.loads(jf.read())
-
-    data[key] = value
-    with open(os.path.join(d, 'settings.json'), 'w+') as jf:
-        jf.write(json.dumps(data))
-
-def default_setting(key, value):
-    if load_setting(key) is not None:
-        return
-    save_setting(key, value)
-
-default_setting('amsbin', '$AMSBIN')
-
 
 def _determine_charges(orbs):
     # build up the effective charges of the atoms
@@ -477,10 +448,12 @@ class MplCanvas(FigureCanvas):
 
         import tcviewer
 
+        amsloc = self.parent.parent.settings_dialog.get("Densf", "General", "amsbin")
         if platform.system() == "Windows":
-            preambles = [f'set AMSHOME={os.path.split(self.parent.parent._amsbin_loc)[0]}', f'set AMSBIN={os.path.split(self.parent.parent._amsbin_loc)[0]}/bin']
+            preambles = [f'set AMSHOME={os.path.split(self.parent.parent.settings_dialog.get("Densf", "General", "amsbin"))[0]}', f'set AMSBIN={os.path.split(self.parent.parent.settings_dialog.get("Densf", "General", "amsbin"))[0]}/bin']
         else:
-            preambles = [f'source {os.path.join(os.path.split(self.parent.parent._amsbin_loc)[0], "amsbashrc.sh")}']
+            amsbashrc = os.path.join(amsloc, 'Contents', 'Resources', 'amshome', 'amsbashrc.sh')
+            preambles = [f'source {amsbashrc}']
 
         if self.parent.tcviewer_screen is None or self.parent.tcviewer_screen.isclosed:
             self.parent.tcviewer_screen = tcviewer.screen._ScreenWindow()
@@ -1752,7 +1725,10 @@ class AnalysisWindow(QtWidgets.QWidget):
         layout.addWidget(label)
 
         # Button
-        button = QtWidgets.QPushButton('Select a File')
+        if self.parent.isDarkMode:
+            button = QtWidgets.QPushButton(QtWidgets.QApplication.instance()._ICONS['folder_dark'], ' Select a File')
+        else:
+            button = QtWidgets.QPushButton(QtWidgets.QApplication.instance()._ICONS['folder'], ' Select a File')
         button.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         button.setFlat(True)
         button.clicked.connect(self.open_filedialog)
@@ -1836,12 +1812,6 @@ class PyOrbbWindow(QtWidgets.QMainWindow):
         grid_widget.setLayout(self.layout)
         self.setCentralWidget(grid_widget)
 
-        # try to get the densf path from the environment
-        # this will be None if it could not be found
-        self._amsbin_loc = load_setting('amsbin')
-        if 'AMSBIN' not in os.environ:
-            os.environ['AMSBIN'] = self._amsbin_loc
-
         self.setWindowTitle("PyOrbb Analysis Tool")
 
         self.tabs = editable_tabs.WindowTabs(self)
@@ -1889,9 +1859,6 @@ class PyOrbbWindow(QtWidgets.QMainWindow):
         settings_action = preferenceMenu.addAction("Open Settings")
         settings_action.triggered.connect(self._open_settings)
 
-        ams_path_action = preferenceMenu.addAction("Set AMS Path")
-        ams_path_action.triggered.connect(self.AMS_loc_dialogue)
-
         self._add_analysis_tab()
 
         ICON_FOLDER = os.path.join(os.path.split(__file__)[0], '..', 'application', 'icons')
@@ -1902,7 +1869,7 @@ class PyOrbbWindow(QtWidgets.QMainWindow):
         self.settings_dialog = settings.SettingsDialog(self)
 
     def _open_settings(self):
-        self.settings_dialog.open()
+        self.settings_dialog.exec()
 
     def close_window_on_last_tab(self, index):
         if self.tabs.count() == 0:
@@ -1911,23 +1878,6 @@ class PyOrbbWindow(QtWidgets.QMainWindow):
     @property
     def isDarkMode(self):
         return QtGui.QGuiApplication.styleHints().colorScheme() == QtCore.Qt.ColorScheme.Dark
-
-
-    def AMS_loc_dialogue(self):
-        '''
-        opens a filedialog allowing the user to select the path to AMSHOME
-        '''
-        if platform.system() == 'Darwin':
-            d = "/Applications" if os.path.exists("/Applications") else os.getcwd()
-            path = QtWidgets.QFileDialog.getOpenFileName(self, caption='Select AMS application', dir=d, filter="*.app")[0]
-            self._amsbin_loc = os.path.join(path, 'Contents', 'Resources', 'amshome', 'bin')
-        else:
-            path = QtWidgets.QFileDialog.getExistingDirectory(caption='Select AMS install location', dir=os.getcwd())
-            self._amsbin_loc = os.path.join(path, "bin")
-
-        # if it is an app we get the amsbin
-        save_setting('amsbin', self._amsbin_loc)
-        os.environ['AMSBIN'] = self._amsbin_loc
 
     def _add_analysis_tab(self, object=None, tabname='new'):
         window = AnalysisWindow(self)
