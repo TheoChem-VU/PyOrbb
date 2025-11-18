@@ -1086,9 +1086,10 @@ class AnalysisWindow(QtWidgets.QWidget):
             pauli_thresh=self.slider_PR.value()/slider_resolution/1000,
             energy_type=self._energytype_selection,
             ylim=self.ylim,
+            **self.parent.settings_dialog.get_flat_state()
             )
 
-    def _draw_diagram(self, *args, oi_thresh=None, pauli_thresh=None, ylim=None, energy_type=None):
+    def _draw_diagram(self, *args, oi_thresh=None, pauli_thresh=None, ylim=None, energy_type=None, **kwargs):
         ax = self.plot.axes
         fig = self.plot.fig
 
@@ -1105,7 +1106,7 @@ class AnalysisWindow(QtWidgets.QWidget):
         self.main_mix.set_energy_type(energy_type)
         self.main_mix.reset_mixes()
 
-        self.main_mix.draw_diagram(ax=ax, ylim=ylim, highlighted_orbitals=self.filtered_orbitals, use_darkmode=False)
+        self.main_mix.draw_diagram(ax=ax, ylim=ylim, highlighted_orbitals=self.filtered_orbitals, use_darkmode=False, **kwargs)
         if self.new_tick_labels is not None:
             self.plot.axes.set_xticklabels(self.new_tick_labels)
 
@@ -1521,6 +1522,7 @@ class AnalysisWindow(QtWidgets.QWidget):
 
         self._update_plot()
         self._loaded_analysis = True
+        self.parent.settings_dialog.settingsChanged.connect(self._update_plot)
 
 
     def _get_general_system_info(self):

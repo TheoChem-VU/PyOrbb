@@ -264,6 +264,7 @@ class SettingsDialog(QtWidgets.QDialog):
         reset_button = QtWidgets.QPushButton('Reset')
         reset_button.clicked.connect(self.reset)
 
+        buttons_layout.addWidget(apply_button)
         buttons_layout.addWidget(save_button)
         buttons_layout.addWidget(cancel_button)
         buttons_layout.addWidget(reset_button)
@@ -289,11 +290,11 @@ class SettingsDialog(QtWidgets.QDialog):
 
         with self.add_section('Plot') as section:
             with section.add_tab('Arrows') as tab:
-                tab.add_float_setting("arrow_length", 'Length', .3 / 4.8280888207)
+                tab.add_float_setting("arrow_length", 'Length', round(.3 / 4.8280888207, 3))
                 tab.add_float_setting("arrow_thickness", 'Thickness', .35)
                 tab.add_float_setting("arrow_width", 'Width', .005)
                 tab.add_float_setting("arrow_head_width", 'Head Width', .025)
-                tab.add_float_setting("arrow_head_length", 'Head Length', .1 / 4.8280888207)
+                tab.add_float_setting("arrow_head_length", 'Head Length', round(.1 / 4.8280888207, 3))
                 tab.add_float_setting("arrow_overhang", 'Overhang', .4)
                 tab.add_float_setting("arrow_spacing", 'Spacing', .012)   
 
@@ -326,7 +327,11 @@ class SettingsDialog(QtWidgets.QDialog):
 
     def save(self):
         super().accept()
+        self.settingsChanged.emit()
         self.write_state()
+
+    def apply(self):
+        self.settingsChanged.emit()
 
     def reject(self):
         self.set_state(self._old_state)
@@ -338,7 +343,13 @@ class SettingsDialog(QtWidgets.QDialog):
             state[section_name] = {}
             for tab_name, tab in section.tabs.items():
                 state[section_name][tab_name] = tab.get_state()
+        return state
 
+    def get_flat_state(self):
+        state = {}
+        for section_name, section in self.sections.items():
+            for tab_name, tab in section.tabs.items():
+                state.update(tab.get_state())
         return state
 
     def get(self, section, tab, variable):
@@ -356,6 +367,7 @@ class SettingsDialog(QtWidgets.QDialog):
 
     def load_state(self):
         d = platformdirs.user_config_dir('PyOrbb', 'TheoCheM', ensure_exists=True)
+        print(d)
         if not os.path.exists(os.path.join(d, 'settings.json')):
             return
 
