@@ -476,6 +476,9 @@ class MplCanvas(FigureCanvas):
 
             if draw_type == 'sum':
                 mol = orb[0].molecule + orb[1].molecule
+                overlap_sign = np.sign(orb[0] @ orb[1])
+                if overlap_sign == 0:
+                    overlap_sign = 1
                 scene.draw_molecule(mol)
 
                 c1, c2 = ([1, 0, 0], [0, 0, 1]) if orb[0].occupied else ([1, .5, 0], [0, 1, 1])
@@ -492,6 +495,7 @@ class MplCanvas(FigureCanvas):
                 except Exception as e:
                     print("".join(traceback.format_exception(type(e), e, e.__traceback__)))
                     QtWidgets.QMessageBox.critical(self, 'Error', 'There was an issue with running densf.\nUse preferences > Set AMS Path to set the AMS installation path.')
+                cub.values *= overlap_sign
                 scene.draw_dual_isosurface(cub, colorm=c1, colorp=c2)
                 
                 scene.draw_text(str(orb[0]) + ' & ' + str(orb[1]))
