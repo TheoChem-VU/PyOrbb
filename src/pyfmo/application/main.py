@@ -1160,7 +1160,17 @@ class AnalysisWindow(QtWidgets.QWidget):
             self.orbs = pyfmo.Orbitals(file)
         except Exception as e:
             import traceback
-            self.errordialog.showMessage(f'Could not load orbital data from file:\n\n{file}')
+
+            reason = ""
+            try:
+                reader = plams.KFReader(file)
+                ident = reader.read('General', 'program')
+                if ident != 'ADF':
+                    reason = 'Not an adf.rkf file.'
+            except (IndexError, plams.core.errors.FileError):
+                reason = "Not an RKF file."
+
+            self.errordialog.showMessage(f'Could not load orbital data from file:\n{reason}\n\n{file}')
             traceback.print_exc(e)
             return
 
