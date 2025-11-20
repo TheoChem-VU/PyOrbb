@@ -423,6 +423,7 @@ class MplCanvas(FigureCanvas):
     def __init__(self, parent=None, width=9, height=6.5, dpi=100):
         self.fig = Figure(figsize=(width, height), dpi=dpi)
         self.axes = self.fig.add_subplot(111)
+        self.fig.subplots_adjust(top=1, right=1, bottom=0.1, left=0.12)
         self.parent = parent
         super().__init__(self.fig)
 
@@ -618,6 +619,8 @@ class MplCanvas(FigureCanvas):
                 self.parent.new_tick_labels.append(new_txt)
 
             self.axes.set_xticklabels(self.parent.new_tick_labels)
+            # self.axes.set_xticklabels(self.parent.new_tick_labels)
+            self.parent._update_plot()
             self.fig.canvas.draw_idle()
 
         # Iterating over each data member plotted
@@ -817,11 +820,14 @@ class MplCanvas(FigureCanvas):
             if self.previous_mouse_pos is not None and mouse_pos is not None:
                 dy = mouse_pos - self.previous_mouse_pos
                 self.parent.ylim = self.parent.ylim[0] - dy, self.parent.ylim[1] - dy
-                self.parent._update_plot()
+                # self.parent._update_plot()
+                self.axes.set_ylim(self.parent.ylim)
+                self.axes.redraw_in_frame()
+                self.fig.canvas.draw_idle()
+
                 self.previous_mouse_pos = mouse_pos - dy
             else:
                 self.previous_mouse_pos = mouse_pos
-
 
         elif event.button is None:
             self.previous_mouse_pos = None
@@ -949,7 +955,10 @@ class MplCanvas(FigureCanvas):
         change = event.step * dy * 0.001
         new_dy = dy + change
         self.parent.ylim = (mousey - new_dy * f, mousey + new_dy * (1 - f))
-        self.parent._update_plot()
+        # self.parent._update_plot()
+        self.axes.set_ylim(self.parent.ylim)
+        self.axes.redraw_in_frame()
+        self.fig.canvas.draw_idle()
 
 
 class SaveFileDialog(QtWidgets.QFileDialog):

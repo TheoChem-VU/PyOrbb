@@ -1,9 +1,58 @@
 import matplotlib.pyplot as plt
+import matplotlib.patches as mpatches
+from matplotlib.path import Path
+from matplotlib.bezier import (
+    NonIntersectingPathException, get_cos_sin, get_intersection,
+    get_parallels, inside_circle, make_wedged_bezier2,
+    split_bezier_intersecting_with_closedpath, split_path_inout)
 import numpy as np
 import pyfmo
 import re
 
 
+def arrow_tail_with_axes_offset(ax, anchor, offset_axes=(0.0, 0.1),
+                                arrowstyle="<|-", **kwargs):
+    """
+    Draw an arrow whose tail is fixed to `anchor` in data coords,
+    but whose head is offset from the tail by `offset_axes` measured in
+    axes fraction (dx, dy in [0..1] of the axes width/height).
+
+    Returns the ConnectionPatch instance.
+    """
+    fig = ax.figure
+
+    # initial dummy head (will be updated immediately)
+    patch = mpatches.ConnectionPatch(
+        anchor, (0, 0), 
+        coordsA=ax.transAxes, coordsB=ax.transAxes,
+        arrowstyle=arrowstyle, shrinkA=0, shrinkB=0, 
+        **kwargs
+    )
+    ax.add_patch(patch)
+
+    def update_patch(event=None):
+        # 1) get tail position in display coords
+        anchor_disp = ax.transData.transform(anchor)  # display (pixel) coords
+
+        # 2) convert tail display to axes coords
+        anchor_axes = ax.transAxes.inverted().transform(anchor_disp)  # (0..1, 0..1)
+
+        # update the positions of the arrow
+        xyA = anchor_axes[0] - offset_axes[0]/2, anchor_axes[1] - offset_axes[1]/2
+        xyB = anchor_axes[0] + offset_axes[0]/2, anchor_axes[1] + offset_axes[1]/2
+
+        # we have to set them like this, otherwise it does not work
+        patch.xy1 = xyA
+        patch.xy2 = xyB
+
+    # Connect updates when y-limits change or figure is resized
+    ax.callbacks.connect('ylim_changed', update_patch)
+    fig.canvas.mpl_connect('resize_event', update_patch)
+
+    # Do an initial update to set correct head position now
+    update_patch()
+
+    return patch
 
 def draw_interaction(sfos, mos, connections, 
         title=None, 
@@ -21,12 +70,11 @@ def draw_interaction(sfos, mos, connections,
         **kwargs):
 
     arrow_length        = kwargs.get('arrow_length', .3 / 4.8280888207)
-    arrow_thickness     = kwargs.get('arrow_thickness', .35)
     arrow_width         = kwargs.get('arrow_width', .005)
     arrow_head_width    = kwargs.get('arrow_head_width', .025)
     arrow_head_length   = kwargs.get('arrow_head_length', .1 / 4.8280888207)
-    arrow_overhang      = kwargs.get('arrow_overhang', .4)
-    arrow_spacing       = kwargs.get('arrow_spacing', .012)
+    arrow_spacing       = kwargs.get('arrow_spacing', .02)
+    arrow_color         = kwargs.get('arrow_color', '#000000')
 
     level_width         = kwargs.get('level_width', .08)
     level_thickness     = kwargs.get('level_thickness', 3)
@@ -190,52 +238,38 @@ def draw_interaction(sfos, mos, connections,
             break_on_one = False
             if spin_part == 'A':
                 offset_x = -arrow_spacing
-                offset_y = -arrow_length / 2 * energy_span
-                displacement = arrow_length * energy_span
+                displacement = arrow_length
             elif spin_part == 'B':
                 offset_x =  arrow_spacing
-                offset_y =  arrow_length / 2 * energy_span
-                displacement = -arrow_length * energy_span
+                displacement = -arrow_length
 
             if orb.spin == 'AB' and orb.occupation == 1:
                 offset_x = 0
                 if orb.spin_pol in (0, 1):
-                    offset_y = -arrow_length / 2 * energy_span
-                    displacement = arrow_length * energy_span
+                    displacement = arrow_length
                 elif orb.spin_pol == -1:
-                    offset_y = arrow_length / 2 * energy_span
-                    displacement = -arrow_length * energy_span
+                    displacement = -arrow_length
                 break_on_one = True
 
             if orb.spin != 'AB':
                 offset_x = 0
 
-            # if orb in highlighted_orbitals:
-            #     ax.arrow(poss[orb]+offset_x, 
-            #              E+offset_y, 
-            #              0, 
-            #              displacement, 
-            #              width=arrow_width, 
-            #              head_width=arrow_head_width, 
-            #              head_length=arrow_head_length * energy_span, 
-            #              color=highlight_color, 
-            #              overhang=arrow_overhang, 
-            #              length_includes_head=True,
-            #              linewidth=arrow_thickness + highlight_thickness,
-            #              gid=f'{"ARROWMO" if is_MO else "ARROWSFO"}_{orb}')
-
-            ax.arrow(poss[orb]+offset_x, 
-                     E+offset_y, 
-                     0, 
-                     displacement, 
-                     width=arrow_width, 
-                     head_width=arrow_head_width, 
-                     head_length=arrow_head_length * energy_span, 
-                     color=level_color, 
-                     overhang=arrow_overhang, 
-                     length_includes_head=True,
-                     linewidth=arrow_thickness,
-                     gid=f'{"ARROWMO" if is_MO else "ARROWSFO"}_{orb}')
+            anchor = (poss[orb] + offset_x, E)
+            style = mpatches.ArrowStyle.CurveB(
+                head_length=arrow_head_length, 
+                head_width=arrow_head_width
+                )
+            ax.add_patch(
+                arrow_tail_with_axes_offset(
+                    ax,
+                    anchor,
+                    [0, displacement],
+                    arrowstyle=style,
+                    clip_on=True,
+                    gid=f'{"ARROWMO" if is_MO else "ARROWSFO"}_{orb_index}',
+                    color=arrow_color
+                    )
+                )
 
             if break_on_one:
                 break
