@@ -1051,9 +1051,11 @@ class AnalysisWindow(QtWidgets.QWidget):
                 fname = str(url.toLocalFile())
                 if not self._loaded_analysis:
                     self.load_analysis(fname)
+                    self.parent.tabs.setTabText(self.parent.tabs.currentIndex(), os.path.split(fname)[1])
+                    self.parent.tabs.setTabToolTip(self.parent.tabs.currentIndex(), fname)
                     return
                 else:
-                    window = self.parent._add_analysis_tab()
+                    window = self.parent._add_analysis_tab(tabname=os.path.split(fname)[1])
                     window.load_analysis(fname)
 
         else:
@@ -1891,10 +1893,11 @@ class PyOrbbWindow(QtWidgets.QMainWindow):
     def isDarkMode(self):
         return QtGui.QGuiApplication.styleHints().colorScheme() == QtCore.Qt.ColorScheme.Dark
 
-    def _add_analysis_tab(self, object=None, tabname='new'):
+    def _add_analysis_tab(self, object=None, tabname='new', tabtooltip=None):
         window = AnalysisWindow(self)
         window.setup_new()
         idx = self.tabs.addTab(window, tabname)
+        self.tabs.setTabToolTip(idx, tabtooltip)
         self.tabs.setCurrentIndex(idx)
         return window
 
