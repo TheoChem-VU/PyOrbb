@@ -135,6 +135,11 @@ def draw_interaction(sfos, mos, connections,
     ax.set_title(title)
     ax.set_ylabel('Orbital Energy / eV', color=axis_label_color)
     ax.set_xticks(xtick_pos, xtick_label, color=spine_color)
+    for i, artist in enumerate(ax.get_xticklabels()):
+        if xtick_label[i] == mo_column_name:
+            artist.is_MO = True
+        else:
+            artist.is_MO = False
     ax.spines[['top', 'bottom', 'right']].set_visible(False)
     ax.spines['left'].set_color(spine_color)
     ax.yaxis.label.set_color(spine_color)
@@ -147,22 +152,24 @@ def draw_interaction(sfos, mos, connections,
         if orb in sfos:
             E = getattr(orb, energy_type)
 
-        orb_name = pyfmo.generate_label(orb)
-
         is_MO = orb in mos
+
+        orb_name = pyfmo.generate_label(orb)
+        orb_index = orb.parent.orbitals.index(orb)
+
         # if our orbital is highlighted we draw an extra plot around it with a different color
         if orb in highlighted_orbitals:
             ax.plot([poss[orb]-level_width/2, poss[orb]+level_width/2],
                     [E, E],
                     c=highlight_color,
                     linewidth=level_thickness + highlight_thickness,
-                    gid=f'{"MO" if is_MO else "SFO"}_{orb}')
+                    gid=f'{"MO" if is_MO else "SFO"}_{orb_index}')
 
         ax.plot([poss[orb]-level_width/2, poss[orb]+level_width/2], 
                 [E, E], 
                 c=level_color, 
                 linewidth=level_thickness, 
-                gid=f'{"MO" if is_MO else "SFO"}_{orb}')
+                gid=f'{"MO" if is_MO else "SFO"}_{orb_index}')
 
         if (is_MO and draw_mo_labels) or (not is_MO and draw_sfo_labels):
             ax.text(poss[orb],
@@ -170,9 +177,10 @@ def draw_interaction(sfos, mos, connections,
                      orb_name,
                      ha='center',
                      va='top',
-                     size=9,
-                     gid=f'{"TEXTMO" if is_MO else "TEXTSFO"}_{orb}',
-                     fontname='monospace',
+                     size=font_size,
+                     clip_on=True,
+                     gid=f'{"TEXTMO" if is_MO else "TEXTSFO"}_{orb_index}',
+                     fontname=font_name,
                      color=level_color)
 
         if not orb.occupied:
@@ -241,5 +249,7 @@ def draw_interaction(sfos, mos, connections,
             psfo -= level_width/2
             pmo  += level_width/2
 
+        sfo_index = sfo.parent.orbitals.index(sfo)
+        mo_index = mo.parent.orbitals.index(mo)
         c = connection_colors.get((sfo, mo), level_color)
-        ax.plot([psfo, pmo], [getattr(sfo, energy_type), mo.energy], c=c, linewidth=1.5, alpha=np.clip(sfo.mulliken_contribution(mo), *alpha_range), gid=f'MIX_{sfo} -> {mo}', zorder=-10)
+        ax.plot([psfo, pmo], [getattr(sfo, energy_type), mo.energy], c=c, linewidth=1.5, alpha=np.clip(sfo.mulliken_contribution(mo), *alpha_range), gid=f'MIX_{sfo_index} -> {mo_index}', zorder=-10)
