@@ -635,7 +635,7 @@ class MplCanvas(FigureCanvas):
 
             s = ''
             if gid.startswith('MO_'):
-                mo = self.parent.orbs.mos[gid[3:]]
+                mo = self.parent.orbs.mos.orbitals[int(gid[3:])]
                 if isinstance(mo, list):
                     mo = mo[0]
 
@@ -650,7 +650,7 @@ class MplCanvas(FigureCanvas):
                 break
 
             if gid.startswith('SFO_'):
-                sfo = self.parent.orbs.sfos[gid[4:]]
+                sfo = self.parent.orbs.sfos.orbitals[int(gid[4:])]
                 if isinstance(sfo, list):
                     sfo = sfo[0]
 
@@ -664,8 +664,8 @@ class MplCanvas(FigureCanvas):
                 break
 
             if gid.startswith('MIX_'):
-                sfo = self.parent.orbs.sfos[gid[4:].split('->')[0].strip()]
-                mo = self.parent.orbs.mos[gid[4:].split('->')[1].strip()]
+                sfo = self.parent.orbs.sfos.orbitals[int(gid[4:].split('->')[0].strip())]
+                mo = self.parent.orbs.mos.orbitals[int(gid[4:].split('->')[1].strip())]
                 
                 if (sfo, mo) not in self._selected_orbitals:
                     self._selected_orbitals.append((sfo, mo))
@@ -870,38 +870,38 @@ class MplCanvas(FigureCanvas):
                 artist.orig_alpha = artist.get_alpha() or 1
 
             if gid.startswith('MO_'):
-                mo = self.parent.orbs.mos[gid[3:]]
+                mo = self.parent.orbs.mos.orbitals[int(gid[3:])]
                 if mo in orbs:
                     continue
 
             if gid.startswith('SFO_'):
-                sfo = self.parent.orbs.sfos[gid[4:]]
+                sfo = self.parent.orbs.sfos.orbitals[int(gid[4:])]
                 if sfo in orbs:
                     continue
 
             if gid.startswith('ARROWMO_'):
-                mo = self.parent.orbs.mos[gid[8:]]
+                mo = self.parent.orbs.mos.orbitals[int(gid[8:])]
                 if mo in orbs:
                     continue
 
             if gid.startswith('ARROWSFO_'):
-                sfo = self.parent.orbs.sfos[gid[9:]]
+                sfo = self.parent.orbs.sfos.orbitals[int(gid[9:])]
                 if sfo in orbs:
                     continue
 
             if gid.startswith('TEXTMO_'):
-                mo = self.parent.orbs.mos[gid[7:]]
+                mo = self.parent.orbs.mos.orbitals[int(gid[7:])]
                 if mo in orbs:
                     continue
 
             if gid.startswith('TEXTSFO_'):
-                sfo = self.parent.orbs.sfos[gid[8:]]
+                sfo = self.parent.orbs.sfos.orbitals[int(gid[8:])]
                 if sfo in orbs:
                     continue
 
             if gid.startswith('MIX_'):
-                sfo = self.parent.orbs.sfos[gid[4:].split('->')[0].strip()]
-                mo = self.parent.orbs.mos[gid[4:].split('->')[1].strip()]
+                sfo = self.parent.orbs.sfos.orbitals[int(gid[4:].split('->')[0].strip())]
+                mo = self.parent.orbs.mos.orbitals[int(gid[4:].split('->')[1].strip())]
                 if mo in orbs and sfo in orbs:
                     continue
 
