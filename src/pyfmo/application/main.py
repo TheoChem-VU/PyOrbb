@@ -17,6 +17,7 @@ import pyperclip
 import platform
 import traceback
 from time import perf_counter
+from scm import plams
 
 slider_resolution = 500
 
