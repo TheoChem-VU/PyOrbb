@@ -619,7 +619,11 @@ class MplCanvas(FigureCanvas):
                 self.parent.orbs.rename_fragment(artist.get_text(), new_txt)
                 self.parent.new_tick_labels.append(new_txt)
 
-            self.axes.set_xticklabels(self.parent.new_tick_labels)
+                if artist.is_MO:
+                    self.parent.parent.settings_dialog.set('Plot', 'Levels', 'mo_column_name', new_txt)
+
+                # self.parent._orb_selection_dialog.rename(artist.get_text(), new_txt)
+                # self.parent.new_tick_labels.append(new_txt)
             # self.axes.set_xticklabels(self.parent.new_tick_labels)
             self.parent._update_plot()
             self.fig.canvas.draw_idle()
@@ -1097,12 +1101,18 @@ class AnalysisWindow(QtWidgets.QWidget):
         file = self.new_figure_filedialog.selectedFiles()[0]
 
     def _update_plot(self):
+        settings = self.parent.settings_dialog.get_flat_state()
+        # set the colors
+        pyfmo.analysis.mixing.INTERACTION_COLORS['OI_color'] = settings.pop('OI_color')
+        pyfmo.analysis.mixing.INTERACTION_COLORS['PR_color'] = settings.pop('PR_color')
+        pyfmo.analysis.mixing.INTERACTION_COLORS['Sanitization_color'] = settings.pop('Sanitization_color')
+        pyfmo.analysis.mixing.INTERACTION_COLORS['Multiple_color'] = settings.pop('Multiple_color')
         self._draw_diagram(
             oi_thresh=10**(self.slider_OI.value()/slider_resolution),
             pauli_thresh=self.slider_PR.value()/slider_resolution/1000,
             energy_type=self._energytype_selection,
             ylim=self.ylim,
-            **self.parent.settings_dialog.get_flat_state()
+            **settings
             )
 
     def _draw_diagram(self, *args, oi_thresh=None, pauli_thresh=None, ylim=None, energy_type=None, **kwargs):

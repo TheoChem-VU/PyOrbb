@@ -55,20 +55,16 @@ def arrow_tail_with_axes_offset(ax, anchor, offset_axes=(0.0, 0.1),
     return patch
 
 def draw_interaction(sfos, mos, connections, 
-        title=None, 
-        energy_type='energy', 
-        connection_colors={}, 
-        ax=None, 
-        ylim=None, 
-        draw_mo_labels=False,
-        draw_sfo_labels=True,
-        alpha_range=(0.1, 1),
+        title=None,
+        energy_type='energy',
+        connection_colors={},
+        ax=None,
+        ylim=None,
         highlighted_orbitals=None,
         use_darkmode=False,
-        font="Aptos",
-        fontsize=9,
+        mo_column_name='Complex',
         **kwargs):
-
+    
     arrow_length        = kwargs.get('arrow_length', .3 / 4.8280888207)
     arrow_width         = kwargs.get('arrow_width', .005)
     arrow_head_width    = kwargs.get('arrow_head_width', .025)
@@ -79,6 +75,16 @@ def draw_interaction(sfos, mos, connections,
     level_width         = kwargs.get('level_width', .08)
     level_thickness     = kwargs.get('level_thickness', 3)
     highlight_thickness = kwargs.get('highlight_thickness', 2)
+
+    font_name           = kwargs.get('font_name', 'monospace')
+    font_size           = kwargs.get('font_size', 9)
+
+    draw_mo_labels      = kwargs.get('draw_mo_labels', False)
+    draw_sfo_labels     = kwargs.get('draw_sfo_labels', False)
+
+    alpha_range         = kwargs.get('alpha_range', (0.1, 1))
+
+
 
     if use_darkmode: 
         highlight_color = '#36B8FF'
@@ -169,7 +175,7 @@ def draw_interaction(sfos, mos, connections,
             deg_degree = len(orb_degenerate) + 1
             poss[orb] = base_pos + 1 / deg_degree * deg_idx
 
-    xtick_pos, xtick_label = [.5], ['Complex']
+    xtick_pos, xtick_label = [.5], [mo_column_name]
     for orb in poss:
         if orb not in sfos:
             continue

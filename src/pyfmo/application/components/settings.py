@@ -7,7 +7,9 @@ import platform
 
 
 class SettingSelectionWidget(QtWidgets.QFrame):
-    ...
+    default = None
+    def setDefault(self, val):
+        self.default = val
 
 
 class LineEditFileDialogWidget(QtWidgets.QLineEdit):
@@ -16,10 +18,10 @@ class LineEditFileDialogWidget(QtWidgets.QLineEdit):
         self.setReadOnly(True)
 
         icon = QtWidgets.QApplication.style().standardIcon(QtWidgets.QStyle.SP_DirIcon)
-        self.action = self.addAction(icon, QtWidgets.QLineEdit.TrailingPosition)
+        action = self.addAction(icon, QtWidgets.QLineEdit.TrailingPosition)
         self.filedialog_settings = filedialog_settings
         self.filetype = filetype
-        self.action.triggered.connect(self.select_file)
+        action.triggered.connect(self.select_file)
 
     def select_file(self):
         if self.filetype == 'filename':
@@ -32,7 +34,7 @@ class LineEditFileDialogWidget(QtWidgets.QLineEdit):
 
 
 class Path(SettingSelectionWidget):
-    def __init__(self, parent, default="", filetype=None):
+    def __init__(self, parent, filetype=None):
         super().__init__(parent)
         self.parent = parent
         self.layout = QtWidgets.QHBoxLayout(self)
@@ -43,8 +45,6 @@ class Path(SettingSelectionWidget):
         else:
             self._filelineedit = LineEditFileDialogWidget(self, filetype="existingdirectory", caption='Select AMS install location', dir=os.getcwd())
         self.layout.addWidget(self._filelineedit)
-        self.default = default
-        self.reset()
 
     def setValue(self, val):
         self._filelineedit.setText(val)
@@ -56,8 +56,81 @@ class Path(SettingSelectionWidget):
         self.setValue(self.default)
 
 
+class LineEditColorDialogWidget(QtWidgets.QLineEdit):
+    def __init__(self, parent=None):
+        super(LineEditColorDialogWidget, self).__init__(parent)
+
+        icon = QtWidgets.QApplication.instance()._ICONS['rgb']
+        action = self.addAction(icon, QtWidgets.QLineEdit.TrailingPosition)
+        action.triggered.connect(self.select_color)
+
+    def select_color(self):
+        curr_color = QtGui.QColor(self.text())
+        new_color = QtWidgets.QColorDialog.getColor(curr_color)
+        if not new_color.isValid():
+            return
+        self.setText(new_color.name())
+
+
+class Color(SettingSelectionWidget):
+    def __init__(self, parent):
+        super().__init__(parent)
+        self.parent = parent
+        self.layout = QtWidgets.QHBoxLayout(self)
+        self.setLayout(self.layout)
+        self._colorlineedit = LineEditColorDialogWidget()
+        self.layout.addWidget(self._colorlineedit)
+
+    def setValue(self, val):
+        self._colorlineedit.setText(val)
+
+    def value(self):
+        return self._colorlineedit.text()
+
+    def reset(self):
+        self.setValue(self.default)
+
+
+class String(SettingSelectionWidget):
+    def __init__(self, parent):
+        super().__init__(parent)
+        self.parent = parent
+        self.layout = QtWidgets.QHBoxLayout(self)
+        self.setLayout(self.layout)
+        self._lineedit = QtWidgets.QLineEdit()
+        self.layout.addWidget(self._lineedit)
+
+    def setValue(self, val):
+        self._lineedit.setText(val)
+
+    def value(self):
+        return self._lineedit.text()
+
+    def reset(self):
+        self.setValue(self.default)
+
+
+class CheckBox(SettingSelectionWidget):
+    def __init__(self, parent):
+        super().__init__(parent)
+        self.parent = parent
+        self.layout = QtWidgets.QHBoxLayout(self)
+        self.setLayout(self.layout)
+        self._checkbox = QtWidgets.QCheckBox()
+        self.layout.addWidget(self._checkbox)
+
+    def setValue(self, val):
+        self._checkbox.setChecked(val)
+
+    def value(self):
+        return self._checkbox.isChecked()
+
+    def reset(self):
+        self.setValue(self.default)
+
+
 class SpinBox(SettingSelectionWidget):
-    def __init__(self, parent, minval=0, maxval=1, stepsize=0.1, decimals=1, default=None):
+    def __init__(self, parent, minval=0, maxval=1, stepsize=0.1, decimals=1):
         super().__init__(parent)
         self.parent = parent
         self.layout = QtWidgets.QHBoxLayout(self)
@@ -68,8 +141,6 @@ class SpinBox(SettingSelectionWidget):
         self._spinbox.setSingleStep(stepsize)
         self._spinbox.setDecimals(decimals)
         self.layout.addWidget(self._spinbox)
-        self.default = default
-        self.reset()
 
     def setValue(self, val):
         self._spinbox.setValue(val)
@@ -84,7 +155,7 @@ class SpinBox(SettingSelectionWidget):
 
 
 class FloatLineEdit(SettingSelectionWidget):
-    def __init__(self, parent, default=None):
+    def __init__(self, parent):
         super().__init__(parent)
         self.parent = parent
         self.layout = QtWidgets.QHBoxLayout(self)
@@ -95,14 +166,35 @@ class FloatLineEdit(SettingSelectionWidget):
         # validator.setNotation(QtGui.QDoubleValidator.Notation.StandardNotation)
         # self._lineedit.setValidator(validator)
         self.layout.addWidget(self._lineedit)
-        self.default = default
-        self.reset()
 
     def setValue(self, val):
         self._lineedit.setText(str(val))
 
     def value(self):
-        print(self._lineedit.text())
+        return float(self._lineedit.text())
+
+    def reset(self):
+        if self.default is None:
+            return
+        self.setValue(self.default)
+
+class TupleLineEdit(SettingSelectionWidget):
+    def __init__(self, parent, ntuple=1):
+        super().__init__(parent)
+        self.parent = parent
+        self.layout = QtWidgets.QHBoxLayout(self)
+        self.setLayout(self.layout)
+
+        self._lineedit = QtWidgets.QLineEdit(self)
+        # validator = QtGui.QDoubleValidator()
+        # validator.setNotation(QtGui.QDoubleValidator.Notation.StandardNotation)
+        # self._lineedit.setValidator(validator)
+        self.layout.addWidget(self._lineedit)
+
+    def setValue(self, val):
+        self._lineedit.setText(str(val))
+
+    def value(self):
         return float(self._lineedit.text())
 
     def reset(self):
@@ -116,8 +208,11 @@ class SettingsTab(QtWidgets.QWidget):
         super().__init__(parent=parent)
         self.parent = parent
         self.layout = QtWidgets.QVBoxLayout(self)
+        self.layout.setSpacing(0)
+        self.layout.setContentsMargins(0, 0, 0, 0)
         self.get_funcs = {}
         self.set_funcs = {}
+        self.set_default_funcs = {}
         self.reset_funcs = {}
 
     def __enter__(self):
@@ -127,20 +222,7 @@ class SettingsTab(QtWidgets.QWidget):
         self.layout.addStretch()        
         pass
 
-    def add_float_setting(self, 
-            variable_name, 
-            name, 
-            default, 
-            minval=0, 
-            maxval=1, 
-            stepsize=0.01,
-            decimals=4,
-            use_spinbox=False):
-        if use_spinbox:
-            setting_widget = SpinBox(self, minval, maxval, stepsize, decimals, default=default)
-        else:
-            setting_widget = FloatLineEdit(self, default)
-
+    def _add_generic_setting(self, name, variable_name, setting_widget):
         reset_btn = QtWidgets.QPushButton(self)
         reset_btn.clicked.connect(setting_widget.reset)
         if QtWidgets.QApplication.instance().isDarkMode:
@@ -151,6 +233,7 @@ class SettingsTab(QtWidgets.QWidget):
         self.get_funcs[variable_name] = setting_widget.value
         self.set_funcs[variable_name] = setting_widget.setValue
         self.reset_funcs[variable_name] = setting_widget.reset
+        self.set_default_funcs[variable_name] = setting_widget.setDefault
 
         layout = QtWidgets.QHBoxLayout(self)
         layout.addWidget(QtWidgets.QLabel(name))
@@ -163,32 +246,43 @@ class SettingsTab(QtWidgets.QWidget):
         frame.setLayout(layout)
         self.layout.addWidget(frame)
 
+    def add_float_setting(self, 
+            variable_name, 
+            name,
+            minval=0, 
+            maxval=1, 
+            stepsize=0.01,
+            decimals=4,
+            use_spinbox=False):
+        if use_spinbox:
+            setting_widget = SpinBox(self, minval, maxval, stepsize, decimals)
+        else:
+            setting_widget = FloatLineEdit(self)
+        self._add_generic_setting(name, variable_name, setting_widget)
+
     def add_path_setting(self, 
             variable_name, 
-            name, 
-            default=""):
-        p = Path(self, default=default)
-        reset_btn = QtWidgets.QPushButton(self)
-        reset_btn.clicked.connect(p.reset)
-        if QtWidgets.QApplication.instance().isDarkMode:
-            reset_btn.setIcon(QtWidgets.QApplication.instance()._ICONS['reset_dark'])
-        else:
-            reset_btn.setIcon(QtWidgets.QApplication.instance()._ICONS['reset'])
+            name):
+        setting_widget = Path(self)
+        self._add_generic_setting(name, variable_name, setting_widget)
 
-        self.get_funcs[variable_name] = p.value
-        self.set_funcs[variable_name] = p.setValue
-        self.reset_funcs[variable_name] = p.reset
+    def add_bool_setting(self, 
+            variable_name, 
+            name,):
+        setting_widget = CheckBox(self)
+        self._add_generic_setting(name, variable_name, setting_widget)
 
-        layout = QtWidgets.QHBoxLayout(self)
-        layout.addWidget(QtWidgets.QLabel(name))
-        layout.addWidget(p)
-        layout.addWidget(reset_btn)
-        layout.setStretch(0, 1)
-        layout.setStretch(1, 0)
-        layout.setStretch(2, 0)
-        frame = QtWidgets.QFrame(self)
-        frame.setLayout(layout)
-        self.layout.addWidget(frame)
+    def add_color_setting(self, 
+            variable_name, 
+            name,):
+        setting_widget = Color(self)
+        self._add_generic_setting(name, variable_name, setting_widget)
+
+    def add_str_setting(self, 
+            variable_name, 
+            name,):
+        setting_widget = String(self)
+        self._add_generic_setting(name, variable_name, setting_widget)
 
     def reset(self):
         for reset in self.reset_funcs.values():
@@ -319,35 +413,34 @@ class SettingsDialog(QtWidgets.QDialog):
 
         with self.add_section('Densf') as section:
             with section.add_tab('General') as tab:
-                default = ""
-                if 'AMSBIN' in os.environ:
-                    if '.app' in os.environ['AMSBIN']:
-                        default = os.environ['AMSBIN'].split('.app')[0] + '.app'
-
-                tab.add_path_setting("amsbin", "AMS Application", default)
+                tab.add_path_setting("amsbin", "AMS Application")
 
         with self.add_section('Plot') as section:
             with section.add_tab('Arrows') as tab:
-                tab.add_float_setting("arrow_length", 'Length', round(.3 / 4.8280888207, 3))
-                tab.add_float_setting("arrow_thickness", 'Thickness', .35)
-                tab.add_float_setting("arrow_width", 'Width', .005)
-                tab.add_float_setting("arrow_head_width", 'Head Width', .025)
-                tab.add_float_setting("arrow_head_length", 'Head Length', round(.1 / 4.8280888207, 3))
-                tab.add_float_setting("arrow_overhang", 'Overhang', .4)
-                tab.add_float_setting("arrow_spacing", 'Spacing', .012)   
+                tab.add_float_setting("arrow_length", 'Length')
+                tab.add_float_setting("arrow_width", 'Width')
+                tab.add_float_setting("arrow_head_width", 'Head Width')
+                tab.add_float_setting("arrow_head_length", 'Head Length')
+                tab.add_float_setting("arrow_spacing", 'Spacing')
+                tab.add_color_setting("arrow_color", 'Color')
 
             with section.add_tab('Labels') as tab:
-                ...
+                tab.add_bool_setting("draw_mo_labels", 'Show MO Labels')
+                tab.add_bool_setting("draw_sfo_labels", 'Show FMO Labels')
 
             with section.add_tab('Levels') as tab:
-                tab.layout.addWidget(QtWidgets.QLabel('tab Special'))
-
-                # "level_width"
-                # "level_thickness"
-                # "highlight_thickness"
+                tab.add_float_setting("level_width", 'Width')
+                tab.add_float_setting("level_thickness", 'Thickness')
+                tab.add_float_setting("highlight_thickness", 'Highlight Thickness')
+                tab.add_str_setting("mo_column_name", 'MO Column Name')
 
             with section.add_tab('Connections') as tab:
-                tab.layout.addWidget(QtWidgets.QLabel('tab Special'))
+                tab.add_color_setting("OI_color", 'Orbital Interactions Color')
+                tab.add_color_setting("PR_color", 'Pauli Repulsion Color')
+                tab.add_color_setting("Sanitization_color", 'Sanitization Color')
+                tab.add_color_setting("Multiple_color", 'Multiple Color')
+                ...
+                # tab.add_tuple_setting("alpha_range", 'Alpha Range', (0.1, 1.0))
 
         with self.add_section('Algorithm') as section:
             with section.add_tab('General') as tab:
@@ -357,6 +450,8 @@ class SettingsDialog(QtWidgets.QDialog):
             with section.add_tab('Grid') as tab:
                 tab.layout.addWidget(QtWidgets.QLabel('Grid Quality'))
 
+        self.load_defaults()
+        self.reset()
         self.load_state()
 
     def reset(self):
@@ -373,6 +468,7 @@ class SettingsDialog(QtWidgets.QDialog):
 
     def reject(self):
         self.set_state(self._old_state)
+        self.settingsChanged.emit()
         super().reject()
 
     def get_state(self):
@@ -393,6 +489,9 @@ class SettingsDialog(QtWidgets.QDialog):
     def get(self, section, tab, variable):
         return self.get_state()[section][tab][variable]
 
+    def set(self, section, tab, variable, value):
+        return self.sections[section].tabs[tab].set_funcs[variable](value)
+
     def set_state(self, state):
         for section_name, section_state in state.items():
             self.sections[section_name].set_state(section_state)
@@ -401,11 +500,10 @@ class SettingsDialog(QtWidgets.QDialog):
         d = platformdirs.user_config_dir('PyOrbb', 'TheoCheM', ensure_exists=True)
         with open(os.path.join(d, 'settings.json'), 'w+') as jf:
             state = self.get_state()
-            jf.write(json.dumps(state))
+            jf.write(json.dumps(state, indent=4))
 
     def load_state(self):
         d = platformdirs.user_config_dir('PyOrbb', 'TheoCheM', ensure_exists=True)
-        print(d)
         if not os.path.exists(os.path.join(d, 'settings.json')):
             return
 
@@ -415,6 +513,26 @@ class SettingsDialog(QtWidgets.QDialog):
             except:
                 raise
                 self.reset()
+
+    def load_defaults(self):
+        d = platformdirs.user_config_dir('PyOrbb', 'TheoCheM', ensure_exists=True)
+        if not os.path.exists(os.path.join(d, 'default_settings.json')):
+            return
+
+        with open(os.path.join(d, 'default_settings.json')) as jf:
+            defaults = json.loads(jf.read())
+
+        for section_name, section in self.sections.items():
+            if section_name not in defaults:
+                continue
+
+            for tab_name, tab in section.tabs.items():
+                if tab_name not in defaults[section_name]:
+                    continue
+
+                for variable_name, func in tab.set_default_funcs.items():
+                    val = defaults[section_name][tab_name].get(variable_name, None)
+                    func(val)
 
     def exec(self):
         self._old_state = self.get_state()
