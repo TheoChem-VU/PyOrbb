@@ -119,18 +119,11 @@ def _get_calc_info(reader: plams.KFReader) -> dict:
     ret.set('unrestricted_mos', (ret['symlabels'][0], 'eps_B') in reader)
     ret.set('mo_spins', ['A', 'B'] if ret['unrestricted_mos'] else ['AB'])
 
-    # determine if the calculation used regions or not
-    ret.set('used_regions', reader.read('Geometry', 'nr of fragments') != reader.read('Geometry', 'nr of atoms'))
-    ret.set('fragments', reader.read('Geometry', 'fragmenttype').split())
-    if not ret['used_regions']:
-        natom = reader.read('Geometry', 'nr of atoms')
-        frags = np.array(ret['fragments'])
-        frag_atom_index = np.array(reader.read('Geometry', 'fragment and atomtype index'))
-        frag_atom_index = frag_atom_index[len(frag_atom_index)//2:] - 1
-        atom_types = np.array(reader.read('Geometry', 'atomtype').split())
+    frag_data = fragments.get_fragments_data(reader)
 
-        fragments = list(set([f'{atom_types[typ]}:{idx+1}' for idx, typ in enumerate(frag_atom_index)]))
-        ret.set('fragments', fragments)
+    # determine if the calculation used regions or not
+    ret.set('used_regions', not frag_data['used_atomic_fragments'])
+    ret.set('fragments', frag_data['fragment_names'])
 
     # determine the spin polarization of the complex and fragments
     # if we were given fragoccupations we use those
@@ -323,9 +316,9 @@ def read_data(reader: plams.KFReader, SCF0_reader: plams.KFReader = None, output
     molecules['complex'] = ret['fragment_data']['complex_molecule']
     ret.set('molecules', molecules)
 
-    # if we used atomic basis we always have zero spinpol
-    for frag in ret['fragment_data']['fragment_names']:
-        ret['calc_info']['sfo_spinpolarizations'][frag] = {}
+    # # if we used atomic basis we always have zero spinpol
+    # for frag in ret['fragment_data']['fragment_names']:
+    #     ret['calc_info']['sfo_spinpolarizations'][frag] = {}
 
 
     ret.set('SFOs', 'number', reader.read('SFOs', 'number'))
