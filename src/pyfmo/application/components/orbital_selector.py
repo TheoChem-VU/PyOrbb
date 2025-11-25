@@ -10,6 +10,12 @@ class OrbitalSelectionState:
         self.orbs = orbs
         self.reset()
 
+    def rename(self, old, new):
+        self.orbitals[new] = self.orbitals.pop(old)
+        self.spins[new] = self.spins.pop(old)
+        self.irreps[new] = self.irreps.pop(old)
+        self.select_all_buttons[new] = self.select_all_buttons.pop(old)
+
     def reset(self):
         # to indicate MOs we use the mos object as the key
         self.orbitals = {self.orbs.mos: {}}
@@ -463,9 +469,9 @@ class OrbitalSelectionDialog(QtWidgets.QDialog):
         layout.addWidget(self.tabs, 1, 0, 1, 3)
         self.tab_indices = {}
         # add a tab for the MOs
-        self.tab_stor = {orbs.mos: OrbitalSelectionTab(self, orbs.mos.orbitals, orbs.mos)}
+        self.tab_stor = {'Complex': OrbitalSelectionTab(self, orbs.mos.orbitals, orbs.mos)}
 
-        self.addTab(self.tab_stor[orbs.mos], self.parent.parent._ICONS['mo'], "Complex")
+        self.addTab(self.tab_stor['Complex'], self.parent.parent._ICONS['mo'], "Complex")
         self.tab_indices["Complex"] = 0
 
         # and for each fragment
@@ -490,11 +496,15 @@ class OrbitalSelectionDialog(QtWidgets.QDialog):
         btn = TabButton(self, text)
         self.tabs.tabBar().setTabButton(index, QtWidgets.QTabBar.RightSide, btn)
 
-    def renameTab(self, old_name, new_name):
+    def rename(self, old_name, new_name):
         index = self.tab_indices.pop(old_name)
         new_btn = TabButton(self, new_name)
         self.tabs.tabBar().setTabButton(index, QtWidgets.QTabBar.RightSide, new_btn)
         self.tab_indices[new_name] = index
+        self.tab_stor[new_name] = self.tab_stor.pop(old_name)
+        if isinstance(self.tab_stor[new_name].state_key, str):
+            self.tab_stor[new_name].state_key = new_name
+            self.state.rename(old_name, new_name)
 
     def reset(self, tab=None):
         self.state.reset()
