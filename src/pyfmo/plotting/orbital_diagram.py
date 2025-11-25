@@ -80,10 +80,11 @@ def draw_interaction(sfos, mos, connections,
     font_size           = kwargs.get('font_size', 9)
 
     draw_mo_labels      = kwargs.get('draw_mo_labels', False)
-    draw_sfo_labels     = kwargs.get('draw_sfo_labels', False)
+    draw_sfo_labels     = kwargs.get('draw_sfo_labels', True)
 
     alpha_range         = kwargs.get('alpha_range', (0.1, 1))
 
+    degeneracy_threshold = kwargs.get('degeneracy_threshold', 0.15)
 
 
     if use_darkmode: 
@@ -102,15 +103,15 @@ def draw_interaction(sfos, mos, connections,
         axis_label_color = 'black'
         spine_color = 'k'
 
-    if draw_mo_labels:
-        degenerate_mo_threshold = .15
-    else:
-        degenerate_mo_threshold = .008
+    # if draw_mo_labels:
+    #     degeneracy_threshold = degeneracy_threshold
+    # else:
+    #     degeneracy_threshold = .008
 
-    if draw_sfo_labels:
-        degenerate_sfo_threshold = .15
-    else:
-        degenerate_sfo_threshold = .008
+    # if draw_sfo_labels:
+    #     degeneracy_threshold = degeneracy_threshold
+    # else:
+    #     degeneracy_threshold = .008
 
     if highlighted_orbitals is None:
         highlighted_orbitals = []
@@ -132,7 +133,7 @@ def draw_interaction(sfos, mos, connections,
         ax.set_ylim(*ylim, auto=False)
 
 
-    frags = sorted(set(sfo.fragment for sfo in sfos))
+    frags = sfos[0].parent.parent.fragments
     ax.set_xlim(-1, len(frags), auto=False)
     sep_orbs = {frag: [sfo for sfo in sfos if sfo.fragment == frag] for frag in frags}
     sep_orbs['mo'] = mos
@@ -161,12 +162,12 @@ def draw_interaction(sfos, mos, connections,
                 if orb in sfos:
                     E1, E2 = getattr(orb, energy_type), getattr(other_orb, energy_type)
 
-                if isinstance(orb, pyfmo.orbitals.objects.MO):
-                    if abs(E1 - E2) < (degenerate_mo_threshold * energy_span):
-                        degenerates[-1].append(other_orb)
-                else:
-                    if abs(E1 - E2) < (degenerate_sfo_threshold * energy_span):
-                        degenerates[-1].append(other_orb)
+                # if isinstance(orb, pyfmo.orbitals.objects.MO):
+                #     if abs(E1 - E2) < (degeneracy_threshold * energy_span):
+                #         degenerates[-1].append(other_orb)
+                # else:
+                if abs(E1 - E2) < (degeneracy_threshold * energy_span):
+                    degenerates[-1].append(other_orb)
 
         degenerates = [list(sorted(deg, key=lambda orb: orb.energy)) for deg in degenerates]
         for orb in sep_orbs_:
