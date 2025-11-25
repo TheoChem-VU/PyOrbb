@@ -923,11 +923,30 @@ class OrbitalSelector:
                 decoded['spin'] = 'AB'
             return {k: v for k, v in decoded.items() if v is not None}
 
+        # in case we have a SFO we need a fragment name
+        sfo_relname_regex = re.compile(r'(.+)\(((?:HOMO|SOMO|LUMO|SOMO)(?:[+-]\d+)?)(_[AB])?\)')
+        sfo_relname_regex_result = sfo_relname_regex.findall(key)
+        if sfo_relname_regex_result != []:
+            decoded['fragment'], decoded['orbname'], decoded['spin'] = sfo_relname_regex_result[0]
+            if decoded['spin'] == '':
+                decoded['spin'] = 'AB'
+            return {k: v for k, v in decoded.items() if v is not None}
+
         # if the SFO regex fails we try the MO regex
         mo_regex = re.compile(r'(\d+[^_]+)_?([AB]?)')
         mo_regex_result = mo_regex.findall(key)
         if mo_regex_result != []:
             decoded['orbname'], decoded['spin'] = mo_regex_result[0]
+            if decoded['spin'] == '':
+                decoded['spin'] = 'AB'
+
+            return {k: v for k, v in decoded.items() if v is not None}
+
+        # if the SFO regex fails we try the MO regex
+        mo_relname_regex = re.compile(r'((?:HOMO|SOMO|LUMO|SOMO)(?:[+-]\d+)?)(_[AB])?')
+        mo_relname_regex_result = mo_relname_regex.findall(key)
+        if mo_relname_regex_result != []:
+            decoded['orbname'], decoded['spin'] = mo_relname_regex_result[0]
             if decoded['spin'] == '':
                 decoded['spin'] = 'AB'
 
