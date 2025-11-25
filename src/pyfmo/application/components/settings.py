@@ -178,24 +178,25 @@ class FloatLineEdit(SettingSelectionWidget):
             return
         self.setValue(self.default)
 
-class TupleLineEdit(SettingSelectionWidget):
-    def __init__(self, parent, ntuple=1):
+
+class FloatTuple(SettingSelectionWidget):
+    def __init__(self, parent, nfloats=None):
         super().__init__(parent)
         self.parent = parent
         self.layout = QtWidgets.QHBoxLayout(self)
         self.setLayout(self.layout)
 
-        self._lineedit = QtWidgets.QLineEdit(self)
-        # validator = QtGui.QDoubleValidator()
-        # validator.setNotation(QtGui.QDoubleValidator.Notation.StandardNotation)
-        # self._lineedit.setValidator(validator)
-        self.layout.addWidget(self._lineedit)
+        self._lineedits = []
+        for i in range(nfloats):
+            le = QtWidgets.QLineEdit(self)
+            self._lineedits.append(le)
+            self.layout.addWidget(le)
 
     def setValue(self, val):
-        self._lineedit.setText(str(val))
+        [self._lineedits[i].setText(str(val[i])) for i in range(len(self._lineedits))]
 
     def value(self):
-        return float(self._lineedit.text())
+        return [float(self._lineedits[i].text()) for i in range(len(self._lineedits))]
 
     def reset(self):
         if self.default is None:
@@ -258,6 +259,13 @@ class SettingsTab(QtWidgets.QWidget):
             setting_widget = SpinBox(self, minval, maxval, stepsize, decimals)
         else:
             setting_widget = FloatLineEdit(self)
+        self._add_generic_setting(name, variable_name, setting_widget)
+
+    def add_float_tuple_setting(self, 
+            variable_name, 
+            name,
+            nfloats=None):
+        setting_widget = FloatTuple(self, nfloats)
         self._add_generic_setting(name, variable_name, setting_widget)
 
     def add_path_setting(self, 
@@ -439,8 +447,7 @@ class SettingsDialog(QtWidgets.QDialog):
                 tab.add_color_setting("PR_color", 'Pauli Repulsion Color')
                 tab.add_color_setting("Sanitization_color", 'Sanitization Color')
                 tab.add_color_setting("Multiple_color", 'Multiple Color')
-                ...
-                # tab.add_tuple_setting("alpha_range", 'Alpha Range', (0.1, 1.0))
+                tab.add_float_tuple_setting("alpha_range", 'Alpha Range', 2)
 
         with self.add_section('Algorithm') as section:
             with section.add_tab('General') as tab:
