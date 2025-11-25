@@ -30,7 +30,7 @@ def mol2xyz(mol):
     return s
 
 
-def _determine_charges(orbs):
+def _determine_formal_charges(orbs):
     # build up the effective charges of the atoms
     # this takes into account the atom number and number of frozen core electrons
     atomtypes = orbs.reader.read('Geometry', 'atomtype').split()
@@ -51,8 +51,35 @@ def _determine_charges(orbs):
         # we need the atoms in the molecule
         mol = sfos[0].molecule
         expected_Nelectrons = sum(atomtype_charges[atom.symbol] for atom in mol)
-        actual_Nelectrons = int(sum(sfo.occupation for sfo in sfos))
+        actual_Nelectrons = round(sum(sfo.occupation for sfo in sfos))
         charges[frag] = expected_Nelectrons - actual_Nelectrons
+        
+    charges['Complex'] = sum(charges.values())
+    return charges
+
+def _determine_vdd_charges(orbs):
+    # build up the effective charges of the atoms
+    # this takes into account the atom number and number of frozen core electrons
+    atomtypes = np.atleast_1d(orbs.reader.read('Geometry', 'atomtype').split())
+    vdd_charges = np.atleast_1d(orbs.reader.read('Properties', 'AtomCharge_SCF Voronoi')) - np.atleast_1d(orbs.reader.read('Properties', 'AtomCharge_initial Voronoi'))
+
+    def get_atom_indices(mol):
+        complex_mol = orbs.data['molecules']['complex']
+        atomtype_order = np.atleast_1d(orbs.reader.read('Geometry', 'atom order index'))
+        atomtype_order = atomtype_order[len(atomtype_order)//2:]
+        indices = []
+        for atom in mol:
+            for i, atom_ref in enumerate(complex_mol):
+                if atom.coords == atom_ref.coords:
+                    indices.append(atomtype_order[i] - 1)
+        return indices
+
+    # calculate the charges for the fragments and the complex
+    charges = {}
+    for frag in orbs.fragments:
+        mol = orbs.data['molecules'][frag]
+        indices = get_atom_indices(mol)
+        charges[frag] = sum(vdd_charges[i] for i in indices)
         
     charges['Complex'] = sum(charges.values())
     return charges
@@ -267,7 +294,7 @@ class ETypeDialog(QtWidgets.QDialog):
                 self.rbuttons[pos].setChecked(True)
             rbtn_layout.addWidget(self.rbuttons[pos], i, 0, 1, 1)
 
-        if any(charge != 0 for charge in _determine_charges(self.parent.orbs).values()):
+        if any(charge != 0 for charge in _determine_formal_charges(self.parent.orbs).values()):
             rbtn_layout.addWidget(QtWidgets.QLabel(f'\n<i><b>Note:</b>\nEffective energies are recommended for charged fragments!</i>'), i+1, 0, 1, 0)
 
         # layout.addWidget(self._frag_rename_textedit, 1, 0, 1, 2)
@@ -595,7 +622,6 @@ class MplCanvas(FigureCanvas):
             label = QtWidgets.QLabel(s)
             label.setStyleSheet('padding: 3px; font: 10px "IBM Plex Mono"')
             self.parent.orbital_info_box.addSpoiler(title, label, icon)
-        # self.parent.orbital_info_box.layout.addStretch(1)
 
 
     def on_plot_click(self, event):
@@ -607,23 +633,23 @@ class MplCanvas(FigureCanvas):
                 self.parent.ylim = self._yaxis_dialog.open(self.axes.get_ylim())
                 self.parent._update_plot()
 
-            self.parent.new_tick_labels = []
+            # self.parent.new_tick_labels = []
             for artist in self.axes.get_xticklabels():
                 if not artist.contains(event)[0]:
-                    self.parent.new_tick_labels.append(artist.get_text())
+                    # self.parent.new_tick_labels.append(artist.get_text())
                     continue
                 new_txt = self._frag_rename_dialog.open(artist.get_text())
 
                 self.parent.system_info_box.renameSpoiler(artist.get_text(), new_txt)
-                self.parent._orb_selection_dialog.renameTab(artist.get_text(), new_txt)
+                self.parent._orb_selection_dialog.rename(artist.get_text(), new_txt)
                 self.parent.orbs.rename_fragment(artist.get_text(), new_txt)
-                self.parent.new_tick_labels.append(new_txt)
 
                 if artist.is_MO:
                     self.parent.parent.settings_dialog.set('Plot', 'Levels', 'mo_column_name', new_txt)
 
                 # self.parent._orb_selection_dialog.rename(artist.get_text(), new_txt)
                 # self.parent.new_tick_labels.append(new_txt)
+
             # self.axes.set_xticklabels(self.parent.new_tick_labels)
             self.parent._update_plot()
             self.fig.canvas.draw_idle()
@@ -1209,7 +1235,7 @@ class AnalysisWindow(QtWidgets.QWidget):
             self._new_page_frame.hide()
             self.central_layout.removeWidget(self._new_page_frame)
 
-        is_charged = any(charge != 0 for charge in _determine_charges(self.orbs).values())
+        is_charged = any(charge != 0 for charge in _determine_formal_charges(self.orbs).values())
         if is_charged and 'site_energy' not in self.orbs.sfo_energy_types:
             QtWidgets.QMessageBox.warning(self, "Warning", "WARNING\nYou have charged fragments but the effective energies are not available!\n\n Rerun your calculation with SFOSiteEnergies or FMatSFO enabled.");
         
@@ -1560,7 +1586,6 @@ class AnalysisWindow(QtWidgets.QWidget):
         self._loaded_analysis = True
         self.parent.settings_dialog.settingsChanged.connect(self._update_plot)
 
-
     def _get_general_system_info(self):
         frame = QtWidgets.QFrame()
         frame.setStyleSheet('QLabel{padding: 2px; font: 10pt} QPushButton{icon-size: 10px;}')
@@ -1622,7 +1647,7 @@ class AnalysisWindow(QtWidgets.QWidget):
         layout = QtWidgets.QGridLayout()
         frame.setLayout(layout)
 
-        charges = _determine_charges(self.orbs)
+        charges = _determine_formal_charges(self.orbs)
         unrestricted_mos = self.orbs.data['calc_info']['unrestricted_mos']
 
         all_spin_pols = self.orbs.data['calc_info']['sfo_spinpolarizations']
@@ -1667,17 +1692,12 @@ class AnalysisWindow(QtWidgets.QWidget):
         frame.setLayout(layout)
 
         sfos = self.orbs.sfos.filter(fragment=frag)
-        charges = _determine_charges(self.orbs)
+        charges = _determine_formal_charges(self.orbs)
+        vdd_charges = _determine_vdd_charges(self.orbs)
         unrestricted_sfos = self.orbs.data['calc_info']['unrestricted_sfos']
 
         row = 0
         layout.addWidget(CopyLabel('<b>Geometry (xyz)</b>', mol2xyz(sfos[0].molecule)), row, 0, 1, 2)
-
-        row += 1
-        layout.addWidget(QtWidgets.QLabel('<b>Charge</b>'), row, 0, 1, 1)
-        label = QtWidgets.QLabel(f'{round(charges[frag]):+d}')
-        label.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
-        layout.addWidget(label, row, 1, 1, 1)
 
         row += 1
         layout.addWidget(QtWidgets.QLabel('<b>Restricted</b>'), row, 0, 1, 1)
@@ -1685,10 +1705,13 @@ class AnalysisWindow(QtWidgets.QWidget):
         label.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
         layout.addWidget(label, row, 1, 1, 1)
 
+        print(self.orbs.data['calc_info']['sfo_spinpolarizations'])
         frag_spin_pols = self.orbs.data['calc_info']['sfo_spinpolarizations'][frag]
+        print(frag_spin_pols)
         total_spin_pols = 0
         for irrep, spin_pols in frag_spin_pols.items():
             total_spin_pols += spin_pols[0] - spin_pols[1]
+            print(irrep, spin_pols)
 
             row += 1
             layout.addWidget(QtWidgets.QLabel(f'<b>Spin-Polarization ({pyfmo.translate_irrep_label(irrep, mode="html")})</b>'), row, 0, 1, 1)
@@ -1704,7 +1727,26 @@ class AnalysisWindow(QtWidgets.QWidget):
 
         row += 1
         layout.addWidget(QtWidgets.QLabel('<b>Nº Electrons</b>'), row, 0, 1, 1)
-        label = QtWidgets.QLabel(str(round(sum(sfo.occupation for sfo in sfos))))
+        occ = sum(sfo.occupation for sfo in sfos)
+        label = QtWidgets.QLabel(str(round(occ)))
+        label.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
+        layout.addWidget(label, row, 1, 1, 1)
+
+        row += 1
+        layout.addWidget(QtWidgets.QLabel('<b>Formal Charge</b>'), row, 0, 1, 1)
+        label = QtWidgets.QLabel(f'{round(charges[frag]):+d}')
+        label.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
+        layout.addWidget(label, row, 1, 1, 1)
+
+        row += 1
+        layout.addWidget(QtWidgets.QLabel('<b>Mulliken Charge</b>'), row, 0, 1, 1)
+        label = QtWidgets.QLabel(f'{occ - sum(sfo.gross_population for sfo in sfos):+.3f}')
+        label.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
+        layout.addWidget(label, row, 1, 1, 1)
+
+        row += 1
+        layout.addWidget(QtWidgets.QLabel('<b>VDD Charge</b>'), row, 0, 1, 1)
+        label = QtWidgets.QLabel(f'{vdd_charges[frag]:+.3f}')
         label.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
         layout.addWidget(label, row, 1, 1, 1)
 
