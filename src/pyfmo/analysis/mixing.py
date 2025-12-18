@@ -10,6 +10,7 @@ warnings.filterwarnings('ignore')
 
 ensure_list = lambda x: [x] if not isinstance(x, (list, tuple, set)) else list(x)  # noqa: E731
 
+INTERACTION_COLORS = {'OI': '#00FF00', 'PR': '#FF0000', 'Sanitization': '#FF00FF', 'Multiple': '#000000'}
 
 class Mixer2:
     def __init__(self, orbs: pyfmo.Orbitals or str, pr_min_thresh=1e-3, oi_min_thresh=1e-7):
@@ -458,7 +459,7 @@ class Mixer:
                         break
                     stab = frac * self.oi_ref
 
-                    col = {conn: 'g' for conn in list(it.product([sfo1, sfo2], [occ_mo, virt_mo]))}
+                    col = {conn: INTERACTION_COLORS['OI'] for conn in list(it.product([sfo1, sfo2], [occ_mo, virt_mo]))}
                     mix = Mixing(self.orbs, [occ_mo, virt_mo], [sfo1, sfo2], stab, frac, connection_colors=col)
                     ret.append(mix)
                     j += 1
@@ -504,7 +505,7 @@ class Mixer:
                         break
                     stab = frac * self.pauli_ref
 
-                    col = {conn: 'r' for conn in list(it.product([sfo1, sfo2], [occ_mo1, occ_mo2]))}
+                    col = {conn: INTERACTION_COLORS['PR'] for conn in list(it.product([sfo1, sfo2], [occ_mo1, occ_mo2]))}
                     mix = Mixing(self.orbs, [occ_mo1, occ_mo2], [sfo1, sfo2], stab, frac, connection_colors=col)
                     ret.append(mix)
                     j += 1
@@ -529,7 +530,7 @@ class Mixing:
         if connections is None:
             self.connections = list(it.product(self.sfos, self.mos))
         if connection_colors is None:
-            self.connection_colors = {conn: 'k' for conn in self.connections}
+            self.connection_colors = {conn: INTERACTION_COLORS['Multiple'] for conn in self.connections}
         if isinstance(connection_colors, str):
             self.connection_colors = {conn: connection_colors for conn in self.connections}
 
@@ -569,7 +570,7 @@ class Mixing:
                 return False
         return True
 
-    def add_mo(self, mo, color='purple', connections=None):
+    def add_mo(self, mo, color=INTERACTION_COLORS['Sanitization'], connections=None):
         '''
         Add an MO to this mixing diagram. 
         '''
@@ -585,7 +586,7 @@ class Mixing:
                 self.connection_colors[conn] = color
 
 
-    def add_sfo(self, sfo, color='purple', connections=None):
+    def add_sfo(self, sfo, color=INTERACTION_COLORS['Sanitization'], connections=None):
         '''
         Add an SFO to this mixing diagram. 
         '''
@@ -664,7 +665,7 @@ class Mixing:
                 if col == self.connection_colors[conn]:
                     continue
                 else:
-                    self.connection_colors[conn] = 'k'
+                    self.connection_colors[conn] = INTERACTION_COLORS['Multiple']
             else:
                 self.connection_colors[conn] = col
 
