@@ -1333,21 +1333,30 @@ class AnalysisWindow(QtWidgets.QWidget):
         self._analysis_page_frame = QtWidgets.QFrame(self)
         self.central_layout.addWidget(self._analysis_page_frame)
         layout = QtWidgets.QGridLayout(self._analysis_page_frame)
+
         plot_container_layout = QtWidgets.QVBoxLayout()
-        plot_container = QtWidgets.QFrame()
-        plot_container.setLayout(plot_container_layout)
-        plot_container.resize(700, 500)
+        plot_container = QtWidgets.QSplitter()
+        plot_container.setStyleSheet("QSplitter::handle { border: 2px black; }")
+        plot_container.setHandleWidth(10)
+        plot_container.setOpaqueResize(True)
+        plot_container.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+        # plot_container.setLayout(plot_container_layout)
+        # plot_container.resize(700, 500)
 
         self.plot = MplCanvas(self)
-        # self.plot.setFocusPolicy(QtCore.Qt.ClickFocus)
+        plot_frame = QtWidgets.QFrame()
+        plot_frame_layout = QtWidgets.QVBoxLayout()
+        plot_frame.setLayout(plot_frame_layout)
+        plot_frame_layout.addWidget(self.plot)
+        self.plot.setMinimumSize(300, 300)
+
         self.plot.setFocus()
         if self.parent.isDarkMode:
-            plot_container.setStyleSheet('QFrame{padding: 0px; margin: 0px; border: 1px solid darkgray; border-radius: 5px; background-color: white;} QDialog{padding: 0px; margin: 0px; border: 1px solid darkgray; border-radius: 5px; background-color: none;} QLabel{padding: 0px; margin: 0px; border: none; border-radius: 5px; background-color: none;}')
+            plot_frame.setStyleSheet('QFrame{padding: 0px; margin: 0px; border: 1px solid darkgray; border-radius: 5px; background-color: white;} QDialog{padding: 0px; margin: 0px; border: 1px solid darkgray; border-radius: 5px; background-color: none;} QLabel{padding: 0px; margin: 0px; border: none; border-radius: 5px; background-color: none;}')
         else:
-            plot_container.setStyleSheet('QFrame{padding: 0px; margin: 0px; border: 1px solid lightgray; border-radius: 5px; background-color: white;} QDialog{padding: 0px; margin: 0px; border: 1px solid lightgray; border-radius: 5px; background-color: white;} QLabel{padding: 0px; margin: 0px; border: none; border-radius: 5px; background-color: none;}')
-        plot_container_layout.addWidget(self.plot)
-        layout.addWidget(plot_container, 0, 0, 1, 1, QtCore.Qt.AlignCenter)
-
+            plot_frame.setStyleSheet('QFrame{padding: 0px; margin: 0px; border: 1px solid lightgray; border-radius: 5px; background-color: white;} QDialog{padding: 0px; margin: 0px; border: 1px solid lightgray; border-radius: 5px; background-color: white;} QLabel{padding: 0px; margin: 0px; border: none; border-radius: 5px; background-color: none;}')
+        plot_container.addWidget(plot_frame)
+        layout.addWidget(plot_container, 0, 0, 1, 2)
 
         self.info_tabs = QtWidgets.QTabWidget()
         if self.parent.isDarkMode:
@@ -1433,7 +1442,7 @@ class AnalysisWindow(QtWidgets.QWidget):
         orbital_info_frame.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
 
         self.orbital_info_box = Spoilers(self)
-        orbital_info_layout.addWidget(self.orbital_info_box, 1, 0, 1, 2)
+        # orbital_info_layout.addWidget(self.orbital_info_box, 1, 0, 1, 2)
 
         orbital_info_layout.addWidget(QtWidgets.QLabel('<i>Use</i> <b>Shift + Click</b> <i>to select multiple orbitals!</i>'), 0, 0, 1, 2)
         orbital_info_layout.addWidget(self.orbital_info_box, 1, 0, 1, 2)
@@ -1452,7 +1461,7 @@ class AnalysisWindow(QtWidgets.QWidget):
         self.info_tabs.addTab(self.system_info_box, 'System')
         self.info_tabs.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
 
-        layout.addWidget(self.info_tabs, 0, 1)
+        plot_container.addWidget(self.info_tabs)
 
         slider_layout = QtWidgets.QGridLayout()
         slider_box = QtWidgets.QFrame()
@@ -1644,6 +1653,16 @@ class AnalysisWindow(QtWidgets.QWidget):
         selector_layout.addWidget(self.orbital_draw_button, 0, 0)
         selector_layout.addWidget(self.orbital_filter_button, 0, 1)
 
+        # we have to set the size of the buttons manually
+        max_width = max(
+            self.orbital_filter_button.sizeHint().width(),
+            self.orbital_draw_button.sizeHint().width(),
+            etype_btn.sizeHint().width(),
+            orb_btn.sizeHint().width())
+
+        selector_layout.setColumnMinimumWidth(0, max_width)
+        selector_layout.setColumnMinimumWidth(1, max_width)
+
         misc_box = QtWidgets.QFrame()
         misc_box_layout = QtWidgets.QGridLayout()
         misc_box.setLayout(misc_box_layout)
@@ -1656,10 +1675,8 @@ class AnalysisWindow(QtWidgets.QWidget):
         misc_box_layout.addWidget(make_sheet_btn, 0, 0, 1, 1)
         misc_box_layout.addWidget(save_fig_btn, 0, 1, 1, 1)
 
-        layout.setColumnStretch(0, 0)
-        layout.setColumnStretch(1, 1)
-
         self._update_plot()
+        # self.__dragger = Dragger(self.plot.fig)
         self._loaded_analysis = True
         self.parent.settings_dialog.settingsChanged.connect(self._update_plot)
 
