@@ -1,6 +1,6 @@
 from PySide6 import QtWidgets, QtCore, QtGui
 import pyfmo
-from .components import orbital_selector, rich_widgets, latex_renderer, action_widget, settings, editable_tabs
+from .components import orbital_selector, rich_widgets, latex_renderer, action_widget, settings, editable_tabs, column_dragger
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qtagg import FigureCanvas
 from matplotlib.backend_tools import Cursors
@@ -20,7 +20,6 @@ from time import perf_counter
 from scm import plams
 
 slider_resolution = 500
-
 
 def mol2xyz(mol):
     s = ''
@@ -450,6 +449,7 @@ class YAxisDialog(QtWidgets.QDialog):
 class MplCanvas(FigureCanvas):
     def __init__(self, parent=None, width=9, height=6.5, dpi=100):
         self.fig = Figure(figsize=(width, height), dpi=dpi)
+        self.__dragger = column_dragger.Dragger(self.fig, callback=self.set_xtick_order)
         self.axes = self.fig.add_subplot(111)
         self.fig.subplots_adjust(top=1, right=1, bottom=0.1, left=0.12)
         self.parent = parent
@@ -463,6 +463,10 @@ class MplCanvas(FigureCanvas):
         self._yaxis_dialog = YAxisDialog(self)
         self._already_unfaded = True
         self.previous_mouse_pos = None
+
+    def set_xtick_order(self, order):
+        self.parent._xtick_order = {tick.get_text(): float(pos) for tick, pos in order.items()}
+        self.parent._update_plot()
 
     def draw_orbital(self, orb=None, draw_type='single'):
         if hasattr(orb, '__len__'):
@@ -634,7 +638,6 @@ class MplCanvas(FigureCanvas):
             label.setStyleSheet('padding: 3px; font: 10px "IBM Plex Mono"')
             self.parent.orbital_info_box.addSpoiler(title, label, icon)
 
-
     def on_plot_click(self, event):
         artists = self.axes.get_children()
         artists = sorted(artists, key=lambda artist: artist.zorder)
@@ -654,6 +657,7 @@ class MplCanvas(FigureCanvas):
                 self.parent.system_info_box.renameSpoiler(artist.get_text(), new_txt)
                 self.parent._orb_selection_dialog.rename(artist.get_text(), new_txt)
                 self.parent.orbs.rename_fragment(artist.get_text(), new_txt)
+                self.parent._xtick_order[new_txt] = self.parent._xtick_order.pop(artist.get_text())
 
                 if artist.is_MO:
                     self.parent.parent.settings_dialog.set('Plot', 'Levels', 'mo_column_name', new_txt)
@@ -664,6 +668,7 @@ class MplCanvas(FigureCanvas):
             # self.axes.set_xticklabels(self.parent.new_tick_labels)
             self.parent._update_plot()
             self.fig.canvas.draw_idle()
+            self.__dragger.mouse_held = False
 
         # Iterating over each data member plotted
         lines = self.axes.get_children()
@@ -1141,6 +1146,7 @@ class AnalysisWindow(QtWidgets.QWidget):
 
         self.new_tick_labels = None
         self.ylim = None
+        self._xtick_order = None
 
         self.tcviewer_screen = None
 
@@ -1214,6 +1220,7 @@ class AnalysisWindow(QtWidgets.QWidget):
             pauli_thresh=self.slider_PR.value()/slider_resolution/1000,
             energy_type=self._energytype_selection,
             ylim=self.ylim,
+            xtick_order=self._xtick_order,
             **settings
             )
 

@@ -63,6 +63,7 @@ def draw_interaction(sfos, mos, connections,
         highlighted_orbitals=None,
         use_darkmode=False,
         mo_column_name='Complex',
+        xtick_order=None,
         **kwargs):
     
     arrow_length        = kwargs.get('arrow_length', .3 / 4.8280888207)
@@ -103,16 +104,6 @@ def draw_interaction(sfos, mos, connections,
         axis_label_color = 'black'
         spine_color = 'k'
 
-    # if draw_mo_labels:
-    #     degeneracy_threshold = degeneracy_threshold
-    # else:
-    #     degeneracy_threshold = .008
-
-    # if draw_sfo_labels:
-    #     degeneracy_threshold = degeneracy_threshold
-    # else:
-    #     degeneracy_threshold = .008
-
     if highlighted_orbitals is None:
         highlighted_orbitals = []
 
@@ -132,22 +123,26 @@ def draw_interaction(sfos, mos, connections,
         energy_span = ylim[1] - ylim[0]
         ax.set_ylim(*ylim, auto=False)
 
+    frags = []
+    for sfo in sfos:
+        if sfo.fragment not in frags:
+            frags.append(sfo.fragment)
 
-    frags = sfos[0].parent.parent.fragments
+    if xtick_order is None:
+        xtick_order = {mo_column_name: .5}
+        for i, frag in enumerate(frags):
+            if i == 0:
+                xtick_order[frag] = -.5
+            else:
+                xtick_order[frag] = i + .5
+
     ax.set_xlim(-1, len(frags), auto=False)
     sep_orbs = {frag: [sfo for sfo in sfos if sfo.fragment == frag] for frag in frags}
-    sep_orbs['mo'] = mos
+    sep_orbs[mo_column_name] = mos
     poss = {}
 
     for typ, sep_orbs_ in sep_orbs.items():
-        if typ == 'mo':
-            base_pos = 0
-        else:
-            idx = frags.index(typ)
-            base_pos = idx
-            if idx == 0:
-                base_pos -= 1
-
+        base_pos = xtick_order[typ] - .5
         degenerates = []
         for orb in sep_orbs_:
             if any(orb in degenerates_ for degenerates_ in degenerates):
@@ -162,10 +157,6 @@ def draw_interaction(sfos, mos, connections,
                 if orb in sfos:
                     E1, E2 = getattr(orb, energy_type), getattr(other_orb, energy_type)
 
-                # if isinstance(orb, pyfmo.orbitals.objects.MO):
-                #     if abs(E1 - E2) < (degeneracy_threshold * energy_span):
-                #         degenerates[-1].append(other_orb)
-                # else:
                 if abs(E1 - E2) < (degeneracy_threshold * energy_span):
                     degenerates[-1].append(other_orb)
 
@@ -176,22 +167,11 @@ def draw_interaction(sfos, mos, connections,
             deg_degree = len(orb_degenerate) + 1
             poss[orb] = base_pos + 1 / deg_degree * deg_idx
 
-    xtick_pos, xtick_label = [.5], [mo_column_name]
-    for orb in poss:
-        if orb not in sfos:
-            continue
-        if orb.fragment in xtick_label:
-            continue
-
-        xtick_pos.append(poss[orb])
-        xtick_label.append(orb.fragment)
-
-
     ax.set_title(title)
     ax.set_ylabel('Orbital Energy / eV', color=axis_label_color)
-    ax.set_xticks(xtick_pos, xtick_label, color=spine_color)
+    ax.set_xticks(list(xtick_order.values()), list(xtick_order.keys()), color=spine_color)
     for i, artist in enumerate(ax.get_xticklabels()):
-        if xtick_label[i] == mo_column_name:
+        if list(xtick_order.keys())[i] == mo_column_name:
             artist.is_MO = True
         else:
             artist.is_MO = False
