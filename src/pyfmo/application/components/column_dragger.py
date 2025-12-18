@@ -2,12 +2,13 @@ import matplotlib.pyplot as plt
 
 
 class Dragger:
-	def __init__(self, fig, callback=None):
+	def __init__(self, fig, release_callback=None, move_callback=None):
 		self.fig = fig
 		self.fig.canvas.mpl_connect('button_press_event', self.button_press_callback)
 		self.fig.canvas.mpl_connect('button_release_event', self.button_release_callback)
 		self.fig.canvas.mpl_connect('motion_notify_event', self.motion_notify_callback)
-		self.callback = callback
+		self.release_callback = release_callback
+		self.move_callback = move_callback
 
 		self.mouse_held = False
 
@@ -44,8 +45,8 @@ class Dragger:
 			self.selected_label_position = None
 			self.label_position_limits = None
 
-			if self.callback:
-				self.callback(self.xtick_positions)
+			if self.release_callback:
+				self.release_callback(self.xtick_positions)
 
 	def motion_notify_callback(self, event):
 		if not self.mouse_held:
@@ -110,6 +111,9 @@ class Dragger:
 
 		self.update_xtick_positions()
 		self.update_fig()
+
+		if self.move_callback:
+			self.move_callback(self.xtick_positions)
 
 	def update_xtick_positions(self):
 		xticks = self.fig.axes[0].get_xticklabels()

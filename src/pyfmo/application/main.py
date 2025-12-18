@@ -449,7 +449,7 @@ class YAxisDialog(QtWidgets.QDialog):
 class MplCanvas(FigureCanvas):
     def __init__(self, parent=None, width=9, height=6.5, dpi=100):
         self.fig = Figure(figsize=(width, height), dpi=dpi)
-        self.__dragger = column_dragger.Dragger(self.fig, callback=self.set_xtick_order)
+        self.__dragger = column_dragger.Dragger(self.fig, move_callback=self.set_xtick_order, release_callback=self.set_xtick_order)
         self.axes = self.fig.add_subplot(111)
         self.fig.subplots_adjust(top=1, right=1, bottom=0.1, left=0.12)
         self.parent = parent
