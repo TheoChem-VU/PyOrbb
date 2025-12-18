@@ -464,7 +464,6 @@ class MplCanvas(FigureCanvas):
         self._already_unfaded = True
         self.previous_mouse_pos = None
 
-
     def draw_orbital(self, orb=None, draw_type='single'):
         if hasattr(orb, '__len__'):
             kfpath = orb[0].parent.parent.kfpath
@@ -2013,8 +2012,11 @@ class PyOrbbWindow(QtWidgets.QMainWindow):
         # File menu
         menuBar = self.menuBar()
         fileMenu = menuBar.addMenu("File")
-        fileMenu.addAction("New PyOrbb window")
-        fileMenu.triggered.connect(QtWidgets.QApplication.instance().add_window)
+        action = fileMenu.addAction("New PyOrbb window")
+        action.triggered.connect(QtWidgets.QApplication.instance().add_window)
+
+        action = fileMenu.addAction("New PyOrbb Viewer window")
+        action.triggered.connect(QtWidgets.QApplication.instance().open_empty_viewer)
 
         plot_menu = menuBar.addMenu("Plot")
 
@@ -2096,3 +2098,10 @@ class PyOrbbApp(QtWidgets.QApplication):
     def isDarkMode(self):
         return QtGui.QGuiApplication.styleHints().colorScheme() == QtCore.Qt.ColorScheme.Dark
 
+    def open_empty_viewer(self):
+        import tcviewer
+        tcviewer_screen = tcviewer.screen._ScreenWindow()
+        tcviewer_screen.setWindowIcon(self._ICONS['pyorbb'])
+        tcviewer_screen.__enter__()
+        tcviewer_screen.setWindowTitle('PyOrbb Viewer')
+        tcviewer_screen.show()
