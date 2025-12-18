@@ -544,7 +544,19 @@ class MplCanvas(FigureCanvas):
                 
                 scene.draw_text(str(orb[0]) + ' * ' + str(orb[1]))
 
+    def draw_molecule(self, mol=None):
+        import tcviewer
 
+        # get or make a new viewer
+        if self.parent.tcviewer_screen is None or self.parent.tcviewer_screen.isclosed:
+            self.parent.tcviewer_screen = tcviewer.screen._ScreenWindow()
+            self.parent.tcviewer_screen.setWindowIcon(self.parent.parent._ICONS['pyorbb'])
+            self.parent.tcviewer_screen.__enter__()
+            self.parent.tcviewer_screen.setWindowTitle('PyOrbb Viewer')
+            self.parent.tcviewer_screen.show()
+
+        with self.parent.tcviewer_screen.add_molscene() as scene:
+            scene.draw_molecule(mol)
 
     def _set_orbital_info_box(self):
         self.parent.orbital_info_box.empty()
@@ -1045,6 +1057,71 @@ class CopyLabel(QtWidgets.QFrame):
 
     def copy(self):
         pyperclip.copy(self.copy_text)
+
+
+class MoleculeLabel(QtWidgets.QFrame):
+    def __init__(self, parent, text, molecule, copy_text=None):
+        super().__init__()
+        self.parent = parent
+        self.molecule = molecule
+        self.copy_text = copy_text
+        if copy_text is None:
+            self.copy_text = text
+
+        layout = QtWidgets.QHBoxLayout()
+        self.setLayout(layout)
+        label = QtWidgets.QLabel(text)
+        label.setAlignment(QtCore.Qt.AlignLeft | QtCore.Qt.AlignVCenter)
+        label.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
+        layout.addWidget(label)
+        copy_icon = QtGui.QIcon(os.path.join(os.path.split(__file__)[0], '..', 'application', 'icons', 'copy.png'))
+        copy_button = QtWidgets.QPushButton(copy_icon, '')
+        copy_button.setToolTip('Copy')
+        copy_button.setSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Preferred)
+        copy_button.clicked.connect(self.copy)
+        copy_button.setStyleSheet("""
+            QPushButton {
+                font-size: 12px;
+                border: 1px solid lightgray;
+                border-radius: 5px;
+                padding: 3px;
+                margin: 0px; 
+                background-color: white;
+            }
+            QPushButton:hover {
+                background-color: #f0f0f0;
+                }
+            """)
+        layout.addWidget(copy_button)
+
+        draw_icon = QtGui.QIcon(os.path.join(os.path.split(__file__)[0], '..', 'application', 'icons', 'draw.png'))
+        draw_button = QtWidgets.QPushButton(draw_icon, '')
+        draw_button.setToolTip('Draw')
+        draw_button.setSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Preferred)
+        draw_button.clicked.connect(self.draw)
+        draw_button.setStyleSheet("""
+            QPushButton {
+                font-size: 12px;
+                border: 1px solid lightgray;
+                border-radius: 5px;
+                padding: 3px;
+                margin: 0px; 
+                background-color: white;
+            }
+            QPushButton:hover {
+                background-color: #f0f0f0;
+                }
+            """)
+
+        layout.addWidget(draw_button)
+        layout.setContentsMargins(0, 0, 0, 0)
+        layout.setSpacing(0)
+
+    def copy(self):
+        pyperclip.copy(self.copy_text)
+
+    def draw(self):
+        print(self.parent.plot.draw_molecule(self.molecule))
 
 
 class AnalysisWindow(QtWidgets.QWidget):
@@ -1657,7 +1734,7 @@ class AnalysisWindow(QtWidgets.QWidget):
                 total_spin_pols += spin_pols[0] - spin_pols[1]
 
         row = 0
-        layout.addWidget(CopyLabel('<b>Geometry (xyz)</b>', mol2xyz(self.orbs.molecule)), row, 0, 1, 2)
+        layout.addWidget(MoleculeLabel(self, '<b>Geometry (xyz)</b>', self.orbs.molecule, mol2xyz(self.orbs.molecule)), row, 0, 1, 2)
 
         row += 1
         layout.addWidget(QtWidgets.QLabel('<b>Charge</b>'), row, 0, 1, 1)
@@ -1697,7 +1774,7 @@ class AnalysisWindow(QtWidgets.QWidget):
         unrestricted_sfos = self.orbs.data['calc_info']['unrestricted_sfos']
 
         row = 0
-        layout.addWidget(CopyLabel('<b>Geometry (xyz)</b>', mol2xyz(sfos[0].molecule)), row, 0, 1, 2)
+        layout.addWidget(MoleculeLabel(self, '<b>Geometry (xyz)</b>', sfos[0].molecule, mol2xyz(sfos[0].molecule)), row, 0, 1, 2)
 
         row += 1
         layout.addWidget(QtWidgets.QLabel('<b>Restricted</b>'), row, 0, 1, 1)
@@ -1705,13 +1782,13 @@ class AnalysisWindow(QtWidgets.QWidget):
         label.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
         layout.addWidget(label, row, 1, 1, 1)
 
-        print(self.orbs.data['calc_info']['sfo_spinpolarizations'])
+        # print(self.orbs.data['calc_info']['sfo_spinpolarizations'])
         frag_spin_pols = self.orbs.data['calc_info']['sfo_spinpolarizations'][frag]
-        print(frag_spin_pols)
+        # print(frag_spin_pols)
         total_spin_pols = 0
         for irrep, spin_pols in frag_spin_pols.items():
             total_spin_pols += spin_pols[0] - spin_pols[1]
-            print(irrep, spin_pols)
+            # print(irrep, spin_pols)
 
             row += 1
             layout.addWidget(QtWidgets.QLabel(f'<b>Spin-Polarization ({pyfmo.translate_irrep_label(irrep, mode="html")})</b>'), row, 0, 1, 1)
