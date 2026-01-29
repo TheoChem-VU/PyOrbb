@@ -510,7 +510,7 @@ def read_data(reader: plams.KFReader, SCF0_reader: plams.KFReader = None, output
             # we also approximate the effective energies here
             contr = ret['matrices']['mulliken_contribution'][symlabel][mo_spin]
             mo_energy = ret['MOs']['energy'][symlabel][mo_spin]
-            approx_site = contr.T @ mo_energy
+            approx_site = mo_energy @ contr
             ret['SFOs']['approx_site_energy'][mo_spin].extend(approx_site.tolist())
 
     ret.set('SFOs', 'gross_population', 'total', _compose_vector(ret['SFOs']['gross_population'], ret['calc_info']['mo_spins']))
