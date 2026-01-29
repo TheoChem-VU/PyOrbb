@@ -1,14 +1,10 @@
-# we set the version number first
-import git
 import os
 
-pwd = __file__
-main_dir = os.path.split(os.path.split(os.path.split(pwd)[0])[0])[0]
-repo = git.Repo(main_dir)
-latest_tag = repo.tags[-1]
-__version__ = str(latest_tag)
-
-
+if os.path.exists(os.path.join(os.path.split(__file__)[0], 'VERSION')):
+    with open(os.path.join(os.path.split(__file__)[0], 'VERSION')) as version:
+        __version__ = version.read().strip()
+else:
+    __version__ = '0.0.0'
 
 from . import orbitals  # noqa
 Orbitals = orbitals.objects.Orbitals
