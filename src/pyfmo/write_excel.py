@@ -74,10 +74,10 @@ def _get_molecules(reader):
     fragment_indices = fragment_indices[len(fragment_indices)//2:]
     fragment_types = np.atleast_1d(reader.read('Geometry', 'fragmenttype').split())
     if not used_regions:
-        fragment_uniques = [f'{fragment_types[frag_idx-1]}:{idx+1}' for idx, frag_idx in enumerate(fragment_indices)]
-        fragment_uniques = np.array(sorted(set(fragment_uniques), key=lambda fu: int(fu.split(':')[1])))
+        fragments = [f'{fragment_types[frag_idx-1]}:{idx+1}' for idx, frag_idx in enumerate(fragment_indices)]
+        fragments = np.array(sorted(set(fragments), key=lambda fu: int(fu.split(':')[1])))
     else:
-        fragment_uniques = np.array(fragment_types)
+        fragments = np.array(fragment_types)
 
     coords = np.array(reader.read('Geometry', 'xyz')).reshape(-1, 3) * 0.529177249
     atoms = np.array(reader.read('Geometry', 'atomtype').split())
@@ -88,11 +88,11 @@ def _get_molecules(reader):
 
     coords = coords[order_index]
     atoms = atoms[symbol_index][order_index]
-    fragment = fragment_uniques[fragment_index][order_index]
+    fragment = fragments[fragment_index][order_index]
 
     ret = {'complex': plams.Molecule()}
     [ret['complex'].add_atom(plams.Atom(symbol=atom, coords=coord)) for atom, coord in zip(atoms, coords)]
-    for name in fragment_uniques:
+    for name in fragments:
         ret[name] = plams.Molecule()
 
         for atom, frag in zip(ret['complex'], fragment):
@@ -150,14 +150,14 @@ def to_excel(orbs: pyfmo.Orbitals, out_file: str = 'pyfmo.xlsx'):
 
         if orbs.data['calc_info']['used_regions']:
             if all(isinstance(orbx, pyfmo.orbitals.objects.SFO) for orbx in orbsx):
-                frag_name = list(set(orbx.fragment_unique for orbx in orbsx))[0]
+                frag_name = list(set(orbx.fragment for orbx in orbsx))[0]
                 labelx = f'{frag_name} ({formula.molecule(mols[frag_name])})'
             else:
                 labelx = 'MO'
             worksheet.merge_range(1, 3, 1, 3 + len(orbsx), labelx, bold_centered_fmt)
 
             if all(isinstance(orby, pyfmo.orbitals.objects.SFO) for orby in orbsy):
-                frag_name = list(set(orby.fragment_unique for orby in orbsy))[0]
+                frag_name = list(set(orby.fragment for orby in orbsy))[0]
                 labely = f'{frag_name} ({formula.molecule(mols[frag_name])})'
             else:
                 labely = 'MO'
@@ -170,7 +170,7 @@ def to_excel(orbs: pyfmo.Orbitals, out_file: str = 'pyfmo.xlsx'):
         for i, orbx in enumerate(orbsx):
             name = orbx.name
             if isinstance(orbx, pyfmo.orbitals.objects.SFO) and not orbs.data['calc_info']['used_regions']:
-                name = f'{orbx.fragment_unique}({orbx.name})'
+                name = f'{orbx.fragment}({orbx.name})'
             worksheet.write(2, 3+i, name, bottom_border_fmt)
 
         for i, orby in enumerate(orbsy):
@@ -178,7 +178,7 @@ def to_excel(orbs: pyfmo.Orbitals, out_file: str = 'pyfmo.xlsx'):
             # print(column_widths[i])
             name = orby.name
             if isinstance(orby, pyfmo.orbitals.objects.SFO) and not orbs.data['calc_info']['used_regions']:
-                name = f'{orby.fragment_unique}({orby.name})'
+                name = f'{orby.fragment}({orby.name})'
 
             worksheet.write(3+i, 2, name, right_border_fmt)
             column_widths[i] = max(column_widths[i], character.text_width(orby.name, font_size=11))
@@ -498,11 +498,12 @@ def to_excel(orbs: pyfmo.Orbitals, out_file: str = 'pyfmo.xlsx'):
 
         if has_site_scf0:
             headers.append('Site Energy (SCF0) (eV)')
+
         make_table_sheet(f'SFOs {fragment}', f'Fragment Orbitals for Fragment {fragment}', rows, headers, tab_color='D6D1CD')
 
     sfos_spin = {spin: [sfo for sfo in orbs.sfos if sfo.spin == spin] for spin in orbs.sfos.spins}
-    sfos1_spin = {spin: [sfo for sfo in sfos_spin[spin] if sfo.fragment_unique == list(orbs.sfos.fragments)[0]] for spin in orbs.sfos.spins}
-    sfos2_spin = {spin: [sfo for sfo in sfos_spin[spin] if sfo.fragment_unique == list(orbs.sfos.fragments)[1]] for spin in orbs.sfos.spins}
+    sfos1_spin = {spin: [sfo for sfo in sfos_spin[spin] if sfo.fragment == list(orbs.sfos.fragments)[0]] for spin in orbs.sfos.spins}
+    sfos2_spin = {spin: [sfo for sfo in sfos_spin[spin] if sfo.fragment == list(orbs.sfos.fragments)[1]] for spin in orbs.sfos.spins}
     mos_spin = {spin: [mo for mo in orbs.mos if mo.spin == spin or mo.spin == 'AB' or spin == 'AB'] for spin in orbs.sfos.spins}
     spin_names = {'A': '𝛼', 'B': '𝛽'}
     # we add a new sheet for each spin species
@@ -577,7 +578,7 @@ def to_excel(orbs: pyfmo.Orbitals, out_file: str = 'pyfmo.xlsx'):
 
             name = f"Coeff {fragment_name} {spin_names[spin]}" if spin != 'AB' else f"Coeff {fragment_name}"
             title = f"MO Coefficients from {fragment_name} (spin {spin_names[spin]})" if spin != 'AB' else f"MO Coefficients from {fragment_name}"
-            sfos_ = [sfo for sfo in sfos_spin[spin] if sfo.fragment_unique == fragment]
+            sfos_ = [sfo for sfo in sfos_spin[spin] if sfo.fragment == fragment]
             coeff = _coefficient_mat(orbs, sfos_, mos_spin[spin])
 
             cnd_fmt = {
@@ -602,7 +603,7 @@ def to_excel(orbs: pyfmo.Orbitals, out_file: str = 'pyfmo.xlsx'):
 
             name = f"Contr {fragment_name} {spin_names[spin]}" if spin != 'AB' else f"Contr {fragment_name}"
             title = f"Mulliken Contributions from {fragment_name} (spin {spin_names[spin]})" if spin != 'AB' else f"Mulliken Contributions from {fragment_name}"
-            sfos_ = [sfo for sfo in sfos_spin[spin] if sfo.fragment_unique == fragment]
+            sfos_ = [sfo for sfo in sfos_spin[spin] if sfo.fragment == fragment]
             contribs = _contribution_mat(orbs, sfos_, mos_spin[spin])
             cnd_fmt = {
                 'type': '2_color_scale',
