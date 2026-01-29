@@ -445,9 +445,9 @@ class SettingsDialog(QtWidgets.QDialog):
                 tab.add_str_setting("mo_column_name", 'MO Column Name', default="Complex")
 
             with section.add_tab('Connections') as tab:
-                tab.add_color_setting("OI_color", 'Orbital Interactions Color', default="#00FF00")
-                tab.add_color_setting("PR_color", 'Pauli Repulsion Color', default="#FF0000")
-                tab.add_color_setting("Sanitization_color", 'Sanitization Color', default="#FF00FF")
+                tab.add_color_setting("OI_color", 'Orbital Interactions Color', default="#008000")
+                tab.add_color_setting("PR_color", 'Pauli Repulsion Color', default="#ff0000")
+                tab.add_color_setting("Sanitization_color", 'Sanitization Color', default="#bf00bf")
                 tab.add_color_setting("Multiple_color", 'Multiple Color', default="#000000")
                 tab.add_float_tuple_setting("alpha_range", 'Alpha Range', 2, default=(0.1, 1.0))
 
