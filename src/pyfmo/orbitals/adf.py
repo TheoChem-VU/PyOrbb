@@ -495,6 +495,7 @@ def read_data(reader: plams.KFReader, SCF0_reader: plams.KFReader = None, output
 
     for mo_spin in ret['calc_info']['mo_spins']:
         ret.set('SFOs', 'gross_population', mo_spin, [])
+        ret.set('SFOs', 'approx_site_energy', mo_spin, [])
 
     for symlabel in ret['calc_info']['symlabels']:
         norb = ret['MOs']['number'][symlabel][ret['calc_info']['mo_spins'][0]]
@@ -506,6 +507,13 @@ def read_data(reader: plams.KFReader, SCF0_reader: plams.KFReader = None, output
             gp = np.sum(gp, axis=0)[ret['MOs']['nfrozencores'][symlabel]:]
             ret['SFOs']['gross_population'][mo_spin].extend(gp.tolist())
 
+            # we also approximate the effective energies here
+            contr = ret['matrices']['mulliken_contribution'][symlabel][mo_spin]
+            mo_energy = ret['MOs']['energy'][symlabel][mo_spin]
+            approx_site = contr.T @ mo_energy
+            ret['SFOs']['approx_site_energy'][mo_spin].extend(approx_site.tolist())
+
     ret.set('SFOs', 'gross_population', 'total', _compose_vector(ret['SFOs']['gross_population'], ret['calc_info']['mo_spins']))
+    ret.set('SFOs', 'approx_site_energy', 'total', _compose_vector(ret['SFOs']['approx_site_energy'], ret['calc_info']['mo_spins']))
 
     return ret

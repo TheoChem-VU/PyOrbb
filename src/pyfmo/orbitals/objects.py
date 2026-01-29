@@ -440,6 +440,9 @@ class SFO(Orbital):
         * - ``energy``
           - ``float``
           - The energy of the |SFO| in |kcal/mol|.
+        * - ``approx_site_energy``
+          - ``float``
+          - Approximated diagonal element of the Fock matrix belonging to the |SFO| in |kcal/mol|. This is available even if the Fock matrix cannot be read from the calculation.
         * - ``site_energy``
           - ``float``
           - The diagonal element of the Fock matrix belonging to the |SFO| in |kcal/mol| if it could be read from the calculation.
@@ -702,6 +705,7 @@ class Orbitals:
                     'fragment_index': self.data['SFOs']['fragment_index'][sfo_idx],
                     'spin': sfo_spin,
                     'energy': self.data['SFOs']['energy'][sfo_spin][sfo_idx] * 27.2114079527,
+                    'approx_site_energy': self.data['SFOs']['approx_site_energy'][sfo_spin][sfo_idx] * 27.2114079527,
                     'occupation': float(self.data['SFOs']['occupation'][sfo_spin][sfo_idx]),
                     'occupied': int(self.data['SFOs']['occupation'][sfo_spin][sfo_idx]) > 0,
                     'gross_population': gross_pop,
@@ -1145,6 +1149,8 @@ class SFOs(OrbitalSelector):
                 ret.append('energy')
             if orb.site_energy is not None:
                 ret.append('site_energy')
+            if orb.approx_site_energy is not None:
+                ret.append('approx_site_energy')
             if orb.site_energy_SCF0 is not None:
                 ret.append('site_energy_SCF0')
 
