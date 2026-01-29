@@ -1019,7 +1019,7 @@ class SaveFileDialog(QtWidgets.QFileDialog):
     def open(self, title, filters, slot=QtCore.SLOT("get_file_from_dialog()")):
         self.setWindowTitle(title)
         self.setNameFilters(filters)
-        super().open(self.parent, slot=QtCore.SLOT("get_file_from_dialog()"))
+        super().open(self.parent, slot=slot)
         return self.selectedFiles()[0]
 
 
@@ -1476,6 +1476,8 @@ class AnalysisWindow(QtWidgets.QWidget):
         slider_box.setLayout(slider_layout)
         layout.addWidget(slider_box, 1, 0)
 
+        has_OI = len(self.main_mix.mixes['OI']['energy']) > 0
+
         self.OI_is_empty_label = QtWidgets.QLabel('⚠️')
         self.OI_is_empty_label.setToolTip('Could not find any Orbital Interactions for these settings.')
         slider_layout.addWidget(self.OI_is_empty_label, 0, 0)
@@ -1540,7 +1542,11 @@ class AnalysisWindow(QtWidgets.QWidget):
                     }
                 """)
         self.slider_OI = QtWidgets.QSlider(QtCore.Qt.Horizontal, self._analysis_page_frame)
-        slider_OI_max = abs(min(min(v.values()) for v in self.main_mix.mixes['OI'].values()))
+        if not has_OI:
+            slider_OI_max = 1
+        else:
+            slider_OI_max = abs(min(min(v.values()) for v in self.main_mix.mixes['OI'].values()))
+
         self.slider_OI.setMinimum(np.log10(0.00000001) * slider_resolution)
         self.slider_OI.setMaximum(floor(np.log10(slider_OI_max) * slider_resolution))
         self.slider_OI.setSliderPosition(np.log10(slider_OI_max/1.5) * slider_resolution)
@@ -1557,6 +1563,14 @@ class AnalysisWindow(QtWidgets.QWidget):
         label_value_OI.setStyleSheet('font: 10px "IBM Plex Mono"')
         slider_layout.addWidget(label_value_OI, 0, 3)
         self.slider_OI.valueChanged.connect(lambda value: (self._update_plot(), label_value_OI.setText(f'{10**(value/slider_resolution):.2E}')))
+
+        if not has_OI:
+            self.cbox_OI.setEnabled(False)
+            label_OI.setEnabled(False)
+            label_value_OI.setEnabled(False)
+            inc_oi_btn.setEnabled(False)
+            self.slider_OI.setEnabled(False)
+            dec_oi_btn.setEnabled(False)
 
         has_PR = len(self.main_mix.mixes['PR']['energy']) > 0
 
@@ -1585,6 +1599,8 @@ class AnalysisWindow(QtWidgets.QWidget):
         else:
             # slider_PR_max = max(self.main_mix.mixes['PR'].values())
             slider_PR_max = abs(max(max(v.values()) for v in self.main_mix.mixes['PR'].values()))
+
+
         inc_pr_btn = QtWidgets.QPushButton('<')
         inc_pr_btn.setToolTip('Show next Pauli Repulsion')
         inc_pr_btn.clicked.connect(self._set_next_pr_slider)
