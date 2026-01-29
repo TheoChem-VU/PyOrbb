@@ -376,8 +376,8 @@ def to_excel(orbs: pyfmo.Orbitals, out_file: str = 'pyfmo.xlsx'):
                      abs(mix.sfos[0].mulliken_contribution(mix.mos[1])),
                      abs(mix.sfos[1].mulliken_contribution(mix.mos[1]))))
 
-        energy_label = {'energy': 'regular', 'site_energy': 'effective'}[energy_type]
-        energy_label_short = {'energy': 'reg.', 'site_energy': 'eff.'}[energy_type]
+        energy_label = {'energy': 'regular', 'site_energy': 'effective', 'approx_site_energy': 'effective (approx.)'}[energy_type]
+        energy_label_short = {'energy': 'reg.', 'site_energy': 'eff.', 'approx_site_energy': 'appr.'}[energy_type]
         make_table_sheet(f'Rᴼᴵ ({energy_label_short})', f'Orbital Interactions ({energy_label} orbital energies)', rows, 
                 header=['SFO1', 'SFO2', 'MO1', 'MO2', 'Ranking', 'Frac.*', 'S', 'Δε (eV)**', 'Contr. SFO1->MO1', 'Contr. SFO2->MO1', 'Contr. SFO1->MO2', 'Contr. SFO2->MO2'],
                 col_fmts={4: table_val_sci_fmt, 5: table_val_pctg_fmt},
@@ -444,10 +444,13 @@ def to_excel(orbs: pyfmo.Orbitals, out_file: str = 'pyfmo.xlsx'):
 
     make_table_sheet('MOs', 'Molecular Orbitals', rows, headers, tab_color='D6D1CD')
 
+    has_site = False
+    has_site_approx = False
+    has_site_scf0 = False
     for fragment in orbs.fragments:
         rows = []
         for sfo in orbs.sfos:
-            if sfo.fragment_unique != fragment:
+            if sfo.fragment != fragment:
                 continue
 
             rows.append([
@@ -462,6 +465,19 @@ def to_excel(orbs: pyfmo.Orbitals, out_file: str = 'pyfmo.xlsx'):
                 sfo.energy,
             ])
 
+            if hasattr(sfo, 'site_energy'):
+                has_site = True
+                rows[-1].append(sfo.site_energy)
+
+            if hasattr(sfo, 'approx_site_energy'):
+                has_site_approx = True
+                rows[-1].append(sfo.approx_site_energy)
+
+            if hasattr(sfo, 'site_energy_scf0'):
+                has_site_scf0 = True
+                rows[-1].append(sfo.site_energy_scf0)
+
+
         headers = [
             'Index',
             'Name', 
@@ -473,6 +489,15 @@ def to_excel(orbs: pyfmo.Orbitals, out_file: str = 'pyfmo.xlsx'):
             'Symmetry', 
             'Energy (eV)',
         ]
+
+        if has_site:
+            headers.append('Site Energy (eV)')
+
+        if has_site_approx:
+            headers.append('Site Energy (Approximate) (eV)')
+
+        if has_site_scf0:
+            headers.append('Site Energy (SCF0) (eV)')
         make_table_sheet(f'SFOs {fragment}', f'Fragment Orbitals for Fragment {fragment}', rows, headers, tab_color='D6D1CD')
 
     sfos_spin = {spin: [sfo for sfo in orbs.sfos if sfo.spin == spin] for spin in orbs.sfos.spins}
