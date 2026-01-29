@@ -216,13 +216,15 @@ class SettingsTab(QtWidgets.QWidget):
         self.layout.addStretch()        
         pass
 
-    def _add_generic_setting(self, name, variable_name, setting_widget):
+    def _add_generic_setting(self, name, variable_name, setting_widget, default):
         reset_btn = QtWidgets.QPushButton(self)
         reset_btn.clicked.connect(setting_widget.reset)
         if QtWidgets.QApplication.instance().isDarkMode:
             reset_btn.setIcon(QtWidgets.QApplication.instance()._ICONS['reset_dark'])
         else:
             reset_btn.setIcon(QtWidgets.QApplication.instance()._ICONS['reset'])
+
+        setting_widget.setDefault(default)
 
         self.get_funcs[variable_name] = setting_widget.value
         self.set_funcs[variable_name] = setting_widget.setValue
@@ -247,43 +249,51 @@ class SettingsTab(QtWidgets.QWidget):
             maxval=1, 
             stepsize=0.01,
             decimals=4,
-            use_spinbox=False):
+            use_spinbox=False,
+            default=0.0):
         if use_spinbox:
             setting_widget = SpinBox(self, minval, maxval, stepsize, decimals)
         else:
             setting_widget = FloatLineEdit(self)
-        self._add_generic_setting(name, variable_name, setting_widget)
+        self._add_generic_setting(name, variable_name, setting_widget, default)
 
     def add_float_tuple_setting(self, 
             variable_name, 
             name,
-            nfloats=None):
+            nfloats=None,
+            default=None):
         setting_widget = FloatTuple(self, nfloats)
-        self._add_generic_setting(name, variable_name, setting_widget)
+        if default is None:
+            default = tuple([0.0] * nfloats)
+        self._add_generic_setting(name, variable_name, setting_widget, default)
 
     def add_path_setting(self, 
             variable_name, 
-            name):
+            name,
+            default=None):
         setting_widget = Path(self)
-        self._add_generic_setting(name, variable_name, setting_widget)
+        self._add_generic_setting(name, variable_name, setting_widget, default)
 
     def add_bool_setting(self, 
             variable_name, 
-            name,):
+            name,
+            default=False):
         setting_widget = CheckBox(self)
-        self._add_generic_setting(name, variable_name, setting_widget)
+        self._add_generic_setting(name, variable_name, setting_widget, default)
 
     def add_color_setting(self, 
             variable_name, 
-            name,):
+            name,
+            default='#000000'):
         setting_widget = Color(self)
-        self._add_generic_setting(name, variable_name, setting_widget)
+        self._add_generic_setting(name, variable_name, setting_widget, default)
 
     def add_str_setting(self, 
             variable_name, 
-            name,):
+            name,
+            default=''):
         setting_widget = String(self)
-        self._add_generic_setting(name, variable_name, setting_widget)
+        self._add_generic_setting(name, variable_name, setting_widget, default)
 
     def reset(self):
         for reset in self.reset_funcs.values():
@@ -416,29 +426,29 @@ class SettingsDialog(QtWidgets.QDialog):
 
         with self.add_section('Plot') as section:
             with section.add_tab('Arrows') as tab:
-                tab.add_float_setting("arrow_length", 'Length')
-                tab.add_float_setting("arrow_width", 'Width')
-                tab.add_float_setting("arrow_head_width", 'Head Width')
-                tab.add_float_setting("arrow_head_length", 'Head Length')
-                tab.add_float_setting("arrow_spacing", 'Spacing')
-                tab.add_color_setting("arrow_color", 'Color')
+                tab.add_float_setting("arrow_length", 'Length', default=0.062)
+                tab.add_float_setting("arrow_width", 'Width', default=0.05)
+                tab.add_float_setting("arrow_head_width", 'Head Width', default=0.15)
+                tab.add_float_setting("arrow_head_length", 'Head Length', default=0.4)
+                tab.add_float_setting("arrow_spacing", 'Spacing', default=0.012)
+                tab.add_color_setting("arrow_color", 'Color', default='#000000')
 
             with section.add_tab('Labels') as tab:
-                tab.add_bool_setting("draw_mo_labels", 'Show MO Labels')
-                tab.add_bool_setting("draw_sfo_labels", 'Show FMO Labels')
+                tab.add_bool_setting("draw_mo_labels", 'Show MO Labels', default=False)
+                tab.add_bool_setting("draw_sfo_labels", 'Show FMO Labels', default=True)
 
             with section.add_tab('Levels') as tab:
-                tab.add_float_setting("level_width", 'Width')
-                tab.add_float_setting("level_thickness", 'Thickness')
-                tab.add_float_setting("highlight_thickness", 'Highlight Thickness')
-                tab.add_str_setting("mo_column_name", 'MO Column Name')
+                tab.add_float_setting("level_width", 'Width', default=0.08)
+                tab.add_float_setting("level_thickness", 'Thickness', default=3.0)
+                tab.add_float_setting("highlight_thickness", 'Highlight Thickness', default=2.0)
+                tab.add_str_setting("mo_column_name", 'MO Column Name', default="Complex")
 
             with section.add_tab('Connections') as tab:
-                tab.add_color_setting("OI_color", 'Orbital Interactions Color')
-                tab.add_color_setting("PR_color", 'Pauli Repulsion Color')
-                tab.add_color_setting("Sanitization_color", 'Sanitization Color')
-                tab.add_color_setting("Multiple_color", 'Multiple Color')
-                tab.add_float_tuple_setting("alpha_range", 'Alpha Range', 2)
+                tab.add_color_setting("OI_color", 'Orbital Interactions Color', default="#00FF00")
+                tab.add_color_setting("PR_color", 'Pauli Repulsion Color', default="#FF0000")
+                tab.add_color_setting("Sanitization_color", 'Sanitization Color', default="#FF00FF")
+                tab.add_color_setting("Multiple_color", 'Multiple Color', default="#000000")
+                tab.add_float_tuple_setting("alpha_range", 'Alpha Range', 2, default=(0.1, 1.0))
 
         with self.add_section('Algorithm') as section:
             with section.add_tab('General') as tab:
