@@ -282,6 +282,7 @@ class ETypeDialog(QtWidgets.QDialog):
 
         display_names = {
             'energy': 'Regular',
+            'approx_site_energy': 'Effective (approximate)',
             'site_energy': 'Effective',
             'site_energy_SCF0': 'Effective (initial density)',
         }
