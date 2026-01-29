@@ -1,3 +1,15 @@
+# we set the version number first
+import git
+import os
+
+pwd = __file__
+main_dir = os.path.split(os.path.split(os.path.split(pwd)[0])[0])[0]
+repo = git.Repo(main_dir)
+latest_tag = repo.tags[-1]
+__version__ = str(latest_tag)
+
+
+
 from . import orbitals  # noqa
 Orbitals = orbitals.objects.Orbitals
 from . import plotting  # noqa
