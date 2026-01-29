@@ -94,6 +94,7 @@ def translate_irrep_label(symm_label: str, mode='latex', use_formatting=True) ->
         s = IRREP_TRANSLATION_LATEX.get(subspecies, subspecies)
         if parity is not None:
             s += rf'$_\mathrm{{{parity}}}$'
+            
         if dimension is not None:
 
             if re.search(r"\d+", dimension): 
