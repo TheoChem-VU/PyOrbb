@@ -3,6 +3,7 @@ import os
 import platformdirs
 import json
 import platform
+import pyfmo
 
 
 
@@ -506,16 +507,16 @@ class SettingsDialog(QtWidgets.QDialog):
 
     def write_state(self):
         d = platformdirs.user_config_dir('PyOrbb', 'TheoCheM', ensure_exists=True)
-        with open(os.path.join(d, 'settings.json'), 'w+') as jf:
+        with open(os.path.join(d, f'settings_{pyfmo.__version__}.json'), 'w+') as jf:
             state = self.get_state()
             jf.write(json.dumps(state, indent=4))
 
     def load_state(self):
         d = platformdirs.user_config_dir('PyOrbb', 'TheoCheM', ensure_exists=True)
-        if not os.path.exists(os.path.join(d, 'settings.json')):
+        if not os.path.exists(os.path.join(d, f'settings_{pyfmo.__version__}.json')):
             return
 
-        with open(os.path.join(d, 'settings.json')) as jf:
+        with open(os.path.join(d, f'settings_{pyfmo.__version__}.json')) as jf:
             try:
                 self.set_state(json.loads(jf.read()))
             except:
@@ -524,10 +525,10 @@ class SettingsDialog(QtWidgets.QDialog):
 
     def load_defaults(self):
         d = platformdirs.user_config_dir('PyOrbb', 'TheoCheM', ensure_exists=True)
-        if not os.path.exists(os.path.join(d, 'default_settings.json')):
+        if not os.path.exists(os.path.join(d, f'default_settings_{pyfmo.__version__}.json')):
             return
 
-        with open(os.path.join(d, 'default_settings.json')) as jf:
+        with open(os.path.join(d, f'default_settings_{pyfmo.__version__}.json')) as jf:
             defaults = json.loads(jf.read())
 
         for section_name, section in self.sections.items():
