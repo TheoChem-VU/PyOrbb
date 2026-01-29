@@ -190,11 +190,7 @@ class Mixer2:
             if mo1 not in self.allowed_mos or mo2 not in self.allowed_mos:
                 continue
 
-            col = {
-                'OI': 'g',
-                'PR': 'r'
-            }.get(interaction_type)
-            mix = Mixing(self.orbs, [mo1, mo2], [sfo1, sfo2], connection_colors=col)
+            mix = Mixing(self.orbs, [mo1, mo2], [sfo1, sfo2], connection_type=interaction_type)
             self.mixes[interaction_type][self.energy_type][mix] = v
             n += 1
 
@@ -459,8 +455,8 @@ class Mixer:
                         break
                     stab = frac * self.oi_ref
 
-                    col = {conn: INTERACTION_COLORS['OI'] for conn in list(it.product([sfo1, sfo2], [occ_mo, virt_mo]))}
-                    mix = Mixing(self.orbs, [occ_mo, virt_mo], [sfo1, sfo2], stab, frac, connection_colors=col)
+                    typ = {conn: 'OI' for conn in list(it.product([sfo1, sfo2], [occ_mo, virt_mo]))}
+                    mix = Mixing(self.orbs, [occ_mo, virt_mo], [sfo1, sfo2], stab, frac, connection_type=typ)
                     ret.append(mix)
                     j += 1
 
@@ -505,8 +501,8 @@ class Mixer:
                         break
                     stab = frac * self.pauli_ref
 
-                    col = {conn: INTERACTION_COLORS['PR'] for conn in list(it.product([sfo1, sfo2], [occ_mo1, occ_mo2]))}
-                    mix = Mixing(self.orbs, [occ_mo1, occ_mo2], [sfo1, sfo2], stab, frac, connection_colors=col)
+                    typ = {conn: 'PR' for conn in list(it.product([sfo1, sfo2], [occ_mo1, occ_mo2]))}
+                    mix = Mixing(self.orbs, [occ_mo1, occ_mo2], [sfo1, sfo2], stab, frac, connection_type=typ)
                     ret.append(mix)
                     j += 1
 
@@ -516,9 +512,8 @@ class Mixer:
         return ret
 
 
-
 class Mixing:
-    def __init__(self, orbs, mos=None, sfos=None, strength=None, fraction=None, connections=None, connection_colors=None, energy_type='energy'):
+    def __init__(self, orbs, mos=None, sfos=None, strength=None, fraction=None, connections=None, connection_type=None, energy_type='energy'):
         self.orbs = orbs
         self.mos = mos or []
         self.sfos = sfos or []
@@ -526,13 +521,13 @@ class Mixing:
         self.fraction = fraction or 0
         self.energy_type = energy_type
         self.connections = connections
-        self.connection_colors = connection_colors
+        self.connection_type = connection_type
         if connections is None:
             self.connections = list(it.product(self.sfos, self.mos))
-        if connection_colors is None:
-            self.connection_colors = {conn: INTERACTION_COLORS['Multiple'] for conn in self.connections}
-        if isinstance(connection_colors, str):
-            self.connection_colors = {conn: connection_colors for conn in self.connections}
+        if connection_type is None:
+            self.connection_type = {conn: 'Multiple' for conn in self.connections}
+        if isinstance(connection_type, str):
+            self.connection_type = {conn: connection_type for conn in self.connections}
 
         self.two_mixings = [[self]]
 
@@ -570,7 +565,7 @@ class Mixing:
                 return False
         return True
 
-    def add_mo(self, mo, color=INTERACTION_COLORS['Sanitization'], connections=None):
+    def add_mo(self, mo, typ='Sanitization', connections=None):
         '''
         Add an MO to this mixing diagram. 
         '''
@@ -579,14 +574,14 @@ class Mixing:
             for sfo in self.sfos:
                 if abs(sfo.mulliken_contribution(mo)) > 0.03:
                     self.connections.append((sfo, mo))
-                    self.connection_colors[(sfo, mo)] = color
+                    self.connection_type[(sfo, mo)] = typ
         else:
             self.connections.append(connections)
             for conn in self.connections:
-                self.connection_colors[conn] = color
+                self.connection_type[conn] = typ
 
 
-    def add_sfo(self, sfo, color=INTERACTION_COLORS['Sanitization'], connections=None):
+    def add_sfo(self, sfo, typ='Sanitization', connections=None):
         '''
         Add an SFO to this mixing diagram. 
         '''
@@ -595,18 +590,18 @@ class Mixing:
             for mo in self.mos:
                 if abs(sfo.mulliken_contribution(mo)) > 0.03:
                     self.connections.append((sfo, mo))
-                    self.connection_colors[(sfo, mo)] = color
+                    self.connection_type[(sfo, mo)] = typ
         else:
             self.connections.append(connections)
             for conn in self.connections:
-                self.connection_colors[conn] = color
+                self.connection_type[conn] = typ
 
 
     def draw_diagram(self, ax=None, ylim=None, simple=False, **kwargs):
         if simple:
-            pyfmo.plotting.simple_orbital_diagram.draw_interaction(self.sfos, self.mos, self.connections, None, energy_type=self.energy_type, connection_colors=self.connection_colors, ax=ax, ylim=ylim)
+            pyfmo.plotting.simple_orbital_diagram.draw_interaction(self.sfos, self.mos, self.connections, None, energy_type=self.energy_type, connection_types=self.connection_type, ax=ax, ylim=ylim)
         else:
-            pyfmo.plotting.orbital_diagram.draw_interaction(self.sfos, self.mos, self.connections, None, energy_type=self.energy_type, connection_colors=self.connection_colors, ax=ax, ylim=ylim, **kwargs)
+            pyfmo.plotting.orbital_diagram.draw_interaction(self.sfos, self.mos, self.connections, None, energy_type=self.energy_type, connection_types=self.connection_type, ax=ax, ylim=ylim, **kwargs)
 
     def draw_sfos(self, overlap=False, screen=None):
         import tcviewer  # noqa: F811
@@ -660,14 +655,14 @@ class Mixing:
         self.sfos.extend([osfo for osfo in other.sfos if osfo not in self.sfos])
         self.mos.extend([omo for omo in other.mos if omo not in self.mos])
         self.connections.extend([oconn for oconn in other.connections if oconn not in self.connections])
-        for conn, col in other.connection_colors.items():
-            if conn in self.connection_colors:
-                if col == self.connection_colors[conn]:
+        for conn, typ in other.connection_type.items():
+            if conn in self.connection_type:
+                if typ == self.connection_type[conn]:
                     continue
                 else:
-                    self.connection_colors[conn] = INTERACTION_COLORS['Multiple']
+                    self.connection_type[conn] = 'Multiple'
             else:
-                self.connection_colors[conn] = col
+                self.connection_type[conn] = typ
 
         self.strength = None
         self.fraction = None
@@ -755,7 +750,7 @@ class Mixing:
                 mos=mos, 
                 sfos=sfos, 
                 connections=connections,
-                connection_colors={conn: self.connection_colors[conn] for conn in connections},
+                connection_type={conn: self.connection_type[conn] for conn in connections},
                 energy_type=self.energy_type))
         return mixes
 
@@ -797,7 +792,6 @@ def track_mixing(orbss, mixing):
 
         plt.savefig(os.path.join(out_dir, f'{i}.jpg'))
         plt.close()
-
 
 
 def _is_bonding(sfo1, sfo2, mo):

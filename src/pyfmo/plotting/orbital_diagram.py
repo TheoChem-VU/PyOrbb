@@ -57,7 +57,7 @@ def arrow_tail_with_axes_offset(ax, anchor, offset_axes=(0.0, 0.1),
 def draw_interaction(sfos, mos, connections, 
         title=None,
         energy_type='energy',
-        connection_colors={},
+        connection_types={},
         ax=None,
         ylim=None,
         highlighted_orbitals=None,
@@ -272,5 +272,14 @@ def draw_interaction(sfos, mos, connections,
 
         sfo_index = sfo.parent.orbitals.index(sfo)
         mo_index = mo.parent.orbitals.index(mo)
-        c = connection_colors.get((sfo, mo), level_color)
+        typ = connection_types.get((sfo, mo), 'Multiple')
+        if typ == 'Multiple':
+            c = kwargs.get('Multiple_color', '#000000')
+        elif typ == 'PR':
+            c = kwargs.get('PR_color', '#FF0000')
+        elif typ == 'OI':
+            c = kwargs.get('OI_color', '#00FF00')
+        elif typ == 'Sanitization':
+            c = kwargs.get('Sanitization_color', '#b37fb9')
+
         ax.plot([psfo, pmo], [getattr(sfo, energy_type), mo.energy], c=c, linewidth=1.5, alpha=np.clip(sfo.mulliken_contribution(mo), *alpha_range), gid=f'MIX_{sfo_index} -> {mo_index}', zorder=-10)

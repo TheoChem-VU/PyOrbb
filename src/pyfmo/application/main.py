@@ -1212,10 +1212,6 @@ class AnalysisWindow(QtWidgets.QWidget):
     def _update_plot(self):
         settings = self.parent.settings_dialog.get_flat_state()
         # set the colors
-        pyfmo.analysis.mixing.INTERACTION_COLORS['OI_color'] = settings.pop('OI_color')
-        pyfmo.analysis.mixing.INTERACTION_COLORS['PR_color'] = settings.pop('PR_color')
-        pyfmo.analysis.mixing.INTERACTION_COLORS['Sanitization_color'] = settings.pop('Sanitization_color')
-        pyfmo.analysis.mixing.INTERACTION_COLORS['Multiple_color'] = settings.pop('Multiple_color')
         self._draw_diagram(
             oi_thresh=10**(self.slider_OI.value()/slider_resolution),
             pauli_thresh=self.slider_PR.value()/slider_resolution/1000,
