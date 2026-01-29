@@ -38,7 +38,6 @@ class Path(SettingSelectionWidget):
         super().__init__(parent)
         self.parent = parent
         self.layout = QtWidgets.QHBoxLayout(self)
-        self.setLayout(self.layout)
         if platform.system() == 'Darwin':
             d = "/Applications" if os.path.exists("/Applications") else os.getcwd()
             self._filelineedit = LineEditFileDialogWidget(self, filetype="filename", caption='Select AMS application', dir=d, filter="*.app")
@@ -77,7 +76,6 @@ class Color(SettingSelectionWidget):
         super().__init__(parent)
         self.parent = parent
         self.layout = QtWidgets.QHBoxLayout(self)
-        self.setLayout(self.layout)
         self._colorlineedit = LineEditColorDialogWidget()
         self.layout.addWidget(self._colorlineedit)
 
@@ -96,7 +94,6 @@ class String(SettingSelectionWidget):
         super().__init__(parent)
         self.parent = parent
         self.layout = QtWidgets.QHBoxLayout(self)
-        self.setLayout(self.layout)
         self._lineedit = QtWidgets.QLineEdit()
         self.layout.addWidget(self._lineedit)
 
@@ -115,7 +112,6 @@ class CheckBox(SettingSelectionWidget):
         super().__init__(parent)
         self.parent = parent
         self.layout = QtWidgets.QHBoxLayout(self)
-        self.setLayout(self.layout)
         self._checkbox = QtWidgets.QCheckBox()
         self.layout.addWidget(self._checkbox)
 
@@ -134,7 +130,6 @@ class SpinBox(SettingSelectionWidget):
         super().__init__(parent)
         self.parent = parent
         self.layout = QtWidgets.QHBoxLayout(self)
-        self.setLayout(self.layout)
 
         self._spinbox = QtWidgets.QDoubleSpinBox(self)
         self._spinbox.setRange(minval, maxval)
@@ -159,7 +154,6 @@ class FloatLineEdit(SettingSelectionWidget):
         super().__init__(parent)
         self.parent = parent
         self.layout = QtWidgets.QHBoxLayout(self)
-        self.setLayout(self.layout)
 
         self._lineedit = QtWidgets.QLineEdit(self)
         # validator = QtGui.QDoubleValidator()
@@ -184,7 +178,6 @@ class FloatTuple(SettingSelectionWidget):
         super().__init__(parent)
         self.parent = parent
         self.layout = QtWidgets.QHBoxLayout(self)
-        self.setLayout(self.layout)
 
         self._lineedits = []
         for i in range(nfloats):
@@ -236,15 +229,15 @@ class SettingsTab(QtWidgets.QWidget):
         self.reset_funcs[variable_name] = setting_widget.reset
         self.set_default_funcs[variable_name] = setting_widget.setDefault
 
-        layout = QtWidgets.QHBoxLayout(self)
+        frame = QtWidgets.QFrame(self)
+        layout = QtWidgets.QHBoxLayout(frame)
         layout.addWidget(QtWidgets.QLabel(name))
         layout.addWidget(setting_widget)
         layout.addWidget(reset_btn)
         layout.setStretch(0, 1)
         layout.setStretch(1, 0)
         layout.setStretch(2, 0)
-        frame = QtWidgets.QFrame(self)
-        frame.setLayout(layout)
+        # frame.setLayout(layout)
         self.layout.addWidget(frame)
 
     def add_float_setting(self, 
@@ -326,7 +319,6 @@ class SettingsSection(QtWidgets.QWidget):
             return
 
         self.layout = QtWidgets.QHBoxLayout(self)
-        self.setLayout(self.layout)
         tabs = QtWidgets.QTabWidget(self)
         tabs.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         self.layout.addWidget(tabs)
@@ -369,7 +361,6 @@ class SettingsDialog(QtWidgets.QDialog):
             stack_widget.setCurrentIndex(new_index)
 
         self.layout = QtWidgets.QVBoxLayout(self)
-        self.setLayout(self.layout)
 
         # build the title label
         title_label = QtWidgets.QLabel(self.title)
