@@ -5,7 +5,7 @@ sed -i "s/%REPLACE_VERSION/$(git describe --tags --abbrev=0 | cut -c 2-)/g" pypr
 git describe --tags --abbrev=0 | cut -c 2- > src/pyfmo/VERSION
 
 briefcase build -r;
-briefcase package;
+briefcase package --adhoc-sign;
 
 mv dist/PyOrbb*.msi dist/PyOrbb.msi;
 
