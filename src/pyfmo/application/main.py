@@ -1318,7 +1318,8 @@ class AnalysisWindow(QtWidgets.QWidget):
         is_charged = any(charge != 0 for charge in _determine_formal_charges(self.orbs).values())
         if is_charged and 'site_energy' not in self.orbs.sfo_energy_types:
             QtWidgets.QMessageBox.warning(self, "Warning", "WARNING\nYou have charged fragments but the effective energies are not available!\n\n Rerun your calculation with SFOSiteEnergies or FMatSFO enabled.");
-        
+            self._energytype_selection = 'approx_site_energy'
+
         if is_charged and 'site_energy' in self.orbs.sfo_energy_types:
             self._energytype_selection = 'site_energy'
 
