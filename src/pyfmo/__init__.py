@@ -165,15 +165,15 @@ def generate_label(orb, mode='latex', use_formatting=True):
         else:
             orb_name = f'{orb.name}{spin_part}'
 
-        if orb.subspecies.startswith('P:'):
-            principal_qn = orb_name.split(':')[0][:-1]
-            orb_name = orb_name.replace(principal_qn, str(int(principal_qn) + 1), 1)
-        if orb.subspecies.startswith('D:'):
-            principal_qn = orb_name.split(':')[0][:-1]
-            orb_name = orb_name.replace(principal_qn, str(int(principal_qn) + 2), 1)
-        if orb.subspecies.startswith('F:'):
-            principal_qn = orb_name.split(':')[0][:-1]
-            orb_name = orb_name.replace(principal_qn, str(int(principal_qn) + 3), 1)
+        # if orb.subspecies.startswith('P:'):
+        #     principal_qn = orb_name.split(':')[0][:-1]
+        #     orb_name = orb_name.replace(principal_qn, str(int(principal_qn) + 1), 1)
+        # if orb.subspecies.startswith('D:'):
+        #     principal_qn = orb_name.split(':')[0][:-1]
+        #     orb_name = orb_name.replace(principal_qn, str(int(principal_qn) + 2), 1)
+        # if orb.subspecies.startswith('F:'):
+        #     principal_qn = orb_name.split(':')[0][:-1]
+        #     orb_name = orb_name.replace(principal_qn, str(int(principal_qn) + 3), 1)
 
         orb_name = orb_name.replace(orb.subspecies, translate_irrep_label(orb.subspecies, mode=mode))
 
