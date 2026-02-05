@@ -1003,7 +1003,6 @@ class MplCanvas(FigureCanvas):
         change = event.step * dy * 0.001
         new_dy = dy + change
         self.parent.ylim = (mousey - new_dy * f, mousey + new_dy * (1 - f))
-        # self.parent._update_plot()
         self.axes.set_ylim(self.parent.ylim)
         self.axes.redraw_in_frame()
         self.fig.canvas.draw_idle()

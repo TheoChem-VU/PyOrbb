@@ -10,6 +10,41 @@ import pyfmo
 import re
 
 
+def anchored_text(ax, x, y, text, offset_axes=(0.0, 0.1), **kwargs):
+    """
+    Draw text that is anchored to a point in data space with specified axes offsets.
+
+    Returns the Artist instance.
+    """
+    fig = ax.figure
+
+    # initial dummy head (will be updated immediately)
+    T = ax.text(x, y, text, **kwargs)
+
+    def update_artist(event=None):
+        # 1) get tail position in display coords
+        anchor_disp = ax.transData.transform((x, y))  # display (pixel) coords
+
+        # 2) convert tail display to axes coords
+        anchor_axes = ax.transAxes.inverted().transform(anchor_disp)  # (0..1, 0..1)
+
+        # update the positions of the arrow
+        xyB = anchor_axes[0] + offset_axes[0]/2, anchor_axes[1] + offset_axes[1]/2
+        # we have to set them like this, otherwise it does not work
+        new_disp = ax.transAxes.transform(xyB)
+        new_data = ax.transData.inverted().transform(new_disp)
+        T.set_position(new_data)
+
+    # Connect updates when y-limits change or figure is resized
+    ax.callbacks.connect('ylim_changed', update_artist)
+    fig.canvas.mpl_connect('resize_event', update_artist)
+
+    # Do an initial update to set correct head position now
+    update_artist()
+
+    return T
+
+
 def arrow_tail_with_axes_offset(ax, anchor, offset_axes=(0.0, 0.1),
                                 arrowstyle="<|-", **kwargs):
     """
@@ -207,9 +242,12 @@ def draw_interaction(sfos, mos, connections,
                 gid=f'{"MO" if is_MO else "SFO"}_{orb_index}')
 
         if (is_MO and draw_mo_labels) or (not is_MO and draw_sfo_labels):
-            ax.text(poss[orb],
-                     E - arrow_length / 1.8 * energy_span,
+            anchored_text(ax,
+                     poss[orb],
+                     E,
                      orb_name,
+                     # [0, -arrow_length / 1.8 * energy_span],
+                     [0, orb_label_offset],
                      ha='center',
                      va='top',
                      size=font_size,
