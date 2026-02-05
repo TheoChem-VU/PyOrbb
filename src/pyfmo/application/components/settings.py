@@ -437,6 +437,7 @@ class SettingsDialog(QtWidgets.QDialog):
             with section.add_tab('Labels') as tab:
                 tab.add_bool_setting("draw_mo_labels", 'Show MO Labels', default=False)
                 tab.add_bool_setting("draw_sfo_labels", 'Show FMO Labels', default=True)
+                tab.add_float_setting("orb_label_offset", 'Label Offset', default=-0.06, minval=-1, maxval=1)
 
             with section.add_tab('Levels') as tab:
                 tab.add_float_setting("level_width", 'Width', default=0.08)

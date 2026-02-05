@@ -89,6 +89,7 @@ def arrow_tail_with_axes_offset(ax, anchor, offset_axes=(0.0, 0.1),
 
     return patch
 
+
 def draw_interaction(sfos, mos, connections, 
         title=None,
         energy_type='energy',
@@ -117,6 +118,8 @@ def draw_interaction(sfos, mos, connections,
 
     draw_mo_labels      = kwargs.get('draw_mo_labels', False)
     draw_sfo_labels     = kwargs.get('draw_sfo_labels', True)
+
+    orb_label_offset    = kwargs.get('orb_label_offset', -0.06)
 
     alpha_range         = kwargs.get('alpha_range', (0.1, 1))
 
