@@ -38,6 +38,21 @@ class Mixer2:
         self._get_pauli_repulsions()
         self.set_energy_type('energy')
 
+    def find_two_mixing(self, orb1, orb2):
+        # self.reset_mixes()
+        for mix in self.main_mix.two_mixings:
+            if len(mix.sfos) > 2:
+                continue
+            if len(mix.mos) > 2:
+                continue
+            if not (orb1 in mix.sfos or orb1 in mix.mos):
+                continue
+            if not (orb2 in mix.sfos or orb2 in mix.mos):
+                continue
+            print(mix.mos, mix.sfos, orb1, orb2)
+
+            return mix
+
     def _prepare(self):
         '''
         Prepare the data used to construct the mixing situations.
