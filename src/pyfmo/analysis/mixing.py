@@ -180,12 +180,10 @@ class Mixer2:
         self._get_mixes(Epr, Epr_order, self.pr_min_thresh, 'PR')
 
     def _get_mixes(self, 
-        M, 
-        order, 
-        min_thresh,
-        interaction_type):
-        v = float('inf')
-
+                   M, 
+                   order, 
+                   min_thresh,
+                   interaction_type):
         self.mixes[interaction_type][self.energy_type] = {}
         n = 0
         while 1:
@@ -204,7 +202,7 @@ class Mixer2:
             if mo1 not in self.allowed_mos or mo2 not in self.allowed_mos:
                 continue
 
-            mix = Mixing(self.orbs, [mo1, mo2], [sfo1, sfo2], connection_type=interaction_type)
+            mix = Mixing(self.orbs, [mo1, mo2], [sfo1, sfo2], fraction=v/np.sum(M), connection_type=interaction_type)
             self.mixes[interaction_type][self.energy_type][mix] = v
             n += 1
 
@@ -561,7 +559,6 @@ class Mixing:
     def PR_is_empty(self):
         max_pop = 1 if self.orbs.data['calc_info']['unrestricted_sfos'] else 2
         for mix in self.two_mixings:
-            mix = mix[0]
             if mix is self:
                 continue
             if mix.nelectrons() == 2 * max_pop:
@@ -572,7 +569,6 @@ class Mixing:
     def OI_is_empty(self):
         max_pop = 1 if self.orbs.data['calc_info']['unrestricted_sfos'] else 2
         for mix in self.two_mixings:
-            mix = mix[0]
             if mix is self:
                 continue
             if mix.nelectrons() == max_pop:
