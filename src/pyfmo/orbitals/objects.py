@@ -6,6 +6,7 @@ from typing import List, Dict
 import math
 import platformdirs
 import re
+import numpy as np
 
 ensure_list = lambda x: [x] if not isinstance(x, (list, tuple, set)) else list(x)  # noqa: E731
 
@@ -670,6 +671,7 @@ class Orbitals:
         self._get_data()
         self._gather_sfos()
         self._gather_mos()
+        self._determine_formal_charges()
         self._gather_notices()
 
     def _get_data(self):
@@ -812,6 +814,33 @@ the threshold of 0.98
     def _check_spurious_mulliken_contr(self):
         return self.mulliken_instability() < 0.98
     
+    def _determine_formal_charges(self):
+        # build up the effective charges of the atoms
+        # this takes into account the atom number and number of frozen core electrons
+        atomtypes = self.reader.read('Geometry', 'atomtype').split()
+        eff_charges = self.reader.read('Geometry', 'atomtype effective charge')
+
+        if isinstance(eff_charges, float):
+            eff_charges = [eff_charges]
+
+        if isinstance(atomtypes, float):
+            atomtypes = [atomtypes]
+
+        atomtype_charges = {typ: charge for typ, charge in zip(atomtypes, eff_charges)}
+
+        # calculate the charges for the fragments and the complex
+        charges = {}
+        for frag in self.fragments:
+            sfos = self.sfos.filter(fragment=frag)
+            # we need the atoms in the molecule
+            mol = sfos[0].molecule
+            expected_Nelectrons = sum(atomtype_charges[atom.symbol] for atom in mol)
+            actual_Nelectrons = round(sum(sfo.occupation for sfo in sfos))
+            charges[frag] = expected_Nelectrons - actual_Nelectrons
+            
+        charges['complex'] = sum(charges.values())
+        self.charges = charges
+
     @property
     def molecule(self):
         mol = plams.Molecule()
