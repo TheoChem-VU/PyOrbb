@@ -762,6 +762,55 @@ class Orbitals:
                 sfo = MO(data, self.mos)
                 self.mos.orbitals.append(sfo)
 
+    def _gather_notices(self):
+        self.notices = {'warning': [], 'error': [], 'info': []}
+        if not self._check_effective_energies_available():
+            self.notices['warning'].append(('No effective energies', 
+'''Effective energies are not available for 
+this calculation. To obtain them, please 
+rerun the calculation with the following 
+settings:
+
+    Engine ADF
+     PRINT FMATSFO
+     FullFock Yes
+     AllPoints Yes
+    EndEngine
+'''))
+        if any(c != 0 for c in self.charges.values()):
+            self.notices['warning'].append(('Charged fragments', 
+'''This system contains charged fragments.
+We recommended you to check if effective
+energies are required.
+'''))
+        if self._check_spurious_mulliken_contr():
+            self.notices['warning'].append(('Mulliken stability score', 
+f'''We detected instabilities in Mulliken 
+analysis. Be carefull when interpreting 
+Mulliken contributions, populations, and
+approximate effective energies!
+Stability score = {self.mulliken_instability():.4f} is below 
+the threshold of 0.98
+'''))
+        if not self._check_spurious_mulliken_contr():
+            self.notices['info'].append(('Mulliken stability score', 
+f'''We didn't detected large instabilities in
+Mulliken  analysis. 
+Stability score = {self.mulliken_instability():.4f} is above 
+the threshold of 0.98
+'''))
+
+    def _check_effective_energies_available(self):
+        return any(hasattr(sfo, 'site_energy') for sfo in self.sfos)
+
+    def mulliken_instability(self):
+        c = self.data['matrices']['mulliken_contribution']['total']
+        mull_stability_score = 1 / (np.sum(np.abs(c)) / np.sqrt(c.size))
+        return mull_stability_score
+
+    def _check_spurious_mulliken_contr(self):
+        return self.mulliken_instability() < 0.98
+    
     @property
     def molecule(self):
         mol = plams.Molecule()
