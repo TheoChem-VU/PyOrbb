@@ -70,23 +70,24 @@ def make_icon(
         cmap_background=None,
         psi_mode='d'
         ):
-
-    x, y = np.arange(0, 512), np.arange(0, 512)
+    
+    resolution = 800
+    x, y = np.arange(0, resolution), np.arange(0, resolution)
     X, Y = np.meshgrid(x, y)
 
     if psi_mode == 'p':
-        psi = np.sqrt((X/512*2-1)**2 + (Y/512*2-1)**2) * ((X/512*2-1) + (Y/512*2-1)) * np.exp(orbital_exponent*((X/512*2-1)**2 + (Y/512*2-1)**2))
+        psi = np.sqrt((X/resolution*2-1)**2 + (Y/resolution*2-1)**2) * ((X/resolution*2-1) + (Y/resolution*2-1)) * np.exp(orbital_exponent*((X/resolution*2-1)**2 + (Y/resolution*2-1)**2))
 
     if psi_mode == 'd':
-        psi = ((X/512*2-1) * (Y/512*2-1)) * np.exp(orbital_exponent*((X/512*2-1)**2 + (Y/512*2-1)**2))
+        psi = ((X/resolution*2-1) * (Y/resolution*2-1)) * np.exp(orbital_exponent*((X/resolution*2-1)**2 + (Y/resolution*2-1)**2))
 
     # psi = np.power(psi, 1.5)
     psi = psi / psi.max() * Nsteps
     psi = np.round(psi)
 
-    im = Image.new('RGB', (512, 512), color=0)
+    im = Image.new('RGB', (resolution, resolution), color=0)
     drawer = ImageDraw(im)
-    squircle = drawer.rounded_rectangle(xy=[(margin, margin), (512-margin, 512-margin)], radius=120, fill=(255, 255, 255), outline=(1, 1, 1), width=border, corners=None)
+    squircle = drawer.rounded_rectangle(xy=[(margin, margin), (resolution-margin, resolution-margin)], radius=int(120/512 * resolution), fill=(255, 255, 255), outline=(1, 1, 1), width=border, corners=None)
     squircle = np.array(im.getdata()).reshape(im.size[0], im.size[1], 3)[:, :, 0]
 
     psi[squircle == 0] = None
@@ -103,7 +104,7 @@ def make_icon(
 
     elif bground_style == 'shaded':
 
-        squircle_bg = drawer.rounded_rectangle(xy=[((margin), (margin)), (512-(margin), 512-(margin))], radius=120, fill=(255, 255, 255), outline=(1, 1, 1), width=5, corners=None)
+        squircle_bg = drawer.rounded_rectangle(xy=[((margin), (margin)), (resolution-(margin), resolution-(margin))], radius=int(120/512 * resolution), fill=(255, 255, 255), outline=(1, 1, 1), width=5, corners=None)
         squircle_bg = np.array(im.getdata()).reshape(im.size[0], im.size[1], 3)[:, :, 0]
         psi_bg = psi.copy()
         # psi_bg[psi != 0] = None
@@ -114,7 +115,7 @@ def make_icon(
         psi_bg[psi!=0] = None
         a = 12
         b = 15
-        psi_bg[psi==0] = (np.exp(a*Y[psi==0]/512) - 1) / (np.exp(a) - 1) * 1 + (np.exp(b*X[psi==0]/512) - 1) / (np.exp(b) - 1) * 1
+        psi_bg[psi==0] = (np.exp(a*Y[psi==0]/resolution) - 1) / (np.exp(a) - 1) * 1 + (np.exp(b*X[psi==0]/resolution) - 1) / (np.exp(b) - 1) * 1
         # plt.imshow(psi, cmap='Greys')
         # plt.show()
 
@@ -139,7 +140,7 @@ def make_icon(
         psi[squircle == 1] = 0
 
     px = 1/plt.rcParams['figure.dpi']  # pixel in inches
-    plt.figure(figsize=(512*px, 512*px))
+    plt.figure(figsize=(resolution*px, resolution*px))
     plt.imshow(psi, cmap=cmap, vmin=-Nsteps, vmax=Nsteps)
     # plt.show()
     if psi_bg is not None:
