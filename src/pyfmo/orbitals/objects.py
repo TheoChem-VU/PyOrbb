@@ -670,6 +670,7 @@ class Orbitals:
         self._get_data()
         self._gather_sfos()
         self._gather_mos()
+        self._gather_notices()
 
     def _get_data(self):
         self.data = pyfmo.orbitals.adf.read_data(self.reader, SCF0_reader=self.SCF0_reader, output=self.output)
