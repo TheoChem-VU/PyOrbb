@@ -49,7 +49,6 @@ class Mixer2:
                 continue
             if not (orb2 in mix.sfos or orb2 in mix.mos):
                 continue
-            print(mix.mos, mix.sfos, orb1, orb2)
 
             return mix
 
@@ -80,9 +79,9 @@ class Mixer2:
         O = o + o.reshape(-1, 1)  # sum of occupations
 
         # first max_pop electrons go to the bonding MO
-        Noi = np.clip(P, 0, max_pop)
+        Poi = np.clip(P, 0, max_pop)
         # any remaining electrons go to the anti-bonding MO
-        Npr = np.clip(P - Noi, 0, max_pop)
+        Ppr = np.clip(P - Poi, 0, max_pop)
 
         # the number of electrons involved in pauli repulsion
         Epr = np.clip(O - max_pop, 0, max_pop) * S2
@@ -94,21 +93,21 @@ class Mixer2:
         for energy_type in self.orbs.sfo_energy_types:
             # we calculate the Eoi for each energy type we have available
             e = np.array([getattr(sfo, energy_type) for sfo in self.sfos])
-            de = abs(e - e.reshape(-1, 1))  # energy gap
+            de = abs(e - e.reshape(-1, 1))  # energy gaps
 
             # calculate the non-degenerate orbital interaction terms
-            Eoi = -(Noi - Npr) * dp * S2 / de
+            Eoi = - (Poi - Ppr) * dp * (S2 / de)
             # for degenerate elements we replace S^2/de with S
             degenerate_mask = np.isclose(de, 0, atol=0.002)
-            Eoi[degenerate_mask] = (-Noi * dp * abs(S))[degenerate_mask]
+            Eoi[degenerate_mask] = (-Poi * dp * abs(S))[degenerate_mask]
 
             # remove upper echelon plus diagonal
             # since the matrix should be symmetric and the diagonal 
             # terms are the self-interactions
             Eoi = np.tril(Eoi, k=-1)
             self.data[energy_type] = (
-                Eoi, np.argsort(Eoi, axis=None), 
-                Epr, np.argsort(-Epr, axis=None)
+                Eoi, np.argsort(Eoi, axis=None),
+                Epr, np.argsort(-Epr, axis=None),
                 )
 
         self.data['mo_occ'] = np.array([mo.occupied for mo in self.orbs.mos])
