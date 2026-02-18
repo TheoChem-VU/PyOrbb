@@ -158,11 +158,7 @@ class ETypeDialog(QtWidgets.QDialog):
             if pos == self.selected:
                 self.rbuttons[pos].setChecked(True)
             rbtn_layout.addWidget(self.rbuttons[pos], i, 0, 1, 1)
-
-        if any(charge != 0 for charge in _determine_formal_charges(self.parent.orbs).values()):
-            rbtn_layout.addWidget(QtWidgets.QLabel(f'\n<i><b>Note:</b>\nEffective energies are recommended for charged fragments!</i>'), i+1, 0, 1, 0)
-
-        # layout.addWidget(self._frag_rename_textedit, 1, 0, 1, 2)
+        
         save_btn = QtWidgets.QPushButton('Save')
         save_btn.clicked.connect(self.accept)
         cancel_btn = QtWidgets.QPushButton('Cancel')
