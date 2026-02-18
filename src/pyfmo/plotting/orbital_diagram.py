@@ -20,19 +20,17 @@ def anchored_text(ax, x, y, text, offset_axes=(0.0, 0.1), **kwargs):
 
     # initial dummy head (will be updated immediately)
     T = ax.text(x, y, text, **kwargs)
-
     def update_artist(event=None):
         # 1) get tail position in display coords
         anchor_disp = ax.transData.transform((x, y))  # display (pixel) coords
 
         # 2) convert tail display to axes coords
-        anchor_axes = ax.transAxes.inverted().transform(anchor_disp)  # (0..1, 0..1)
-
+        # anchor_axes = ax.transAxes.inverted().transform(anchor_disp)  # (0..1, 0..1)
         # update the positions of the arrow
-        xyB = anchor_axes[0] + offset_axes[0]/2, anchor_axes[1] + offset_axes[1]/2
+        xyB = anchor_disp[0] + offset_axes[0]/2 * fig.dpi, anchor_disp[1] + offset_axes[1]/2 * fig.dpi
         # we have to set them like this, otherwise it does not work
-        new_disp = ax.transAxes.transform(xyB)
-        new_data = ax.transData.inverted().transform(new_disp)
+        # new_disp = ax.transAxes.transform(xyB)
+        new_data = ax.transData.inverted().transform(xyB)
         T.set_position(new_data)
 
     # Connect updates when y-limits change or figure is resized
@@ -45,11 +43,11 @@ def anchored_text(ax, x, y, text, offset_axes=(0.0, 0.1), **kwargs):
     return T
 
 
-def arrow_tail_with_axes_offset(ax, anchor, offset_axes=(0.0, 0.1),
+def arrow_tail_with_axes_offset(ax, anchor, displacement_axes=(0.0, 0.1), anchor_axes=(0.0, 0.0),
                                 arrowstyle="<|-", **kwargs):
     """
     Draw an arrow whose tail is fixed to `anchor` in data coords,
-    but whose head is offset from the tail by `offset_axes` measured in
+    but whose head is offset from the tail by `displacement_axes` measured in
     axes fraction (dx, dy in [0..1] of the axes width/height).
 
     Returns the ConnectionPatch instance.
@@ -59,7 +57,7 @@ def arrow_tail_with_axes_offset(ax, anchor, offset_axes=(0.0, 0.1),
     # initial dummy head (will be updated immediately)
     patch = mpatches.ConnectionPatch(
         anchor, (0, 0), 
-        coordsA=ax.transAxes, coordsB=ax.transAxes,
+        coordsA=ax.transData, coordsB=ax.transData,
         arrowstyle=arrowstyle, shrinkA=0, shrinkB=0, 
         **kwargs
     )
@@ -68,17 +66,15 @@ def arrow_tail_with_axes_offset(ax, anchor, offset_axes=(0.0, 0.1),
     def update_patch(event=None):
         # 1) get tail position in display coords
         anchor_disp = ax.transData.transform(anchor)  # display (pixel) coords
-
         # 2) convert tail display to axes coords
-        anchor_axes = ax.transAxes.inverted().transform(anchor_disp)  # (0..1, 0..1)
+        # anchor_axes = ax.transAxes.inverted().transform(anchor_disp)  # (0..1, 0..1)
 
         # update the positions of the arrow
-        xyA = anchor_axes[0] - offset_axes[0]/2, anchor_axes[1] - offset_axes[1]/2
-        xyB = anchor_axes[0] + offset_axes[0]/2, anchor_axes[1] + offset_axes[1]/2
-
+        xyA = anchor_disp[0] - displacement_axes[0]/2 * fig.dpi + anchor_axes[0]/2 * fig.dpi, anchor_disp[1] - displacement_axes[1]/2 * fig.dpi + anchor_axes[1]/2 * fig.dpi
+        xyB = anchor_disp[0] + displacement_axes[0]/2 * fig.dpi + anchor_axes[0]/2 * fig.dpi, anchor_disp[1] + displacement_axes[1]/2 * fig.dpi + anchor_axes[1]/2 * fig.dpi
         # we have to set them like this, otherwise it does not work
-        patch.xy1 = xyA
-        patch.xy2 = xyB
+        patch.xy1 = ax.transData.inverted().transform(xyA)
+        patch.xy2 = ax.transData.inverted().transform(xyB)
 
     # Connect updates when y-limits change or figure is resized
     ax.callbacks.connect('ylim_changed', update_patch)
@@ -102,11 +98,11 @@ def draw_interaction(sfos, mos, connections,
         xtick_order=None,
         **kwargs):
     
-    arrow_length        = kwargs.get('arrow_length', .3 / 4.8280888207)
+    arrow_length        = kwargs.get('arrow_length', 0.25)
     arrow_width         = kwargs.get('arrow_width', .005)
     arrow_head_width    = kwargs.get('arrow_head_width', .025)
     arrow_head_length   = kwargs.get('arrow_head_length', .1 / 4.8280888207)
-    arrow_spacing       = kwargs.get('arrow_spacing', .02)
+    arrow_spacing       = kwargs.get('arrow_spacing', .06)
     arrow_color         = kwargs.get('arrow_color', '#000000')
 
     level_width         = kwargs.get('level_width', .08)
@@ -119,7 +115,7 @@ def draw_interaction(sfos, mos, connections,
     draw_mo_labels      = kwargs.get('draw_mo_labels', False)
     draw_sfo_labels     = kwargs.get('draw_sfo_labels', True)
 
-    orb_label_offset    = kwargs.get('orb_label_offset', -0.06)
+    orb_label_offset    = kwargs.get('orb_label_offset', -.28)
 
     alpha_range         = kwargs.get('alpha_range', (0.1, 1))
 
@@ -290,8 +286,10 @@ def draw_interaction(sfos, mos, connections,
             ax.add_patch(
                 arrow_tail_with_axes_offset(
                     ax,
-                    anchor,
+                    (poss[orb], E),
+                    # anchor,
                     [0, displacement],
+                    [offset_x, 0],
                     arrowstyle=style,
                     clip_on=True,
                     gid=f'{"ARROWMO" if is_MO else "ARROWSFO"}_{orb_index}',
