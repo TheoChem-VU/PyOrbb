@@ -1616,10 +1616,47 @@ class AnalysisWindow(QtWidgets.QWidget):
         misc_box_layout.addWidget(make_sheet_btn, 0, 0, 1, 1)
         misc_box_layout.addWidget(save_fig_btn, 0, 1, 1, 1)
 
+        self.notice_tab = spoilers.Spoilers(self)
+        # self._notice_tab_nums = {'info': 0, 'warning': 0, 'error': 0}
+        self.notice_tab_idx = self.info_tabs.addTab(self.notice_tab, '')
+        for title, text in self.orbs.notices['warning']:
+            self.add_warning_notice(title, text)
+        for title, text in self.orbs.notices['error']:
+            self.add_error_notice(title, text)
+        for title, text in self.orbs.notices['info']:
+            self.add_info_notice(title, text)
+        self._reset_notice_bar_tabbutton()
         self._update_plot()
         # self.__dragger = Dragger(self.plot.fig)
         self._loaded_analysis = True
         self.parent.settings_dialog.settingsChanged.connect(self._update_plot)
+
+    def add_info_notice(self, title, text):
+        label = QtWidgets.QLabel(text)
+        label.setStyleSheet('padding: 3px; font: 10px "IBM Plex Mono"')
+        self.notice_tab.addSpoiler(title, label, icon=self.parent._ICONS['info'])
+        self._reset_notice_bar_tabbutton()
+
+    def add_warning_notice(self, title, text):
+        label = QtWidgets.QLabel(text)
+        label.setStyleSheet('padding: 3px; font: 10px "IBM Plex Mono"')
+        self.notice_tab.addSpoiler(title, label, icon=self.parent._ICONS['warning'])
+        self._reset_notice_bar_tabbutton()
+
+    def add_error_notice(self, title, text):
+        label = QtWidgets.QLabel(text)
+        label.setStyleSheet('padding: 3px; font: 10px "IBM Plex Mono"')
+        self.notice_tab.addSpoiler(title, label, icon=self.parent._ICONS['error'])
+        self._reset_notice_bar_tabbutton()
+
+    def _reset_notice_bar_tabbutton(self):
+        n_info = len(self.orbs.notices['info'])
+        n_warning = len(self.orbs.notices['warning'])
+        n_error = len(self.orbs.notices['error'])
+        pixmap = latex_renderer.multicolor_QPixMap((r'$\text{ⓘ}$', f'{n_info} ', r'$\text{⚠}$', f'{n_warning} ', r'$\text{×}$', f'{n_error}'), ('#2ec4b6', 'k', '#ff9f1c', 'k', '#e71d36', 'k'))
+        label = QtWidgets.QLabel()
+        label.setPixmap(pixmap)
+        self.info_tabs.tabBar().setTabButton(self.notice_tab_idx, QtWidgets.QTabBar.LeftSide, label)
 
     def _get_general_system_info(self):
         frame = QtWidgets.QFrame()
