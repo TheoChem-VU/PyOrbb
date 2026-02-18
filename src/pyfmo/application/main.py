@@ -1368,22 +1368,20 @@ class AnalysisWindow(QtWidgets.QWidget):
         orbital_info_frame.setLayout(orbital_info_layout)
         orbital_info_frame.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
 
-        self.orbital_info_box = Spoilers(self)
-        # orbital_info_layout.addWidget(self.orbital_info_box, 1, 0, 1, 2)
+        self.orbital_info_box = spoilers.Spoilers(self)
 
         orbital_info_layout.addWidget(QtWidgets.QLabel('<i>Use</i> <b>Shift + Click</b> <i>to select multiple orbitals!</i>'), 0, 0, 1, 2)
         orbital_info_layout.addWidget(self.orbital_info_box, 1, 0, 1, 2)
         
         self.info_tabs.addTab(orbital_info_frame, 'Orbitals')
 
-        self.system_info_box = Spoilers(self)
+        self.system_info_box = spoilers.Spoilers(self)
         self.system_info_box.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         self.system_info_box.addSpoiler('General', self._get_general_system_info(), self.parent._ICONS['info'])
         self.system_info_box.addSpoiler('Complex', self._get_complex_system_info(), self.parent._ICONS['mo'])
         for frag in self.orbs.fragments:
             self.system_info_box.addSpoiler(frag, self._get_fragment_system_info(frag), self.parent._ICONS['sfo'])
 
-        # self.system_info_box.addSpoiler(self._get_system_info_txt())
         
         self.info_tabs.addTab(self.system_info_box, 'System')
         self.info_tabs.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
