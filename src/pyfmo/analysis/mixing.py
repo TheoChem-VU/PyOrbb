@@ -544,7 +544,7 @@ class Mixing:
         if isinstance(connection_type, str):
             self.connection_type = {conn: connection_type for conn in self.connections}
 
-        self.two_mixings = [[self]]
+        self.two_mixings = [self]
 
     def __str__(self):
         s = f'{self.__class__.__name__}('
