@@ -478,9 +478,9 @@ class MplCanvas(FigureCanvas):
                     s += f'\n{str(sfo):19.19} {sfo.mulliken_contribution(orb): 8.2%} {sfo.coefficient(orb): 7.4f}'
                 title = pyfmo.generate_label(orb, mode='latex')
 
-            if isinstance(orb, tuple):
+            if isinstance(orb, tuple) and isinstance(orb[0], pyfmo.orbitals.objects.SFO) and isinstance(orb[1], pyfmo.orbitals.objects.MO):
                 sfo, mo = orb
-                icon = self.parent.parent._ICONS['mix']
+                icon = self.parent.parent._ICONS['contribution']
                 connected_sfos = [conn[0] for conn in self.parent.main_mix.connections if conn[1] == mo and conn[0].fragment != sfo.fragment]
                 s += 'SFO'
                 s += f'\n  Name     {pyfmo.generate_label(sfo, mode="html", use_formatting=False)} ({sfo.relative_name})'
