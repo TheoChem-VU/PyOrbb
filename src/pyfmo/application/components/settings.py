@@ -427,17 +427,17 @@ class SettingsDialog(QtWidgets.QDialog):
 
         with self.add_section('Plot') as section:
             with section.add_tab('Arrows') as tab:
-                tab.add_float_setting("arrow_length", 'Length', default=0.062)
+                tab.add_float_setting("arrow_length", 'Length', default=0.25)
                 tab.add_float_setting("arrow_width", 'Width', default=0.05)
                 tab.add_float_setting("arrow_head_width", 'Head Width', default=0.15)
                 tab.add_float_setting("arrow_head_length", 'Head Length', default=0.4)
-                tab.add_float_setting("arrow_spacing", 'Spacing', default=0.012)
+                tab.add_float_setting("arrow_spacing", 'Spacing', default=0.06)
                 tab.add_color_setting("arrow_color", 'Color', default='#000000')
 
             with section.add_tab('Labels') as tab:
                 tab.add_bool_setting("draw_mo_labels", 'Show MO Labels', default=False)
                 tab.add_bool_setting("draw_sfo_labels", 'Show FMO Labels', default=True)
-                tab.add_float_setting("orb_label_offset", 'Label Offset', default=-0.06, minval=-1, maxval=1)
+                tab.add_float_setting("orb_label_offset", 'Label Offset', default=-0.28)
 
             with section.add_tab('Levels') as tab:
                 tab.add_float_setting("level_width", 'Width', default=0.08)
