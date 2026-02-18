@@ -1269,9 +1269,7 @@ class AnalysisWindow(QtWidgets.QWidget):
         plot_container.setHandleWidth(10)
         plot_container.setOpaqueResize(True)
         plot_container.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
-        # plot_container.setLayout(plot_container_layout)
-        # plot_container.resize(700, 500)
-
+        
         self.plot = MplCanvas(self)
         plot_frame = QtWidgets.QFrame()
         plot_frame_layout = QtWidgets.QVBoxLayout()
