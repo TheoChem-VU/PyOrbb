@@ -1,6 +1,17 @@
 from PySide6 import QtWidgets, QtCore, QtGui
 import pyfmo
-from .components import orbital_selector, rich_widgets, latex_renderer, action_widget, settings, editable_tabs, column_dragger
+from .components import (
+    orbital_selector,
+    rich_widgets,
+    latex_renderer,
+    action_widget,
+    settings,
+    editable_tabs,
+    column_dragger,
+    warnings_tab,
+    spoilers,
+    carousel
+    )
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qtagg import FigureCanvas
 from matplotlib.backend_tools import Cursors
