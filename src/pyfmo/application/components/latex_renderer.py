@@ -6,6 +6,7 @@ from PIL import ImageQt, Image
 
 def convert_to_QPixMap(text, fs=9, darkmode=False, scale=2):
 
+def multicolor_QPixMap(texts, colors, fs=11, darkmode=False, scale=2, **kwargs):
     #---- set up a mpl figure instance ----
 
     fig = plt.Figure()
@@ -18,10 +19,62 @@ def convert_to_QPixMap(text, fs=9, darkmode=False, scale=2):
     ax = fig.add_axes([0, 0, 1, 1])
     ax.axis('off')
     ax.patch.set_facecolor('none')
-    if darkmode:
-      t = ax.text(0, 0, text, ha='left', va='bottom', fontsize=fs*scale, c='white')
+    ts = []
+    x0 = 0
+    transform = ax.transData
+    for text, color in zip(texts, colors):
+        kwargs.pop('c', None)
+        text_obj = ax.text(x0, 0, text, ha='left', va='bottom', fontsize=fs*scale, c=color, transform=transform, **kwargs)
+        text_obj.draw(ax.figure.canvas.get_renderer())
+        ex = text_obj.get_window_extent()
+        transform = mpl.transforms.offset_copy(text_obj._transform, x=ex.width, units='dots')
+        ts.append(text_obj)
+    # plt.show()
+    #---- fit figure size to text artist ----
+  
+    fwidth, fheight = fig.get_size_inches()
+    fig_bbox = fig.get_window_extent(renderer)
+
+    height = max([t.get_window_extent(renderer).height for t in ts])
+    width = sum([t.get_window_extent(renderer).width for t in ts])
+
+    tight_fwidth = width * fwidth / fig_bbox.width
+    tight_fheight = height * fheight / fig_bbox.height
+
+    fig.set_size_inches(tight_fwidth, tight_fheight)
+
+
+    #---- convert mpl figure to QPixmap ----
+
+    buf, size = fig.canvas.print_to_buffer()
+    qimage = QtGui.QImage.rgbSwapped(QtGui.QImage(buf, size[0], size[1],
+                                                  QtGui.QImage.Format_ARGB32))
+    qpixmap = QtGui.QPixmap(qimage)
+    qpixmap.setDevicePixelRatio(scale)
+    qpixmap.save('text.png')
+    return qpixmap
+
+
+
+def convert_to_QPixMap(text, fs=9, darkmode=False, scale=2, **kwargs):
+
+    #---- set up a mpl figure instance ----
+
+    fig = plt.Figure()
+    fig.patch.set_facecolor('none')
+    fig.set_canvas(FigureCanvasAgg(fig))
+    renderer = fig.canvas.get_renderer()
+
+    #---- plot the text expression ----
+
+    ax = fig.add_axes([0, 0, 1, 1])
+    ax.axis('off')
+    ax.patch.set_facecolor('none')
+    if darkmode and 'c' not in kwargs:
+        kwargs.pop('c', None)
+        t = ax.text(0, 0, text, ha='left', va='bottom', fontsize=fs*scale, c='white', **kwargs)
     else:
-      t = ax.text(0, 0, text, ha='left', va='bottom', fontsize=fs*scale)
+        t = ax.text(0, 0, text, ha='left', va='bottom', fontsize=fs*scale, **kwargs)
 
     #---- fit figure size to text artist ----
 
