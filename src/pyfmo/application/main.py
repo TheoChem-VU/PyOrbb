@@ -496,6 +496,72 @@ class MplCanvas(FigureCanvas):
                 orb = f'{sfo} ⇒ {mo}'
                 title = f"{sfo.fragment}({pyfmo.generate_label(sfo, mode='latex')}) ⇒ {pyfmo.generate_label(mo, mode='latex')}"
 
+            if isinstance(orb, tuple) and isinstance(orb[0], pyfmo.orbitals.objects.SFO) and isinstance(orb[1], pyfmo.orbitals.objects.SFO):
+                sfo1, sfo2 = orb
+                self.parent._set_mix_settings()
+                mix = self.parent.main_mix.find_two_mixing(sfo1, sfo2)
+                int_type = list(mix.connection_type.values())[0]
+                mo1, mo2 = mix.mos
+                icon = self.parent.parent._ICONS['mix']
+
+                if mo2.energy > mo1.energy:
+                    mo1, mo2 = mo2, mo1
+
+                name_sfo1 = f'{pyfmo.generate_label(sfo1, mode="html", use_formatting=False)} ({sfo1.relative_name})'
+                name_sfo2 = f'{pyfmo.generate_label(sfo2, mode="html", use_formatting=False)} ({sfo2.relative_name})'
+                name_mo1 = f'{pyfmo.generate_label(mo1, mode="html", use_formatting=False)} ({mo1.relative_name})'
+                name_mo2 = f'{pyfmo.generate_label(mo2, mode="html", use_formatting=False)} ({mo2.relative_name})'
+                if int_type == 'PR':
+                    s += '\nPauli Repulsive Interaction\n───────────────────────────\n'
+                else:
+                    s += '\nOrbital Interaction\n───────────────────\n'
+                s += '\n' + name_mo1.center(23)
+                s += f'\n        ╱       ╲'
+                s += f'\n       ╱         ╲'
+                s += f'\n      ╱           ╲'
+                s += '\n' + name_sfo1 + ' ' * (18 - len(name_sfo1)) + name_sfo2
+                s += f'\n      ╲           ╱'
+                s += f'\n       ╲         ╱'
+                s += f'\n        ╲       ╱'
+                s += '\n' + name_mo2.center(23)
+                s += f'\n\n𝛙i          {pyfmo.generate_label(sfo1, mode="html", use_formatting=False)}'
+                s += f'\n𝛙j          {pyfmo.generate_label(sfo2, mode="html", use_formatting=False)}'
+                s += f'\nΨk          {pyfmo.generate_label(mo1, mode="html", use_formatting=False)}'
+                s += f'\nΨl          {pyfmo.generate_label(mo2, mode="html", use_formatting=False)}'
+
+                S = sfo1 @ sfo2
+                s += f'\n\nSij         {S: 5.3f}'
+                max_pop = 1 if self.parent.orbs.data['calc_info']['unrestricted_sfos'] else 2
+                if int_type == 'OI':
+                    de = abs(getattr(sfo1, self.parent._energytype_selection) - getattr(sfo2, self.parent._energytype_selection))
+                    s += f'\n|εi-εj|      {de:.2f} eV'
+                    s += f'\nS^2/|εi-εj|  {S**2 / de:.4f} eV⁻¹'
+                    dpi = -(sfo1.occupation - sfo1.gross_population)
+                    s += f'\nΔpi         {dpi: 5.3f} e⁻'
+                    dpj = -(sfo2.occupation - sfo2.gross_population)
+                    s += f'\nΔpj         {dpj: 5.3f} e⁻'
+                    ptot = sfo1.gross_population + sfo2.gross_population
+                    poi = min(max_pop, ptot)
+                    ppr = max(0, ptot - poi)
+
+                    s += f'\npoi          {poi:5.3f} e⁻'
+                    s += f'\nppr          {ppr:5.3f} e⁻'
+
+                    s += f'\n\nRoi         {-abs(dpi*dpj)*(poi - ppr) * S**2/de:5.2e} ({mix.fraction:.2%})'
+                else:
+                    oi = sfo1.occupation
+                    oj = sfo2.occupation
+                    s += f'\nOpr          {max(oi+oj - max_pop, 0):5.3f} e⁻'
+                    s += f'\n\nRpr          {max(oi+oj - max_pop, 0) * S**2:5.2e} ({mix.fraction:.2%})'
+
+                s += f'\n\nCik         {sfo1.mulliken_contribution(mo1): 5.3%}'
+                s += f'\nCil         {sfo1.mulliken_contribution(mo2): 5.3%}'
+                s += f'\nCjk         {sfo2.mulliken_contribution(mo1): 5.3%}'
+                s += f'\nCjl         {sfo2.mulliken_contribution(mo2): 5.3%}'
+                s += f'\nCik⋅Cil⋅Cjk⋅Cjl {sfo1.mulliken_contribution(mo1)*sfo1.mulliken_contribution(mo2)*sfo2.mulliken_contribution(mo1)*sfo2.mulliken_contribution(mo2): 5.3%}'
+
+                title = f"{sfo1.fragment}({pyfmo.generate_label(sfo1, mode='latex')}) ± {sfo2.fragment}({pyfmo.generate_label(sfo2, mode='latex')})"
+
             label = QtWidgets.QLabel(s)
             label.setStyleSheet('padding: 3px; font: 10px "IBM Plex Mono"')
             self.parent.orbital_info_box.addSpoiler(title, label, icon)
@@ -524,10 +590,6 @@ class MplCanvas(FigureCanvas):
                 if artist.is_MO:
                     self.parent.parent.settings_dialog.set('Plot', 'Levels', 'mo_column_name', new_txt)
 
-                # self.parent._orb_selection_dialog.rename(artist.get_text(), new_txt)
-                # self.parent.new_tick_labels.append(new_txt)
-
-            # self.axes.set_xticklabels(self.parent.new_tick_labels)
             self.parent._update_plot()
             self.fig.canvas.draw_idle()
             self.__dragger.mouse_held = False
@@ -560,7 +622,6 @@ class MplCanvas(FigureCanvas):
                 self._fade_unrelated_ints(self._selected_orbitals)
                 self._already_unfaded = False
 
-                self.selected_orbital = mo
                 self.fig.canvas.draw_idle()
 
                 break
@@ -572,9 +633,24 @@ class MplCanvas(FigureCanvas):
 
                 if sfo not in self._selected_orbitals:
                     self._selected_orbitals.append(sfo)
+
+                to_add = []
+                for orb in self._selected_orbitals:
+                    if not isinstance(orb, pyfmo.orbitals.objects.SFO):
+                        continue
+                    if orb is sfo:
+                        continue
+
+                    mix = self.parent.main_mix.find_two_mixing(sfo, orb)
+                    if mix is None:
+                        continue
+
+                    to_add.extend([(sfo, orb)])
+                    to_add.extend(mix.mos)
+                self._selected_orbitals.extend(to_add)
+
                 self._fade_unrelated_ints(self._selected_orbitals)
                 self._already_unfaded = False
-                self.selected_orbital = sfo
                 self.fig.canvas.draw_idle()
 
                 break
@@ -594,7 +670,6 @@ class MplCanvas(FigureCanvas):
 
                 self._fade_unrelated_ints(self._selected_orbitals)
                 self._already_unfaded = False
-                self.selected_orbital = None
                 self.fig.canvas.draw_idle()
 
                 break
@@ -603,7 +678,6 @@ class MplCanvas(FigureCanvas):
             if not self._already_unfaded:
                 self._already_unfaded = True
                 self._unfade()
-                self.selected_orbital = None
                 self.fig.canvas.set_cursor(Cursors.POINTER)
                 self.fig.canvas.draw_idle()
 
@@ -1072,32 +1146,31 @@ class AnalysisWindow(QtWidgets.QWidget):
     def _update_plot(self):
         settings = self.parent.settings_dialog.get_flat_state()
         # set the colors
+        self._set_mix_settings()
         self._draw_diagram(
-            oi_thresh=10**(self.slider_OI.value()/slider_resolution),
-            pauli_thresh=self.slider_PR.value()/slider_resolution/1000,
-            energy_type=self._energytype_selection,
             ylim=self.ylim,
             xtick_order=self._xtick_order,
             **settings
             )
 
-    def _draw_diagram(self, *args, oi_thresh=None, pauli_thresh=None, ylim=None, energy_type=None, **kwargs):
+    def _set_mix_settings(self):
+        allowed_mos = self.allowed_mos_override if self.allowed_mos_override is not None else self._orb_selection_dialog.state.allowed_mos()
+        allowed_sfos = self.allowed_sfos_override if self.allowed_sfos_override is not None else self._orb_selection_dialog.state.allowed_sfos()
+        self.main_mix.set_oi_threshold(10**(self.slider_OI.value()/slider_resolution))
+        self.main_mix.set_pr_threshold(self.slider_PR.value()/slider_resolution/1000)
+        self.main_mix.set_enable_oi(self.cbox_OI.isChecked())
+        self.main_mix.set_enable_pr(self.cbox_PR.isChecked())
+        self.main_mix.set_allowed_mos(allowed_mos)
+        self.main_mix.set_allowed_sfos(allowed_sfos)
+        self.main_mix.set_energy_type(self._energytype_selection)
+        self.main_mix.reset_mixes()
+
+    def _draw_diagram(self, *args, ylim=None, **kwargs):
         ax = self.plot.axes
         fig = self.plot.fig
 
         ax.clear()
         ax.yaxis.set_major_formatter('{x: 3.0f}')
-        allowed_mos = self.allowed_mos_override if self.allowed_mos_override is not None else self._orb_selection_dialog.state.allowed_mos()
-        allowed_sfos = self.allowed_sfos_override if self.allowed_sfos_override is not None else self._orb_selection_dialog.state.allowed_sfos()
-        self.main_mix.set_oi_threshold(oi_thresh)
-        self.main_mix.set_pr_threshold(pauli_thresh)
-        self.main_mix.set_enable_oi(self.cbox_OI.isChecked())
-        self.main_mix.set_enable_pr(self.cbox_PR.isChecked())
-        self.main_mix.set_allowed_mos(allowed_mos)
-        self.main_mix.set_allowed_sfos(allowed_sfos)
-        self.main_mix.set_energy_type(energy_type)
-        self.main_mix.reset_mixes()
-
         self.main_mix.draw_diagram(ax=ax, ylim=ylim, highlighted_orbitals=self.filtered_orbitals, use_darkmode=False, **kwargs)
         if self.new_tick_labels is not None:
             self.plot.axes.set_xticklabels(self.new_tick_labels)
