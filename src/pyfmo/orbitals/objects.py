@@ -708,13 +708,17 @@ class Orbitals:
                     'fragment_index': self.data['SFOs']['fragment_index'][sfo_idx],
                     'spin': sfo_spin,
                     'energy': self.data['SFOs']['energy'][sfo_spin][sfo_idx] * 27.2114079527,
-                    'approx_site_energy': self.data['SFOs']['approx_site_energy'][sfo_spin][sfo_idx] * 27.2114079527,
                     'occupation': float(self.data['SFOs']['occupation'][sfo_spin][sfo_idx]),
                     'occupied': int(self.data['SFOs']['occupation'][sfo_spin][sfo_idx]) > 0,
                     'gross_population': gross_pop,
                     'gross_spin': gross_spin,
                     'molecule': self.data['molecules'][frag],
                 }
+                if sfo_spin in self.data['SFOs']['approx_site_energy']:
+                    data['approx_site_energy'] = self.data['SFOs']['approx_site_energy'][sfo_spin][sfo_idx] * 27.2114079527
+                else:
+                    data['approx_site_energy'] = (self.data['SFOs']['approx_site_energy']['A'][sfo_idx]  + self.data['SFOs']['approx_site_energy']['B'][sfo_idx]) * 27.2114079527
+
                 if 'adf_names_fixed_principal' in self.data['SFOs']:
                     data['name'] = self.data['SFOs']['adf_names_fixed_principal'][sfo_spin][sfo_idx].removesuffix('_AB').removesuffix('_A').removesuffix('_B')
 
