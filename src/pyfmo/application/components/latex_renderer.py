@@ -1,10 +1,9 @@
+import matplotlib as mpl
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_agg import FigureCanvasAgg
 from PySide6 import QtGui, QtCore
 from PIL import ImageQt, Image
 
-
-def convert_to_QPixMap(text, fs=9, darkmode=False, scale=2):
 
 def multicolor_QPixMap(texts, colors, fs=11, darkmode=False, scale=2, **kwargs):
     #---- set up a mpl figure instance ----
