@@ -41,8 +41,8 @@ class Orbital:
             order = len(orbitals) - order - 1
             return f'HOMO-{order}' if order > 0 else 'HOMO'
 
-        if self.singly_occupied:
-            if self.occupation == 1:
+        if self.singly_occupied or self.partially_occupied:
+            if round(self.occupation) == 1:
                 order = len(orbitals) - order - 1
                 return f'SOMO-{order}' if order > 0 else 'SOMO'
             else:
@@ -68,8 +68,8 @@ class Orbital:
             order = len(orbitals) - order - 1
             return f'HOMO-{order}' if order > 0 else 'HOMO'
 
-        if self.singly_occupied:
-            if self.occupation == 1:
+        if self.singly_occupied or self.partially_occupied:
+            if round(self.occupation) == 1:
                 order = len(orbitals) - order - 1
                 return f'SOMO-{order}' if order > 0 else 'SOMO'
             else:
