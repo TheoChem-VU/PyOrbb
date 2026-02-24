@@ -8,27 +8,23 @@ from .components import (
     settings,
     editable_tabs,
     column_dragger,
-    warnings_tab,
     spoilers,
-    carousel
+    carousel,
+    shadow
     )
-import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qtagg import FigureCanvas
 from matplotlib.backend_tools import Cursors
 from matplotlib.figure import Figure
 import numpy as np
 import os
-import shutil
-import platformdirs
-import json
 from math import floor, ceil
 import tcutility
 from functools import partial
 import pyperclip
 import platform
 import traceback
-from time import perf_counter
 from scm import plams
+import webbrowser
 
 slider_resolution = 500
 
@@ -1269,7 +1265,7 @@ class AnalysisWindow(QtWidgets.QWidget):
         plot_container.setHandleWidth(10)
         plot_container.setOpaqueResize(True)
         plot_container.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
-        
+
         self.plot = MplCanvas(self)
         plot_frame = QtWidgets.QFrame()
         plot_frame_layout = QtWidgets.QVBoxLayout()
@@ -1861,38 +1857,59 @@ class AnalysisWindow(QtWidgets.QWidget):
 
     def setup_new(self):
         self._new_page_frame = QtWidgets.QFrame(self)
+        new_page_layout = QtWidgets.QVBoxLayout(self._new_page_frame)
         self.central_layout.addWidget(self._new_page_frame, QtCore.Qt.AlignCenter)
-        layout = QtWidgets.QVBoxLayout(self._new_page_frame)
+
+        outlined_area = QtWidgets.QFrame()
+        layout = QtWidgets.QVBoxLayout()
+        drop_area = QtWidgets.QFrame()
+        drop_area.setObjectName('drop_area')
+        shadow.apply(drop_area)
+        layout.addWidget(drop_area)
+
+        new_page_layout.addWidget(drop_area)
+        # outlined_area
+        outlined_area_layout = QtWidgets.QVBoxLayout(outlined_area)
+        drop_area_layout = QtWidgets.QGridLayout(drop_area)
+
+        # image
+        pixmap = QtWidgets.QApplication.instance()._ICONS['dropfile'].pixmap(50, 50)
+        label = QtWidgets.QLabel()
+        label.setPixmap(pixmap)
+        outlined_area_layout.addWidget(label, alignment=QtCore.Qt.AlignCenter)
+
 
         # Label
-        label = QtWidgets.QLabel('<font size="50">Drop a File here</font>')
+        label = QtWidgets.QLabel('<font size="12" style="color:black">Drop a File here</font>')
         label.setAlignment(QtCore.Qt.AlignCenter)
         label.setTextFormat(QtCore.Qt.RichText)
-        layout.addWidget(label)
+        outlined_area_layout.addWidget(label)
 
         # second label
-        label = QtWidgets.QLabel('<font size="50" style="font-size:300%;color:grey;"><i>or</i></font>')
+        label = QtWidgets.QLabel('<font size="12" style="font-size:300%;color:grey;"><i>or</i></font>')
         label.setAlignment(QtCore.Qt.AlignCenter)
         label.setTextFormat(QtCore.Qt.RichText)
-        layout.addWidget(label)
+        outlined_area_layout.addWidget(label)
 
         # Button
         if self.parent.isDarkMode:
             button = QtWidgets.QPushButton(QtWidgets.QApplication.instance()._ICONS['folder_dark'], ' Select a File')
         else:
             button = QtWidgets.QPushButton(QtWidgets.QApplication.instance()._ICONS['folder'], ' Select a File')
+        shadow.apply(button, radius=20)
         button.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         button.setFlat(True)
         button.clicked.connect(self.open_filedialog)
         label.setTextFormat(QtCore.Qt.RichText)
 
-        self._new_page_frame.setObjectName('ParentWidget')
+        outlined_area.setObjectName('Outline')
+        # shadow.apply(outlined_area, radius=20)
         if self.parent.isDarkMode:
             self._new_page_frame.setStyleSheet("""
-                QWidget#ParentWidget {
-                    border: 3px dashed gray;
+                QWidget#Outline {
+                    border: 1.5px dashed lightgray;
                     margin: 4px;
-                    padding: 80px;
+                    padding: 40px;
                     border-radius: 10px;
                     background-color: transparent;
                 }
@@ -1900,7 +1917,7 @@ class AnalysisWindow(QtWidgets.QWidget):
                     background-color: #656565;
                 }
                 QPushButton {
-                    font-size: 20px;
+                    font-size: 12px;
                     border: 1px solid gray;
                     border-radius: 10px;
                     padding: 8px;
@@ -1908,24 +1925,60 @@ class AnalysisWindow(QtWidgets.QWidget):
             """)
         else:
             self._new_page_frame.setStyleSheet("""
-                QWidget#ParentWidget {
-                    border: 3px dashed gray;
-                    margin: 4px;
-                    padding: 80px;
+                QWidget#Outline {
+                    border: 1.5px dashed lightgray;
+                    padding: 40px;
                     border-radius: 10px;
-                    background-color: transparent;
+                    background-color: white;
+                    margin-top: 10px;
+                    margin-left: 10px;
+                    margin-right: 10px;
                 }
                 QPushButton:hover {
-                    background-color: #f0f0f0;
+                    background-color: #f6f6f6;
                 }
                 QPushButton {
-                    font-size: 20px;
-                    border: 1px solid gray;
+                    font-size: 14px;
+                    border: 0px solid gray;
                     border-radius: 10px;
                     padding: 8px;
+                    margin-left: 10px;
+                    margin-right: 10px;
+                }
+                QWidget#drop_area {
+                    border: 1px solid #d0d0d0;
+                    background-color: white;
+                    border-radius: 20px;
+                    margin-left: 60px;
+                    margin-right: 60px;
+                    margin-top: 5px;
+                }
+                QWidget#carousel {
+                    margin-left: 120px;
+                    margin-right: 120px;
                 }
             """)
-        layout.addWidget(button, alignment=QtCore.Qt.AlignCenter)
+        outlined_area_layout.addWidget(button, alignment=QtCore.Qt.AlignCenter)
+        drop_area_layout.addWidget(outlined_area, 0, 0, 1, 2)
+
+        open_article_btn = QtWidgets.QPushButton('Open the PyOrbb Article')
+        shadow.apply(open_article_btn, radius=20)
+        open_article_btn.clicked.connect(lambda: webbrowser.open('https://github.com/TheoChem-VU/PyFMO'))
+        open_article_btn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        drop_area_layout.addWidget(open_article_btn, 1, 0)
+
+        open_docs_btn = QtWidgets.QPushButton('See the PyOrbb Documentation')
+        open_docs_btn.clicked.connect(lambda: webbrowser.open('https://theochem-vu.github.io/PyFMO/'))
+        shadow.apply(open_docs_btn, radius=20)
+        open_docs_btn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        drop_area_layout.addWidget(open_docs_btn, 1, 1)
+
+        recently_openend_list = carousel.PublicationCarousel(self)
+        recently_openend_list.setObjectName('carousel')
+        # new_page_layout.addWidget(QtWidgets.QLabel('\n<b>Recent Publications Using PyOrbb:</b>'), 2, 0, 1, 2)
+        new_page_layout.addWidget(recently_openend_list)
+
+
 
 
 class PyOrbbWindow(QtWidgets.QMainWindow):
