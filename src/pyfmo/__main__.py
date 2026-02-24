@@ -4,7 +4,11 @@ def main():
     import contextlib
     from datetime import datetime
     import traceback
+    import faulthandler
 
+
+    faulthandler.enable()
+    
     log_dir = platformdirs.user_log_dir(appname="PyOrbb", appauthor="TheoCheMVU", ensure_exists=True)
     now = str(datetime.now()).replace(" ", "_").replace(":", "-").split(".")[0]
     log_file = os.path.join(log_dir, now + ".txt")
