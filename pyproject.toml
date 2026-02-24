@@ -67,7 +67,7 @@ sources = [
 ]
 requires = [
     "tcviewer>=0.1.11",
-    "git+https://github.com/TheoChem-VU/TCutility.git@495-support-for-windows",
+    "git+https://github.com/TheoChem-VU/TCutility.git@509-improvements-to-the-cite-and-caching-module",
     "numpy",
     "matplotlib>=3.5.3",
     "networkx>=2.6.3",
@@ -78,6 +78,7 @@ requires = [
     "pyside6-essentials",
     "pyperclip",
     "platformdirs",
+    "beautifulsoup4",
     ]
 test_sources = [
     "test",
