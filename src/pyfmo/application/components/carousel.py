@@ -15,6 +15,7 @@ class FadeWidget(QtWidgets.QWidget):
         self.left_side = left_side
         self.setAttribute(QtCore.Qt.WA_TransparentForMouseEvents)
         self.setAttribute(QtCore.Qt.WA_NoSystemBackground)
+        self.update_background_color()
 
     def paintEvent(self, event):
         painter = QtGui.QPainter(self)
@@ -27,10 +28,10 @@ class FadeWidget(QtWidgets.QWidget):
         else:
             gradient = QtGui.QLinearGradient(0, 0, self.width(), 0)
 
-        solid = QtGui.QColor('#F8F8F8')
+        solid = QtGui.QColor(self.background_color)
         solid.setAlpha(255)
 
-        transparent = QtGui.QColor('#F8F8F8')
+        transparent = QtGui.QColor(self.background_color)
         transparent.setAlpha(0)
 
         gradient.setColorAt(0, solid)
@@ -38,6 +39,9 @@ class FadeWidget(QtWidgets.QWidget):
 
         painter.fillRect(self.rect(), gradient)
 
+    def update_background_color(self):
+        darkmode = QtWidgets.QApplication.instance().isDarkMode
+        self.background_color = '#3E3E3E' if darkmode else '#F7F7F7'
 
 
 @tcutility.cache_file("cited_by.json", datetime.timedelta(weeks=1))
@@ -89,42 +93,14 @@ class PublicationWidget(QtWidgets.QFrame):
         self._authors = data["author"]
         self._date = data["created"]["date-parts"][0]
 
-        self.setObjectName("main")
-        self.setStyleSheet("""
-            QFrame#main {
-                    border: none;
-                    margin: 5px;
-                    padding: 10px;
-                    border-radius: 10px;
-                    background-color: white;
-                }
-            QFrame#main:hover {
-                background-color: #f6f6f6;
-            }
-            QLabel#Pub_ref {
-                    font: 12px;
-                    color: #1f2022;
-                }
-            QLabel#Pub_authors {
-                    font: 12px;
-                    color: #1f2022;
-                }
-            QLabel#Pub_title {
-                    font: 12px;
-                    color: #1f2022;
-                }
-            """)
+        self.setObjectName("Pub_main")
         self.setup()
-        # self.setMinimumWidth(250)
         shadow.apply(self)
         self.setSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum)
 
     def mousePressEvent(self, event):
         import webbrowser
-        # print(webbrowser.get('firefox'))
         ret = webbrowser.get('firefox').open(self._link)
-        # ret = webbrowser.open(self._link)
-        # print(ret)
 
     def setup(self):
         month_name = {1: 'Jan', 2: 'Feb', 3: 'Mar', 4: 'Apr', 5: 'May', 6: 'Jun', 7: 'Jul', 8: 'Aug', 9: 'Sept', 10: 'Oct', 11: 'Nov', 12: 'Dec'}
@@ -132,7 +108,6 @@ class PublicationWidget(QtWidgets.QFrame):
         title_label = QtWidgets.QLabel('<b>' + self._title + '</b>')
 
         title_label.setWordWrap(True)
-        title_label.setObjectName('Pub_title')
 
         initials = []
         last_names = []
@@ -153,11 +128,9 @@ class PublicationWidget(QtWidgets.QFrame):
 
         author_label = QtWidgets.QLabel(author_str)
         author_label.setWordWrap(True)
-        author_label.setObjectName('Pub_authors')
 
         ref_label = QtWidgets.QLabel(f'<i><b>{journal}</b></i><br>{month_name[self._date[1]]} {self._date[0]}')
-        # ref_label.setWordWrap(True)
-        ref_label.setObjectName('Pub_ref')
+
 
         self.layout.addWidget(ref_label)
         self.layout.addWidget(title_label)
@@ -190,216 +163,26 @@ class Carousel(QtWidgets.QWidget):
 
         if title is not None:
             title_label = QtWidgets.QLabel(title)
-            title_label.setObjectName('title')
+            title_label.setObjectName('carousel_title')
             _layout.addWidget(title_label)
 
 
         self.fade_left = FadeWidget(left_side=False, parent=self.scroll_area)
         self.fade_right = FadeWidget(left_side=True, parent=self.scroll_area)
 
-        self.fade_width = 20
+        self.fade_width = 30
 
         # Connect scroll updates
         scrollbar = self.scroll_area.horizontalScrollBar()
 
         _layout.addWidget(self.scroll_area)
 
-        if self.parent.parent.isDarkMode:
-            self.setStyleSheet('''
-                QLabel#title {
-                    font-size: 20px;
-                    color: #b0b0b0;
-                }
-                QWidget {
-                    border: none;
-                    background-color: transparent;
-                    border-radius: 5px;
-                }
-                QPushButton {
-                    font-size: 12px;
-                    border: 1px solid darkgray;
-                    border-radius: 13px;
-                    padding: 8px;
-                    margin: 0px; 
-                    background-color: #3A3A3A;
-                }
-                QPushButton:hover {
-                    background-color: #656565;
-                }
-                 QScrollBar:horizontal
-                {
-                    height: 15px;
-                    margin: 3px 15px 3px 15px;
-                    border: 1px transparent #2A2929;
-                    border-radius: 2px;
-                    background-color: white;    /* #2A2929; */
-                }
-
-                QScrollBar::handle:horizontal
-                {
-                    background-color: lightgrey;      /* #605F5F; */
-                    min-width: 5px;
-                    border-radius: 2px;
-                }
-
-                QScrollBar::add-line:horizontal
-                {
-                    margin: 0px 3px 0px 3px;
-                    border-image: url(:/qss_icons/rc/right_arrow_disabled.png);
-                    width: 10px;
-                    height: 10px;
-                    subcontrol-position: right;
-                    subcontrol-origin: margin;
-                }
-
-                QScrollBar::sub-line:horizontal
-                {
-                    margin: 0px 3px 0px 3px;
-                    border-image: url(:/qss_icons/rc/left_arrow_disabled.png);
-                    height: 10px;
-                    width: 10px;
-                    subcontrol-position: left;
-                    subcontrol-origin: margin;
-                }
-
-                QScrollBar::add-line:horizontal:hover,QScrollBar::add-line:horizontal:on
-                {
-                    border-image: url(:/qss_icons/rc/right_arrow.png);
-                    height: 10px;
-                    width: 10px;
-                    subcontrol-position: right;
-                    subcontrol-origin: margin;
-                }
-
-
-                QScrollBar::sub-line:horizontal:hover, QScrollBar::sub-line:horizontal:on
-                {
-                    border-image: url(:/qss_icons/rc/left_arrow.png);
-                    height: 10px;
-                    width: 10px;
-                    subcontrol-position: left;
-                    subcontrol-origin: margin;
-                }
-
-                QScrollBar::up-arrow:horizontal, QScrollBar::down-arrow:horizontal
-                {
-                    background: none;
-                }
-
-
-                QScrollBar::add-page:horizontal, QScrollBar::sub-page:horizontal
-                {
-                    background: none;
-                }
-
-            ''')
-        else:
-            self.setStyleSheet('''  
-                QLabel#title {
-                    font-size: 20px;
-                    color: #808080;
-                    padding-top: 10px;
-                    padding-left: 90px;
-                }  
-                QLabel#ref {
-                    font: 20px black;
-                }  
-                QLabel#authors {
-                    font: 20px black;
-                }  
-                QLabel#article_title {
-                    font: 20px black;
-                }
-                QWidget {
-                    border: none;
-                    background-color: transparent;
-                    border-radius: 5px;
-                }  
-                QWidget#carousel {
-                    padding-left: 0px;
-                    padding-right: 0px;
-                }  
-                QPushButton {
-                    font-size: 12px;
-                    border: 1px solid lightgray;
-                    border-radius: 13px;
-                    padding: 8px;
-                    margin: 0px; 
-                    background-color: white;
-                }
-                QPushButton:hover {
-                    background-color: #f0f0f0;
-                }
-                 QScrollBar:horizontal
-                {
-                    height: 11px;
-                    margin: 3px 15px 3px 15px;
-                    border: 1px transparent #2A2929;
-                    border-radius: 4px;
-                    background-color: transparent;    /* #2A2929; */
-                }
-
-                QScrollBar::handle:horizontal
-                {
-                    background-color: lightgrey;      /* #605F5F; */
-                    min-width: 5px;
-                    border-radius: 4px;
-                }
-
-                QScrollBar::add-line:horizontal
-                {
-                    margin: 0px 3px 0px 3px;
-                    border-image: url(:/qss_icons/rc/right_arrow_disabled.png);
-                    width: 10px;
-                    height: 10px;
-                    subcontrol-position: right;
-                    subcontrol-origin: margin;
-                }
-
-                QScrollBar::sub-line:horizontal
-                {
-                    margin: 0px 3px 0px 3px;
-                    border-image: url(:/qss_icons/rc/left_arrow_disabled.png);
-                    height: 10px;
-                    width: 10px;
-                    subcontrol-position: left;
-                    subcontrol-origin: margin;
-                }
-
-                QScrollBar::add-line:horizontal:hover,QScrollBar::add-line:horizontal:on
-                {
-                    border-image: url(:/qss_icons/rc/right_arrow.png);
-                    height: 10px;
-                    width: 10px;
-                    subcontrol-position: right;
-                    subcontrol-origin: margin;
-                }
-
-
-                QScrollBar::sub-line:horizontal:hover, QScrollBar::sub-line:horizontal:on
-                {
-                    border-image: url(:/qss_icons/rc/left_arrow.png);
-                    height: 10px;
-                    width: 10px;
-                    subcontrol-position: left;
-                    subcontrol-origin: margin;
-                }
-
-                QScrollBar::up-arrow:horizontal, QScrollBar::down-arrow:horizontal
-                {
-                    background: none;
-                }
-
-
-                QScrollBar::add-page:horizontal, QScrollBar::sub-page:horizontal
-                {
-                    background: none;
-                }
-
-            ''')
-
         self.setup()
         self.resize_fades()
+
+    def update_background_color(self):
+        self.fade_left.update_background_color()
+        self.fade_right.update_background_color()
 
     def resizeEvent(self, event):
         super().resizeEvent(event)
