@@ -1931,6 +1931,11 @@ class AnalysisWindow(QtWidgets.QWidget):
 class PyOrbbWindow(QtWidgets.QMainWindow):
     def __init__(self):
         super().__init__()
+
+        ICON_FOLDER = os.path.join(os.path.split(__file__)[0], '..', 'application', 'icons')
+        self._ICONS = {file.removesuffix('.png'): QtGui.QIcon(os.path.join(ICON_FOLDER, file)) for file in os.listdir(ICON_FOLDER)}
+        self._PIXMAPS = {file.removesuffix('.png'): QtGui.QPixmap(os.path.join(ICON_FOLDER, file)) for file in os.listdir(ICON_FOLDER)}
+        
         self.resize(1030 + 22 + 12, 698 + 52)
         self.layout = QtWidgets.QGridLayout()
         grid_widget = QtWidgets.QWidget()
@@ -2013,15 +2018,12 @@ class PyOrbbWindow(QtWidgets.QMainWindow):
 
         settings_action = preferenceMenu.addAction("Open Settings")
         settings_action.triggered.connect(self._open_settings)
-
-        self._add_analysis_tab()
-
-        ICON_FOLDER = os.path.join(os.path.split(__file__)[0], '..', 'application', 'icons')
-        self._ICONS = {file.removesuffix('.png'): QtGui.QIcon(os.path.join(ICON_FOLDER, file)) for file in os.listdir(ICON_FOLDER)}
-        self._PIXMAPS = {file.removesuffix('.png'): QtGui.QPixmap(os.path.join(ICON_FOLDER, file)) for file in os.listdir(ICON_FOLDER)}
         self.setWindowIcon(self._ICONS["pyorbb"])
 
         self.settings_dialog = settings.SettingsDialog(self)
+
+        self._add_analysis_tab()
+        self.tabs.setCurrentIndex(0)
 
     def _open_settings(self):
         self.settings_dialog.exec()
