@@ -1717,16 +1717,16 @@ class AnalysisWindow(QtWidgets.QWidget):
 
 
         # Label
-        label = QtWidgets.QLabel('<font size="12">Drop a File here</font>')
+        label = QtWidgets.QLabel('<font size="8">Drop a File here</font><br><font size="6"><i>or</i></font>')
         label.setAlignment(QtCore.Qt.AlignCenter)
         label.setTextFormat(QtCore.Qt.RichText)
         outlined_area_layout.addWidget(label)
 
-        # second label
-        label = QtWidgets.QLabel('<font size="12""><i>or</i></font>')
-        label.setAlignment(QtCore.Qt.AlignCenter)
-        label.setTextFormat(QtCore.Qt.RichText)
-        outlined_area_layout.addWidget(label)
+        # # second label
+        # label = QtWidgets.QLabel('<font size="12""><i>or</i></font>')
+        # label.setAlignment(QtCore.Qt.AlignCenter)
+        # label.setTextFormat(QtCore.Qt.RichText)
+        # outlined_area_layout.addWidget(label)
 
         # Button
         self.open_file_button = QtWidgets.QPushButton(QtWidgets.QApplication.instance()._ICONS['folder'], ' Select a File')
@@ -1734,7 +1734,6 @@ class AnalysisWindow(QtWidgets.QWidget):
         self.open_file_button.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.open_file_button.setFlat(True)
         self.open_file_button.clicked.connect(self.open_filedialog)
-        label.setTextFormat(QtCore.Qt.RichText)
 
         outlined_area.setObjectName('Outline')        
         outlined_area_layout.addWidget(self.open_file_button, alignment=QtCore.Qt.AlignCenter)
