@@ -117,7 +117,7 @@ class ScrollLabel(QtWidgets.QScrollArea):
 
         # setting alignment to the text
         self.label.setAlignment(QtCore.Qt.AlignLeft | QtCore.Qt.AlignTop)
-        self.label.setStyleSheet('padding: 10px; font: 10px "IBM Plex Mono"')
+        self.label.setStyleSheet('padding: 10px; font: 10px "Inter"')
         self.label.setTextInteractionFlags(QtCore.Qt.TextSelectableByMouse)
 
         # adding label to the layout
@@ -563,7 +563,7 @@ class MplCanvas(FigureCanvas):
                 title = f"{sfo1.fragment}({pyfmo.generate_label(sfo1, mode='latex')}) ± {sfo2.fragment}({pyfmo.generate_label(sfo2, mode='latex')})"
 
             label = QtWidgets.QLabel(s)
-            label.setStyleSheet('padding: 3px; font: 10px "IBM Plex Mono"')
+            label.setStyleSheet('padding: 3px; font: 10px "Inter"')
             self.parent.orbital_info_box.addSpoiler(title, label, icon)
 
     def on_plot_click(self, event):
@@ -1478,7 +1478,7 @@ class AnalysisWindow(QtWidgets.QWidget):
 
         label_value_OI = QtWidgets.QLabel(f'{10**(self.slider_OI.value()/slider_resolution):.2E}')
         label_value_OI.setToolTip('The threshold value for Orbital Interactions')
-        label_value_OI.setStyleSheet('font: 10px "IBM Plex Mono"')
+        label_value_OI.setStyleSheet('font: 10px "Inter"')
         slider_layout.addWidget(label_value_OI, 0, 3)
         self.slider_OI.valueChanged.connect(lambda value: (self._update_plot(), label_value_OI.setText(f'{10**(value/slider_resolution):.2E}')))
 
@@ -1534,7 +1534,7 @@ class AnalysisWindow(QtWidgets.QWidget):
         dec_pr_btn.clicked.connect(self._set_previous_pr_slider)
         slider_layout.addWidget(dec_pr_btn, 1, 6)
         label_value_PR = QtWidgets.QLabel(f'{self.slider_PR.value()/slider_resolution:.3f}')
-        label_value_PR.setStyleSheet('font: 10px "IBM Plex Mono"')
+        label_value_PR.setStyleSheet('font: 10px "Inter"')
         label_value_PR.setToolTip('The threshold value for Pauli Repulsions')
         slider_layout.addWidget(label_value_PR, 1, 3)
         self.slider_PR.valueChanged.connect(lambda value: (self._update_plot(), label_value_PR.setText(f'{value/slider_resolution/1000:.4f}')))
@@ -1633,19 +1633,19 @@ class AnalysisWindow(QtWidgets.QWidget):
 
     def add_info_notice(self, title, text):
         label = QtWidgets.QLabel(text)
-        label.setStyleSheet('padding: 3px; font: 10px "IBM Plex Mono"')
+        label.setStyleSheet('padding: 3px; font: 10px "Inter"')
         self.notice_tab.addSpoiler(title, label, icon=self.parent._ICONS['info'])
         self._reset_notice_bar_tabbutton()
 
     def add_warning_notice(self, title, text):
         label = QtWidgets.QLabel(text)
-        label.setStyleSheet('padding: 3px; font: 10px "IBM Plex Mono"')
+        label.setStyleSheet('padding: 3px; font: 10px "Inter"')
         self.notice_tab.addSpoiler(title, label, icon=self.parent._ICONS['warning'])
         self._reset_notice_bar_tabbutton()
 
     def add_error_notice(self, title, text):
         label = QtWidgets.QLabel(text)
-        label.setStyleSheet('padding: 3px; font: 10px "IBM Plex Mono"')
+        label.setStyleSheet('padding: 3px; font: 10px "Inter"')
         self.notice_tab.addSpoiler(title, label, icon=self.parent._ICONS['error'])
         self._reset_notice_bar_tabbutton()
 
@@ -2045,7 +2045,7 @@ class PyOrbbWindow(QtWidgets.QMainWindow):
 
 class PyOrbbApp(QtWidgets.QApplication):
     def __post_init__(self):
-        fontpath = os.path.split(__file__)[0] + '/../cli_scripts/ibm_plex_mono/IBMPlexMono-Regular.ttf'
+        fontpath = os.path.split(__file__)[0] + '/../fonts/Inter/Inter-VariableFont_opsz,wght.ttf'
         QtGui.QFontDatabase.addApplicationFont(fontpath)
         self.setStyle('Fusion')
         self.windows = []
