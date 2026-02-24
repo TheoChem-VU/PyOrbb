@@ -9,8 +9,8 @@ from .components import (
     editable_tabs,
     column_dragger,
     spoilers,
-    carousel,
-    shadow
+    # carousel,
+    # shadow
     )
 from matplotlib.backends.backend_qtagg import FigureCanvas
 from matplotlib.backend_tools import Cursors
@@ -113,7 +113,7 @@ class ScrollLabel(QtWidgets.QScrollArea):
 
         # setting alignment to the text
         self.label.setAlignment(QtCore.Qt.AlignLeft | QtCore.Qt.AlignTop)
-        self.label.setStyleSheet('padding: 10px; font: 10px "Inter"')
+        self.label.setStyleSheet('padding: 10px; font-size: 10px;')
         self.label.setTextInteractionFlags(QtCore.Qt.TextSelectableByMouse)
 
         # adding label to the layout
@@ -157,8 +157,10 @@ class ETypeDialog(QtWidgets.QDialog):
         
         save_btn = QtWidgets.QPushButton('Save')
         save_btn.clicked.connect(self.accept)
+        # shadow.apply(save_btn)
         cancel_btn = QtWidgets.QPushButton('Cancel')
         cancel_btn.clicked.connect(self.reject)
+        # shadow.apply(cancel_btn)
         layout.addWidget(save_btn, 2, 0, 1, 1)
         layout.addWidget(cancel_btn, 2, 1, 1, 1)
 
@@ -186,54 +188,14 @@ class FragRenameDialog(QtWidgets.QDialog):
         self.setLayout(layout)
         title = QtWidgets.QLabel('<b>Rename orbital column name</b>')
         layout.addWidget(title, 0, 0, 1, 2)
-        if self.parent.parent.parent.isDarkMode:
-            self.setStyleSheet("""
-                QDialog {
-                    background-color: none;
-                    border: 1px solid darkgray;
-                }
-                QPushButton {
-                    font-size: 12px;
-                    border: 1px solid darkgray;
-                    border-radius: 5px;
-                    padding: 2px;
-                    margin: 0px; 
-                    background-color: #3A3A3A;
-                }
-                QPushButton:hover {
-                    background-color: ##656565;
-                    }
-                QLabel: {
-                    border: 0px;
-                }
-                """)
-        else:
-            self.setStyleSheet("""
-                QDialog {
-                    background-color: none;
-                    border: 1px solid lightgray;
-                }
-                QPushButton {
-                    font-size: 12px;
-                    border: 1px solid lightgray;
-                    border-radius: 5px;
-                    padding: 2px;
-                    margin: 0px; 
-                    background-color: white;
-                }
-                QPushButton:hover {
-                    background-color: #f0f0f0;
-                    }
-                QLabel: {
-                    border: none;
-                }
-                """)
         self._frag_rename_textedit = QtWidgets.QLineEdit(self)
         layout.addWidget(self._frag_rename_textedit, 1, 0, 1, 2)
         save_btn = QtWidgets.QPushButton('Save')
         save_btn.clicked.connect(self.accept)
+        # shadow.apply(save_btn)
         cancel_btn = QtWidgets.QPushButton('Cancel')
         cancel_btn.clicked.connect(self.reject)
+        # shadow.apply(cancel_btn)
         layout.addWidget(save_btn, 2, 0, 1, 1)
         layout.addWidget(cancel_btn, 2, 1, 1, 1)
 
@@ -259,7 +221,7 @@ class YAxisDialog(QtWidgets.QDialog):
         super().__init__(parent=parent)
         layout = QtWidgets.QGridLayout(self)
         self.setLayout(layout)
-        layout.addWidget(QtWidgets.QLabel('Choose Y-axis limits'), 0, 0, 1, 2)
+        layout.addWidget(QtWidgets.QLabel('<b>Choose Y-axis limits</b>'), 0, 0, 1, 2)
 
         label = QtWidgets.QLabel("Min:")
         layout.addWidget(label, 1, 0, 1, 1)
@@ -273,14 +235,17 @@ class YAxisDialog(QtWidgets.QDialog):
 
         save_btn = QtWidgets.QPushButton('Save')
         save_btn.clicked.connect(self.accept)
+        # shadow.apply(save_btn)
         cancel_btn = QtWidgets.QPushButton('Cancel')
         cancel_btn.clicked.connect(self.reject)
+        # shadow.apply(cancel_btn)
         layout.addWidget(save_btn, 4, 0, 1, 1)
         layout.addWidget(cancel_btn, 4, 1, 1, 1)
 
         _reset_btn = QtWidgets.QPushButton("Reset Y-axis")
         _reset_btn.clicked.connect(self.reset)
         _reset_btn.clicked.connect(self.reject)
+        # shadow.apply(_reset_btn)
         layout.addWidget(_reset_btn, 3, 0, 1, 1)
 
     def reset(self):
@@ -559,7 +524,7 @@ class MplCanvas(FigureCanvas):
                 title = f"{sfo1.fragment}({pyfmo.generate_label(sfo1, mode='latex')}) ± {sfo2.fragment}({pyfmo.generate_label(sfo2, mode='latex')})"
 
             label = QtWidgets.QLabel(s)
-            label.setStyleSheet('padding: 3px; font: 10px "Inter"')
+            label.setStyleSheet('font-size: 10px')
             self.parent.orbital_info_box.addSpoiler(title, label, icon)
 
     def on_plot_click(self, event):
@@ -972,19 +937,6 @@ class CopyLabel(QtWidgets.QFrame):
         copy_button.setToolTip('Copy')
         copy_button.setSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Preferred)
         copy_button.clicked.connect(self.copy)
-        copy_button.setStyleSheet("""
-            QPushButton {
-                font-size: 12px;
-                border: 1px solid lightgray;
-                border-radius: 5px;
-                padding: 3px;
-                margin: 0px; 
-                background-color: white;
-            }
-            QPushButton:hover {
-                background-color: #f0f0f0;
-                }
-            """)
 
         layout.addWidget(copy_button)
         layout.setContentsMargins(0, 0, 0, 0)
@@ -1014,19 +966,7 @@ class MoleculeLabel(QtWidgets.QFrame):
         copy_button.setToolTip('Copy')
         copy_button.setSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Preferred)
         copy_button.clicked.connect(self.copy)
-        copy_button.setStyleSheet("""
-            QPushButton {
-                font-size: 12px;
-                border: 1px solid lightgray;
-                border-radius: 5px;
-                padding: 3px;
-                margin: 0px; 
-                background-color: white;
-            }
-            QPushButton:hover {
-                background-color: #f0f0f0;
-                }
-            """)
+
         layout.addWidget(copy_button)
 
         draw_icon = QtGui.QIcon(os.path.join(os.path.split(__file__)[0], '..', 'application', 'icons', 'draw.png'))
@@ -1034,19 +974,6 @@ class MoleculeLabel(QtWidgets.QFrame):
         draw_button.setToolTip('Draw')
         draw_button.setSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Preferred)
         draw_button.clicked.connect(self.draw)
-        draw_button.setStyleSheet("""
-            QPushButton {
-                font-size: 12px;
-                border: 1px solid lightgray;
-                border-radius: 5px;
-                padding: 3px;
-                margin: 0px; 
-                background-color: white;
-            }
-            QPushButton:hover {
-                background-color: #f0f0f0;
-                }
-            """)
 
         layout.addWidget(draw_button)
         layout.setContentsMargins(0, 0, 0, 0)
@@ -1268,98 +1195,25 @@ class AnalysisWindow(QtWidgets.QWidget):
 
         self.plot = MplCanvas(self)
         plot_frame = QtWidgets.QFrame()
+        # shadow.apply(plot_container)
         plot_frame_layout = QtWidgets.QVBoxLayout()
         plot_frame.setLayout(plot_frame_layout)
         plot_frame_layout.addWidget(self.plot)
         self.plot.setMinimumSize(300, 300)
 
         self.plot.setFocus()
-        if self.parent.isDarkMode:
-            plot_frame.setStyleSheet('QFrame{padding: 0px; margin: 0px; border: 1px solid darkgray; border-radius: 5px; background-color: white;} QDialog{padding: 0px; margin: 0px; border: 1px solid darkgray; border-radius: 5px; background-color: none;} QLabel{padding: 0px; margin: 0px; border: none; border-radius: 5px; background-color: none;}')
-        else:
-            plot_frame.setStyleSheet('QFrame{padding: 0px; margin: 0px; border: 1px solid lightgray; border-radius: 5px; background-color: white;} QDialog{padding: 0px; margin: 0px; border: 1px solid lightgray; border-radius: 5px; background-color: white;} QLabel{padding: 0px; margin: 0px; border: none; border-radius: 5px; background-color: none;}')
+        # if self.parent.isDarkMode:
+            # plot_frame.setStyleSheet('QFrame{padding: 0px; margin: 0px; border: 1px solid darkgray; border-radius: 5px; background-color: white;} QDialog{padding: 0px; margin: 0px; border: 1px solid darkgray; border-radius: 5px; background-color: none;} QLabel{padding: 0px; margin: 0px; border: none; border-radius: 5px; background-color: none;}')
+        plot_frame.setObjectName('plot_frame')
         plot_container.addWidget(plot_frame)
         layout.addWidget(plot_container, 0, 0, 1, 2)
 
         self.info_tabs = QtWidgets.QTabWidget()
-        if self.parent.isDarkMode:
-            self.info_tabs.setStyleSheet("""
-                QTabWidget { 
-                    border-radius: 5px; 
-                    border: 1px solid darkgray
-                    } 
-                QTabWidget::pane { 
-                    border: 1px solid darkgray; 
-                    background-color: rgb(70, 70, 70);
-                    border-radius: 5px; 
-                    border-top-left-radius: 0px;
-                    } 
-                QTabWidget::tab-bar {
-                    background-color: darkgray; 
-                    border: 0px;
-                    }
-                """)
-        else:
-            self.info_tabs.setStyleSheet("""
-                QTabWidget { 
-                    border-radius: 5px; 
-                    border: 1px solid lightgray
-                    } 
-                QTabWidget::pane { 
-                    border: 1px solid lightgray; 
-                    background-color: white;
-                    border-radius: 5px; 
-                    border-top-left-radius: 0px;
-                    } 
-                QTabWidget::tab-bar {
-                    background-color: lightgray; 
-                    border: 0px;
-                    }
-                """)
-        if self.parent.isDarkMode:
-            self.info_tabs.tabBar().setStyleSheet("""
-                border-radius: 5px; 
-                border: 1px solid darkgray; 
-                background-color: #3A3A3A'
-                """)
-        else:
-            self.info_tabs.tabBar().setStyleSheet("""
-                border-radius: 5px; 
-                border: 1px solid lightgray; 
-                background-color: white'
-                """)
-        
+        # shadow.apply(self.info_tabs)
 
         # self.info_tabs.setFixedSize(300, 500)
         orbital_info_frame = QtWidgets.QFrame()
-        if self.parent.isDarkMode:
-            orbital_info_frame.setStyleSheet("""
-                QPushButton {
-                    font-size: 12px;
-                    border: 1px solid lightgray;
-                    border-radius: 5px;
-                    padding: 8px;
-                    margin: 0px; 
-                    background-color: #3A3A3A;
-                }
-                QPushButton:hover {
-                    background-color: ##656565;
-                    }
-                """)
-        else:
-            orbital_info_frame.setStyleSheet("""
-                QPushButton {
-                    font-size: 12px;
-                    border: 1px solid lightgray;
-                    border-radius: 5px;
-                    padding: 8px;
-                    margin: 0px; 
-                    background-color: white;
-                }
-                QPushButton:hover {
-                    background-color: #f0f0f0;
-                    }
-                """)
+
         orbital_info_layout = QtWidgets.QGridLayout()
         orbital_info_frame.setLayout(orbital_info_layout)
         orbital_info_frame.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
@@ -1386,6 +1240,7 @@ class AnalysisWindow(QtWidgets.QWidget):
 
         slider_layout = QtWidgets.QGridLayout()
         slider_box = QtWidgets.QFrame()
+        # shadow.apply(slider_box)
         slider_box.setObjectName('sliderbox')
         slider_box.setLayout(slider_layout)
         layout.addWidget(slider_box, 1, 0)
@@ -1410,51 +1265,52 @@ class AnalysisWindow(QtWidgets.QWidget):
         slider_layout.addWidget(label_OI, 0, 2)
 
         inc_oi_btn = QtWidgets.QPushButton('<')
+        # shadow.apply(inc_oi_btn)
         inc_oi_btn.setToolTip('Add next Orbital Interaction')
         inc_oi_btn.clicked.connect(self._set_next_oi_slider)
         slider_layout.addWidget(inc_oi_btn, 0, 4)
-        if self.parent.isDarkMode:
-            slider_box.setStyleSheet("""
-                QWidget#sliderbox{
-                    padding: 0px; 
-                    margin: 0px; 
-                    border: 1px solid darkgray; 
-                    border-radius: 5px; 
-                    background-color: #3A3A3A;
-                    }
-                QPushButton {
-                    font-size: 12px;
-                    border: 1px solid darkgray;
-                    border-radius: 13px;
-                    padding: 8px;
-                    margin: 0px; 
-                    background-color: #3A3A3A;
-                }
-                QPushButton:hover {
-                    background-color: #656565;
-                    }
-                """)
-        else:
-            slider_box.setStyleSheet("""
-                QWidget#sliderbox{
-                    padding: 0px; 
-                    margin: 0px; 
-                    border: 1px solid lightgray; 
-                    border-radius: 5px; 
-                    background-color: white;
-                    }
-                QPushButton {
-                    font-size: 12px;
-                    border: 1px solid lightgray;
-                    border-radius: 13px;
-                    padding: 8px;
-                    margin: 0px; 
-                    background-color: white;
-                }
-                QPushButton:hover {
-                    background-color: #f0f0f0;
-                    }
-                """)
+        # if self.parent.isDarkMode:
+        #     slider_box.setStyleSheet("""
+        #         QWidget#sliderbox{
+        #             padding: 0px; 
+        #             margin: 0px; 
+        #             border: 1px solid darkgray; 
+        #             border-radius: 5px; 
+        #             background-color: #3A3A3A;
+        #             }
+        #         QPushButton {
+        #             font-size: 12px;
+        #             border: 1px solid darkgray;
+        #             border-radius: 13px;
+        #             padding: 8px;
+        #             margin: 0px; 
+        #             background-color: #3A3A3A;
+        #         }
+        #         QPushButton:hover {
+        #             background-color: #656565;
+        #             }
+        #         """)
+        # else:
+        #     slider_box.setStyleSheet("""
+        #         QWidget#sliderbox{
+        #             padding: 0px; 
+        #             margin: 0px; 
+        #             border: 1px solid lightgray; 
+        #             border-radius: 5px; 
+        #             background-color: white;
+        #             }
+        #         QPushButton {
+        #             font-size: 12px;
+        #             border: 1px solid lightgray;
+        #             border-radius: 13px;
+        #             padding: 8px;
+        #             margin: 0px; 
+        #             background-color: white;
+        #         }
+        #         QPushButton:hover {
+        #             background-color: #f0f0f0;
+        #             }
+        #         """)
         self.slider_OI = QtWidgets.QSlider(QtCore.Qt.Horizontal, self._analysis_page_frame)
         if not has_OI:
             slider_OI_max = 1
@@ -1471,6 +1327,7 @@ class AnalysisWindow(QtWidgets.QWidget):
         dec_oi_btn.setToolTip('Remove weakest Orbital Interaction')
         dec_oi_btn.clicked.connect(self._set_previous_oi_slider)
         slider_layout.addWidget(dec_oi_btn, 0, 6)
+        # shadow.apply(dec_oi_btn)
 
         label_value_OI = QtWidgets.QLabel(f'{10**(self.slider_OI.value()/slider_resolution):.2E}')
         label_value_OI.setToolTip('The threshold value for Orbital Interactions')
@@ -1518,6 +1375,7 @@ class AnalysisWindow(QtWidgets.QWidget):
         inc_pr_btn = QtWidgets.QPushButton('<')
         inc_pr_btn.setToolTip('Show next Pauli Repulsion')
         inc_pr_btn.clicked.connect(self._set_next_pr_slider)
+        # shadow.apply(inc_pr_btn)
         slider_layout.addWidget(inc_pr_btn, 1, 4)
         self.slider_PR.setMinimum(0.001**2 * 1000 * slider_resolution)
         self.slider_PR.setMaximum(slider_PR_max * 1000 * slider_resolution)
@@ -1528,6 +1386,7 @@ class AnalysisWindow(QtWidgets.QWidget):
         dec_pr_btn = QtWidgets.QPushButton('>')
         dec_pr_btn.setToolTip('Remove weakest Pauli Repulsion')
         dec_pr_btn.clicked.connect(self._set_previous_pr_slider)
+        # shadow.apply(dec_pr_btn)
         slider_layout.addWidget(dec_pr_btn, 1, 6)
         label_value_PR = QtWidgets.QLabel(f'{self.slider_PR.value()/slider_resolution:.3f}')
         label_value_PR.setStyleSheet('font: 10px "Inter"')
@@ -1560,6 +1419,7 @@ class AnalysisWindow(QtWidgets.QWidget):
         etype_btn = QtWidgets.QPushButton('Energy Type')
         etype_btn.clicked.connect(self._energytype_selection_dialog.exec)
         selector_layout.addWidget(etype_btn, 1, 0)
+        # shadow.apply(etype_btn)
 
         # self._orb_selection_dialog = OrbitalSelectionDialog(self, self._orb_selection)
         self._orb_selection_dialog = orbital_selector.OrbitalSelectionDialog(self, self.orbs)
@@ -1567,6 +1427,7 @@ class AnalysisWindow(QtWidgets.QWidget):
         orb_btn = QtWidgets.QPushButton('Orbitals')
         orb_btn.clicked.connect(self._orb_selection_dialog.exec)
         selector_layout.addWidget(orb_btn, 1, 1)
+        # shadow.apply(orb_btn)
 
         self.orbital_draw_button = QtWidgets.QPushButton()
         self.orbital_draw_button.setEnabled(False)
@@ -1575,7 +1436,7 @@ class AnalysisWindow(QtWidgets.QWidget):
         menu = QtWidgets.QMenu(self)
         self.orbital_draw_button.setMenu(menu)
         self.orbital_draw_button.setText('Draw Orbitals')
-
+        # shadow.apply(self.orbital_draw_button)
         self.orbital_filter_button = QtWidgets.QPushButton('Filter')
         if self.parent.isDarkMode:
             self.orbital_filter_button.setIcon(self.parent._ICONS['unchecked_dark'])
@@ -1584,6 +1445,7 @@ class AnalysisWindow(QtWidgets.QWidget):
         self.orbital_filter_button.clicked.connect(self._set_orbital_filter)
         self.orbital_filter_button.setEnabled(False)
         self.orbital_filter_button._is_checked = False
+        # shadow.apply(self.orbital_filter_button)
         self.allowed_mos_override = None
         self.allowed_sfos_override = None
         self.filtered_orbitals = None
@@ -1606,7 +1468,9 @@ class AnalysisWindow(QtWidgets.QWidget):
         layout.addWidget(misc_box, 2, 0)
 
         make_sheet_btn = QtWidgets.QPushButton('Generate Sheets')
+        # shadow.apply(make_sheet_btn)
         save_fig_btn = QtWidgets.QPushButton('Save Figure')
+        # shadow.apply(save_fig_btn)
         make_sheet_btn.clicked.connect(self.get_sheets_save_file)
         save_fig_btn.clicked.connect(self.get_figure_save_file)
         misc_box_layout.addWidget(make_sheet_btn, 0, 0, 1, 1)
@@ -1629,19 +1493,19 @@ class AnalysisWindow(QtWidgets.QWidget):
 
     def add_info_notice(self, title, text):
         label = QtWidgets.QLabel(text)
-        label.setStyleSheet('padding: 3px; font: 10px "Inter"')
+        label.setStyleSheet('font-size: 10px;')
         self.notice_tab.addSpoiler(title, label, icon=self.parent._ICONS['info'])
         self._reset_notice_bar_tabbutton()
 
     def add_warning_notice(self, title, text):
         label = QtWidgets.QLabel(text)
-        label.setStyleSheet('padding: 3px; font: 10px "Inter"')
+        label.setStyleSheet('font-size: 10px;')
         self.notice_tab.addSpoiler(title, label, icon=self.parent._ICONS['warning'])
         self._reset_notice_bar_tabbutton()
 
     def add_error_notice(self, title, text):
         label = QtWidgets.QLabel(text)
-        label.setStyleSheet('padding: 3px; font: 10px "Inter"')
+        label.setStyleSheet('font-size: 10px;')
         self.notice_tab.addSpoiler(title, label, icon=self.parent._ICONS['error'])
         self._reset_notice_bar_tabbutton()
 
@@ -1656,7 +1520,7 @@ class AnalysisWindow(QtWidgets.QWidget):
 
     def _get_general_system_info(self):
         frame = QtWidgets.QFrame()
-        frame.setStyleSheet('QLabel{padding: 2px; font: 10pt} QPushButton{icon-size: 10px;}')
+        frame.setStyleSheet('QLabel{padding: 2px; font-size: 10pt} QPushButton{icon-size: 10px;}')
         layout = QtWidgets.QGridLayout()
         frame.setLayout(layout)
 
@@ -1864,7 +1728,7 @@ class AnalysisWindow(QtWidgets.QWidget):
         layout = QtWidgets.QVBoxLayout()
         drop_area = QtWidgets.QFrame()
         drop_area.setObjectName('drop_area')
-        shadow.apply(drop_area)
+        # shadow.apply(drop_area)
         layout.addWidget(drop_area)
 
         new_page_layout.addWidget(drop_area)
@@ -1880,13 +1744,13 @@ class AnalysisWindow(QtWidgets.QWidget):
 
 
         # Label
-        label = QtWidgets.QLabel('<font size="12" style="color:black">Drop a File here</font>')
+        label = QtWidgets.QLabel('<font size="12">Drop a File here</font>')
         label.setAlignment(QtCore.Qt.AlignCenter)
         label.setTextFormat(QtCore.Qt.RichText)
         outlined_area_layout.addWidget(label)
 
         # second label
-        label = QtWidgets.QLabel('<font size="12" style="font-size:300%;color:grey;"><i>or</i></font>')
+        label = QtWidgets.QLabel('<font size="12""><i>or</i></font>')
         label.setAlignment(QtCore.Qt.AlignCenter)
         label.setTextFormat(QtCore.Qt.RichText)
         outlined_area_layout.addWidget(label)
@@ -1896,87 +1760,34 @@ class AnalysisWindow(QtWidgets.QWidget):
             button = QtWidgets.QPushButton(QtWidgets.QApplication.instance()._ICONS['folder_dark'], ' Select a File')
         else:
             button = QtWidgets.QPushButton(QtWidgets.QApplication.instance()._ICONS['folder'], ' Select a File')
-        shadow.apply(button, radius=20)
+        # shadow.apply(button, radius=20)
         button.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         button.setFlat(True)
         button.clicked.connect(self.open_filedialog)
         label.setTextFormat(QtCore.Qt.RichText)
 
-        outlined_area.setObjectName('Outline')
-        # shadow.apply(outlined_area, radius=20)
-        if self.parent.isDarkMode:
-            self._new_page_frame.setStyleSheet("""
-                QWidget#Outline {
-                    border: 1.5px dashed lightgray;
-                    margin: 4px;
-                    padding: 40px;
-                    border-radius: 10px;
-                    background-color: transparent;
-                }
-                QPushButton:hover {
-                    background-color: #656565;
-                }
-                QPushButton {
-                    font-size: 12px;
-                    border: 1px solid gray;
-                    border-radius: 10px;
-                    padding: 8px;
-                }
-            """)
-        else:
-            self._new_page_frame.setStyleSheet("""
-                QWidget#Outline {
-                    border: 1.5px dashed lightgray;
-                    padding: 40px;
-                    border-radius: 10px;
-                    background-color: white;
-                    margin-top: 10px;
-                    margin-left: 10px;
-                    margin-right: 10px;
-                }
-                QPushButton:hover {
-                    background-color: #f6f6f6;
-                }
-                QPushButton {
-                    font-size: 14px;
-                    border: 0px solid gray;
-                    border-radius: 10px;
-                    padding: 8px;
-                    margin-left: 10px;
-                    margin-right: 10px;
-                }
-                QWidget#drop_area {
-                    border: 1px solid #d0d0d0;
-                    background-color: white;
-                    border-radius: 20px;
-                    margin-left: 60px;
-                    margin-right: 60px;
-                    margin-top: 5px;
-                }
-                QWidget#carousel {
-                    margin-left: 120px;
-                    margin-right: 120px;
-                }
-            """)
+        outlined_area.setObjectName('Outline')        
         outlined_area_layout.addWidget(button, alignment=QtCore.Qt.AlignCenter)
         drop_area_layout.addWidget(outlined_area, 0, 0, 1, 2)
 
         open_article_btn = QtWidgets.QPushButton('Open the PyOrbb Article')
-        shadow.apply(open_article_btn, radius=20)
+        open_article_btn.setStyleSheet("margin-left: 20px; margin-right: 20px")
+        # shadow.apply(open_article_btn, radius=20)
         open_article_btn.clicked.connect(lambda: webbrowser.open('https://github.com/TheoChem-VU/PyFMO'))
         open_article_btn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         drop_area_layout.addWidget(open_article_btn, 1, 0)
 
         open_docs_btn = QtWidgets.QPushButton('See the PyOrbb Documentation')
+        open_docs_btn.setStyleSheet("margin-left: 20px; margin-right: 20px")
+        # shadow.apply(open_docs_btn, radius=20)
         open_docs_btn.clicked.connect(lambda: webbrowser.open('https://theochem-vu.github.io/PyFMO/'))
-        shadow.apply(open_docs_btn, radius=20)
         open_docs_btn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         drop_area_layout.addWidget(open_docs_btn, 1, 1)
 
-        recently_openend_list = carousel.PublicationCarousel(self)
-        recently_openend_list.setObjectName('carousel')
-        # new_page_layout.addWidget(QtWidgets.QLabel('\n<b>Recent Publications Using PyOrbb:</b>'), 2, 0, 1, 2)
-        new_page_layout.addWidget(recently_openend_list)
+        # self.recent_publish_carousel = carousel.PublicationCarousel(self)
+        # self.recent_publish_carousel.setObjectName('carousel')
+        # # new_page_layout.addWidget(QtWidgets.QLabel('\n<b>Recent Publications Using PyOrbb:</b>'), 2, 0, 1, 2)
+        # new_page_layout.addWidget(self.recent_publish_carousel)
 
 
 
@@ -1992,32 +1803,8 @@ class PyOrbbWindow(QtWidgets.QMainWindow):
         self.resize(1030 + 22 + 12, 698 + 52)
         self.layout = QtWidgets.QGridLayout()
         grid_widget = QtWidgets.QWidget()
-        if self.isDarkMode:
-            grid_widget.setStyleSheet('''
-                QPushButton:hover {
-                    background-color: #656565;
-                    }
-                QPushButton {
-                    border: 1px solid darkgray;
-                    border-radius: 5px;
-                    padding: 4px;
-                    margin: 0px; 
-                    background-color: #3A3A3A;
-                    }
-                ''')
-        else:
-            grid_widget.setStyleSheet('''
-                QPushButton:hover {
-                    background-color: #f0f0f0;
-                    }
-                QPushButton {
-                    border: 1px solid lightgray;
-                    border-radius: 5px;
-                    padding: 4px;
-                    margin: 0px; 
-                    background-color: white;
-                    }
-                ''')
+
+        self.windows = []
 
         grid_widget.setLayout(self.layout)
         self.setCentralWidget(grid_widget)
@@ -2033,7 +1820,7 @@ class PyOrbbWindow(QtWidgets.QMainWindow):
                 font-size: 20px;
                 border-radius: 16px;
                 padding: 6px;
-                background-color: none;
+                background-color: transparent;
                 border: none;
             }
             """)
@@ -2077,6 +1864,25 @@ class PyOrbbWindow(QtWidgets.QMainWindow):
 
         self._add_analysis_tab()
         self.tabs.setCurrentIndex(0)
+        self.set_style()
+
+    def set_style(self):
+        # shadow.update_style()
+        # for window in self.windows:
+        #     window.recent_publish_carousel.update_background_color()
+
+        if self.isDarkMode:
+            with open(os.path.split(__file__)[0] + '/style_dark.qss') as style:
+                self.setStyleSheet(style.read())
+        else:
+            with open(os.path.split(__file__)[0] + '/style.qss') as style:
+                self.setStyleSheet(style.read())
+
+    def changeEvent(self, event):
+        if event.type() == QtCore.QEvent.Type.ThemeChange:
+            self.set_style()
+
+        super().changeEvent(event)
 
     def _open_settings(self):
         self.settings_dialog.exec()
@@ -2095,6 +1901,7 @@ class PyOrbbWindow(QtWidgets.QMainWindow):
         idx = self.tabs.addTab(window, tabname)
         self.tabs.setTabToolTip(idx, tabtooltip)
         self.tabs.setCurrentIndex(idx)
+        self.windows.append(window)
         return window
 
 
@@ -2114,8 +1921,11 @@ class PyOrbbApp(QtWidgets.QApplication):
         return self
 
     def __exit__(self, *args):
+        print('Before add window')
         self.add_window()
+        print('Before exec')
         self.exec()
+        print('Before shutdown')
         self.shutdown()
 
     def add_window(self):
