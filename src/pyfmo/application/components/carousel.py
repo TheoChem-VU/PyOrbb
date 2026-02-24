@@ -100,7 +100,7 @@ class PublicationWidget(QtWidgets.QFrame):
 
     def mousePressEvent(self, event):
         import webbrowser
-        ret = webbrowser.get('firefox').open(self._link)
+        ret = webbrowser.open(self._link)
 
     def setup(self):
         month_name = {1: 'Jan', 2: 'Feb', 3: 'Mar', 4: 'Apr', 5: 'May', 6: 'Jun', 7: 'Jul', 8: 'Aug', 9: 'Sept', 10: 'Oct', 11: 'Nov', 12: 'Dec'}
