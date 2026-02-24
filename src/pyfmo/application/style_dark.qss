@@ -41,9 +41,10 @@ QWidget#drop_area {
     margin-top: 5px;
 }
 QWidget#carousel {
+    padding: 15px;
     margin-left: 120px;
     margin-right: 120px;
-    background-color: transparent;
+    background-color: #393939;
 }
 
 QDialog {

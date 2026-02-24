@@ -40,9 +40,11 @@ QWidget#drop_area {
     margin-right: 60px;
     margin-top: 5px;
 }
-QWidget#carousel {
+QWidget#carousel {    
+    padding: 10px;
     margin-left: 120px;
     margin-right: 120px;
+    /*background-color: #CACACA;*/
     background-color: transparent;
 }
 
@@ -92,39 +94,43 @@ QTabbar {
     border: 1px solid lightgray; 
     background-color: #F8F8F8;
 }
- 
+
 QScrollBar:horizontal
 {
     height: 11px;
     margin: 3px 15px 3px 15px;
     border: 1px transparent #2A2929;
     border-radius: 4px;
-    background-color: transparent;    /* #2A2929; */
+    background: transparent;    /* #2A2929; */
 }
 
 QScrollBar::handle:horizontal
 {
-    background-color: lightgrey;      /* #605F5F; */
+    background-color: #CACACA;      /* #605F5F; */
     min-width: 5px;
     border-radius: 4px;
 }
 
+QScrollBar::handle:horizontal:hover
+{
+    min-width: 10px;
+}
+
 QScrollBar::add-line:horizontal
 {
-    margin: 0px 3px 0px 3px;
+    margin: 0px 0px 0px 0px;
     border-image: url(:/qss_icons/rc/right_arrow_disabled.png);
-    width: 10px;
-    height: 10px;
+    width: 0px;
+    height: 0px;
     subcontrol-position: right;
     subcontrol-origin: margin;
 }
-
 QScrollBar::sub-line:horizontal
 {
-    margin: 0px 3px 0px 3px;
+    margin: 0px 0px 0px 0px;
     border-image: url(:/qss_icons/rc/left_arrow_disabled.png);
-    height: 10px;
-    width: 10px;
+    height: 0px;
+    width: 0px;
     subcontrol-position: left;
     subcontrol-origin: margin;
 }
@@ -132,8 +138,8 @@ QScrollBar::sub-line:horizontal
 QScrollBar::add-line:horizontal:hover,QScrollBar::add-line:horizontal:on
 {
     border-image: url(:/qss_icons/rc/right_arrow.png);
-    height: 10px;
-    width: 10px;
+    height: 0px;
+    width: 0px;
     subcontrol-position: right;
     subcontrol-origin: margin;
 }
@@ -142,8 +148,8 @@ QScrollBar::add-line:horizontal:hover,QScrollBar::add-line:horizontal:on
 QScrollBar::sub-line:horizontal:hover, QScrollBar::sub-line:horizontal:on
 {
     border-image: url(:/qss_icons/rc/left_arrow.png);
-    height: 10px;
-    width: 10px;
+    height: 0px;
+    width: 0px;
     subcontrol-position: left;
     subcontrol-origin: margin;
 }
@@ -246,13 +252,13 @@ QFrame#Pub_main:hover {
 }
 QLabel#Pub_ref {
         font: 12px;
-        color: #1f2022;
+        /*color: #1f2022;*/
     }
 QLabel#Pub_authors {
         font: 12px;
-        color: #1f2022;
+        /*color: #1f2022;*/
     }
 QLabel#Pub_title {
         font: 12px;
-        color: #1f2022;
+        /*color: #1f2022;*/
     }
