@@ -18,10 +18,11 @@ class Spoilers(QtWidgets.QScrollArea):
         # vertical box layout
         self.layout = QtWidgets.QVBoxLayout(content)
         self.layout.addStretch(1)
-        if self.parent.parent.isDarkMode:
-            self.setStyleSheet('background-color: rgb(50, 50, 50);')
-        else:
-            self.setStyleSheet('background-color: white;')
+        self.setStyleSheet('background-color: transparent;')
+
+    def themechange(self):
+        for spoiler in self.spoilers.values():
+            spoiler.set_pixmap()
 
     def addSpoiler(self, title, widget, icon=None):
         layout = QtWidgets.QVBoxLayout()
@@ -71,6 +72,7 @@ class Spoiler(QtWidgets.QWidget):
         """
         super().__init__(parent=parent)
 
+        self.title = title
         self.animationDuration = animationDuration
         self.toggleAnimation = QtCore.QParallelAnimationGroup()
         self.contentArea = QtWidgets.QScrollArea(self)
@@ -82,14 +84,12 @@ class Spoiler(QtWidgets.QWidget):
         titleFrame.setLayout(titleLayout)
 
         toggleButton = self.toggleButton
+        self.set_pixmap()
         # toggleButton.setStyleSheet("QToolButton { border: none; font-weight: bold; font-size: 20px; text-align: left top}")
 
         toggleButton.setToolButtonStyle(QtCore.Qt.ToolButtonFollowStyle)
         toggleButton.setArrowType(QtCore.Qt.NoArrow)
         # toggleButton.setText(f'{title}')
-
-        pixmap = latex_renderer.convert_to_QPixMap("  " + title, darkmode=parent.parent.parent.isDarkMode, fs=10)
-        toggleButton.setPixmap(pixmap)
 
         # parent.parent.setWindowIcon(icon)
         # toggleButton.setIconSize(pixmap.size())
@@ -97,7 +97,7 @@ class Spoiler(QtWidgets.QWidget):
         toggleButton.setCheckable(True)
         toggleButton.setChecked(False)
 
-        self.contentArea.setStyleSheet("QScrollArea { background-color: white; border: none; }")
+        self.contentArea.setStyleSheet("QScrollArea { background-color: transparent; border: none; }")
         self.contentArea.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff);
         # start out collapsed
         self.contentArea.setMaximumHeight(0)
@@ -133,6 +133,13 @@ class Spoiler(QtWidgets.QWidget):
             self.toggleAnimation.start()
 
         self.toggleButton.clicked.connect(start_animation)
+
+    def set_pixmap(self):
+        darkmode = QtWidgets.QApplication.instance().isDarkMode
+
+        pixmap = latex_renderer.convert_to_QPixMap("  " + self.title, darkmode=darkmode, fs=10)
+        self.toggleButton.setPixmap(pixmap)
+
 
     def setContentLayout(self, contentLayout):
         # Not sure if this is equivalent to self.contentArea.destroy()

@@ -4,14 +4,16 @@ _shadows = {}
 
 def update_style():
     use_darkmode = QtWidgets.QApplication.instance().isDarkMode
-    newc = QtGui.QColor(0, 0, 0, 200) if use_darkmode else QtGui.QColor(170, 170, 170, 200)
+    newc = QtGui.QColor(0, 0, 0, 150) if use_darkmode else QtGui.QColor(170, 170, 170, 150)
+    # newc = QtGui.QColor(170, 170, 170, 150)
     for widg, shadow in _shadows.items():
         shadow.setColor(newc)
         widg.setGraphicsEffect(shadow)
 
 def apply(widg, radius=40):
     use_darkmode = QtWidgets.QApplication.instance().isDarkMode
-    newc = QtGui.QColor(0, 0, 0, 200) if use_darkmode else QtGui.QColor(170, 170, 170, 200)
+    newc = QtGui.QColor(0, 0, 0, 150) if use_darkmode else QtGui.QColor(170, 170, 170, 150)
+    # newc = QtGui.QColor(170, 170, 170, 150)
     shadow = QtWidgets.QGraphicsDropShadowEffect(
         parent=widg, 
         blurRadius=radius, 

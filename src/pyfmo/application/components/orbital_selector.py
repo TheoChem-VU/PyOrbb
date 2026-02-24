@@ -146,6 +146,7 @@ class OrbitalSelectionTable(QtWidgets.QTableWidget):
     def __init__(self, parent, orbitals):
         self.parent = parent
         self.orbital_checkboxes = {}
+        self.draw_buttons = {}
         self.orbitals = orbitals
         is_MO = isinstance(orbitals[0], pyfmo.orbitals.objects.MO)
 
@@ -207,15 +208,17 @@ class OrbitalSelectionTable(QtWidgets.QTableWidget):
             self.orbital_checkboxes[orb].setChecked(self.parent.parent.state.is_enabled(orb))
             self.orbital_checkboxes[orb].checkStateChanged.connect(self.multi_select)
 
-            draw_button = QtWidgets.QPushButton()
-            draw_button.setIcon(self.parent.parent.parent.parent._ICONS["draw"])
-            draw_button.setIconSize(QtCore.QSize(8, 8))
-            draw_button.setFixedSize(QtCore.QSize(16, 16))
-            draw_button.setToolTip("Click to draw this orbital")
-            draw_button.clicked.connect(functools.partial(self.parent.parent.parent.plot.draw_orbital, orb=orb, draw_type='single'))
-            layout_.addWidget(draw_button, stretch=0)
+            self.draw_buttons[orb] = QtWidgets.QPushButton()
+            # self.draw_buttons[orb].setIcon(self.parent.parent.parent.parent._ICONS["draw"])
+            self.draw_buttons[orb].setIconSize(QtCore.QSize(8, 8))
+            self.draw_buttons[orb].setFixedSize(QtCore.QSize(16, 16))
+            self.draw_buttons[orb].setToolTip("Click to draw this orbital")
+            self.draw_buttons[orb].clicked.connect(functools.partial(self.parent.parent.parent.plot.draw_orbital, orb=orb, draw_type='single'))
+            layout_.addWidget(self.draw_buttons[orb], stretch=0)
             layout_.addWidget(self.orbital_checkboxes[orb])
-            layout_.addWidget(QtWidgets.QLabel(pyfmo.generate_label(orb, mode='html')))
+            orb_label = QtWidgets.QLabel(pyfmo.generate_label(orb, mode='html'))
+            orb_label.setObjectName('orbital_table')
+            layout_.addWidget(orb_label)
             layout_.addStretch()
             self.setCellWidget(i, headers.index('Orbital'), orbital_frame)
 
@@ -285,6 +288,16 @@ class OrbitalSelectionTable(QtWidgets.QTableWidget):
         for orb, checkbox in self.orbital_checkboxes.items():
             checkbox.setChecked(self.parent.parent.state.is_enabled(orb))
 
+    def themechange(self):
+        app = QtWidgets.QApplication.instance()
+        darkmode = app.isDarkMode
+        for btn in self.draw_buttons.values():
+            if darkmode:
+                btn.setIcon(app._ICONS["draw_dark"])
+            else:
+                btn.setIcon(app._ICONS["draw"])
+
+
 
 
 class OrbitalSelectionTab(QtWidgets.QFrame):
@@ -334,6 +347,9 @@ class OrbitalSelectionTab(QtWidgets.QFrame):
             self.table.orbital_checkboxes[orb].setChecked(state)
 
         self.select_all_button.setChecked(self.parent.state.select_all_buttons[self.state_key])
+
+    def themechange(self):
+        self.table.themechange()
 
 
 class SpinSelectionDialog(QtWidgets.QDialog):
@@ -394,11 +410,16 @@ class TabButton(QtWidgets.QFrame):
         self.layout = QtWidgets.QHBoxLayout(self)
         self.setLayout(self.layout)
 
-        pixmap = latex_renderer.convert_to_QPixMap(text, darkmode=self.parent.parent.parent.isDarkMode)
         self._lbl = QtWidgets.QLabel(self)
-        self._lbl.setPixmap(pixmap)
         self.layout.addWidget(self._lbl)
         self.layout.setContentsMargins(0, 0, 0, 0)
+        self.themechange()
+
+    def themechange(self):
+        darkmode = QtWidgets.QApplication.instance().isDarkMode
+        pixmap = latex_renderer.convert_to_QPixMap(self.text, darkmode=darkmode)
+        self._lbl.setPixmap(pixmap)
+
 
 
 class IrrepSelectionDialog(QtWidgets.QDialog):
@@ -472,6 +493,7 @@ class OrbitalSelectionDialog(QtWidgets.QDialog):
 
         # all buttons and tables go into the tabs
         self.tabs = QtWidgets.QTabWidget()
+        self.tab_buttons = []
         layout.addWidget(self.tabs, 1, 0, 1, 3)
         self.tab_indices = {}
         # add a tab for the MOs
@@ -499,10 +521,12 @@ class OrbitalSelectionDialog(QtWidgets.QDialog):
         layout.addWidget(save_btn, 2, 0, 1, 1)
         layout.addWidget(cancel_btn, 2, 1, 1, 1)
         layout.addWidget(reset_btn, 2, 2, 1, 1)
+        self.themechange()
 
     def addTab(self, widget, icon, text):
         index = self.tabs.addTab(widget, icon, "")
         btn = TabButton(self, text)
+        self.tab_buttons.append(btn)
         self.tabs.tabBar().setTabButton(index, QtWidgets.QTabBar.RightSide, btn)
 
     def rename(self, old_name, new_name):
@@ -545,3 +569,10 @@ class OrbitalSelectionDialog(QtWidgets.QDialog):
     def reject(self):
         self.state = self.__old_state
         self.hide()
+
+    def themechange(self):
+        for tab_button in self.tab_buttons:
+            tab_button.themechange()
+
+        for tab in self.tab_stor.values():
+            tab.themechange()
