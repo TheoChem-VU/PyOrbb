@@ -1,5 +1,5 @@
 from PySide6 import QtWidgets, QtCore
-from pyfmo.application.components import rich_widgets, latex_renderer
+from pyfmo.application.components import rich_widgets, latex_renderer, shadow
 import pyfmo
 import dictfunc
 import functools
@@ -307,9 +307,11 @@ class OrbitalSelectionTab(QtWidgets.QFrame):
         # and a spins and irreps selection button
         self.spin_selection_dialog = SpinSelectionDialog(self)
         spin_select_button = QtWidgets.QPushButton('Spins')
+        shadow.apply(spin_select_button)
         spin_select_button.clicked.connect(self.spin_selection_dialog.open)
         self.irrep_selection_dialog = IrrepSelectionDialog(self)
         irrep_select_button = QtWidgets.QPushButton('Irreps')
+        shadow.apply(irrep_select_button)
         irrep_select_button.clicked.connect(self.irrep_selection_dialog.open)
 
         selection_frame = QtWidgets.QFrame()
@@ -351,9 +353,11 @@ class SpinSelectionDialog(QtWidgets.QDialog):
             layout.addWidget(self.checkboxes[spin], i, 0, 1, 2)
 
         save_btn = QtWidgets.QPushButton('Save')
+        shadow.apply(save_btn)
         save_btn.clicked.connect(self.accept)
         layout.addWidget(save_btn, i + 1, 0, 1, 1)
         cancel_btn = QtWidgets.QPushButton('Cancel')
+        shadow.apply(cancel_btn)
         cancel_btn.clicked.connect(self.reject)
         layout.addWidget(cancel_btn, i + 1, 1, 1, 1)
 
@@ -415,9 +419,11 @@ class IrrepSelectionDialog(QtWidgets.QDialog):
 
         save_btn = QtWidgets.QPushButton('Save')
         save_btn.clicked.connect(self.accept)
+        shadow.apply(save_btn)
         layout.addWidget(save_btn, i + 1, 0, 1, 1)
         cancel_btn = QtWidgets.QPushButton('Cancel')
         cancel_btn.clicked.connect(self.reject)
+        shadow.apply(cancel_btn)
         layout.addWidget(cancel_btn, i + 1, 1, 1, 1)
 
         self.setup()
@@ -483,10 +489,13 @@ class OrbitalSelectionDialog(QtWidgets.QDialog):
         # some standard buttons
         save_btn = QtWidgets.QPushButton('Save')
         save_btn.clicked.connect(self.accept)
+        shadow.apply(save_btn)
         cancel_btn = QtWidgets.QPushButton('Cancel')
         cancel_btn.clicked.connect(self.reject)
+        shadow.apply(cancel_btn)
         reset_btn = QtWidgets.QPushButton('Reset')
         reset_btn.clicked.connect(self.reset)
+        shadow.apply(reset_btn)
         layout.addWidget(save_btn, 2, 0, 1, 1)
         layout.addWidget(cancel_btn, 2, 1, 1, 1)
         layout.addWidget(reset_btn, 2, 2, 1, 1)
