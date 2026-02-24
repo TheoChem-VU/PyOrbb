@@ -96,8 +96,10 @@ class PublicationWidget(QtWidgets.QFrame):
 
         self.setObjectName("Pub_main")
         self.setup()
-        shadow.apply(self)
+        shadow.apply(self, radius=20)
         self.setSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum)
+
+        self.setToolTip(self._link)
 
     def mousePressEvent(self, event):
         import webbrowser
@@ -121,7 +123,7 @@ class PublicationWidget(QtWidgets.QFrame):
             last_names.append(author["family"].title())
 
         # format the citation correctly
-        names = [f"{first} {last}" for first, last in zip(initials, last_names)]
+        names = [f"<i>{last}</i>" for first, last in zip(initials, last_names)]
         if len(names) > 3:
             author_str = ',  '.join(names[:3]) + ', <i>et al.</i>'
         else:
