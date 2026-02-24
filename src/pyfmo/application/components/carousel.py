@@ -10,9 +10,9 @@ from pyfmo.application.components import shadow
 
 
 class FadeWidget(QtWidgets.QWidget):
-    def __init__(self, left_side=True, parent=None):
+    def __init__(self, side, parent=None):
         super().__init__(parent)
-        self.left_side = left_side
+        self.side = side
         self.setAttribute(QtCore.Qt.WA_TransparentForMouseEvents)
         self.setAttribute(QtCore.Qt.WA_NoSystemBackground)
         self.update_background_color()
@@ -20,13 +20,14 @@ class FadeWidget(QtWidgets.QWidget):
     def paintEvent(self, event):
         painter = QtGui.QPainter(self)
         painter.setRenderHint(QtGui.QPainter.Antialiasing)
-
-        gradient = QtGui.QLinearGradient()
-
-        if self.left_side:
+        if self.side == 'right':
             gradient = QtGui.QLinearGradient(self.width(), 0, 0, 0)
-        else:
+        elif self.side == 'left':
             gradient = QtGui.QLinearGradient(0, 0, self.width(), 0)
+        elif self.side == 'top':
+            gradient = QtGui.QLinearGradient(0, self.height(), 0, 0)
+        elif self.side == 'bottom':
+            gradient = QtGui.QLinearGradient(0, 0, 0, self.height())
 
         solid = QtGui.QColor(self.background_color)
         solid.setAlpha(255)
@@ -167,10 +168,12 @@ class Carousel(QtWidgets.QWidget):
             _layout.addWidget(title_label)
 
 
-        self.fade_left = FadeWidget(left_side=False, parent=self.scroll_area)
-        self.fade_right = FadeWidget(left_side=True, parent=self.scroll_area)
+        self.fade_left = FadeWidget(side='left', parent=self.scroll_area)
+        self.fade_right = FadeWidget(side='right', parent=self.scroll_area)
+        self.fade_top = FadeWidget(side='top', parent=self.scroll_area)
+        self.fade_bottom = FadeWidget(side='bottom', parent=self.scroll_area)
 
-        self.fade_width = 30
+        self.fade_width = 35
 
         # Connect scroll updates
         scrollbar = self.scroll_area.horizontalScrollBar()
@@ -183,6 +186,8 @@ class Carousel(QtWidgets.QWidget):
     def update_background_color(self):
         self.fade_left.update_background_color()
         self.fade_right.update_background_color()
+        self.fade_top.update_background_color()
+        self.fade_bottom.update_background_color()
 
     def resizeEvent(self, event):
         super().resizeEvent(event)
@@ -191,17 +196,36 @@ class Carousel(QtWidgets.QWidget):
     def resize_fades(self):
         # Make scroll area fill entire container
         # Position fade overlays ON TOP
-        self.fade_left.setGeometry(120, 0, self.fade_width, self.scroll_area.height())
+        self.fade_left.setGeometry(
+            120, 
+            0, 
+            self.fade_width, 
+            self.scroll_area.height()
+            )
         self.fade_right.setGeometry(
             self.scroll_area.width() - self.fade_width - 120,
             0,
             self.fade_width,
             self.scroll_area.height()
-        )
+            )
+        self.fade_top.setGeometry(
+            120, 
+            self.scroll_area.height() - self.fade_width, 
+            self.scroll_area.width() - 240, 
+            self.fade_width
+            )
+        self.fade_bottom.setGeometry(
+            120, 
+            0,
+            self.scroll_area.width() - 240, 
+            self.fade_width
+            )
 
         # Ensure fades are above scroll area
         self.fade_left.raise_()
         self.fade_right.raise_()
+        self.fade_top.raise_()
+        self.fade_bottom.raise_()
 
     def setup(self):
         ...
