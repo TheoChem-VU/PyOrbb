@@ -86,9 +86,42 @@ class Color(SettingSelectionWidget):
     def value(self):
         return self._colorlineedit.text()
 
-    def reset(self):
-        self.setValue(self.default)
 
+class ButtonGroup(SettingSelectionWidget):
+    def __init__(self, parent, icons, names, exclusive=True):
+        super().__init__(parent)
+        self.parent = parent
+        self.icons = icons
+        self.names = names
+        self.layout = QtWidgets.QHBoxLayout(self)
+        self._buttongroup = QtWidgets.QButtonGroup()
+        self._buttongroup.setExclusive(exclusive)
+        self._buttons = []
+
+        for i, (icon, name) in enumerate(zip(icons, names)):
+            btn_frame = QtWidgets.QFrame()
+            self.layout.addWidget(btn_frame)
+            btn_layout = QtWidgets.QVBoxLayout(btn_frame)
+            btn = QtWidgets.QPushButton(icon, '')
+            btn.setCheckable(True)
+            btn.clicked.connect(lambda args: print(self.value()))
+            btn.setIconSize(QtCore.QSize(30, 30))
+            lab = QtWidgets.QLabel(name)
+            self._buttongroup.addButton(btn, i)
+            self._buttons.append(btn)
+
+            btn_layout.addWidget(btn)
+            btn_layout.addWidget(lab)
+
+    def setValue(self, val):
+        for i, btn in enumerate(self._buttons):
+            btn.setChecked(val == i)
+        [btn.setChecked(val == i) for i, btn in enumerate(self._buttons)]
+
+    def value(self):
+        for i, btn in enumerate(self._buttons):
+            if btn.isChecked():
+                return i
 
 class String(SettingSelectionWidget):
     def __init__(self, parent):
@@ -273,6 +306,15 @@ class SettingsTab(QtWidgets.QWidget):
             name,
             default=None):
         setting_widget = Path(self)
+        self._add_generic_setting(name, variable_name, setting_widget, default)
+
+    def add_buttongroup_setting(self, 
+            variable_name, 
+            name,
+            icons,
+            names,
+            default=None):
+        setting_widget = ButtonGroup(self, icons, names)
         self._add_generic_setting(name, variable_name, setting_widget, default)
 
     def add_bool_setting(self, 
