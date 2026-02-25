@@ -1730,7 +1730,7 @@ class AnalysisWindow(QtWidgets.QWidget):
 
         # Button
         self.open_file_button = QtWidgets.QPushButton(QtWidgets.QApplication.instance()._ICONS['folder'], ' Select a File')
-        shadow.apply(self.open_file_button, radius=20)
+        shadow.apply(self.open_file_button, radius=30)
         self.open_file_button.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.open_file_button.setFlat(True)
         self.open_file_button.clicked.connect(self.open_filedialog)
@@ -1741,14 +1741,14 @@ class AnalysisWindow(QtWidgets.QWidget):
 
         open_article_btn = QtWidgets.QPushButton('Open the PyOrbb Article')
         open_article_btn.setStyleSheet("margin-left: 20px; margin-right: 20px")
-        shadow.apply(open_article_btn, radius=20)
+        shadow.apply(open_article_btn, radius=30)
         open_article_btn.clicked.connect(lambda: webbrowser.open('https://github.com/TheoChem-VU/PyFMO'))
         open_article_btn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         drop_area_layout.addWidget(open_article_btn, 1, 0)
 
         open_docs_btn = QtWidgets.QPushButton('See the PyOrbb Documentation')
         open_docs_btn.setStyleSheet("margin-left: 20px; margin-right: 20px")
-        shadow.apply(open_docs_btn, radius=20)
+        shadow.apply(open_docs_btn, radius=30)
         open_docs_btn.clicked.connect(lambda: webbrowser.open('https://theochem-vu.github.io/PyFMO/'))
         open_docs_btn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         drop_area_layout.addWidget(open_docs_btn, 1, 1)
