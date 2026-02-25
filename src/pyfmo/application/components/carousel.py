@@ -47,25 +47,60 @@ class FadeWidget(QtWidgets.QWidget):
 
 @tcutility.cache_file("cited_by.json", datetime.timedelta(weeks=1))
 def _get_citedby_data(url: str):
-    headers = {"User-Agent": "Mozilla/5.0"}
+    headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.142 Safari/537.36"}
     res = requests.get(url, headers=headers, allow_redirects=True).content
+    # with open('/Users/yumanhordijk/Desktop/test.html') as inp:
+    #     res = inp.read()
     soup = BeautifulSoup(res, 'html.parser')
-
-    current_art = soup.find(id='gs_res_ccl_top')
-    current_art_title = current_art.find('h2').a.get_text()
-    current_art_title_doi = tcutility._get_doi_data_from_title(current_art_title)['DOI']
-
-    match = soup.find(id='gs_res_ccl_mid')
-
+    # print(soup)
+    # current_art = soup.find(id='gs_res_ccl_top')
+    # current_art_title = current_art.find('h2').a.get_text()
+    # current_art_title_doi = tcutility._get_doi_data_from_title(current_art_title)['DOI']
+    # print(soup)
     citedby_data = []
-    for h3 in match.find_all('h3'):
-        a = h3.a
-        datum = {'link': a.get('href'), 'title': a.get_text()}
+    matches = soup.find_all('div', 'gs_ri')
+    # print(matches)
+    # print(matches)
+    for match in matches:
+        gs_a = match.find('div', 'gs_a')
+        text = gs_a.get_text().replace('…', '')
+        parts = text.split('- ')
+        if len(parts) == 3:
+            authors, journal_year, publisher = parts
+            journal = journal_year.split(',')[0].strip()
+            if journal.isnumeric():
+                journal = None
+        elif len(parts) == 2:
+            authors, publisher = parts
+            journal = None
+
+        if journal is not None and 'chemrxiv' in journal:
+            continue
+
+        authors = authors.strip().split(',')
+        authors = [author.strip() for author in authors]
+        datum = {
+            'link': match.h3.a.get('href'), 
+            'title': match.h3.a.get_text(),
+            'authors': authors,
+            # 'journal': journal,
+            }
         citedby_data.append(datum)
 
     citation_data = []
     for citedby in citedby_data:
-        citation_datum = tcutility._get_doi_data_from_title(citedby["title"])
+        # print(citedby['title'])
+
+        citation_datum = tcutility._get_doi_data_from_query(
+            title=citedby['title'],
+            author=citedby['authors'],)
+            # container_title=citedby['journal'])
+
+        # print(citation_datum['title'])
+        # print()
+        if citation_datum is None:
+            continue
+        # print(citation_datum)
         if 'reference' not in citation_datum:
             continue
 
@@ -73,14 +108,16 @@ def _get_citedby_data(url: str):
         for reference in references:
             if 'DOI' not in reference:
                 continue
-            if reference['DOI'] != current_art_title_doi:
-                continue
+            # if reference['DOI'] != current_art_title_doi:
+            #     continue
             citation_data.append(citation_datum)
             break
 
     return citation_data
 
-
+# url = "https://scholar.google.com/scholar?hl=nl&num=20&as_sdt=2005&sciodt=0,5&cites=13608188881403064766&scipsc=&q=&scisbd=1"
+# _get_citedby_data(url)
+# exit()
 
 class PublicationWidget(QtWidgets.QFrame):
     def __init__(self, parent, data):
