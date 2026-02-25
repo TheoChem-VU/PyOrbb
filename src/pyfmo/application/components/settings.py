@@ -456,6 +456,11 @@ class SettingsDialog(QtWidgets.QDialog):
         self.state = {}
         self.setting_widgets = {}  # dict of setting options name: (setting-widget, default value)
 
+        with self.add_section('PyOrbb') as section:
+            with section.add_tab('Color Scheme') as tab:
+                app = QtWidgets.QApplication.instance()
+                tab.add_buttongroup_setting('theme_mode', 'Theme', [app._ICONS['lightmode'], app._ICONS['darkmode'], app._ICONS['automode']], ['Light', 'Dark', 'Auto'], default=2)
+
         with self.add_section('Densf') as section:
             with section.add_tab('General') as tab:
                 tab.add_path_setting("amsbin", "AMS Application")
