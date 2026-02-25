@@ -161,10 +161,10 @@ class PublicationWidget(QtWidgets.QFrame):
 
         # format the citation correctly
         names = [f"<i>{last}</i>" for first, last in zip(initials, last_names)]
-        if len(names) > 3:
-            author_str = ',  '.join(names[:3]) + ', <i>et al.</i>'
+        if len(names) > 4:
+            author_str = ', '.join(names[:3]) + ', <i>et al.</i>'
         else:
-            author_str = ',  '.join(names)
+            author_str = ', '.join(names)
 
         author_label = QtWidgets.QLabel(author_str)
         author_label.setWordWrap(True)
