@@ -1831,9 +1831,20 @@ class PyOrbbWindow(QtWidgets.QMainWindow):
 
         self.settings_dialog = settings.SettingsDialog(self)
 
+        self.settings_dialog.settingsChanged.connect(self.set_theme)
+
         self._add_analysis_tab()
         self.tabs.setCurrentIndex(0)
         self.set_style()
+
+    def set_theme(self):
+        settings_theme = self.settings_dialog.get("PyOrbb", "Color Scheme", "theme_mode")
+        if settings_theme == 0:
+            QtGui.QGuiApplication.styleHints().setColorScheme(QtCore.Qt.ColorScheme.Light)
+        elif settings_theme == 1:
+            QtGui.QGuiApplication.styleHints().setColorScheme(QtCore.Qt.ColorScheme.Dark)
+        else:
+            QtGui.QGuiApplication.styleHints().setColorScheme(QtCore.Qt.ColorScheme.Unknown)
 
     def set_style(self):
         shadow.update_style()
