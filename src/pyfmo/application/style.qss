@@ -1,13 +1,24 @@
+
+QWidget {
+    border: none;
+    /*background-color: transparent;*/
+    border-radius: 5px;
+}
+
 QPushButton {
     font: 12px "Inter";
     color: #1f2022;
-    border: none;
+    /*border: none;*/
+    border: 1px solid #d0d0d0;
     border-radius: 5px;
     padding: 4px;
     background-color: white;
     }
 QPushButton:hover {
     background-color: #f6f6f6;
+}
+QPushButton:checked {
+    background-color: #d0d0d0;
 }
 QPushButton::disabled {
     font: 12px "Inter";
@@ -18,11 +29,6 @@ QPushButton::disabled {
     background-color: lightgray;
     }
 
-QWidget {
-    border: none;
-    /*background-color: transparent;*/
-    border-radius: 5px;
-}
 QWidget#Outline {
     border: 1.5px dashed lightgray;
     padding: 40px;
@@ -40,11 +46,10 @@ QWidget#drop_area {
     margin-right: 60px;
     margin-top: 5px;
 }
-QWidget#carousel {    
-    padding: 10px;
+QWidget#carousel {
+    /*padding: 15px;*/
     margin-left: 120px;
     margin-right: 120px;
-    /*background-color: #CACACA;*/
     background-color: transparent;
 }
 
@@ -111,14 +116,9 @@ QScrollBar::handle:horizontal
     border-radius: 4px;
 }
 
-QScrollBar::handle:horizontal:hover
-{
-    min-width: 10px;
-}
-
 QScrollBar::add-line:horizontal
 {
-    margin: 0px 0px 0px 0px;
+    margin: 0px px 0px px;
     border-image: url(:/qss_icons/rc/right_arrow_disabled.png);
     width: 0px;
     height: 0px;
@@ -236,12 +236,11 @@ QFrame#plot_frame{
 	margin: 0px; 
 	border: 1px solid lightgray; 
 	border-radius: 5px; 
-	background-color: 
-	white;
+	background-color: white;
 }
 
 QFrame#Pub_main {
-        border: none;
+        border: 1px solid #d0d0d0;
         margin: 5px;
         padding: 10px;
         border-radius: 10px;
@@ -262,3 +261,37 @@ QLabel#Pub_title {
         font: 12px;
         /*color: #1f2022;*/
     }
+
+
+
+QSlider::groove:horizontal {
+    /*border: 1px solid black;*/
+    background-color: #ECECEC;
+    height: 2px;
+}
+
+QSlider::handle:horizontal {
+    /*background: #2a2a2a;*/
+    width: 10px;
+    margin: -5px -1px;
+    border-radius: 5px;
+    /*border: 1px solid #2a2a2a;*/
+}
+
+QSlider#slider_OI::handle:horizontal {
+    background: green;
+    border: 1px solid green;
+}
+
+QSlider#slider_OI::sub-page:horizontal {
+    background: #00ce00;
+}
+
+QSlider#slider_PR::handle:horizontal {
+    background: red;
+    border: 1px solid red;
+}
+
+QSlider#slider_PR::sub-page:horizontal {
+    background: #ff9a9a;
+}

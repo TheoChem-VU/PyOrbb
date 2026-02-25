@@ -1273,6 +1273,7 @@ class AnalysisWindow(QtWidgets.QWidget):
         slider_layout.addWidget(inc_oi_btn, 0, 4)
 
         self.slider_OI = QtWidgets.QSlider(QtCore.Qt.Horizontal, self._analysis_page_frame)
+        self.slider_OI.setObjectName('slider_OI')
         if not has_OI:
             slider_OI_max = 1
         else:
@@ -1332,7 +1333,6 @@ class AnalysisWindow(QtWidgets.QWidget):
             # slider_PR_max = max(self.main_mix.mixes['PR'].values())
             slider_PR_max = abs(max(max(v.values()) for v in self.main_mix.mixes['PR'].values()))
 
-
         inc_pr_btn = QtWidgets.QPushButton('<')
         inc_pr_btn.setToolTip('Show next Pauli Repulsion')
         inc_pr_btn.clicked.connect(self._set_next_pr_slider)
@@ -1341,6 +1341,7 @@ class AnalysisWindow(QtWidgets.QWidget):
         self.slider_PR.setMinimum(0.001**2 * 1000 * slider_resolution)
         self.slider_PR.setMaximum(slider_PR_max * 1000 * slider_resolution)
         self.slider_PR.setSliderPosition(slider_PR_max/1.5 * 1000 * slider_resolution)
+        self.slider_PR.setObjectName('slider_PR')
         self.main_mix.set_pr_threshold(slider_PR_max/1.1)
         slider_layout.addWidget(self.slider_PR, 1, 5)
 
