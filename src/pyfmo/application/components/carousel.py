@@ -209,8 +209,8 @@ class Carousel(QtWidgets.QWidget):
 
         self.fade_left = FadeWidget(side='left', parent=self.scroll_area)
         self.fade_right = FadeWidget(side='right', parent=self.scroll_area)
-        self.fade_top = FadeWidget(side='top', parent=self.scroll_area)
-        self.fade_bottom = FadeWidget(side='bottom', parent=self.scroll_area)
+        # self.fade_top = FadeWidget(side='top', parent=self.scroll_area)
+        # self.fade_bottom = FadeWidget(side='bottom', parent=self.scroll_area)
 
         self.fade_width = 35
 
@@ -225,8 +225,9 @@ class Carousel(QtWidgets.QWidget):
     def update_background_color(self):
         self.fade_left.update_background_color()
         self.fade_right.update_background_color()
-        self.fade_top.update_background_color()
-        self.fade_bottom.update_background_color()
+        # self.fade_top.update_background_color()
+        # self.fade_bottom.update_background_color()
+        ...
 
     def resizeEvent(self, event):
         super().resizeEvent(event)
@@ -247,24 +248,25 @@ class Carousel(QtWidgets.QWidget):
             self.fade_width,
             self.scroll_area.height()
             )
-        self.fade_top.setGeometry(
-            120, 
-            self.scroll_area.height() - self.fade_width, 
-            self.scroll_area.width() - 240, 
-            self.fade_width
-            )
-        self.fade_bottom.setGeometry(
-            120, 
-            0,
-            self.scroll_area.width() - 240, 
-            self.fade_width
-            )
+        # self.fade_top.setGeometry(
+        #     120, 
+        #     self.scroll_area.height() - self.fade_width, 
+        #     self.scroll_area.width() - 240, 
+        #     self.fade_width
+        #     )
+        # self.fade_bottom.setGeometry(
+        #     120, 
+        #     0,
+        #     self.scroll_area.width() - 240, 
+        #     self.fade_width
+        #     )
 
         # Ensure fades are above scroll area
         self.fade_left.raise_()
         self.fade_right.raise_()
-        self.fade_top.raise_()
-        self.fade_bottom.raise_()
+        # self.fade_top.raise_()
+        # self.fade_bottom.raise_()
+        ...
 
     def setup(self):
         ...
@@ -273,7 +275,6 @@ class Carousel(QtWidgets.QWidget):
 class PublicationCarousel(Carousel):
     def __init__(self, parent):
         super().__init__(parent=parent, title='<b>Recent Publications Citing PyOrbb</b>')
-        # shadow.apply(self, radius=-40)
 
     def setup(self):
         url = "https://scholar.google.com/scholar?hl=nl&as_sdt=2005&sciodt=0,5&cites=8000893946037734095&scipsc=&q=&scisbd=1"
@@ -281,6 +282,7 @@ class PublicationCarousel(Carousel):
         # try to get data
         try:
             data = _get_citedby_data(url)
+            # print(data)
         # otherwise we display a 404 error message
         except:
             self._carousel_layout.addWidget(QtWidgets.QLabel('Sorry! Could not find the right data.'))
@@ -288,7 +290,6 @@ class PublicationCarousel(Carousel):
             return
 
         for row in data:
-            # print(row)
             try:
                 self._carousel_layout.addWidget(PublicationWidget(self, row))
             except:
