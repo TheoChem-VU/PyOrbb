@@ -133,7 +133,7 @@ class PublicationWidget(QtWidgets.QFrame):
 
         self.setObjectName("Pub_main")
         self.setup()
-        shadow.apply(self, radius=20)
+        shadow.apply(self, radius=10)
         self.setSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum)
 
         self.setToolTip(self._link)
