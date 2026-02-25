@@ -6,12 +6,13 @@ import platform
 import pyfmo
 
 
-
 class SettingSelectionWidget(QtWidgets.QFrame):
     default = None
     def setDefault(self, val):
         self.default = val
 
+    def reset(self):
+        self.setValue(self.default)
 
 class LineEditFileDialogWidget(QtWidgets.QLineEdit):
     def __init__(self, parent=None, filetype="filename", **filedialog_settings):
@@ -137,10 +138,6 @@ class String(SettingSelectionWidget):
     def value(self):
         return self._lineedit.text()
 
-    def reset(self):
-        self.setValue(self.default)
-
-
 class CheckBox(SettingSelectionWidget):
     def __init__(self, parent):
         super().__init__(parent)
@@ -154,10 +151,6 @@ class CheckBox(SettingSelectionWidget):
 
     def value(self):
         return self._checkbox.isChecked()
-
-    def reset(self):
-        self.setValue(self.default)
-
 
 class SpinBox(SettingSelectionWidget):
     def __init__(self, parent, minval=0, maxval=1, stepsize=0.1, decimals=1):
