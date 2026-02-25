@@ -492,13 +492,13 @@ class SettingsDialog(QtWidgets.QDialog):
                 tab.add_color_setting("Multiple_color", 'Multiple Color', default="#000000")
                 tab.add_float_tuple_setting("alpha_range", 'Alpha Range', 2, default=(0.1, 1.0))
 
-        with self.add_section('Algorithm') as section:
-            with section.add_tab('General') as tab:
-                tab.layout.addWidget(QtWidgets.QLabel('tab General'))
+        # with self.add_section('Algorithm') as section:
+        #     with section.add_tab('General') as tab:
+        #         tab.layout.addWidget(QtWidgets.QLabel('tab General'))
 
-        with self.add_section('PyOrbb Viewer') as section:
-            with section.add_tab('Grid') as tab:
-                tab.layout.addWidget(QtWidgets.QLabel('Grid Quality'))
+        # with self.add_section('PyOrbb Viewer') as section:
+        #     with section.add_tab('Grid') as tab:
+        #         tab.layout.addWidget(QtWidgets.QLabel('Grid Quality'))
 
         self.load_defaults()
         self.reset()
