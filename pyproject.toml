@@ -66,6 +66,7 @@ sources = [
     "src/pyfmo",
 ]
 requires = [
+    "pyside6-essentials==6.7.3",
     "tcviewer>=0.1.11",
     "git+https://github.com/TheoChem-VU/TCutility.git@509-improvements-to-the-cite-and-caching-module",
     "numpy",
@@ -75,7 +76,6 @@ requires = [
     "plams>=2024.106",
     "xlsxwriter>=3.2.2",
     "tcintegral>=1.0.2",
-    "pyside6-essentials",
     "pyperclip",
     "platformdirs",
     "beautifulsoup4",
