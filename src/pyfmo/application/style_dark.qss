@@ -47,14 +47,15 @@ QWidget#drop_area {
     margin-top: 5px;
 }
 QWidget#carousel {
-    /*padding: 15px;*/
+    padding-left: 15px;
+    padding-right: 15px;
     margin-left: 120px;
     margin-right: 120px;
     background-color: transparent;
 }
 
 QDialog {
-    background-color: none;
+    background: #323232;
     border: none;
     border-radius: 5px; 
 }
@@ -72,7 +73,7 @@ QLabel#orbital_table {
 QLabel#carousel_title {
     font: 20px "Inter";
     color: #a0a0a0;
-    margin-left: 90px;
+    margin-left: 120px;
     margin-top: 15px;
 }
 
@@ -87,17 +88,30 @@ QTabWidget::pane {
     border-top-left-radius: 0px;
     top: -1px;
 } 
-QTabWidget::tab-bar {
-    /*background-color: #F8F8F8; */
+/*QTabWidget::tab-bar {
+    /*background-color: #F8F8F8; 
     border-radius: 10px; 
     border: 1px solid darkgray;
 }
-
-QTabbar {
-    border-radius: 5px; 
-    border: 1px solid darkgray; 
-    background-color: #3A3A3A;
+*/
+QTabBar {
+    background-color: transparent;
+    color: #e0e0e0;
 }
+/*
+QTabBar::tab {
+    border: 1px solid #222222;
+    border-radius: 2px; 
+    background: #3A3A3A;
+    height: 25px;
+    margin-top: -1px; 
+}
+QTabBar::tab:selected { 
+    background: #404040; 
+    height: 29px;
+    margin-bottom: -1px; 
+}
+*/
 
 QScrollBar:horizontal
 {
@@ -242,7 +256,7 @@ QFrame#plot_frame{
 QFrame#Pub_main {
         border: 1px solid #242424;
         margin: 5px;
-        padding: 10px;
+        padding: 5px;
         border-radius: 10px;
         background-color: #323232;
     }
@@ -298,3 +312,97 @@ QSlider#slider_PR::sub-page:horizontal {
 QWindow {
     background: #323232;
 }
+
+QMainWindow {
+    background: #323232;
+}
+
+
+QTabBar::tab:top:selected
+{
+    background-color: #404040;
+    border-style: solid;
+    border-width: 1px 1px 0px 1px;
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+    border-color: #222222;
+    min-width: 8ex;
+    padding-top: 5px;
+    padding-left: 5px;
+    padding-right: 5px;
+    padding-bottom: 6px;
+}
+
+
+QTabBar::tab:top:!selected
+{
+    background-color: #292929;
+    border-style: solid;
+    border-width: 1px;
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+    border-color: #222222;
+    min-width: 8ex;
+    padding: 5px;
+}
+
+QTabBar::tab:left:selected
+{
+    background-color: #404040;
+    border-style: solid;
+    border-width: 1px 0px 1px 1px;
+    border-top-left-radius: 3px;
+    border-bottom-left-radius: 3px;
+    border-color: #222222;
+    min-height: 8ex;
+    padding-top: 5px;
+    padding-left: 6px;
+    padding-right: 5px;
+    padding-bottom: 5px;
+}
+
+
+QTabBar::tab:left:!selected
+{
+    background-color: #292929;
+    border-style: solid;
+    border-width: 1px;
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+    border-color: #222222;
+    min-height: 8ex;
+    padding: 5px;
+}
+
+
+/*
+QTabBar::tab {
+    border: 1px solid #222222;
+    border-radius: 2px; 
+    background: #3A3A3A;
+    height: 25px;
+    margin-top: -1px; 
+}
+QTabBar::tab:selected { 
+    background: #404040; 
+    height: 29px;
+    margin-bottom: -1px; 
+}*/
+
+/*
+QTabBar::tab:top
+{
+    min-width: 8ex;
+    margin-right: -1px;
+    padding: 5px 5px 5px 5px;
+
+}*/
+/*
+QTabBar::tab:top:selected
+{
+    min-width: 8ex;
+    margin-right: -1px;
+    padding: 5px 5px 8px 5px;
+
+}
+*/

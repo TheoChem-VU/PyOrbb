@@ -73,7 +73,7 @@ QLabel#orbital_table {
 QLabel#carousel_title {
     font: 20px "Inter";
     color: #808080;
-    margin-left: 90px;
+    margin-left: 120px;
     margin-top: 15px;
 }
 
@@ -98,6 +98,10 @@ QTabbar {
     border-radius: 5px; 
     border: 1px solid lightgray; 
     background-color: #F8F8F8;
+}
+
+QTabbar::tab {
+    background: #ECECEC;
 }
 
 QScrollBar:horizontal
@@ -295,3 +299,9 @@ QSlider#slider_PR::handle:horizontal {
 QSlider#slider_PR::sub-page:horizontal {
     background: #ff9a9a;
 }
+
+QMainWindow {
+    background: #ECECEC;
+}
+
+
