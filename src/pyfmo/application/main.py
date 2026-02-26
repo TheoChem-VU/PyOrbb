@@ -10,7 +10,8 @@ from .components import (
     column_dragger,
     spoilers,
     carousel,
-    shadow
+    shadow,
+    theme_switcher,
     )
 from matplotlib.backends.backend_qtagg import FigureCanvas
 from matplotlib.backend_tools import Cursors
@@ -25,6 +26,8 @@ import platform
 import traceback
 from scm import plams
 import webbrowser
+import tcviewer
+
 
 slider_resolution = 500
 
@@ -313,9 +316,11 @@ class MplCanvas(FigureCanvas):
         if self.parent.tcviewer_screen is None or self.parent.tcviewer_screen.isclosed:
             self.parent.tcviewer_screen = tcviewer.screen._ScreenWindow()
             self.parent.tcviewer_screen.setWindowIcon(self.parent.parent._ICONS['pyorbb'])
-            self.parent.tcviewer_screen.__enter__()
             self.parent.tcviewer_screen.setWindowTitle('PyOrbb Viewer')
             self.parent.tcviewer_screen.show()
+
+            app = QtWidgets.QApplication.instance()
+            app.windows.append(self.parent.tcviewer_screen)
 
         with self.parent.tcviewer_screen.add_molscene() as scene:
             if draw_type == 'single':
@@ -371,17 +376,23 @@ class MplCanvas(FigureCanvas):
                 scene.draw_text(str(orb[0]) + ' * ' + str(orb[1]))
 
     def draw_molecule(self, mol=None):
+        print('before loaded tcviewer')
         import tcviewer
-
+        print('loaded tcviewer')
         # get or make a new viewer
         if self.parent.tcviewer_screen is None or self.parent.tcviewer_screen.isclosed:
+            print('making a screen')
             self.parent.tcviewer_screen = tcviewer.screen._ScreenWindow()
             self.parent.tcviewer_screen.setWindowIcon(self.parent.parent._ICONS['pyorbb'])
-            self.parent.tcviewer_screen.__enter__()
             self.parent.tcviewer_screen.setWindowTitle('PyOrbb Viewer')
             self.parent.tcviewer_screen.show()
 
+            app = QtWidgets.QApplication.instance()
+            app.windows.append(self.parent.tcviewer_screen)
+
+        print('made a screen')
         with self.parent.tcviewer_screen.add_molscene() as scene:
+            print('drawing mol')
             scene.draw_molecule(mol)
 
     def _set_orbital_info_box(self):
@@ -1764,6 +1775,7 @@ class AnalysisWindow(QtWidgets.QWidget):
 class PyOrbbWindow(QtWidgets.QMainWindow):
     def __init__(self):
         super().__init__()
+        self.theme_switcher = theme_switcher.ThemeSwitcher()
 
         ICON_FOLDER = os.path.join(os.path.split(__file__)[0], '..', 'application', 'icons')
         self._ICONS = {file.removesuffix('.png'): QtGui.QIcon(os.path.join(ICON_FOLDER, file)) for file in os.listdir(ICON_FOLDER)}
@@ -1835,16 +1847,18 @@ class PyOrbbWindow(QtWidgets.QMainWindow):
 
         self._add_analysis_tab()
         self.tabs.setCurrentIndex(0)
-        self.set_style()
+        self.set_theme()
 
     def set_theme(self):
         settings_theme = self.settings_dialog.get("PyOrbb", "Color Scheme", "theme_mode")
         if settings_theme == 0:
-            QtGui.QGuiApplication.styleHints().setColorScheme(QtCore.Qt.ColorScheme.Light)
+            self.theme_switcher.set_light_theme()
         elif settings_theme == 1:
-            QtGui.QGuiApplication.styleHints().setColorScheme(QtCore.Qt.ColorScheme.Dark)
+            self.theme_switcher.set_dark_theme()
         else:
-            QtGui.QGuiApplication.styleHints().setColorScheme(QtCore.Qt.ColorScheme.Unknown)
+            self.theme_switcher.set_auto_theme()
+        self.changeEvent(QtCore.QEvent(QtCore.QEvent.Type.ThemeChange))
+        self.set_style()
 
     def set_style(self):
         shadow.update_style()
@@ -1858,7 +1872,6 @@ class PyOrbbWindow(QtWidgets.QMainWindow):
                 window._set_orbital_filter_button_icon()
             else:
                 window.update_icons()
-
 
         if self.isDarkMode:
             with open(os.path.split(__file__)[0] + '/style_dark.qss') as style:
@@ -1934,6 +1947,8 @@ class PyOrbbApp(QtWidgets.QApplication):
         import tcviewer
         tcviewer_screen = tcviewer.screen._ScreenWindow()
         tcviewer_screen.setWindowIcon(self._ICONS['pyorbb'])
-        tcviewer_screen.__enter__()
         tcviewer_screen.setWindowTitle('PyOrbb Viewer')
         tcviewer_screen.show()
+        self.windows.append(tcviewer_screen)
+        return tcviewer_screen
+
