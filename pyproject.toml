@@ -68,7 +68,7 @@ sources = [
 requires = [
     "pyside6-essentials==6.7.3",
     "tcviewer>=0.1.11",
-    "git+https://github.com/TheoChem-VU/TCutility.git@509-improvements-to-the-cite-and-caching-module",
+    "git+https://github.com/TheoChem-VU/TCutility.git",
     "numpy",
     "matplotlib>=3.5.3",
     "networkx>=2.6.3",
