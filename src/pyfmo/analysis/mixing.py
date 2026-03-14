@@ -13,7 +13,7 @@ ensure_list = lambda x: [x] if not isinstance(x, (list, tuple, set)) else list(x
 INTERACTION_COLORS = {'OI': '#00FF00', 'PR': '#FF0000', 'Sanitization': '#FF00FF', 'Multiple': '#000000'}
 
 class Mixer2:
-    def __init__(self, orbs: pyfmo.Orbitals or str, pr_min_thresh=1e-3, oi_min_thresh=1e-7):
+    def __init__(self, orbs: pyfmo.Orbitals or str, pr_min_thresh=1e-3, oi_min_thresh=1e-7, oi_max_N=50, pr_max_N=50):
         self.orbs = orbs
         if isinstance(orbs, str):
             self.orbs = pyfmo.Orbitals(str)
@@ -34,6 +34,8 @@ class Mixer2:
         self._prepare()
         self.oi_min_thresh = oi_min_thresh
         self.pr_min_thresh = pr_min_thresh
+        self.oi_max_N = oi_max_N
+        self.pr_max_N = pr_max_N
         self._get_orbital_interactions()
         self._get_pauli_repulsions()
         self.set_energy_type('energy')
@@ -206,6 +208,12 @@ class Mixer2:
             self.mixes[interaction_type][self.energy_type][mix] = v
             n += 1
 
+            if interaction_type == 'OI':
+                if n == self.oi_max_N:
+                    break
+            else:
+                if n == self.pr_max_N:
+                    break
 
     def _get_mos(self, sfo1, sfo2, interaction_type=None):
         sfo1_contr = np.array([sfo1.mulliken_contribution(mo, normalized=True) for mo in self.orbs.mos.orbitals])
