@@ -322,12 +322,13 @@ class MplCanvas(FigureCanvas):
             app = QtWidgets.QApplication.instance()
             app.windows.append(self.parent.tcviewer_screen)
 
+        gridsize = self.parent.parent.settings_dialog.get("Densf", "General", "gridsize")
         with self.parent.tcviewer_screen.add_molscene() as scene:
             if draw_type == 'single':
                 c1, c2 = ([1, 0, 0], [0, 0, 1]) if orb.occupied else ([1, .5, 0], [0, 1, 1])
                 scene.draw_molecule(orb.molecule)
                 try:
-                    data = orb.vtk_file(preambles=preambles)
+                    data = orb.vtk_file(gridsize=gridsize, preambles=preambles)
                 except Exception as e:
                     print("".join(traceback.format_exception(type(e), e, e.__traceback__)))
                     QtWidgets.QMessageBox.critical(self, 'Error', 'There was an issue with running densf.\nUse preferences > Set AMS Path to set the AMS installation path.')
@@ -343,7 +344,7 @@ class MplCanvas(FigureCanvas):
 
                 c1, c2 = ([1, 0, 0], [0, 0, 1]) if orb[0].occupied else ([1, .5, 0], [0, 1, 1])
                 try:
-                    cub = orb[0].vtk_file(preambles=preambles)
+                    cub = orb[0].vtk_file(gridsize=gridsize, preambles=preambles)
                 except Exception as e:
                     print("".join(traceback.format_exception(type(e), e, e.__traceback__)))
                     QtWidgets.QMessageBox.critical(self, 'Error', 'There was an issue with running densf.\nUse preferences > Set AMS Path to set the AMS installation path.')
@@ -351,7 +352,7 @@ class MplCanvas(FigureCanvas):
 
                 c1, c2 = ([1, 0, 0], [0, 0, 1]) if orb[1].occupied else ([1, .5, 0], [0, 1, 1])
                 try:
-                    cub = orb[1].vtk_file(preambles=preambles)
+                    cub = orb[1].vtk_file(gridsize=gridsize, preambles=preambles)
                 except Exception as e:
                     print("".join(traceback.format_exception(type(e), e, e.__traceback__)))
                     QtWidgets.QMessageBox.critical(self, 'Error', 'There was an issue with running densf.\nUse preferences > Set AMS Path to set the AMS installation path.')
@@ -365,8 +366,8 @@ class MplCanvas(FigureCanvas):
                 mol = orb[0].molecule + orb[1].molecule
                 scene.draw_molecule(mol)
                 try:
-                    cub1 = orb[0].vtk_file(preambles=preambles, grid_around_mol=mol)
-                    cub2 = orb[1].vtk_file(preambles=preambles, grid_around_mol=mol)
+                    cub1 = orb[0].vtk_file(gridsize=gridsize, preambles=preambles, grid_around_mol=mol)
+                    cub2 = orb[1].vtk_file(gridsize=gridsize, preambles=preambles, grid_around_mol=mol)
                 except Exception as e:
                     print("".join(traceback.format_exception(type(e), e, e.__traceback__)))
                     QtWidgets.QMessageBox.critical(self, 'Error', 'There was an issue with running densf.\nUse preferences > Set AMS Path to set the AMS installation path.')

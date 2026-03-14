@@ -4,6 +4,7 @@ import platformdirs
 import json
 import platform
 import pyfmo
+from pyfmo.application.components import shadow
 
 
 class SettingSelectionWidget(QtWidgets.QFrame):
@@ -87,6 +88,27 @@ class Color(SettingSelectionWidget):
     def value(self):
         return self._colorlineedit.text()
 
+class DropDown(SettingSelectionWidget):
+    def __init__(self, parent, choices):
+        super().__init__(parent)
+        self.parent = parent
+        self.layout = QtWidgets.QHBoxLayout(self)
+        self._combobox = QtWidgets.QComboBox()
+        self.layout.addWidget(self._combobox)
+
+        self.choices = choices
+        for choice in choices:
+            self._combobox.addItem(choice)
+        self.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+
+    def setValue(self, val: str):
+        idx = [i for i, text in enumerate(self.choices) if text == val][0]
+        self._combobox.setCurrentIndex(idx)
+
+    def value(self):
+        idx = self._combobox.currentIndex()
+        return self.choices[idx]
+
 
 class ButtonGroup(SettingSelectionWidget):
     def __init__(self, parent, icons, names, exclusive=True):
@@ -104,6 +126,8 @@ class ButtonGroup(SettingSelectionWidget):
             self.layout.addWidget(btn_frame)
             btn_layout = QtWidgets.QVBoxLayout(btn_frame)
             btn = QtWidgets.QPushButton(icon, '')
+            btn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+            shadow.apply(btn)
             btn.setCheckable(True)
             btn.clicked.connect(lambda args: print(self.value()))
             btn.setIconSize(QtCore.QSize(30, 30))
@@ -145,6 +169,7 @@ class CheckBox(SettingSelectionWidget):
         self.layout = QtWidgets.QHBoxLayout(self)
         self._checkbox = QtWidgets.QCheckBox()
         self.layout.addWidget(self._checkbox)
+        self.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
 
     def setValue(self, val):
         self._checkbox.setChecked(val)
@@ -245,13 +270,16 @@ class SettingsTab(QtWidgets.QWidget):
 
     def _add_generic_setting(self, name, variable_name, setting_widget, default):
         reset_btn = QtWidgets.QPushButton(self)
+        reset_btn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         reset_btn.clicked.connect(setting_widget.reset)
+        shadow.apply(reset_btn)
         if QtWidgets.QApplication.instance().isDarkMode:
             reset_btn.setIcon(QtWidgets.QApplication.instance()._ICONS['reset_dark'])
         else:
             reset_btn.setIcon(QtWidgets.QApplication.instance()._ICONS['reset'])
 
         setting_widget.setDefault(default)
+        # shadow.apply(setting_widget)
 
         self.get_funcs[variable_name] = setting_widget.value
         self.set_funcs[variable_name] = setting_widget.setValue
@@ -264,7 +292,7 @@ class SettingsTab(QtWidgets.QWidget):
         layout.addWidget(setting_widget)
         layout.addWidget(reset_btn)
         layout.setStretch(0, 1)
-        layout.setStretch(1, 0)
+        layout.setStretch(1, 1)
         layout.setStretch(2, 0)
         # frame.setLayout(layout)
         self.layout.addWidget(frame)
@@ -299,6 +327,14 @@ class SettingsTab(QtWidgets.QWidget):
             name,
             default=None):
         setting_widget = Path(self)
+        self._add_generic_setting(name, variable_name, setting_widget, default)
+
+    def add_dropdown_setting(self, 
+            variable_name, 
+            name,
+            choices,
+            default=None):
+        setting_widget = DropDown(self, choices=choices)
         self._add_generic_setting(name, variable_name, setting_widget, default)
 
     def add_buttongroup_setting(self, 
@@ -431,15 +467,19 @@ class SettingsDialog(QtWidgets.QDialog):
 
         apply_button = QtWidgets.QPushButton('Apply')
         apply_button.clicked.connect(self.apply)
+        shadow.apply(apply_button)
 
         save_button = QtWidgets.QPushButton('Save')
         save_button.clicked.connect(self.save)
+        shadow.apply(save_button)
 
         cancel_button = QtWidgets.QPushButton('Cancel')
         cancel_button.clicked.connect(self.reject)
+        shadow.apply(cancel_button)
 
         reset_button = QtWidgets.QPushButton('Reset')
         reset_button.clicked.connect(self.reset)
+        shadow.apply(reset_button)
 
         buttons_layout.addWidget(apply_button)
         buttons_layout.addWidget(save_button)
@@ -464,6 +504,7 @@ class SettingsDialog(QtWidgets.QDialog):
         with self.add_section('Densf') as section:
             with section.add_tab('General') as tab:
                 tab.add_path_setting("amsbin", "AMS Application")
+                tab.add_dropdown_setting("gridsize", "Grid Size", choices=['Coarse', 'Medium', 'Fine'], default='Medium')
 
         with self.add_section('Plot') as section:
             with section.add_tab('Arrows') as tab:
@@ -491,14 +532,6 @@ class SettingsDialog(QtWidgets.QDialog):
                 tab.add_color_setting("Sanitization_color", 'Sanitization Color', default="#bf00bf")
                 tab.add_color_setting("Multiple_color", 'Multiple Color', default="#000000")
                 tab.add_float_tuple_setting("alpha_range", 'Alpha Range', 2, default=(0.1, 1.0))
-
-        # with self.add_section('Algorithm') as section:
-        #     with section.add_tab('General') as tab:
-        #         tab.layout.addWidget(QtWidgets.QLabel('tab General'))
-
-        # with self.add_section('PyOrbb Viewer') as section:
-        #     with section.add_tab('Grid') as tab:
-        #         tab.layout.addWidget(QtWidgets.QLabel('Grid Quality'))
 
         self.load_defaults()
         self.reset()
