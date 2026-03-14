@@ -1769,6 +1769,19 @@ class AnalysisWindow(QtWidgets.QWidget):
         self.recent_publish_carousel = carousel.PublicationCarousel(self)
         self.recent_publish_carousel.setObjectName('carousel')
         new_page_layout.addWidget(self.recent_publish_carousel)
+
+        # add a button for making an issue on github
+        issue_btn = QtWidgets.QPushButton('?')
+        issue_btn.clicked.connect(lambda: webbrowser.open('https://github.com/TheoChem-VU/PyFMO/issues/new'))
+        issue_btn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        issue_btn.setToolTip('Open an issue on GitHub')
+        issue_btn.setSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
+        issue_btn.setFixedSize(30, 30)
+        issue_btn.setStyleSheet('QPushButton{border-radius: 15px; font-weight: bold}')
+        shadow.apply(issue_btn)
+        new_page_layout.addWidget(issue_btn)
+
+
         self.update_icons()
 
 
@@ -1776,7 +1789,7 @@ class AnalysisWindow(QtWidgets.QWidget):
 class PyOrbbWindow(QtWidgets.QMainWindow):
     def __init__(self):
         super().__init__()
-        self.theme_switcher = theme_switcher.ThemeSwitcher()
+        self.theme_switcher = theme_switcher.ThemeSwitcher(self)
 
         ICON_FOLDER = os.path.join(os.path.split(__file__)[0], '..', 'application', 'icons')
         self._ICONS = {file.removesuffix('.png'): QtGui.QIcon(os.path.join(ICON_FOLDER, file)) for file in os.listdir(ICON_FOLDER)}
