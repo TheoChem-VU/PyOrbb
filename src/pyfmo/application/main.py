@@ -1728,18 +1728,11 @@ class AnalysisWindow(QtWidgets.QWidget):
         self.dropfile_label.setPixmap(pixmap)
         outlined_area_layout.addWidget(self.dropfile_label, alignment=QtCore.Qt.AlignCenter)
 
-
         # Label
         label = QtWidgets.QLabel('<font size="8">Drop a File here</font><br><font size="6"><i>or</i></font>')
         label.setAlignment(QtCore.Qt.AlignCenter)
         label.setTextFormat(QtCore.Qt.RichText)
         outlined_area_layout.addWidget(label)
-
-        # # second label
-        # label = QtWidgets.QLabel('<font size="12""><i>or</i></font>')
-        # label.setAlignment(QtCore.Qt.AlignCenter)
-        # label.setTextFormat(QtCore.Qt.RichText)
-        # outlined_area_layout.addWidget(label)
 
         # Button
         self.open_file_button = QtWidgets.QPushButton(QtWidgets.QApplication.instance()._ICONS['folder'], ' Select a File')
@@ -1909,7 +1902,13 @@ class PyOrbbWindow(QtWidgets.QMainWindow):
 
     @property
     def isDarkMode(self):
-        return QtGui.QGuiApplication.styleHints().colorScheme() == QtCore.Qt.ColorScheme.Dark
+        settings_theme = self.settings_dialog.get("PyOrbb", "Color Scheme", "theme_mode")
+        if settings_theme == 0:
+            return False
+        elif settings_theme == 1:
+            return True
+        else:
+            return QtGui.QGuiApplication.styleHints().colorScheme() == QtCore.Qt.ColorScheme.Dark
 
     def _add_analysis_tab(self, object=None, tabname='new', tabtooltip=None):
         window = AnalysisWindow(self)
@@ -1955,7 +1954,10 @@ class PyOrbbApp(QtWidgets.QApplication):
 
     @property
     def isDarkMode(self):
-        return QtGui.QGuiApplication.styleHints().colorScheme() == QtCore.Qt.ColorScheme.Dark
+        if len(self.windows) == 0:
+            return QtGui.QGuiApplication.styleHints().colorScheme() == QtCore.Qt.ColorScheme.Dark
+        else:
+            return self.windows[0].isDarkMode
 
     def open_empty_viewer(self):
         import tcviewer

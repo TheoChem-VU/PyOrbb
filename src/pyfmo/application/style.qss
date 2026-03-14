@@ -81,12 +81,19 @@ QTabWidget {
     border-radius: 5px; 
     border: 1px solid lightgray;
 } 
-QTabWidget::pane { 
+QTabWidget::pane:top { 
     border: 1px solid #A9A9A9;
     background-color: #F7F7F7;
     border-radius: 10px;
     border-top-left-radius: 0px;
     top: -1px;
+} 
+QTabWidget::pane:left { 
+    border: 1px solid #A9A9A9;
+    background-color: #F7F7F7;
+    border-radius: 10px;
+    border-top-left-radius: 0px;
+    left: -1px;
 } 
 QTabWidget::tab-bar {
     /*background-color: #F8F8F8; */
@@ -246,7 +253,7 @@ QFrame#plot_frame{
 QFrame#Pub_main {
         border: 1px solid #d0d0d0;
         margin: 5px;
-        padding: 10px;
+        padding: 5px;
         border-radius: 10px;
         background-color: white;
     }
@@ -304,4 +311,82 @@ QMainWindow {
     background: #ECECEC;
 }
 
+
+
+QTabBar::tab:top:selected
+{
+    background-color: #F7F7F7;
+    border-style: solid;
+    border-width: 1px 1px 0px 1px;
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+    border-color: #A9A9A9;
+    min-width: 8ex;
+    padding-top: 5px;
+    padding-left: 5px;
+    padding-right: 5px;
+    padding-bottom: 6px;
+}
+
+
+QTabBar::tab:top:!selected
+{
+    background-color: #E5E5E5;
+    border-style: solid;
+    border-width: 1px;
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+    border-color: #A9A9A9;
+    min-width: 8ex;
+    padding: 5px;
+}
+
+QTabBar::tab:left:selected
+{
+    background-color: #F7F7F7;
+    border-style: solid;
+    border-width: 1px 0px 1px 1px;
+    border-top-left-radius: 3px;
+    border-bottom-left-radius: 3px;
+    border-color: #A9A9A9;
+    min-height: 8ex;
+    padding-top: 5px;
+    padding-left: 6px;
+    padding-right: 5px;
+    padding-bottom: 5px;
+}
+
+
+QTabBar::tab:left:!selected
+{
+    background-color: #E5E5E5;
+    border-style: solid;
+    border-width: 1px;
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+    border-color: #A9A9A9;
+    min-height: 8ex;
+    padding: 5px;
+}
+
+
+QComboBox {
+    /*image: url(:/misc/down_arrow_2);*/
+    background-color: white;
+    border: 0px solid white;
+    color: black;
+}
+
+/*
+QComboBox::down-arrow {
+    image: url(/usr/share/icons/crystalsvg/16x16/actions/1downarrow.png);
+    background-color: transparent;
+    border: 0px solid #E5E5E5;
+}
+*/
+
+QComboBox::drop-down {
+    /*image: url(:/misc/down_arrow_2);*/
+    border-width: none;
+}
 

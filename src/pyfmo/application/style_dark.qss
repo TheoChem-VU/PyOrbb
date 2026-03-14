@@ -47,8 +47,8 @@ QWidget#drop_area {
     margin-top: 5px;
 }
 QWidget#carousel {
-    padding-left: 15px;
-    padding-right: 15px;
+    /*padding-left: 15px;*/
+    /*padding-right: 15px;*/
     margin-left: 120px;
     margin-right: 120px;
     background-color: transparent;
@@ -279,7 +279,7 @@ QLabel#Pub_title {
 
 QSlider::groove:horizontal {
     /*border: 1px solid black;*/
-    background-color: #ECECEC;
+    background-color: #242424;
     height: 2px;
 }
 
