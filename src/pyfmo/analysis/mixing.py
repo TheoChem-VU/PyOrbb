@@ -51,7 +51,8 @@ class Mixer2:
                 continue
             if not (orb2 in mix.sfos or orb2 in mix.mos):
                 continue
-
+            if mix.fraction is None:
+                continue
             return mix
 
     def _prepare(self):
