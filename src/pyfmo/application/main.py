@@ -919,6 +919,7 @@ class MplCanvas(FigureCanvas):
         self.fig.canvas.draw_idle()
 
 
+
 class SaveFileDialog(QtWidgets.QFileDialog):
     def __init__(self, parent=None):
         super().__init__()
@@ -1147,6 +1148,10 @@ class AnalysisWindow(QtWidgets.QWidget):
 
         self.OI_is_empty_label.setVisible(self.main_mix.main_mix.OI_is_empty)
         self.PR_is_empty_label.setVisible(self.main_mix.main_mix.PR_is_empty)
+
+        if self.plot._add_warning:
+                ax.text(0.9, 0.9, '⚠︎', transform=fig.transFigure, fontsize=30, c='r')
+
 
         props = dict(edgecolor='white', facecolor='white', alpha=1)  # bbox features
         fig.canvas.draw_idle()
