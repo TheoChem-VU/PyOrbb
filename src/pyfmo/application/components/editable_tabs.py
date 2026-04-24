@@ -44,10 +44,10 @@ class WindowTabs(QtWidgets.QTabWidget):
     def __init__(self, parent):
         super().__init__(parent=parent)
         self.parent = parent
-        self.setMovable(True)
-        self.setMouseTracking(True)
+        # self.setMovable(True)
+        # self.setMouseTracking(True)
         self.setTabBar(WindowTabBar(self))
-        self.setTabsClosable(True)
+        # self.setTabsClosable(True)
         self.tabBarDoubleClicked.connect(self.rename_tab)
         self.rename_tab_dialog = LineEditDialog(self.parent, 'Rename tab to:')
         self.tabCloseRequested.connect(self.removeTab)
@@ -70,9 +70,9 @@ class WindowTabBar(QtWidgets.QTabBar):
         self.setMouseTracking(True)
         self.setTabsClosable(True)
 
-        self.dragStartPos = QtCore.QPoint()
-        self.dragDropedPos = QtCore.QPoint()
-        self.mouseCursor = QtGui.QCursor()
+        # self.dragStartPos = QtCore.QPoint()
+        # self.dragDropedPos = QtCore.QPoint()
+        # self.mouseCursor = QtGui.QCursor()
         self.dragInitiated = False
         self.dragLabel = None
         self.mouseCrossedWindowTime = 0
@@ -84,24 +84,32 @@ class WindowTabBar(QtWidgets.QTabBar):
 
 
     def timerEvent(self, event=None):
+        super().timerEvent(event)
+
         index = self.parent.currentIndex()
         widg = self.parent.widget(index)
-        pixmap = widg.grab()
+        # pixmap = widg.grab()
 
         time_since_crossed = perf_counter() - self.mouseCrossedWindowTime
         self.labelShrinkage = self.labelShrinkage + (self.targetLabelShrinkage - self.labelShrinkage) * time_since_crossed * 2
 
-        pixmap = pixmap.scaled(pixmap.width()/self.labelShrinkage, pixmap.height()/self.labelShrinkage)
-        rect = pixmap.rect()
+        # pixmap = pixmap.scaled(pixmap.width()/self.labelShrinkage, pixmap.height()/self.labelShrinkage)
 
+        pixmap = self.orig_pixmap.scaled(self.orig_pixmap.width()/self.labelShrinkage, self.orig_pixmap.height()/self.labelShrinkage)
+        rect = pixmap.rect()
         # make the pixmap transparent
         painter = QtGui.QPainter()
         painter.begin(pixmap)
         painter.setCompositionMode(QtGui.QPainter.CompositionMode_DestinationIn)
         painter.fillRect(pixmap.rect(), QtGui.QColor(0, 0, 0, 100))
         painter.end()
-        self.dragLabel.setPixmap(pixmap)
+
+        # self.dragLabel.setPixmap(pixmap)
+        # pixmap = self.dragLabel.pixmap()
+
+        # self.dragLabel.resize(widg.width()/self.labelShrinkage, widg.height()/self.labelShrinkage)
         self.dragLabel.updateGeometry()
+        self.dragLabel.setPixmap(pixmap)
 
         # this removes the window frame
         self.dragLabel.setWindowFlags(QtCore.Qt.CustomizeWindowHint)
@@ -117,6 +125,11 @@ class WindowTabBar(QtWidgets.QTabBar):
             #Create the appearance of dragging the tab content
             if self.dragLabel is None:
                 self.dragLabel = QtWidgets.QLabel()
+                index = self.parent.currentIndex()
+                widg = self.parent.widget(index)
+                pixmap = widg.grab()
+                self.orig_pixmap = pixmap
+                self.dragLabel.setPixmap(pixmap)
                 # this makes the label transparent to mouse
                 self.dragLabel.setAttribute(QtCore.Qt.WA_TransparentForMouseEvents, True);
                 self.timerID = self.startTimer(10)
@@ -127,6 +140,7 @@ class WindowTabBar(QtWidgets.QTabBar):
             if self.timerID is not None:
                 self.killTimer(self.timerID)
                 self.timerID = None
+            # self.dragLabel = None
             return
 
         if self.dragInitiated:
@@ -156,6 +170,7 @@ class WindowTabBar(QtWidgets.QTabBar):
 
     def mouseReleaseEvent(self, event):
         super().mouseReleaseEvent(event)
+        
         if self.dragLabel is not None:
             self.dragLabel.hide()
         self.dragLabel = None
