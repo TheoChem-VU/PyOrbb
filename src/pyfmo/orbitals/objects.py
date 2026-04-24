@@ -147,7 +147,7 @@ class Orbital:
             :meth:`Orbital.draw` to draw and open a TCviewer screen showing this |Orbital|.
             :meth:`Orbital.screenshot` to generate a screenshot of this |Orbital|.
         '''
-        from tcutility.job.adf import DensfJob
+        from tcmu.job.adf import DensfJob
         from tcintegral import grid
 
         # start a Densf job to calculate the cube-file. 
