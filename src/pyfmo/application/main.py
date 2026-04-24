@@ -1001,6 +1001,38 @@ class MoleculeLabel(QtWidgets.QFrame):
         print(self.parent.plot.draw_molecule(self.molecule))
 
 
+class ValueSlider(QtWidgets.QSlider):
+    '''
+    Taken from https://stackoverflow.com/questions/56694631/how-to-reverse-the-ticklabels-for-a-qslider-element-and-how-to-make-it-clickable
+    by user "S. Nick".
+    '''
+    def mousePressEvent(self, event):
+        if event.button() == QtCore.Qt.LeftButton:
+            val = self.pixelPosToRangeValue(event.pos())
+            self.setValue(val)
+        super().mousePressEvent(event) 
+
+    def pixelPosToRangeValue(self, pos):
+        opt = QtWidgets.QStyleOptionSlider()
+        self.initStyleOption(opt)
+        gr = self.style().subControlRect(QtWidgets.QStyle.CC_Slider, opt, QtWidgets.QStyle.SC_SliderGroove, self)
+        sr = self.style().subControlRect(QtWidgets.QStyle.CC_Slider, opt, QtWidgets.QStyle.SC_SliderHandle, self)
+
+        if self.orientation() == QtCore.Qt.Horizontal:
+            sliderLength = sr.width()
+            sliderMin = gr.x()
+            sliderMax = gr.right() - sliderLength + 1
+        else:
+            sliderLength = sr.height()
+            sliderMin = gr.y()
+            sliderMax = gr.bottom() - sliderLength + 1;
+        pr = pos - sr.center() + sr.topLeft()
+        p = pr.x() if self.orientation() == QtCore.Qt.Horizontal else pr.y()
+        return QtWidgets.QStyle.sliderValueFromPosition(self.minimum(), self.maximum(), p - sliderMin,
+                                               sliderMax - sliderMin, opt.upsideDown)
+
+
+
 class AnalysisWindow(QtWidgets.QWidget):
     def __init__(self, parent):
         super().__init__()
@@ -1287,7 +1319,8 @@ class AnalysisWindow(QtWidgets.QWidget):
         inc_oi_btn.clicked.connect(self._set_next_oi_slider)
         slider_layout.addWidget(inc_oi_btn, 0, 4)
 
-        self.slider_OI = QtWidgets.QSlider(QtCore.Qt.Horizontal, self._analysis_page_frame)
+        self.slider_OI = ValueSlider(QtCore.Qt.Horizontal, self._analysis_page_frame)
+        self.slider_OI.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.slider_OI.setObjectName('slider_OI')
         if not has_OI:
             slider_OI_max = 1
@@ -1340,7 +1373,7 @@ class AnalysisWindow(QtWidgets.QWidget):
         label_PR.setStyleSheet('QLabel{ font: 12pt}')
         slider_layout.addWidget(label_PR, 1, 2)
 
-        self.slider_PR = QtWidgets.QSlider(QtCore.Qt.Horizontal, self._analysis_page_frame)
+        self.slider_PR = ValueSlider(QtCore.Qt.Horizontal, self._analysis_page_frame)
         # slider_PR_max = max(max(mix.xiaobo_value() for mix in mixes) for mixes in self.pauli_mixes.values())
         if not has_PR:
             slider_PR_max = 0.001**2
