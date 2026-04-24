@@ -747,7 +747,7 @@ class MplCanvas(FigureCanvas):
 
         self.parent.orbital_draw_button.setMenu(menu)
         self.parent.orbital_draw_button.setEnabled(len(menu.actions()) > 0)
-        self.parent.orbital_filter_button.setEnabled(len(self._selected_orbitals) > 0 or self.parent.orbital_filter_button._is_checked)
+        self.parent.orbital_filter_button.setEnabled(len(self._selected_orbitals) > 0 or self.parent.orbital_filter_button.isChecked())
 
 
     def on_plot_hover(self, event):
@@ -1159,9 +1159,9 @@ class AnalysisWindow(QtWidgets.QWidget):
     def _set_orbital_filter(self):
         selected_systems = set([self.orbs.mos if isinstance(orb, pyfmo.orbitals.objects.MO) else orb.fragment for orb in self.plot._selected_orbitals if not isinstance(orb, tuple)])
 
-        self.orbital_filter_button._is_checked = not self.orbital_filter_button._is_checked
+        # self.orbital_filter_button.checked() = not self.orbital_filter_button._is_checked
 
-        if self.orbital_filter_button._is_checked:
+        if self.orbital_filter_button.isChecked():
             if self.orbs.mos in selected_systems:
                 self.allowed_mos_override = [orb for orb in self.plot._selected_orbitals if isinstance(orb, pyfmo.orbitals.objects.MO)]
             else:
@@ -1181,21 +1181,7 @@ class AnalysisWindow(QtWidgets.QWidget):
 
         self._update_plot()
 
-        # self._set_orbital_filter_button_icon()
-        self.orbital_filter_button.setEnabled(len(self.plot._selected_orbitals) > 0 or self.orbital_filter_button._is_checked)
-
-    def _set_orbital_filter_button_icon(self):
-        darkmode = self.parent.isDarkMode
-        if darkmode:
-            if self.orbital_filter_button._is_checked:
-                self.orbital_filter_button.setIcon(self.parent._ICONS['checked_dark'])
-            else:
-                self.orbital_filter_button.setIcon(self.parent._ICONS['unchecked_dark'])
-        else:
-            if self.orbital_filter_button._is_checked:
-                self.orbital_filter_button.setIcon(self.parent._ICONS['checked'])
-            else:
-                self.orbital_filter_button.setIcon(self.parent._ICONS['unchecked'])
+        # self.orbital_filter_button.setEnabled(len(self.plot._selected_orbitals) > 0 or self.orbital_filter_button._is_checked)
 
     def load_analysis(self, file):
         try:
