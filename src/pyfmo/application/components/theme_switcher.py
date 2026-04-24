@@ -1,4 +1,3 @@
-import tcutility
 from PySide6 import QtCore
 
 # on macos we can use Cocoa to force dark/light mode
