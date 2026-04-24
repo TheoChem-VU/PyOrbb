@@ -185,8 +185,9 @@ class Orbital:
             :meth:`Orbital.draw` to draw and open a TCviewer screen showing this |Orbital|.
             :meth:`Orbital.screenshot` to generate a screenshot of this |Orbital|.
         '''
-        from tcutility.job.adf import DensfJob
+        from tcmu.job.adf import DensfJob
         from tcintegral import grid
+        import vtk
 
         # start a Densf job to calculate the cube-file. 
         # We want to return the cube-file, so we should wait for it to finish.
@@ -216,7 +217,7 @@ class Orbital:
              isovalue: float = 0.03, 
              overwrite: bool = False, 
              screen: "tcviewer.screen.Screen" = None,  # noqa: F821
-             transform: "tcutility.geometry.Transform" = None):  # noqa: F821
+             transform: "tcmu.geometry.Transform" = None):  # noqa: F821
         '''
         Generate and draw a cube-file for this |Orbital| object.
 
@@ -265,7 +266,7 @@ class Orbital:
                    gridsize: str = 'medium', 
                    isovalue: float = 0.03, 
                    overwrite: bool = False, 
-                   transform: "tcutility.geometry.Transform" = None) -> str:  # noqa: F821
+                   transform: "tcmu.geometry.Transform" = None) -> str:  # noqa: F821
         '''
         Generate a screenshot for this |Orbital| object.
 
