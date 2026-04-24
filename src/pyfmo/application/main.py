@@ -288,6 +288,10 @@ class MplCanvas(FigureCanvas):
         self._yaxis_dialog = YAxisDialog(self)
         self._already_unfaded = True
         self.previous_mouse_pos = None
+        self._add_warning = False
+
+    def add_warning(self):
+        self._add_warning = True
 
     def set_xtick_order(self, order):
         self.parent._xtick_order = {tick.get_text(): float(pos) for tick, pos in order.items()}
