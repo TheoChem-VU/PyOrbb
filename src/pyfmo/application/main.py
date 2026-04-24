@@ -1181,7 +1181,7 @@ class AnalysisWindow(QtWidgets.QWidget):
 
         self._update_plot()
 
-        self._set_orbital_filter_button_icon()
+        # self._set_orbital_filter_button_icon()
         self.orbital_filter_button.setEnabled(len(self.plot._selected_orbitals) > 0 or self.orbital_filter_button._is_checked)
 
     def _set_orbital_filter_button_icon(self):
@@ -1309,6 +1309,7 @@ class AnalysisWindow(QtWidgets.QWidget):
         self.OI_is_empty_label.setSizePolicy(sp_retain)
 
         self.cbox_OI = QtWidgets.QCheckBox('Show OI')
+        self.cbox_OI.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.cbox_OI.setChecked(True)
         slider_layout.addWidget(self.cbox_OI, 0, 1)
         self.cbox_OI.checkStateChanged.connect(self._update_plot)
@@ -1319,6 +1320,7 @@ class AnalysisWindow(QtWidgets.QWidget):
         slider_layout.addWidget(label_OI, 0, 2)
 
         inc_oi_btn = QtWidgets.QPushButton('<')
+        inc_oi_btn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         shadow.apply(inc_oi_btn)
         inc_oi_btn.setToolTip('Add next Orbital Interaction')
         inc_oi_btn.clicked.connect(self._set_next_oi_slider)
@@ -1326,6 +1328,7 @@ class AnalysisWindow(QtWidgets.QWidget):
 
         self.slider_OI = ValueSlider(QtCore.Qt.Horizontal, self._analysis_page_frame)
         self.slider_OI.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+
         self.slider_OI.setObjectName('slider_OI')
         if not has_OI:
             slider_OI_max = 1
@@ -1339,6 +1342,7 @@ class AnalysisWindow(QtWidgets.QWidget):
         slider_layout.addWidget(self.slider_OI, 0, 5)
 
         dec_oi_btn = QtWidgets.QPushButton('>')
+        dec_oi_btn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         dec_oi_btn.setToolTip('Remove weakest Orbital Interaction')
         dec_oi_btn.clicked.connect(self._set_previous_oi_slider)
         slider_layout.addWidget(dec_oi_btn, 0, 6)
@@ -1369,6 +1373,7 @@ class AnalysisWindow(QtWidgets.QWidget):
         slider_layout.addWidget(self.PR_is_empty_label, 1, 0)
 
         self.cbox_PR = QtWidgets.QCheckBox('Show PR')
+        self.cbox_PR.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.cbox_PR.setChecked(True)
         slider_layout.addWidget(self.cbox_PR, 1, 1)
         self.cbox_PR.checkStateChanged.connect(self._update_plot)
@@ -1379,6 +1384,7 @@ class AnalysisWindow(QtWidgets.QWidget):
         slider_layout.addWidget(label_PR, 1, 2)
 
         self.slider_PR = ValueSlider(QtCore.Qt.Horizontal, self._analysis_page_frame)
+        self.slider_PR.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         # slider_PR_max = max(max(mix.xiaobo_value() for mix in mixes) for mixes in self.pauli_mixes.values())
         if not has_PR:
             slider_PR_max = 0.001**2
@@ -1387,6 +1393,7 @@ class AnalysisWindow(QtWidgets.QWidget):
             slider_PR_max = abs(max(max(v.values()) for v in self.main_mix.mixes['PR'].values()))
 
         inc_pr_btn = QtWidgets.QPushButton('<')
+        inc_pr_btn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         inc_pr_btn.setToolTip('Show next Pauli Repulsion')
         inc_pr_btn.clicked.connect(self._set_next_pr_slider)
         shadow.apply(inc_pr_btn)
@@ -1399,6 +1406,7 @@ class AnalysisWindow(QtWidgets.QWidget):
         slider_layout.addWidget(self.slider_PR, 1, 5)
 
         dec_pr_btn = QtWidgets.QPushButton('>')
+        dec_pr_btn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         dec_pr_btn.setToolTip('Remove weakest Pauli Repulsion')
         dec_pr_btn.clicked.connect(self._set_previous_pr_slider)
         shadow.apply(dec_pr_btn)
@@ -1467,6 +1475,11 @@ class AnalysisWindow(QtWidgets.QWidget):
         selector_layout.addWidget(self.orbital_draw_button, 0, 0)
         selector_layout.addWidget(self.orbital_filter_button, 0, 1)
 
+        orb_btn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        etype_btn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.orbital_draw_button.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.orbital_filter_button.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+
         # we have to set the size of the buttons manually
         max_width = max(
             self.orbital_filter_button.sizeHint().width(),
@@ -1486,13 +1499,16 @@ class AnalysisWindow(QtWidgets.QWidget):
         shadow.apply(make_sheet_btn)
         save_fig_btn = QtWidgets.QPushButton('Save Figure')
         shadow.apply(save_fig_btn)
+
+        make_sheet_btn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        save_fig_btn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+
         make_sheet_btn.clicked.connect(self.get_sheets_save_file)
         save_fig_btn.clicked.connect(self.get_figure_save_file)
         misc_box_layout.addWidget(make_sheet_btn, 0, 0, 1, 1)
         misc_box_layout.addWidget(save_fig_btn, 0, 1, 1, 1)
 
         self.notice_tab = spoilers.Spoilers(self)
-        # self._notice_tab_nums = {'info': 0, 'warning': 0, 'error': 0}
         self.notice_tab_idx = self.info_tabs.addTab(self.notice_tab, 'Notices')
 
         for title, text in self.orbs.notices['warning']:
