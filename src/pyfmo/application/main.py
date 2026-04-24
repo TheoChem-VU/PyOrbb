@@ -1518,11 +1518,19 @@ class AnalysisWindow(QtWidgets.QWidget):
         for title, text in self.orbs.notices['info']:
             self.add_info_notice(title, text)
 
-        # self._reset_notice_bar_tabbutton()
-        self._update_plot()
-        # self.__dragger = Dragger(self.plot.fig)
         self._loaded_analysis = True
         self.parent.settings_dialog.settingsChanged.connect(self._update_plot)
+
+        if len(self.orbs.notices['warning']) > 0:
+            QtWidgets.QMessageBox.critical(self, 'Warning', 'The provided calculation triggered warnings.\n\nPlease read the Notices carefully!')
+            self.info_tabs.setCurrentIndex(2)
+            # self.plot.add_warning()
+        if len(self.orbs.notices['error']) > 0:
+            QtWidgets.QMessageBox.critical(self, 'Error', 'The provided calculation contains errors.\n\nPlease read the Notices carefully!')
+            self.info_tabs.setCurrentIndex(2)
+            self.plot.add_warning()
+        self._update_plot()
+
 
     def add_info_notice(self, title, text):
         label = QtWidgets.QLabel(text)
