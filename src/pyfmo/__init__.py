@@ -144,7 +144,7 @@ def translate_irrep_label(symm_label: str, mode='latex', use_formatting=True) ->
     return symm_label
 
 
-def generate_label(orb, mode='latex', use_formatting=True):
+def generate_label(orb, mode='latex', include_fragment=False, use_formatting=True):
     if mode == 'latex':
         spin_part = {
             'A': r'$\alpha$',
@@ -160,10 +160,12 @@ def generate_label(orb, mode='latex', use_formatting=True):
         orb_name = f'{orb.name}{spin_part}'
         orb_name = orb_name.replace(orb.symmetry, translate_irrep_label(orb.symmetry, mode=mode))
     else:
-        if orb.spin == 'AB':
-            orb_name = orb.name
-        else:
-            orb_name = f'{orb.name}{spin_part}'
+        orb_name = orb.name
+        if include_fragment:
+            fragname = orb.fragment
+            orb_name = f'{fragname}({orb_name})'
+        if orb.spin != 'AB':
+            orb_name += spin_part
 
         # if orb.subspecies.startswith('P:'):
         #     principal_qn = orb_name.split(':')[0][:-1]
