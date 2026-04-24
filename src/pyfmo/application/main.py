@@ -19,7 +19,6 @@ from matplotlib.figure import Figure
 import numpy as np
 import os
 from math import floor, ceil
-import tcutility
 from functools import partial
 import pyperclip
 import platform
