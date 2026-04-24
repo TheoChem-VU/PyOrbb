@@ -95,22 +95,24 @@ QTabWidget::pane:left {
     border-top-left-radius: 0px;
     left: -1px;
 } 
-QTabWidget::tab-bar {
-    /*background-color: #F8F8F8; */
-    border-radius: 10px;
-    border: 1px solid lightgray;
-}
 
-QTabbar {
+QTabBar {
+    /*border-radius: 10px;*/
+    /*border: 1px solid lightgray; */
+    border: none;
+    background-color: #ECECEC;
+}
+/*
+QTabBar {
     border-radius: 5px; 
     border: 1px solid lightgray; 
     background-color: #F8F8F8;
 }
 
-QTabbar::tab {
+QTabBar::tab {
     background: #ECECEC;
 }
-
+*/
 QScrollBar:horizontal
 {
     height: 11px;
@@ -312,7 +314,7 @@ QMainWindow {
 }
 
 
-
+/*
 QTabBar::tab:top:selected
 {
     background-color: #F7F7F7;
@@ -328,7 +330,6 @@ QTabBar::tab:top:selected
     padding-bottom: 6px;
 }
 
-
 QTabBar::tab:top:!selected
 {
     background-color: #E5E5E5;
@@ -340,7 +341,6 @@ QTabBar::tab:top:!selected
     min-width: 8ex;
     padding: 5px;
 }
-
 QTabBar::tab:left:selected
 {
     background-color: #F7F7F7;
@@ -369,6 +369,7 @@ QTabBar::tab:left:!selected
     padding: 5px;
 }
 
+*/
 
 QComboBox {
     /*image: url(:/misc/down_arrow_2);*/
