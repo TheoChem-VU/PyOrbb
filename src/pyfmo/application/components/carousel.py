@@ -2,7 +2,7 @@ from PySide6 import QtWidgets, QtGui, QtCore
 import webbrowser
 import requests
 from bs4 import BeautifulSoup
-import tcutility
+import tcmu
 import datetime
 import json
 import pprint
@@ -45,7 +45,7 @@ class FadeWidget(QtWidgets.QWidget):
         self.background_color = '#3E3E3E' if darkmode else '#F7F7F7'
 
 
-@tcutility.cache_file("cited_by.json", datetime.timedelta(weeks=1))
+@tcmu.cache_file("cited_by.json", datetime.timedelta(weeks=1))
 def _get_citedby_data(url: str):
     headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.142 Safari/537.36"}
     res = requests.get(url, headers=headers, allow_redirects=True).content
@@ -55,7 +55,7 @@ def _get_citedby_data(url: str):
     # print(soup)
     # current_art = soup.find(id='gs_res_ccl_top')
     # current_art_title = current_art.find('h2').a.get_text()
-    # current_art_title_doi = tcutility._get_doi_data_from_title(current_art_title)['DOI']
+    # current_art_title_doi = tcmu._get_doi_data_from_title(current_art_title)['DOI']
     # print(soup)
     citedby_data = []
     matches = soup.find_all('div', 'gs_ri')
@@ -91,7 +91,7 @@ def _get_citedby_data(url: str):
     for citedby in citedby_data:
         # print(citedby['title'])
 
-        citation_datum = tcutility._get_doi_data_from_query(
+        citation_datum = tcmu._get_doi_data_from_query(
             title=citedby['title'],
             author=citedby['authors'],)
             # container_title=citedby['journal'])
@@ -144,7 +144,7 @@ class PublicationWidget(QtWidgets.QFrame):
 
     def setup(self):
         month_name = {1: 'Jan', 2: 'Feb', 3: 'Mar', 4: 'Apr', 5: 'May', 6: 'Jun', 7: 'Jul', 8: 'Aug', 9: 'Sept', 10: 'Oct', 11: 'Nov', 12: 'Dec'}
-        journal = tcutility._get_journal_abbreviation(self._journal)
+        journal = tcmu._get_journal_abbreviation(self._journal)
         title_label = QtWidgets.QLabel('<b>' + self._title + '</b>')
 
         title_label.setWordWrap(True)
