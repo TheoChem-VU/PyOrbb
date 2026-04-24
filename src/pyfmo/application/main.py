@@ -1598,6 +1598,20 @@ class AnalysisWindow(QtWidgets.QWidget):
         label.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
         layout.addWidget(label, row, 1, 1, 1)
 
+        irreps = []
+        for lab in self.orbs.reader.read('Symmetry', 'symlab').split():
+            l = lab.split(':')[0]
+            if l not in irreps:
+                irreps.append(l)
+
+        if len(irreps) > 1:
+            for lab in irreps:
+                row += 1
+                layout.addWidget(QtWidgets.QLabel(f'<b>Δ<i>E</i><sub>oi</sub></b>({pyfmo.translate_irrep_label(lab, mode="html")})'), row, 0, 1, 1)
+                label = QtWidgets.QLabel(f"{self.orbs.reader.read('Energy', f'Orb.Int. {lab}') * 627.503:.2f} kcal mol<sup>–1</sup>")
+                label.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
+                layout.addWidget(label, row, 1, 1, 1)
+
         row += 1
         layout.addWidget(QtWidgets.QLabel('<b>Δ<i>E</i><sub>disp</sub></b>'), row, 0, 1, 1)
         label = QtWidgets.QLabel(f"{self.orbs.reader.read('Energy', 'Dispersion Energy') * 627.503:.2f} kcal mol<sup>–1</sup>")
