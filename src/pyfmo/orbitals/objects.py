@@ -808,6 +808,56 @@ Stability score = {self.mulliken_instability():.4f} is above
 the threshold of 0.98
 '''))
 
+        # check the EDA terms
+        # OI: check irreps
+        positive_eoi_irreps = []
+        for lab in self.reader.read('Symmetry', 'symlab').split():
+            l = lab.split(':')[0]
+            if l not in positive_eoi_irreps:
+
+                Eoi = float(self.reader.read('Energy', f'Orb.Int. {l}'))
+                if Eoi > 0:
+                    positive_eoi_irreps.append(l)
+
+        if len(positive_eoi_irreps) > 0:
+            s = r"    \n".join(positive_eoi_irreps)
+            self.notices['error'].append((f'Positive orb. int. energy', 
+f'''The orbital interaction energy
+is positive for the following irreps:
+    {s}'''))
+
+        # check the electronic preparation
+        for frag in self.fragments:
+            sfos = [sfo for sfo in self.sfos if sfo.fragment == frag]
+            res = self.polarization(sfos)
+            # print(res)
+            if len(res['polarized_sfos']) > 0 and max(r[1] for r in res['polarized_sfos']) >= 0.8:
+                s = f'The "{frag}" fragment has at least\none large internal electronic shift\n\nMain polarized FMOs:\n'
+
+                sfo_name_len = max([len(str(sfo)) for sfo, _ in res["polarized_sfos"]])
+                for (sfo, dp) in res["polarized_sfos"]:
+                    s += f'    {str(sfo):>{sfo_name_len}s}: {dp:+.2f} electrons\n'
+
+                s += '\nCheck the electronic configuration!'
+
+                self.notices['error'].append(('Incorrect electronic preparation', s))
+
+
+    def polarization(self, sfos):
+        dp = [sfo.gross_population - sfo.occupation for sfo in sfos]
+        dp_abs = [abs(max(0, sfo.gross_population) - sfo.occupation) for sfo in sfos]
+        charge = sum([sfo.occupation for sfo in sfos]) - sum([sfo.gross_population for sfo in sfos])
+        polarization = (sum(dp_abs) - abs(charge))
+
+        polarized_sfos = []
+        for sfo, dp in zip(sfos, dp):
+            if abs(dp) > 0.2:
+                polarized_sfos.append((sfo, dp))
+
+        polarized_sfos = sorted(polarized_sfos, key=lambda r: -abs(r[1]))
+
+        return {'polarization': polarization, 'charge': charge, 'polarized_sfos': polarized_sfos}
+
     def _check_effective_energies_available(self):
         return any(hasattr(sfo, 'site_energy') for sfo in self.sfos)
 
