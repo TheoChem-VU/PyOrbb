@@ -82,9 +82,9 @@ class Mixer2:
         O = o + o.reshape(-1, 1)  # sum of occupations
 
         # first max_pop electrons go to the bonding MO
-        Poi = np.clip(P, 0, max_pop)
+        Obond = np.clip(O, 0, max_pop)
         # any remaining electrons go to the anti-bonding MO
-        Ppr = np.clip(P - Poi, 0, max_pop)
+        Oanti = np.clip(O - Obond, 0, max_pop)
 
         # the number of electrons involved in pauli repulsion
         Epr = np.clip(O - max_pop, 0, max_pop) * S2
@@ -99,10 +99,10 @@ class Mixer2:
             de = abs(e - e.reshape(-1, 1))  # energy gaps
 
             # calculate the non-degenerate orbital interaction terms
-            Eoi = - (Poi - Ppr) * dp * (S2 / de)
+            Eoi = - (Obond - Oanti) * dp * (S2 / de)
             # for degenerate elements we replace S^2/de with S
             degenerate_mask = np.isclose(de, 0, atol=0.002)
-            Eoi[degenerate_mask] = (-Poi * dp * abs(S))[degenerate_mask]
+            Eoi[degenerate_mask] = (-Obond * dp * abs(S))[degenerate_mask]
 
             # remove upper echelon plus diagonal
             # since the matrix should be symmetric and the diagonal 
@@ -223,9 +223,6 @@ class Mixer2:
         occ_contrs = abs(sfo1_contr * sfo2_contr) * self.data['mo_occ']
         virt_contrs = abs(sfo2_contr * sfo1_contr) * (1-self.data['mo_occ'])
 
-        max_occ = 1 if self.orbs.data['calc_info']['unrestricted_mos'] else 2
-        occ_total = sfo1.occupation + sfo2.occupation
-
         # handle orbital interactions
         if interaction_type == 'OI':
             occ_mo = self.orbs.mos.orbitals[argNmax(occ_contrs, 0)]
@@ -269,7 +266,7 @@ class Mixer2:
                 relevant_mos = [mo for mo in self.orbs.mos if mo.spin in (spin, 'AB') and mo.symmetry == symm]
                 relevant_mix_mos = [mo for mo in relevant_mos if mo in self.main_mix.mos]
                 N_virt_MO = len([mo for mo in relevant_mix_mos if mo.occupation == 0])
-                N_occ_MO = len([mo for mo in relevant_mix_mos if mo.occupation == max_pop])
+                N_occ_MO = len([mo for mo in relevant_mix_mos if mo.occupation > 0])
 
                 # allowed_sfos = [sfo for sfo in self.orbs.sfos]
                 relevant_sfos = [sfo for sfo in self.orbs.sfos if sfo.spin in (spin, 'AB') and sfo.symmetry == symm]
