@@ -1454,17 +1454,14 @@ class AnalysisWindow(QtWidgets.QWidget):
 
         self.orbital_draw_button = QtWidgets.QPushButton()
         self.orbital_draw_button.setEnabled(False)
-        self.orbital_draw_button.setStyleSheet('QPushButton::menu-indicator { image: none; }')
+        # self.orbital_draw_button.setStyleSheet('QPushButton::menu-indicator { image: none; }')
 
         menu = QtWidgets.QMenu(self)
         self.orbital_draw_button.setMenu(menu)
         self.orbital_draw_button.setText('Draw Orbitals')
         shadow.apply(self.orbital_draw_button)
         self.orbital_filter_button = QtWidgets.QPushButton('Filter')
-        if self.parent.isDarkMode:
-            self.orbital_filter_button.setIcon(self.parent._ICONS['unchecked_dark'])
-        else:
-            self.orbital_filter_button.setIcon(self.parent._ICONS['unchecked'])
+        self.orbital_filter_button.setCheckable(True)
         self.orbital_filter_button.clicked.connect(self._set_orbital_filter)
         self.orbital_filter_button.setEnabled(False)
         self.orbital_filter_button._is_checked = False
@@ -1756,9 +1753,11 @@ class AnalysisWindow(QtWidgets.QWidget):
         self.slider_OI.setSliderPosition(ceil(np.log10(next_val) * slider_resolution))
 
     def get_sheets_save_file(self):
+        print('hello')
         d = os.path.join(os.path.split(self.orbs.kfpath)[0], 'pyorbb.xlsx')
-        filename, _ = QtWidgets.QFileDialog.getSaveFileName(self, "Save File", dir=d, filter="XLSX file (*.xlsx);;Any file (*)")
+        filename, v = QtWidgets.QFileDialog.getSaveFileName(None, "Save File")
         
+        print('after', repr(filename), repr(v))
         if not filename.strip():
             return
 
