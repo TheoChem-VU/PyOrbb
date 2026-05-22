@@ -70,9 +70,6 @@ class WindowTabBar(QtWidgets.QTabBar):
         self.setMouseTracking(True)
         self.setTabsClosable(True)
 
-        # self.dragStartPos = QtCore.QPoint()
-        # self.dragDropedPos = QtCore.QPoint()
-        # self.mouseCursor = QtGui.QCursor()
         self.dragInitiated = False
         self.dragLabel = None
         self.mouseCrossedWindowTime = 0
@@ -88,12 +85,10 @@ class WindowTabBar(QtWidgets.QTabBar):
 
         index = self.parent.currentIndex()
         widg = self.parent.widget(index)
-        # pixmap = widg.grab()
 
         time_since_crossed = perf_counter() - self.mouseCrossedWindowTime
         self.labelShrinkage = self.labelShrinkage + (self.targetLabelShrinkage - self.labelShrinkage) * time_since_crossed * 2
 
-        # pixmap = pixmap.scaled(pixmap.width()/self.labelShrinkage, pixmap.height()/self.labelShrinkage)
 
         pixmap = self.orig_pixmap.scaled(self.orig_pixmap.width()/self.labelShrinkage, self.orig_pixmap.height()/self.labelShrinkage)
         rect = pixmap.rect()
@@ -104,10 +99,6 @@ class WindowTabBar(QtWidgets.QTabBar):
         painter.fillRect(pixmap.rect(), QtGui.QColor(0, 0, 0, 100))
         painter.end()
 
-        # self.dragLabel.setPixmap(pixmap)
-        # pixmap = self.dragLabel.pixmap()
-
-        # self.dragLabel.resize(widg.width()/self.labelShrinkage, widg.height()/self.labelShrinkage)
         self.dragLabel.updateGeometry()
         self.dragLabel.setPixmap(pixmap)
 
@@ -140,7 +131,6 @@ class WindowTabBar(QtWidgets.QTabBar):
             if self.timerID is not None:
                 self.killTimer(self.timerID)
                 self.timerID = None
-            # self.dragLabel = None
             return
 
         if self.dragInitiated:
