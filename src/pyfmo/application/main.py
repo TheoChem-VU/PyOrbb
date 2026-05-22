@@ -1492,7 +1492,21 @@ class AnalysisWindow(QtWidgets.QWidget):
         misc_box_layout.addWidget(save_fig_btn, 0, 1, 1, 1)
 
         self.notice_tab = spoilers.Spoilers(self)
-        self.notice_tab_idx = self.info_tabs.addTab(self.notice_tab, 'Notices')
+
+        notices_frame = QtWidgets.QFrame()
+        notices_layout = QtWidgets.QVBoxLayout()
+        notices_frame.setLayout(notices_layout)
+        notices_frame.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+
+        more_info_label = QtWidgets.QLabel('<a href=\"http://google.com/\">Click here for more information about notices</a>')
+        more_info_label.setTextFormat(QtCore.Qt.RichText)
+        more_info_label.setTextInteractionFlags(QtCore.Qt.TextBrowserInteraction)
+        more_info_label.setOpenExternalLinks(True)
+
+        notices_layout.addWidget(more_info_label)
+        notices_layout.addWidget(self.notice_tab)
+        
+        self.notice_tab_idx = self.info_tabs.addTab(notices_frame, 'Notices')
 
         for title, text in self.orbs.notices['warning']:
             self.add_warning_notice(title, text)
