@@ -134,9 +134,35 @@ class PublicationWidget(QtWidgets.QFrame):
         self.setObjectName("Pub_main")
         self.setup()
         shadow.apply(self, radius=10)
+
+        # grad = QtGui.QGradient(QtGui.QGradient.Preset.WarmFlame)
+        # print(grad)
+        # gradient = QLinearGradient(0, 0, 0, widget.height())  # top to bottom
+        # gradient.setColorAt(0.0, QColor("#4facfe"))  # start color
+        # gradient.setColorAt(1.0, QColor("#00f2fe"))  # end color
+
+        # palette = self.palette()
+        # palette.setBrush(QtGui.QPalette.ColorRole.Window, QtGui.QBrush(grad))
+        # self.setPalette(palette)
+        # self.setAutoFillBackground(True)
+
         self.setSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum)
 
         self.setToolTip(self._link)
+
+    # def paintEvent(self, event):
+    #     super().paintEvent(event)
+    #     painter = QtGui.QPainter(self)
+
+    #     preset = QtGui.QGradient(QtGui.QGradient.Preset.ShadyWater)
+    #     stops = preset.stops()
+
+    #     gradient = QtGui.QLinearGradient(0, 0, 0, 1)  # top to bottom
+    #     gradient.setCoordinateMode(QtGui.QGradient.CoordinateMode.ObjectMode)
+    #     gradient.setStops(stops)
+
+    #     painter.fillRect(self.rect(), gradient)
+
 
     def mousePressEvent(self, event):
         import webbrowser
@@ -170,7 +196,6 @@ class PublicationWidget(QtWidgets.QFrame):
         author_label.setWordWrap(True)
 
         ref_label = QtWidgets.QLabel(f'<i><b>{journal}</b></i><br>{month_name[self._date[1]]} {self._date[0]}')
-
 
         self.layout.addWidget(ref_label)
         self.layout.addWidget(title_label)
