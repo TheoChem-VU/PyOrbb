@@ -870,6 +870,20 @@ is positive for the following irreps:
 
                 self.notices['error'].append(('Incorrect electronic preparation', s))
 
+        if self._check_nonaufbau():
+            wrong_sfos = self._get_nonaufbau()
+
+            sfo_names = [str(sfo) for sfo in wrong_sfos]
+            max_len = max(len(name) for name in sfo_names)
+            occs = [f'{sfo.occupation:.2f}' for sfo in wrong_sfos]
+
+            s = 'The following non-aufbau SFOS were found:\n'
+            for name, occ in zip(sfo_names, occs):
+                s += f'    {name.ljust(max_len)} {occ} electrons\n'
+            s += '\nCheck the electronic configuration!'
+
+            self.notices['warning'].append(('Non-aufbau SFOs', s))
+
 
     def polarization(self, sfos):
         dp = [sfo.gross_population - sfo.occupation for sfo in sfos]
@@ -885,6 +899,21 @@ is positive for the following irreps:
         polarized_sfos = sorted(polarized_sfos, key=lambda r: -abs(r[1]))
 
         return {'polarization': polarization, 'charge': charge, 'polarized_sfos': polarized_sfos}
+
+    def _check_nonaufbau(self):
+        for sfo in self.sfos:
+            if round(sfo.occupation) != sfo.occupation:
+                return True
+
+        return False
+
+    def _get_nonaufbau(self):
+        ret = []
+        for sfo in self.sfos:
+            if round(sfo.occupation) != sfo.occupation:
+                ret.append(sfo)
+
+        return ret
 
     def _check_effective_energies_available(self):
         return any(hasattr(sfo, 'site_energy') for sfo in self.sfos)
