@@ -1150,7 +1150,7 @@ class AnalysisWindow(QtWidgets.QWidget):
         self.PR_is_empty_label.setVisible(self.main_mix.main_mix.PR_is_empty)
 
         if self.plot._add_warning:
-                ax.text(0.9, 0.9, '⚠︎', transform=fig.transFigure, fontsize=30, c='r')
+            ax.text(0.9, 0.9, '⚠︎', transform=fig.transFigure, fontsize=30, c='r')
 
 
         props = dict(edgecolor='white', facecolor='white', alpha=1)  # bbox features
@@ -1450,7 +1450,6 @@ class AnalysisWindow(QtWidgets.QWidget):
         self.orbital_filter_button.setCheckable(True)
         self.orbital_filter_button.clicked.connect(self._set_orbital_filter)
         self.orbital_filter_button.setEnabled(False)
-        self.orbital_filter_button._is_checked = False
         shadow.apply(self.orbital_filter_button)
         self.allowed_mos_override = None
         self.allowed_sfos_override = None
@@ -1889,6 +1888,7 @@ class PyOrbbWindow(QtWidgets.QMainWindow):
         self.setWindowTitle("PyOrbb Analysis Tool")
 
         self.tabs = editable_tabs.WindowTabs(self)
+
         add_tab_button = QtWidgets.QPushButton('+')
         add_tab_button.resize(50, 50)
         add_tab_button.clicked.connect(self._add_analysis_tab)
@@ -1965,7 +1965,7 @@ class PyOrbbWindow(QtWidgets.QMainWindow):
                 window.system_info_box.themechange()
                 window.notice_tab.themechange()
                 window._orb_selection_dialog.themechange()
-                window._set_orbital_filter_button_icon()
+                # window._set_orbital_filter_button_icon()
             else:
                 window.update_icons()
 
