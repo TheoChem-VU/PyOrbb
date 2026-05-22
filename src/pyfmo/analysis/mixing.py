@@ -82,9 +82,9 @@ class Mixer2:
         O = o + o.reshape(-1, 1)  # sum of occupations
 
         # first max_pop electrons go to the bonding MO
-        Obond = np.clip(O, 0, max_pop)
+        Pbond = np.clip(P, 0, max_pop)
         # any remaining electrons go to the anti-bonding MO
-        Oanti = np.clip(O - Obond, 0, max_pop)
+        Panti = np.clip(P - Pbond, 0, max_pop)
 
         # the number of electrons involved in pauli repulsion
         Epr = np.clip(O - max_pop, 0, max_pop) * S2
@@ -99,10 +99,10 @@ class Mixer2:
             de = abs(e - e.reshape(-1, 1))  # energy gaps
 
             # calculate the non-degenerate orbital interaction terms
-            Eoi = - (Obond - Oanti) * dp * (S2 / de)
+            Eoi = - (Pbond - Panti) * dp * (S2 / de)
             # for degenerate elements we replace S^2/de with S
             degenerate_mask = np.isclose(de, 0, atol=0.002)
-            Eoi[degenerate_mask] = (-Obond * dp * abs(S))[degenerate_mask]
+            Eoi[degenerate_mask] = (-Pbond * dp * abs(S))[degenerate_mask]
 
             # remove upper echelon plus diagonal
             # since the matrix should be symmetric and the diagonal 
