@@ -1518,14 +1518,25 @@ class AnalysisWindow(QtWidgets.QWidget):
         self._loaded_analysis = True
         self.parent.settings_dialog.settingsChanged.connect(self._update_plot)
 
-        if len(self.orbs.notices['warning']) > 0:
-            QtWidgets.QMessageBox.critical(self, 'Warning', 'The provided calculation triggered warnings.\n\nPlease read the Notices carefully!')
+        msg_title = None
+        msg_text = 'The provided calculation triggered '
+
+        if len(self.orbs.notices['warning']) > 0 and len(self.orbs.notices['error']) > 0:
+            msg_text = f'The provided calculation triggered {len(self.orbs.notices["warning"])} warning(s) and {len(self.orbs.notices["error"])} error(s).\n\nPlease read the Notices carefully!'
+            msg_title = 'Error'
             self.info_tabs.setCurrentIndex(2)
-            # self.plot.add_warning()
-        if len(self.orbs.notices['error']) > 0:
-            QtWidgets.QMessageBox.critical(self, 'Error', 'The provided calculation contains errors.\n\nPlease read the Notices carefully!')
+            QtWidgets.QMessageBox.critical(self, msg_title, msg_text)
+        elif len(self.orbs.notices['warning']) > 0:
+            msg_text = f'The provided calculation triggered {len(self.orbs.notices["warning"])} warning(s).\n\nPlease read the Notices carefully!'
+            msg_title = 'Warning'
             self.info_tabs.setCurrentIndex(2)
-            self.plot.add_warning()
+            QtWidgets.QMessageBox.warning(self, msg_title, msg_text)
+        elif len(self.orbs.notices['error']) > 0:
+            msg_text = f'The provided calculation triggered {len(self.orbs.notices["error"])} error(s).\n\nPlease read the Notices carefully!'
+            msg_title = 'Error'
+            self.info_tabs.setCurrentIndex(2)
+            QtWidgets.QMessageBox.critical(self, msg_title, msg_text)
+
         self._update_plot()
 
 
