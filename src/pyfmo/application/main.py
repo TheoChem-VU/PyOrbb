@@ -1941,8 +1941,12 @@ class PyOrbbWindow(QtWidgets.QMainWindow):
 
         self.settings_dialog.settingsChanged.connect(self.set_theme)
 
+        # self.tabs.palette().setColor(QtGui.QPalette.ColorRole.Window, 'red')
+        # self.tabs.palette().setColor(QtGui.QPalette.ColorRole.Button, 'red')
+        # self.tabs.palette().setColor(QtGui.QPalette.ColorRole.Base, 'red')
         self._add_analysis_tab()
         self.tabs.setCurrentIndex(0)
+
         self.set_theme()
 
     def set_theme(self):
