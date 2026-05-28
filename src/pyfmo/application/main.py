@@ -289,9 +289,13 @@ class MplCanvas(FigureCanvas):
         self._already_unfaded = True
         self.previous_mouse_pos = None
         self._add_warning = False
+        self._add_warning_orbs = []
 
     def add_warning(self):
         self._add_warning = True
+
+    def add_warning_to_orb(self, orb, gid):
+        self._add_warning_orbs.append((orb, gid))
 
     def set_xtick_order(self, order):
         self.parent._xtick_order = {tick.get_text(): float(pos) for tick, pos in order.items()}
@@ -587,6 +591,18 @@ class MplCanvas(FigureCanvas):
             if not curve.contains(event)[0]:
                 continue
 
+            if gid == 'warning_main_txt':
+                self.parent.info_tabs.setCurrentIndex(2)
+                self.parent.notice_tab.emphasize()
+                break
+
+            if gid.startswith('OPENSPOILER_'):
+                idx = int(gid.split('_')[1])
+                self.parent.info_tabs.setCurrentIndex(2)
+                self.parent.notice_tab.spoilers[idx].start_animation(True)
+                self.parent.notice_tab.spoilers[idx].emphasize()
+                break
+
             s = ''
             if gid.startswith('MO_'):
                 mo = self.parent.orbs.mos.orbitals[int(gid[3:])]
@@ -763,7 +779,7 @@ class MplCanvas(FigureCanvas):
             if not curve.contains(event)[0]:
                 continue
 
-            if gid.startswith('MO_') or gid.startswith('SFO_') or gid.startswith('MIX_'):
+            if gid.startswith('MO_') or gid.startswith('SFO_') or gid.startswith('MIX_') or gid == 'warning_main_txt' or gid.startswith('OPENSPOILER_'):
                 self.fig.canvas.set_cursor(Cursors.HAND)
                 break
         else:
@@ -883,7 +899,7 @@ class MplCanvas(FigureCanvas):
             self.fig.canvas.draw_idle()
 
             artist.set_color(artist.orig_color)
-            artist.set_alpha(0.05)
+            artist.set_alpha(0.075)
             self.axes.draw_artist(artist)
             self.fig.canvas.draw_idle()
 
@@ -1142,7 +1158,7 @@ class AnalysisWindow(QtWidgets.QWidget):
 
         ax.clear()
         ax.yaxis.set_major_formatter('{x: 3.0f}')
-        self.main_mix.draw_diagram(ax=ax, ylim=ylim, highlighted_orbitals=self.filtered_orbitals, use_darkmode=False, **kwargs)
+        self.main_mix.draw_diagram(ax=ax, ylim=ylim, highlighted_orbitals=self.filtered_orbitals, warning_orbs=self.plot._add_warning_orbs, use_darkmode=False, **kwargs)
         if self.new_tick_labels is not None:
             self.plot.axes.set_xticklabels(self.new_tick_labels)
 
@@ -1150,8 +1166,7 @@ class AnalysisWindow(QtWidgets.QWidget):
         self.PR_is_empty_label.setVisible(self.main_mix.main_mix.PR_is_empty)
 
         if self.plot._add_warning:
-            ax.text(0.9, 0.9, '⚠︎', transform=fig.transFigure, fontsize=30, c='r')
-
+            ax.text(0.9, 0.9, '⚠︎', transform=fig.transFigure, fontsize=30, c='r', gid='warning_main_txt')
 
         props = dict(edgecolor='white', facecolor='white', alpha=1)  # bbox features
         fig.canvas.draw_idle()
@@ -1507,12 +1522,12 @@ class AnalysisWindow(QtWidgets.QWidget):
         
         self.notice_tab_idx = self.info_tabs.addTab(notices_frame, 'Notices')
 
-        for title, text in self.orbs.notices['warning']:
-            self.add_warning_notice(title, text)
-        for title, text in self.orbs.notices['error']:
-            self.add_error_notice(title, text)
-        for title, text in self.orbs.notices['info']:
-            self.add_info_notice(title, text)
+        for title, text, relevant_orbitals in self.orbs.notices['warning']:
+            self.add_warning_notice(title, text, relevant_orbitals)
+        for title, text, relevant_orbitals in self.orbs.notices['error']:
+            self.add_error_notice(title, text, relevant_orbitals)
+        for title, text, relevant_orbitals in self.orbs.notices['info']:
+            self.add_info_notice(title, text, relevant_orbitals)
 
         self._loaded_analysis = True
         self.parent.settings_dialog.settingsChanged.connect(self._update_plot)
@@ -1525,6 +1540,7 @@ class AnalysisWindow(QtWidgets.QWidget):
             msg_title = 'Error'
             self.info_tabs.setCurrentIndex(2)
             QtWidgets.QMessageBox.critical(self, msg_title, msg_text)
+            self.plot.add_warning()
         elif len(self.orbs.notices['warning']) > 0:
             msg_text = f'The provided calculation triggered {len(self.orbs.notices["warning"])} warning(s).\n\nPlease read the Notices carefully!'
             msg_title = 'Warning'
@@ -1535,26 +1551,36 @@ class AnalysisWindow(QtWidgets.QWidget):
             msg_title = 'Error'
             self.info_tabs.setCurrentIndex(2)
             QtWidgets.QMessageBox.critical(self, msg_title, msg_text)
+            self.plot.add_warning()
 
         self._update_plot()
 
 
-    def add_info_notice(self, title, text):
+    def add_info_notice(self, title, text, relevant_orbitals):
         label = QtWidgets.QLabel(text)
         label.setStyleSheet('font: 10px "IBM Plex Mono";')
-        self.notice_tab.addSpoiler(title, label, icon=self.parent._ICONS['info'])
+        idx = self.notice_tab.addSpoiler(title, label, icon=self.parent._ICONS['info'])
+        if relevant_orbitals is not None:
+            for orb in relevant_orbitals:
+                self.plot.add_warning_to_orb(orb, gid=f'OPENSPOILER_{idx}_{orb}')
         # self._reset_notice_bar_tabbutton()
 
-    def add_warning_notice(self, title, text):
+    def add_warning_notice(self, title, text, relevant_orbitals):
         label = QtWidgets.QLabel(text)
         label.setStyleSheet('font: 10px "IBM Plex Mono";')
-        self.notice_tab.addSpoiler(title, label, icon=self.parent._ICONS['warning'])
+        idx = self.notice_tab.addSpoiler(title, label, icon=self.parent._ICONS['warning'])
+        if relevant_orbitals is not None:
+            for orb in relevant_orbitals:
+                self.plot.add_warning_to_orb(orb, gid=f'OPENSPOILER_{idx}_{orb}')
         # self._reset_notice_bar_tabbutton()
 
-    def add_error_notice(self, title, text):
+    def add_error_notice(self, title, text, relevant_orbitals):
         label = QtWidgets.QLabel(text)
         label.setStyleSheet('font: 10px "IBM Plex Mono";')
-        self.notice_tab.addSpoiler(title, label, icon=self.parent._ICONS['error'])
+        idx = self.notice_tab.addSpoiler(title, label, icon=self.parent._ICONS['error'])
+        if relevant_orbitals is not None:
+            for orb in relevant_orbitals:
+                self.plot.add_warning_to_orb(orb, gid=f'OPENSPOILER_{idx}_{orb}')
         # self._reset_notice_bar_tabbutton()
 
     def _reset_notice_bar_tabbutton(self):

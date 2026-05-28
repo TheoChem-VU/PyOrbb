@@ -812,29 +812,30 @@ settings:
      FullFock Yes
      AllPoints Yes
     EndEngine
-'''))
+''', None))
         if any(c != 0 for c in self.charges.values()):
             self.notices['warning'].append(('Charged fragments', 
 '''This system contains charged fragments.
 We recommended you to check if effective
 energies are required.
-'''))
+''', None))
         if self._check_spurious_mulliken_contr():
             self.notices['warning'].append(('Mulliken stability score', 
-f'''We detected instabilities in Mulliken 
-analysis. Be carefull when interpreting 
-Mulliken contributions, populations, and
-approximate effective energies!
+f'''We detected instabilities in the 
+Mulliken analysis. Be carefull when 
+interpreting Mulliken contributions, 
+populations, and approximate effective 
+energies!
 Stability score = {self.mulliken_instability():.4f} is below 
 the threshold of 0.98
-'''))
+''', None))
         if not self._check_spurious_mulliken_contr():
             self.notices['info'].append(('Mulliken stability score', 
-f'''We didn't detected large instabilities in
-Mulliken  analysis. 
+f'''We didn't detected large instabilities
+in the Mulliken analysis. 
 Stability score = {self.mulliken_instability():.4f} is above 
 the threshold of 0.98
-'''))
+''', None))
 
         # check the EDA terms
         # OI: check irreps
@@ -852,7 +853,7 @@ the threshold of 0.98
             self.notices['error'].append((f'Positive orb. int. energy', 
 f'''The orbital interaction energy
 is positive for the following irreps:
-    {s}'''))
+    {s}''', None))
 
         # check the electronic preparation
         for frag in self.fragments:
@@ -868,28 +869,29 @@ is positive for the following irreps:
 
                 s += '\nCheck the electronic configuration!'
 
-                self.notices['error'].append(('Incorrect electronic preparation', s))
+                self.notices['error'].append(('Incorrect electronic preparation', s, [r[0] for r in res['polarized_sfos']]))
 
-        if self._check_nonaufbau():
-            wrong_sfos = self._get_nonaufbau()
+        if self._check_noninteger_occs():
+            wrong_sfos = self._get_noninteger_occs()
 
             sfo_names = [str(sfo) for sfo in wrong_sfos]
             max_len = max(len(name) for name in sfo_names)
             occs = [f'{sfo.occupation:.2f}' for sfo in wrong_sfos]
 
-            s = 'The following non-aufbau SFOS were found:\n'
+            s = 'The following fractionally occupied\nSFOS were found:\n'
             for name, occ in zip(sfo_names, occs):
                 s += f'    {name.ljust(max_len)} {occ} electrons\n'
             s += '\nCheck the electronic configuration!'
 
-            self.notices['warning'].append(('Non-aufbau SFOs', s))
+            self.notices['warning'].append(('Fractional occupations', s, wrong_sfos))
 
 
     def polarization(self, sfos):
         dp = [sfo.gross_population - sfo.occupation for sfo in sfos]
-        dp_abs = [abs(max(0, sfo.gross_population) - sfo.occupation) for sfo in sfos]
+        dp_abs = sum([abs(max(0, sfo.gross_population) - sfo.occupation) for sfo in sfos])
         charge = sum([sfo.occupation for sfo in sfos]) - sum([sfo.gross_population for sfo in sfos])
-        polarization = (sum(dp_abs) - abs(charge))
+
+        polarization = dp_abs - abs(charge)
 
         polarized_sfos = []
         for sfo, dp in zip(sfos, dp):
@@ -900,14 +902,14 @@ is positive for the following irreps:
 
         return {'polarization': polarization, 'charge': charge, 'polarized_sfos': polarized_sfos}
 
-    def _check_nonaufbau(self):
+    def _check_noninteger_occs(self):
         for sfo in self.sfos:
             if round(sfo.occupation) != sfo.occupation:
                 return True
 
         return False
 
-    def _get_nonaufbau(self):
+    def _get_noninteger_occs(self):
         ret = []
         for sfo in self.sfos:
             if round(sfo.occupation) != sfo.occupation:
