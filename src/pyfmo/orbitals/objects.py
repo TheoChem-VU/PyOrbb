@@ -922,7 +922,7 @@ is positive for the following irreps:
 
     def mulliken_instability(self):
         c = self.data['matrices']['mulliken_contribution']['total']
-        mull_stability_score = 1 / (np.sum(np.abs(c)) / np.sqrt(c.size))
+        mull_stability_score = np.sqrt(c.size) / np.sum(np.abs(c))
         return mull_stability_score
 
     def _check_spurious_mulliken_contr(self):
