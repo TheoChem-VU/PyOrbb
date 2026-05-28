@@ -1,7 +1,17 @@
-from PySide6 import QtWidgets, QtCore
+from PySide6 import QtWidgets, QtCore, QtGui
 from . import rich_widgets, latex_renderer
 
+
 class Spoilers(QtWidgets.QScrollArea):
+    def _readBG(self):
+        return self.background_color
+
+    def _setBG(self, color):
+        self.background_color = color
+        self.setStyleSheet(f"QScrollArea {{ background-color: {color.name(QtGui.QColor.NameFormat.HexArgb)}; border: none; }}")
+
+    _background_color_prop = QtCore.Property(QtGui.QColor, _readBG, _setBG)
+
     def __init__(self, parent=None):
         # making widget resizable
         super().__init__(parent=parent)
@@ -13,15 +23,16 @@ class Spoilers(QtWidgets.QScrollArea):
         # making qwidget object
         content = QtWidgets.QWidget(self)
         self.setWidget(content)
-        self.spoilers = {}
+        self.spoilers = []
 
+        self.background_color = QtGui.QColor('transparent')
         # vertical box layout
         self.layout = QtWidgets.QVBoxLayout(content)
         self.layout.addStretch(1)
         self.setStyleSheet('background-color: transparent;')
 
     def themechange(self):
-        for spoiler in self.spoilers.values():
+        for spoiler in self.spoilers:
             spoiler.set_pixmap()
 
     def addSpoiler(self, title, widget, icon=None):
@@ -31,8 +42,9 @@ class Spoilers(QtWidgets.QScrollArea):
         layout.addWidget(widget)
         spoiler = Spoiler(self, title, icon=icon)
         spoiler.setContentLayout(layout)
-        self.spoilers[title] = spoiler
+        self.spoilers.append(spoiler)
         self.layout.insertWidget(self.layout.count() - 1, spoiler)
+        return len(self.spoilers) - 1
 
     def renameSpoiler(self, old_title, new_title):
         # self.spoilers[old_title].toggleButton.setText(new_title)
@@ -62,8 +74,26 @@ class Spoilers(QtWidgets.QScrollArea):
     def __len__(self):
         return len(self.spoilers)
 
+    def emphasize(self):
+        self.animation = QtCore.QPropertyAnimation(self, b"_background_color_prop")
+        self.animation.setEasingCurve(QtCore.QEasingCurve.Type.OutQuart)
+        self.animation.setDuration(2000)
+        self.animation.setStartValue(QtGui.QColor(137, 207, 240, 255))
+        self.animation.setEndValue(QtGui.QColor(137, 207, 240, 0))
+        self.animation.start()
+
+
 
 class Spoiler(QtWidgets.QWidget):
+    def _readBG(self):
+        return self.background_color
+
+    def _setBG(self, color):
+        self.background_color = color
+        self.contentArea.setStyleSheet(f"QScrollArea {{ background-color: {color.name(QtGui.QColor.NameFormat.HexArgb)}; border: none; }}")
+
+    _background_color_prop = QtCore.Property(QtGui.QColor, _readBG, _setBG)
+
     def __init__(self, parent=None, title='', animationDuration=100, icon=None):
         """
         References:
@@ -97,6 +127,8 @@ class Spoiler(QtWidgets.QWidget):
         toggleButton.setCheckable(True)
         toggleButton.setChecked(False)
 
+        self.background_color = QtGui.QColor('transparent')
+        self._last_toggle_forward_direction = False
         self.contentArea.setStyleSheet("QScrollArea { background-color: transparent; border: none; }")
         self.contentArea.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff);
         # start out collapsed
@@ -125,24 +157,23 @@ class Spoiler(QtWidgets.QWidget):
         # mainLayout.addStretch()
         self.setLayout(self.mainLayout)
 
-        def start_animation(checked):
-            arrow_type = QtCore.Qt.DownArrow if checked else QtCore.Qt.RightArrow
-            direction = QtCore.QAbstractAnimation.Forward if checked else QtCore.QAbstractAnimation.Backward
-            # toggleButton.setArrowType(arrow_type)
-            self.toggleAnimation.setDirection(direction)
-            self.toggleAnimation.start()
+        self.toggleButton.clicked.connect(self.start_animation)
 
-        self.toggleButton.clicked.connect(start_animation)
+    def start_animation(self, forward=True):
+        if forward == self._last_toggle_forward_direction:
+            return
+        direction = QtCore.QAbstractAnimation.Forward if forward else QtCore.QAbstractAnimation.Backward
+        self.toggleAnimation.setDirection(direction)
+        self.toggleAnimation.start()
+        self.toggleButton.setChecked(forward)
+        self._last_toggle_forward_direction = forward
 
     def set_pixmap(self):
         darkmode = QtWidgets.QApplication.instance().isDarkMode
-
         pixmap = latex_renderer.convert_to_QPixMap("  " + self.title, darkmode=darkmode, fs=10)
         self.toggleButton.setPixmap(pixmap)
 
-
     def setContentLayout(self, contentLayout):
-        # Not sure if this is equivalent to self.contentArea.destroy()
         self.contentArea.destroy()
         self.contentArea.setLayout(contentLayout)
         collapsedHeight = self.sizeHint().height() - self.contentArea.maximumHeight()
@@ -156,3 +187,11 @@ class Spoiler(QtWidgets.QWidget):
         contentAnimation.setDuration(self.animationDuration)
         contentAnimation.setStartValue(0)
         contentAnimation.setEndValue(contentHeight)
+
+    def emphasize(self):
+        self.animation = QtCore.QPropertyAnimation(self, b"_background_color_prop")
+        self.animation.setEasingCurve(QtCore.QEasingCurve.Type.OutQuart)
+        self.animation.setDuration(2000)
+        self.animation.setStartValue(QtGui.QColor(137, 207, 240, 255))
+        self.animation.setEndValue(QtGui.QColor(137, 207, 240, 0))
+        self.animation.start()
