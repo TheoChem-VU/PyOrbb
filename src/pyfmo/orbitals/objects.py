@@ -431,6 +431,30 @@ class MO(Orbital):
         return sum(sfo.mulliken_contribution(self) for sfo in sfos)
 
 
+    def coefficient(self, other: "SFO") -> float:
+        '''
+        Get the coefficient of an |SFO| into this |MO|.
+
+        Args:
+            other: the orbital that contributes to this |MO|.
+        '''
+        assert isinstance(other, SFO)
+
+        return other.coefficient(self)
+
+
+    def mulliken_contribution(self, other: "SFO") -> float:
+        '''
+        Get the Mulliken contribution of an |SFO| into this |MO|.
+
+        Args:
+            other: the orbital that contributes to this |MO|.
+        '''
+        assert isinstance(other, SFO)
+
+        return other.mulliken_contribution(self)
+
+
 class SFO(Orbital):
     '''
     Class holding data specifically for symmetry-adapted fragment orbitals.
