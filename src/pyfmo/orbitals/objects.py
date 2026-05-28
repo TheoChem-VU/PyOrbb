@@ -413,7 +413,7 @@ class MO(Orbital):
     def fragment_character(self, fragment: str) -> float:
         '''
         Calculate the total contribution of |SFO| objects from a specific fragment to this |MO|.
-        The sum of all fragment characters should be ``1`` for each |MO|.
+        The sum of all fragment characters is always ``1`` for each |MO|.
 
         Args:
             fragment: the fragment to calculate the character for.
@@ -505,7 +505,7 @@ class SFO(Orbital):
           - The diagonal element of the Fock matrix after 0 SCF cycles belonging to the |SFO| in |kcal/mol| if it could be read from the calculation.
         * - ``occupation``
           - ``int``
-          - The occupation number of this |SFO|. Either ``0``, ``1`` or ``2``.
+          - The occupation number of this |SFO|. Either ``0``, ``1``, ``2``, or a fractional value if the electronic configuration is non-aufbau.
         * - ``occupied``
           - ``bool``
           - Whether the |SFO| has electrons in it.
