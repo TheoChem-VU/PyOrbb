@@ -96,6 +96,7 @@ def draw_interaction(sfos, mos, connections,
         use_darkmode=False,
         mo_column_name='Complex',
         xtick_order=None,
+        warning_orbs=None,
         **kwargs):
     
     arrow_length        = kwargs.get('arrow_length', 0.25)
@@ -241,6 +242,24 @@ def draw_interaction(sfos, mos, connections,
                 gid=f'{"MO" if is_MO else "SFO"}_{orb_index}')
 
         if (is_MO and draw_mo_labels) or (not is_MO and draw_sfo_labels):
+            if warning_orbs is not None:
+                for w in warning_orbs:
+                    if w[0] is not orb:
+                        continue
+                    anchored_text(ax,
+                             poss[orb],
+                             E,
+                             '⚠',
+                             # [0, -arrow_length / 1.8 * energy_span],
+                             [orb_label_offset * 1.8, 0],
+                             ha='center',
+                             va='center',
+                             size=font_size*2.5,
+                             clip_on=True,
+                             gid=w[1],
+                             fontname=font_name,
+                             color='r')
+
             anchored_text(ax,
                      poss[orb],
                      E,
