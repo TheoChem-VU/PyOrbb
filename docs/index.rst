@@ -6,7 +6,7 @@
 |ProjectName| |ProjectVersion| documentation
 ********************************************
 
-**PyOrbb** is an orbital interaction analysis tool and Python library enabling non-expert users to perform expert-level Kohn-Sham MO analyses. This is the documentation website for the Python library provided by PyOrbb.
+**PyOrbb** is an orbital interaction analysis tool and Python library enabling expert and non-expert users to perform high quality Kohn-Sham MO analyses. This is the documentation website for both the Python library provided by PyOrbb and the graphical user interface.
 
 
 .. grid:: 3
@@ -15,7 +15,7 @@
     .. grid-item-card:: Installation
       :link: installation.html
 
-      .. image:: _static/images/installation.png
+      .. image:: _static/images/cards/installation.png
          :width: 150px
          :align: center
 
@@ -24,25 +24,44 @@
     .. grid-item-card:: Publication
       :link: https://aces.onlinelibrary.wiley.com/doi/pdfdirect/10.1002/asia.202001127
 
-      .. image:: _static/images/publication.png
+      .. image:: _static/images/cards/publication.png
          :width: 150px
          :align: center
 
       Read the accompanying PyOrbb publication.
 
-    .. grid-item-card:: Command-line Tools
-      :link: api/cli.html
+    .. grid-item-card:: Get Started
+      :link: get_started.html
 
-      .. image:: _static/images/command_line.png
+      .. image:: _static/images/cards/get_started.png
          :width: 150px
          :align: center
 
-      An overview of the main command-line tools provided by PyOrbb.
+      Get started with using the PyOrbb program.
 
-    .. grid-item-card:: Basic Usage
+    .. grid-item-card:: Warnings and Errors
+      :link: notices.html
+
+      .. image:: _static/images/cards/notices.png
+         :width: 150px
+         :align: center
+
+      An overview of warnings and errors provided by PyOrbb.
+
+
+PyOrbb Python library overview
+------------------------------
+
+Learn how to use PyOrbb's Python library to perform custom orbital analyses suitable for your projects.
+
+
+.. grid:: 3
+    :gutter: 3
+
+    .. grid-item-card:: Basic API Usage
       :link: api/basic_usage.html
 
-      .. image:: _static/images/basic_usage.png
+      .. image:: _static/images/cards/basic_usage.png
          :width: 150px
          :align: center
 
@@ -51,7 +70,7 @@
     .. grid-item-card:: Full API
       :link: api/modules.html
 
-      .. image:: _static/images/api.png
+      .. image:: _static/images/cards/api.png
          :width: 150px
          :align: center
 
@@ -60,8 +79,17 @@
     .. grid-item-card:: Examples
       :link: examples/index.html
 
-      .. image:: _static/images/examples.png
+      .. image:: _static/images/cards/examples.png
          :width: 150px
          :align: center
 
-      Interesting examples showcasing the usage of the PyOrbb Python API.
+      Examples showcasing the usage of the PyOrbb Python API.
+
+    .. grid-item-card:: Command-line Tools
+      :link: api/cli.html
+
+      .. image:: _static/images/cards/command_line.png
+         :width: 150px
+         :align: center
+
+      An overview of the main command-line tools provided by PyOrbb.

@@ -45,7 +45,21 @@ extensions = [
     "sphinx_design",
     "sphinx_tabs.tabs",
     "sphinxcontrib.video",
+    "sphinx_new_tab_link",
+    "sphinxcontrib.lightbox2",
 ]
+
+hoverxref_auto_ref = True
+hoverxref_role_types = {
+    'ref': 'tooltip',   # or 'modal' for a popup box
+}
+# enable external link icons for "sphinx_new_tab_link":
+new_tab_link_show_external_link_icon = True
+
+# configuration of "sphinxcontrib.lightbox2"
+lightbox2_image_fade_duration = 300
+lightbox2_resize_duration = 300
+lightbox2_disable_scrolling = True
 
 templates_path = ['_templates']
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
@@ -64,6 +78,8 @@ html_theme_options = {
   "navbar_center": [],
   "navbar_start": ['logo'],
 }
+
+html_js_files = ['gui_tabs.js']
 
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output

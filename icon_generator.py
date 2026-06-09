@@ -68,10 +68,12 @@ def make_icon(
         bground_style=None,
         cmap='twilight',
         cmap_background=None,
-        psi_mode='d'
+        psi_mode='d',
+        invert=False,
+        round_vals=True
         ):
     
-    resolution = 800
+    resolution = 1600
     x, y = np.arange(0, resolution), np.arange(0, resolution)
     X, Y = np.meshgrid(x, y)
 
@@ -83,7 +85,12 @@ def make_icon(
 
     # psi = np.power(psi, 1.5)
     psi = psi / psi.max() * Nsteps
-    psi = np.round(psi)
+    if invert:
+        psi[psi < 0] = Nsteps - psi
+        psi[psi > 0] = psi - Nsteps
+
+    if round_vals:
+        psi = np.round(psi)
 
     im = Image.new('RGB', (resolution, resolution), color=0)
     drawer = ImageDraw(im)
@@ -160,9 +167,11 @@ def make_icon(
     print('Saved', filename)
     plt.savefig(filename, bbox_inches='tight', transparent=True)
     plt.close()
-
+ 
 
 for psi_mode in ['d', 'p']:
+    make_icon(psi_mode=psi_mode, cmap='twilight', bground_style='hide', orbital_exponent=-6, Nsteps=10, border_style=None, border=20, invert=True)
+    make_icon(psi_mode=psi_mode, cmap='twilight_r', bground_style='hide', orbital_exponent=-6, Nsteps=10, border_style=None, border=20, invert=True)
     make_icon(psi_mode=psi_mode, orbital_exponent=-8, border_style='wavy', border=40, bground_style='hide')
     make_icon(psi_mode=psi_mode, cmap='berlin', orbital_exponent=-8, border_style='wavy', border=40, bground_style='hide')
     make_icon(psi_mode=psi_mode, cmap='bwr', orbital_exponent=-8, border_style='wavy', border=40, bground_style='lowest')
@@ -193,3 +202,6 @@ for psi_mode in ['d', 'p']:
     make_icon(psi_mode=psi_mode, orbital_exponent=-8, border_style='highest', border=30, bground_style='highest')
     make_icon(psi_mode=psi_mode, orbital_exponent=-8, border_style='lowest', border=30, bground_style='highest')
     make_icon(psi_mode=psi_mode, orbital_exponent=-8, border_style='wavy', border=30, bground_style='highest')
+
+
+    make_icon(psi_mode=psi_mode, cmap='twilight', bground_style='hide', orbital_exponent=-7, Nsteps=3, border_style=None, border=20)

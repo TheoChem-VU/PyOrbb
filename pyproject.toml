@@ -38,6 +38,7 @@ docs = [
     "sphinx-design>=0.4.1",
     "sphinx-tabs>=3.4.7",
     "sphinxcontrib-video>=0.4.1",
+    "sphinx_new_tab_link==0.8.1",
 ]
 
 [project.scripts]
@@ -48,7 +49,7 @@ pyfmo = "pyfmo.cli_scripts.pyfmoparser:main"
 # This project was generated with 0.3.25 using template: https://github.com/beeware/briefcase-template @ v0.3.25
 [tool.briefcase]
 project_name = "PyOrbb"
-version= "%REPLACE_VERSION"
+version= "0.9.0"
 bundle = "nl.theochem"
 url = "https://theochem.nl/pyorbb"
 license.file = "LICENSE"
