@@ -8,7 +8,7 @@ the oxidative addition reaction. All data was computed at ZORA-BP86/TZ2P
 with Good numerical quality.
 '''
 
-import pyfmo
+import pyorbb
 import os
 import matplotlib.pyplot as plt
 import numpy as np
@@ -19,7 +19,7 @@ import moviepy.editor as mvp
 files = [os.path.join('OxAdd_rkfs', file) for file in os.listdir('OxAdd_rkfs') if file.endswith('.adf.rkf')]
 
 # then load the Orbitals objects
-orbs = [pyfmo.Orbitals(file) for file in files]
+orbs = [pyorbb.Orbitals(file) for file in files]
 
 # we want to also have the key distance, the C-H distance
 # we will sort on this distance later on
@@ -49,7 +49,7 @@ for i, orb in enumerate(orbs):
     Pd_5s = orb.sfos['Pd(5S)']
     sub_lumo = orb.sfos['Substrate(HOMO)']
     mos = [orb.mos['21AA'], orb.mos['17AA']]
-    mix1 = pyfmo.analysis.mixing.Mixing(
+    mix1 = pyorbb.analysis.mixing.Mixing(
         orb,
         sfos=[Pd_5s, sub_lumo], 
         mos=mos,
@@ -63,7 +63,7 @@ for i, orb in enumerate(orbs):
     Pd_4d = orb.sfos['Pd(2D:x2-y2)']
     sub_homo = orb.sfos['Substrate(LUMO)']
     mos = [orb.mos['22AA'], orb.mos['18AA']]
-    mix2 = pyfmo.analysis.mixing.Mixing(
+    mix2 = pyorbb.analysis.mixing.Mixing(
         orb,
         sfos=[Pd_4d, sub_homo], 
         mos=mos,

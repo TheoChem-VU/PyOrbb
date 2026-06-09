@@ -6,7 +6,7 @@ calculated at the OLYP/TZ2P level of theory.
 The C-Cl bond was homolytically cleaved.
 '''
 
-import pyfmo
+import pyorbb
 
 
 def bonding_score(mo, sfos1, sfos2):
@@ -26,7 +26,7 @@ def bonding_score(mo, sfos1, sfos2):
 	return total
 
 # load the orbital data
-orbs = pyfmo.Orbitals('bonding.adf.rkf')
+orbs = pyorbb.Orbitals('bonding.adf.rkf')
 
 # and filter the correct orbitals
 # for clarity we only show the filled alpha orbitals

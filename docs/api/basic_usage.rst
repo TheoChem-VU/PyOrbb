@@ -8,7 +8,7 @@ Simply supply the ``adf.rkf`` file from your ADF calculation to the class to loa
 
 .. code-block:: python
    
-   >>> orbs = pyfmo.Orbitals('adf.rkf')
+   >>> orbs = pyorbb.Orbitals('adf.rkf')
 
 The data is then divided into the |MOs| and |SFOs| objects inside the |Orbitals| object.
 The |MOs| and |SFOs| objects provide tools to select specific |MO| and |SFO| objects to analyse further.
@@ -41,7 +41,7 @@ To select an |SFO| object we must also specify the fragment.
    >>> nh3_sfo
    NH3(4A1)
 
-We can also select multiple objects at once using the :meth:`~pyfmo.orbitals.objects.OrbitalSelector.filter` methods of |MOs| and |SFOs|.
+We can also select multiple objects at once using the :meth:`~pyorbb.orbitals.objects.OrbitalSelector.filter` methods of |MOs| and |SFOs|.
 For example, to select all |MO| objects belonging to the A2 irreducible representation.
 
 .. code-block::

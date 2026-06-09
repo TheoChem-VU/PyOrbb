@@ -1,10 +1,10 @@
-import pyfmo
+import pyorbb
 import matplotlib.pyplot as plt
 
 
-orbs = pyfmo.Orbitals('../test/fixtures/NH3BH3/adf.rkf')
-mixer = pyfmo.analysis.mixing.Mixer(orbs)
-main_mix = pyfmo.analysis.mixing.Mixing(orbs)
+orbs = pyorbb.Orbitals('../test/fixtures/NH3BH3/adf.rkf')
+mixer = pyorbb.analysis.mixing.Mixer(orbs)
+main_mix = pyorbb.analysis.mixing.Mixing(orbs)
 
 for mix_ in mixer.orbital_interactions(N=4):
     main_mix += mix_

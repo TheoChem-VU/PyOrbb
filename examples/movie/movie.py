@@ -8,7 +8,7 @@ the oxidative addition reaction. All data was computed at ZORA-BP86/TZ2P
 with Good numerical quality.
 '''
 
-import pyfmo
+import pyorbb
 import os
 import numpy as np
 import moviepy.editor as mvp
@@ -20,7 +20,7 @@ import cv2
 # obtain all adf.rkf files
 files = [os.path.join('OxAdd_rkfs', file) for file in os.listdir('OxAdd_rkfs') if file.endswith('.adf.rkf')]
 # then load the Orbitals objects
-orbs = [pyfmo.Orbitals(file) for file in files]
+orbs = [pyorbb.Orbitals(file) for file in files]
 
 # we want to also have the key distance, the C-H distance
 # we will sort on this distance later on
@@ -36,7 +36,7 @@ distances = [distances[i] for i in distance_order]
 
 
 
-def make_frames(orbs: List[pyfmo.Orbitals], sfo1_name: str, sfo2_name: str, frames_dir: str) -> List[str]:
+def make_frames(orbs: List[pyorbb.Orbitals], sfo1_name: str, sfo2_name: str, frames_dir: str) -> List[str]:
     # create a directory to store the frames in
     os.makedirs(frames_dir, exist_ok=True)
     frames = []

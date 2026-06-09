@@ -1,5 +1,5 @@
 [project]
-name = "pyfmo"
+name = "pyorbb"
 version = "0.3.1"
 authors = [
   { name="Yuman Hordijk", email="y.hordijk@vu.nl"},
@@ -12,7 +12,7 @@ authors = [
   { name="F. Matthias Bickelhaupt", email="f.m.bickelhaupt@vu.nl"},
   { name="Célia Fonseca Guerra", email="c.fonsecaguerra@vu.nl"}]
 
-description = "PyFMO is an automated orbital analysis tool used in the TheoCheM group at VU Amsterdam"
+description = "PyOrbb is an automated orbital analysis tool used in the TheoCheM group at VU Amsterdam"
 readme = "README.md"
 classifiers = [
     "Programming Language :: Python :: 3",
@@ -42,7 +42,7 @@ docs = [
 ]
 
 [project.scripts]
-pyfmo = "pyfmo.cli_scripts.pyfmoparser:main"
+pyorbb = "pyorbb.cli_scripts.pyorbbparser:main"
 
 
 # content below this line added by briefcase convert
@@ -57,14 +57,14 @@ license.file = "LICENSE"
 author = "TheoCheMVU"
 author_email = "yumanhordijk@gmail.com"
 
-[tool.briefcase.app.pyfmo]
+[tool.briefcase.app.pyorbb]
 formal_name = "PyOrbb"
-description = "PyFMO is an automated orbital analysis tool used in the TheoCheM group at VU Amsterdam"
+description = "PyOrbb is an automated orbital analysis tool used in the TheoCheM group at VU Amsterdam"
 long_description = """More details about the app should go here.
 """
 icon = "icon_12"
 sources = [
-    "src/pyfmo",
+    "src/pyorbb",
 ]
 requires = [
     "pyside6-essentials==6.7.3",
@@ -89,17 +89,17 @@ test_requires = [
     # Add your cross-platform test requirements here
 ]
 
-[tool.briefcase.app.pyfmo.macOS]
+[tool.briefcase.app.pyorbb.macOS]
 universal_build = false
 requires = [
 ]
 
-[tool.briefcase.app.pyfmo.linux]
+[tool.briefcase.app.pyorbb.linux]
 requires = [
     # Add your Linux-specific app requirements here
 ]
 
-[tool.briefcase.app.pyfmo.linux.system.debian]
+[tool.briefcase.app.pyorbb.linux.system.debian]
 system_requires = [
     # Add any system packages needed at build the app here
 ]
@@ -108,7 +108,7 @@ system_runtime_requires = [
     # Add any system packages needed at runtime here
 ]
 
-[tool.briefcase.app.pyfmo.linux.system.rhel]
+[tool.briefcase.app.pyorbb.linux.system.rhel]
 system_requires = [
     # Add any system packages needed at build the app here
 ]
@@ -117,7 +117,7 @@ system_runtime_requires = [
     # Add any system packages needed at runtime here
 ]
 
-[tool.briefcase.app.pyfmo.linux.system.suse]
+[tool.briefcase.app.pyorbb.linux.system.suse]
 system_requires = [
     # Add any system packages needed at build the app here
 ]
@@ -126,7 +126,7 @@ system_runtime_requires = [
     # Add any system packages needed at runtime here
 ]
 
-[tool.briefcase.app.pyfmo.linux.system.arch]
+[tool.briefcase.app.pyorbb.linux.system.arch]
 system_requires = [
     # Add any system packages needed at build the app here
 ]
@@ -135,29 +135,29 @@ system_runtime_requires = [
     # Add any system packages needed at runtime here
 ]
 
-[tool.briefcase.app.pyfmo.linux.flatpak]
+[tool.briefcase.app.pyorbb.linux.flatpak]
 flatpak_runtime = "org.freedesktop.Platform"
 flatpak_runtime_version = "24.08"
 flatpak_sdk = "org.freedesktop.Sdk"
 
-[tool.briefcase.app.pyfmo.windows]
+[tool.briefcase.app.pyorbb.windows]
 requires = [
     # Add your Windows-specific app requirements here
 ]
 
 # Mobile deployments
-[tool.briefcase.app.pyfmo.iOS]
+[tool.briefcase.app.pyorbb.iOS]
 requires = [
     # Add your iOS-specific app requirements here
 ]
 
-[tool.briefcase.app.pyfmo.android]
+[tool.briefcase.app.pyorbb.android]
 requires = [
     # Add your Android-specific app requirements here
 ]
 
 # Web deployments
-[tool.briefcase.app.pyfmo.web]
+[tool.briefcase.app.pyorbb.web]
 requires = [
     # Add your web-specific app requirements here
 ]

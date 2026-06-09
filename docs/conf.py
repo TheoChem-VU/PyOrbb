@@ -95,10 +95,10 @@ rst_epilog = f"""
 .. |ProjectVersion| replace:: {release}
 .. |eV| replace:: :math:`\\text{{eV}}`
 .. |kcal/mol| replace:: :math:`\\text{{kcal mol}}^{{-1}}`
-.. |Orbitals| replace:: :class:`~pyfmo.orbitals.objects.Orbitals`
-.. |Orbital| replace:: :class:`~pyfmo.orbitals.objects.Orbital`
-.. |MOs| replace:: :class:`~pyfmo.orbitals.objects.MOs`
-.. |MO| replace:: :class:`~pyfmo.orbitals.objects.MO`
-.. |SFOs| replace:: :class:`~pyfmo.orbitals.objects.SFOs`
-.. |SFO| replace:: :class:`~pyfmo.orbitals.objects.SFO`
+.. |Orbitals| replace:: :class:`~pyorbb.orbitals.objects.Orbitals`
+.. |Orbital| replace:: :class:`~pyorbb.orbitals.objects.Orbital`
+.. |MOs| replace:: :class:`~pyorbb.orbitals.objects.MOs`
+.. |MO| replace:: :class:`~pyorbb.orbitals.objects.MO`
+.. |SFOs| replace:: :class:`~pyorbb.orbitals.objects.SFOs`
+.. |SFO| replace:: :class:`~pyorbb.orbitals.objects.SFO`
 """

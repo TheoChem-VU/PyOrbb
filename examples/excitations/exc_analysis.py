@@ -10,7 +10,7 @@ and the accepting orbital should have at least 90% Acceptor fragment character.
 '''
 
 import tcutility.results2
-import pyfmo
+import pyorbb
 
 # exc should have wl of at least 300
 wavelength_thresh          = 300
@@ -27,7 +27,7 @@ acceptor_thresh            = 0.9
 # it will be stored in the ``properties.excitations`` attribute.
 res = tcutility.results2.read('excitations.adf.rkf')
 # also load the orbital objects
-orbs = pyfmo.Orbitals('excitations.adf.rkf')
+orbs = pyorbb.Orbitals('excitations.adf.rkf')
 
 # the excitation data is sorted by the irrep (only 'A' for this system) 
 # and the excitation type (only 'SS' = singlet-singlet for this system)

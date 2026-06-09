@@ -12,8 +12,8 @@ For expert users who would like to work on the code we also offer installation o
 
 .. code-block::
 	
-	git clone git@github.com:TheoChem-VU/PyFMO.git
-	cd PyFMO
+	git clone git@github.com:TheoChem-VU/PyOrbb.git
+	cd PyOrbb
 	python -m "pip install -e ."
 
 
@@ -27,12 +27,12 @@ which should output:
 
 .. code-block::
 
-	usage: pyfmo [-h] {excel,analyse} ...
+	usage: pyorbb [-h] {excel,analyse} ...
 
 	options:
 	  -h, --help       show this help message and exit
 
-	PyFMO command-line scripts:
+	PyOrbb command-line scripts:
 	  {excel,analyse}
 	    excel          Read orbital information from an ADF calculation and write them to an Excel file.
 	    analyse        Start an interactive PyOrbb orbital diagram.

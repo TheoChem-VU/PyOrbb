@@ -5,13 +5,13 @@ This example uses an ADF calculation on indole in a random orientation
 calculated at the OLYP/TZ2P level of theory with a small frozen core.
 '''
 
-import pyfmo
+import pyorbb
 import scipy
 import numpy as np
 
 
 # load the orbital data
-orbs = pyfmo.Orbitals('indole.adf.rkf')
+orbs = pyorbb.Orbitals('indole.adf.rkf')
 
 # this molecule has a random orientation, so we must first find the
 # normal vector to the plane of the molecule to find the right pi-orbitals
