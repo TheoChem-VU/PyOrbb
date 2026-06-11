@@ -507,13 +507,14 @@ class MplCanvas(FigureCanvas):
                 s += f'\n       ╲         ╱'
                 s += f'\n        ╲       ╱'
                 s += '\n' + name_mo2.center(23)
-                s += f'\n\n𝛙i          {pyorbb.generate_label(fmo1, mode="html", use_formatting=False)}'
-                s += f'\n𝛙j          {pyorbb.generate_label(fmo2, mode="html", use_formatting=False)}'
-                s += f'\nΨk          {pyorbb.generate_label(mo1, mode="html", use_formatting=False)}'
-                s += f'\nΨl          {pyorbb.generate_label(mo2, mode="html", use_formatting=False)}'
+                s += f'\n\n𝛙i          {name_fmo1}'
+                s += f'\n𝛙j          {name_fmo2}'
+                s += f'\nΨk          {name_mo1}'
+                s += f'\nΨl          {name_mo2}'
 
                 S = fmo1 @ fmo2
                 s += f'\n\nSij         {S: 5.3f}'
+                
                 max_pop = 1 if self.parent.orbs.data['calc_info']['unrestricted_fmos'] else 2
                 if int_type == 'OI':
                     de = abs(getattr(fmo1, self.parent._energytype_selection) - getattr(fmo2, self.parent._energytype_selection))
