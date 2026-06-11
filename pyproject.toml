@@ -68,7 +68,7 @@ sources = [
 ]
 requires = [
     "pyside6-essentials==6.7.3",
-    "tcviewer>=0.1.11",
+    "git+https://github.com/TheoChem-VU/TCviewer@version2",
     "git+https://github.com/TheoChem-VU/TCMU.git",
     "numpy",
     "matplotlib>=3.5.3",
