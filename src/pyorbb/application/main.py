@@ -466,8 +466,8 @@ class MplCanvas(FigureCanvas):
                 s += '\nMO'
                 s += f'\n  Name     {pyorbb.generate_label(mo, mode="html", use_formatting=False)} ({mo.relative_name})'
                 s += f'\n  Symm.    {pyorbb.translate_irrep_label(mo.symmetry, mode="html", use_formatting=False)} {mo.symmetry_relative_name}\n'
-                s += f'\nContr.       {fmo.mulliken_contribution(mo, normalized=False): .2%}'
-                s += f'\nContr. Norm. {fmo.mulliken_contribution(mo, normalized=True): .2%}'
+                s += f'\nContr.       {fmo.mulliken_contribution(mo, normalized=False): 5.3%}'
+                s += f'\nContr. Norm. {fmo.mulliken_contribution(mo, normalized=True): 5.3%}'
                 s += f'\nCoeff.       {fmo.coefficient(mo): .6f}'
                 s += f'\nSpin          {fmo.spin}'
                 s += f'\nIrrep         {fmo.symmetry}'
@@ -526,10 +526,8 @@ class MplCanvas(FigureCanvas):
                     ptot = fmo1.gross_population + fmo2.gross_population
                     poi = min(max_pop, ptot)
                     ppr = max(0, ptot - poi)
-
                     s += f'\npoi          {poi:5.3f} e⁻'
                     s += f'\nppr          {ppr:5.3f} e⁻'
-
                     s += f'\n\nRoi         {-abs(dpi*dpj)*(poi - ppr) * S**2/de:5.2e} ({mix.fraction:.2%})'
                 else:
                     oi = fmo1.occupation
@@ -537,11 +535,11 @@ class MplCanvas(FigureCanvas):
                     s += f'\nOpr          {max(oi+oj - max_pop, 0):5.3f} e⁻'
                     s += f'\n\nRpr          {max(oi+oj - max_pop, 0) * S**2:5.2e} ({mix.fraction:.2%})'
 
-                s += f'\n\nCik         {fmo1.mulliken_contribution(mo1): 5.3%}'
-                s += f'\nCil         {fmo1.mulliken_contribution(mo2): 5.3%}'
-                s += f'\nCjk         {fmo2.mulliken_contribution(mo1): 5.3%}'
-                s += f'\nCjl         {fmo2.mulliken_contribution(mo2): 5.3%}'
-                s += f'\nCik⋅Cil⋅Cjk⋅Cjl {fmo1.mulliken_contribution(mo1)*fmo1.mulliken_contribution(mo2)*fmo2.mulliken_contribution(mo1)*fmo2.mulliken_contribution(mo2): 5.3%}'
+                s += f'\n\nMik         {fmo1.mulliken_contribution(mo1, normalized=True): 5.3%}'
+                s += f'\nMil         {fmo1.mulliken_contribution(mo2, normalized=True): 5.3%}'
+                s += f'\nMjk         {fmo2.mulliken_contribution(mo1, normalized=True): 5.3%}'
+                s += f'\nMjl         {fmo2.mulliken_contribution(mo2, normalized=True): 5.3%}'
+                s += f'\nMik⋅Mil⋅Mjk⋅Mjl {fmo1.mulliken_contribution(mo1, normalized=True)*fmo1.mulliken_contribution(mo2, normalized=True)*fmo2.mulliken_contribution(mo1, normalized=True)*fmo2.mulliken_contribution(mo2, normalized=True): 5.3%}'
 
                 title = f"{fmo1.fragment}({pyorbb.generate_label(fmo1, mode='latex')}) ± {fmo2.fragment}({pyorbb.generate_label(fmo2, mode='latex')})"
 
