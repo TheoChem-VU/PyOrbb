@@ -774,7 +774,6 @@ class Orbitals:
 
                 if 'adf_names_fixed_principal' in self.data['FMOs']:
                     data['name'] = self.data['FMOs']['adf_names_fixed_principal'][fmo_spin][fmo_idx].removesuffix('_AB').removesuffix('_A').removesuffix('_B')
-                    print(data['name'])
 
                 # frag_unique = str(self.data['FMOs']['fragment_unique']['total'][fmo_idx])
                 if symlabel in self.data['calc_info']['fmo_spinpolarizations'][frag]:
@@ -893,7 +892,6 @@ is positive for the following irreps:
         for frag in self.fragments:
             fmos = [fmo for fmo in self.fmos if fmo.fragment == frag]
             res = self.polarization(fmos)
-            # print(res)
             if len(res['polarized_fmos']) > 0:
                 s = f'The "{frag}" fragment has at least\none large electronic shift\n\nMain polarized FMOs:\n'
 
@@ -1176,16 +1174,16 @@ class OrbitalSelector:
         if fmo_regex_result != []:
             decoded['fragment'], decoded['orbname'], decoded['spin'] = fmo_regex_result[0]
             if decoded['spin'] == '':
-                decoded['spin'] = 'AB'
+                decoded['spin'] = None
             return {k: v for k, v in decoded.items() if v is not None}
 
         # in case we have a FMO we need a fragment name
-        fmo_relname_regex = re.compile(r'(.+)\(((?:HOMO|SOMO|LUMO|SOMO)(?:[+-]\d+)?)(_[AB])?\)')
+        fmo_relname_regex = re.compile(r'(.+)\(((?:HOMO|SOMO|LUMO|SUMO)(?:[+-]\d+)?)_?([AB])?\)')
         fmo_relname_regex_result = fmo_relname_regex.findall(key)
         if fmo_relname_regex_result != []:
             decoded['fragment'], decoded['orbname'], decoded['spin'] = fmo_relname_regex_result[0]
             if decoded['spin'] == '':
-                decoded['spin'] = 'AB'
+                decoded['spin'] = None
             return {k: v for k, v in decoded.items() if v is not None}
 
         # if the FMO regex fails we try the MO regex
@@ -1194,17 +1192,17 @@ class OrbitalSelector:
         if mo_regex_result != []:
             decoded['orbname'], decoded['spin'] = mo_regex_result[0]
             if decoded['spin'] == '':
-                decoded['spin'] = 'AB'
+                decoded['spin'] = None
 
             return {k: v for k, v in decoded.items() if v is not None}
 
         # if the FMO regex fails we try the MO regex
-        mo_relname_regex = re.compile(r'((?:HOMO|SOMO|LUMO|SOMO)(?:[+-]\d+)?)(_[AB])?')
+        mo_relname_regex = re.compile(r'((?:HOMO|SOMO|LUMO|SUMO)(?:[+-]\d+)?)_?([AB])?')
         mo_relname_regex_result = mo_relname_regex.findall(key)
         if mo_relname_regex_result != []:
             decoded['orbname'], decoded['spin'] = mo_relname_regex_result[0]
             if decoded['spin'] == '':
-                decoded['spin'] = 'AB'
+                decoded['spin'] = None
 
             return {k: v for k, v in decoded.items() if v is not None}
 
