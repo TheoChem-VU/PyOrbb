@@ -99,6 +99,6 @@ rst_epilog = f"""
 .. |Orbital| replace:: :class:`~pyorbb.orbitals.objects.Orbital`
 .. |MOs| replace:: :class:`~pyorbb.orbitals.objects.MOs`
 .. |MO| replace:: :class:`~pyorbb.orbitals.objects.MO`
-.. |SFOs| replace:: :class:`~pyorbb.orbitals.objects.SFOs`
-.. |SFO| replace:: :class:`~pyorbb.orbitals.objects.SFO`
+.. |FMOs| replace:: :class:`~pyorbb.orbitals.objects.FMOs`
+.. |FMO| replace:: :class:`~pyorbb.orbitals.objects.FMO`
 """
