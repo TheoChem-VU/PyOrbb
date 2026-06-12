@@ -403,3 +403,10 @@ QComboBox::drop-down {
     border-width: none;
 }
 
+QToolTip {
+    padding: 0px; 
+    margin: 0px; 
+    border: 1px solid lightgray; 
+    border-radius: 5px; 
+    background-color: white;
+}

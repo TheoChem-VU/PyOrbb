@@ -411,3 +411,13 @@ QTabBar::tab:top:selected
 
 }
 */
+
+
+QToolTip {
+    padding: 0px; 
+    margin: 0px; 
+    border: 1px solid #242424; 
+    border-radius: 5px; 
+    background-color: #323232;
+    color: white;
+}
