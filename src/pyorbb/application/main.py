@@ -445,8 +445,7 @@ class MplCanvas(FigureCanvas):
 μ
     Normalized Mulliken contribution between this FMO and the MO
 C
-    Coefficient between this FMO and the MO
-'''
+    Coefficient between this FMO and the MO'''
             if isinstance(orb, pyorbb.orbitals.objects.MO):
                 icon = self.parent.parent._ICONS['mo']
                 submixes = self.parent.main_mix.split()
@@ -470,8 +469,7 @@ C
 μ
     Normalized Mulliken contribution between this MO and the FMO
 C
-    Coefficient between this MO and the FMO
-'''
+    Coefficient between this MO and the FMO'''
             if isinstance(orb, tuple) and isinstance(orb[0], pyorbb.orbitals.objects.FMO) and isinstance(orb[1], pyorbb.orbitals.objects.MO):
                 fmo, mo = orb
                 icon = self.parent.parent._ICONS['contribution']
@@ -602,8 +600,7 @@ Rpr
                 tooltip += '''Mik
     Mulliken contribution between 𝛙i and Ψk
 μik
-    Normalized Mulliken contribution between 𝛙i and Ψk
-                '''
+    Normalized Mulliken contribution between 𝛙i and Ψk'''
 
             label = QtWidgets.QLabel(s)
             label.setStyleSheet('font: 10px "IBM Plex Mono";')
