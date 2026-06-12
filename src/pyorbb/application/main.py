@@ -409,6 +409,7 @@ class MplCanvas(FigureCanvas):
         self.parent.orbital_info_box.empty()
         for i, orb in enumerate(self._selected_orbitals):
             s = ''
+            tooltip = None
             if isinstance(orb, pyorbb.orbitals.objects.FMO):
                 icon = self.parent.parent._ICONS['fmo']
                 submixes = self.parent.main_mix.split()
@@ -433,12 +434,19 @@ class MplCanvas(FigureCanvas):
                         continue
                     s += f'\n{str(fmo2):19.19} {orb @ fmo2: 5.3f} {abs(getattr(orb, self.parent._energytype_selection) - getattr(fmo2, self.parent._energytype_selection)): 8.2f}'
                 
-                s += '\n\nMO                     Contr   Coeff'
-                s += '\n─────────────────── ──────── ───────'
+                s += '\n\nMO                     M      μ      C'
+                s += '\n─────────────────── ────── ────── ──────'
                 for mo in sorted(submix.mos, key=lambda mo: -abs(orb.mulliken_contribution(mo))):
-                    s += f'\n{str(mo):19.19} {orb.mulliken_contribution(mo): 8.2%} {orb.coefficient(mo): 7.4f}'
+                    s += f'\n{str(mo):19.19} {orb.mulliken_contribution(mo): >6.1%} {orb.mulliken_contribution(mo, normalized=True): >6.1%} {orb.coefficient(mo): >6.3f}'
                 title = f"{orb.fragment}({pyorbb.generate_label(orb, mode='latex')})"
-
+                
+                tooltip = '''M
+    Mulliken contribution between this FMO and the MO
+μ
+    Normalized Mulliken contribution between this FMO and the MO
+C
+    Coefficient between this FMO and the MO
+'''
             if isinstance(orb, pyorbb.orbitals.objects.MO):
                 icon = self.parent.parent._ICONS['mo']
                 submixes = self.parent.main_mix.split()
@@ -450,12 +458,20 @@ class MplCanvas(FigureCanvas):
                 s += f'\nSpin         {orb.spin}'
                 s += f'\nIrrep        {orb.symmetry}'
 
-                s += '\n\nFMO                    Contr   Coeff'
-                s += '\n─────────────────── ──────── ───────'
+                s += '\n\nFMO                    M      μ      C'
+                s += '\n─────────────────── ────── ────── ──────'
                 for fmo in sorted(submix.fmos, key=lambda fmo: -abs(fmo.mulliken_contribution(orb))):
-                    s += f'\n{str(fmo):19.19} {fmo.mulliken_contribution(orb): 8.2%} {fmo.coefficient(orb): 7.4f}'
+                    s += f'\n{str(fmo):19.19} {fmo.mulliken_contribution(orb): >6.1%} {fmo.mulliken_contribution(orb, normalized=True): >6.1%} {fmo.coefficient(orb): >6.3f}'
+                    # s += f'\n{str(fmo):19.19} {fmo.mulliken_contribution(orb): 8.2%} {fmo.coefficient(orb): 7.4f}'
                 title = pyorbb.generate_label(orb, mode='latex')
 
+                tooltip = '''M
+    Mulliken contribution between this MO and the FMO
+μ
+    Normalized Mulliken contribution between this MO and the FMO
+C
+    Coefficient between this MO and the FMO
+'''
             if isinstance(orb, tuple) and isinstance(orb[0], pyorbb.orbitals.objects.FMO) and isinstance(orb[1], pyorbb.orbitals.objects.MO):
                 fmo, mo = orb
                 icon = self.parent.parent._ICONS['contribution']
@@ -514,7 +530,7 @@ class MplCanvas(FigureCanvas):
 
                 S = fmo1 @ fmo2
                 s += f'\n\nSij         {S: 5.3f}'
-                
+
                 max_pop = 1 if self.parent.orbs.data['calc_info']['unrestricted_fmos'] else 2
                 if int_type == 'OI':
                     de = abs(getattr(fmo1, self.parent._energytype_selection) - getattr(fmo2, self.parent._energytype_selection))
@@ -527,26 +543,71 @@ class MplCanvas(FigureCanvas):
                     ptot = fmo1.gross_population + fmo2.gross_population
                     poi = min(max_pop, ptot)
                     ppr = max(0, ptot - poi)
-                    s += f'\npoi          {poi:5.3f} e⁻'
-                    s += f'\nppr          {ppr:5.3f} e⁻'
+                    s += f'\npbond        {poi:5.3f} e⁻'
+                    s += f'\npanti        {ppr:5.3f} e⁻'
                     s += f'\n\nRoi         {-abs(dpi*dpj)*(poi - ppr) * S**2/de:5.2e} ({mix.fraction:.2%})'
+
+                    tooltip = '''𝛙
+    An FMO
+Ψ
+    An MO
+Sij
+    Overlap between 𝛙i and 𝛙j
+εi
+    Orbital energy of 𝛙i
+Δpi
+    Difference between initial occupation and Mulliken population of 𝛙i
+pbond
+    Total bonding electrons of 𝛙i and 𝛙j based on populations
+panti
+    Total antibonding electrons of 𝛙i and 𝛙j based on populations
+Roi
+    The ranking number of this orbital interaction, 
+    in parantheses Roi of this interaction divided by Roi of all interactions
+'''
                 else:
                     oi = fmo1.occupation
                     oj = fmo2.occupation
-                    s += f'\nOpr          {max(oi+oj - max_pop, 0):5.3f} e⁻'
+                    s += f'\nOanti        {max(oi+oj - max_pop, 0):5.3f} e⁻'
                     s += f'\n\nRpr          {max(oi+oj - max_pop, 0) * S**2:5.2e} ({mix.fraction:.2%})'
 
-                s += f'\n\nMik         {fmo1.mulliken_contribution(mo1, normalized=True): 5.3%}'
-                s += f'\nMil         {fmo1.mulliken_contribution(mo2, normalized=True): 5.3%}'
-                s += f'\nMjk         {fmo2.mulliken_contribution(mo1, normalized=True): 5.3%}'
-                s += f'\nMjl         {fmo2.mulliken_contribution(mo2, normalized=True): 5.3%}'
-                s += f'\nMik⋅Mil⋅Mjk⋅Mjl {fmo1.mulliken_contribution(mo1, normalized=True)*fmo1.mulliken_contribution(mo2, normalized=True)*fmo2.mulliken_contribution(mo1, normalized=True)*fmo2.mulliken_contribution(mo2, normalized=True): 5.3%}'
+                    tooltip = '''𝛙
+    An FMO
+Ψ
+    An MO
+Sij
+    Overlap between 𝛙i and 𝛙j
+Oanti
+    Total antibonding electrons of 𝛙i and 𝛙j based on occupations
+Rpr
+    The ranking number of this Pauli repulsive interaction, 
+    in parantheses Rpr of this interaction divided by Rpr of all interactions
+'''
+                s += '\n\nMulliken contributions:'
+                s += f'\n  Mik             {fmo1.mulliken_contribution(mo1, normalized=False): >8.3%}'
+                s += f'\n  Mil             {fmo1.mulliken_contribution(mo2, normalized=False): >8.3%}'
+                s += f'\n  Mjk             {fmo2.mulliken_contribution(mo1, normalized=False): >8.3%}'
+                s += f'\n  Mjl             {fmo2.mulliken_contribution(mo2, normalized=False): >8.3%}'
+                s += f'\n  Mik•Mil•Mjk•Mjl {fmo1.mulliken_contribution(mo1, normalized=False)*fmo1.mulliken_contribution(mo2, normalized=False)*fmo2.mulliken_contribution(mo1, normalized=False)*fmo2.mulliken_contribution(mo2, normalized=False): >8.3%}'
+
+                s += '\n\nNormalized Mulliken contributions:'
+                s += f'\n  μik             {fmo1.mulliken_contribution(mo1, normalized=True): >8.3%}'
+                s += f'\n  μil             {fmo1.mulliken_contribution(mo2, normalized=True): >8.3%}'
+                s += f'\n  μjk             {fmo2.mulliken_contribution(mo1, normalized=True): >8.3%}'
+                s += f'\n  μjl             {fmo2.mulliken_contribution(mo2, normalized=True): >8.3%}'
+                s += f'\n  μik•μil•μjk•μjl {fmo1.mulliken_contribution(mo1, normalized=True)*fmo1.mulliken_contribution(mo2, normalized=True)*fmo2.mulliken_contribution(mo1, normalized=True)*fmo2.mulliken_contribution(mo2, normalized=True): >8.3%}'
 
                 title = f"{fmo1.fragment}({pyorbb.generate_label(fmo1, mode='latex')}) ± {fmo2.fragment}({pyorbb.generate_label(fmo2, mode='latex')})"
 
+                tooltip += '''Mik
+    Mulliken contribution between 𝛙i and Ψk
+μik
+    Normalized Mulliken contribution between 𝛙i and Ψk
+                '''
+
             label = QtWidgets.QLabel(s)
             label.setStyleSheet('font: 10px "IBM Plex Mono";')
-            self.parent.orbital_info_box.addSpoiler(title, label, icon)
+            self.parent.orbital_info_box.addSpoiler(title, label, icon, tooltip)
 
     def on_plot_click(self, event):
         artists = self.axes.get_children()
@@ -1173,7 +1234,7 @@ class AnalysisWindow(QtWidgets.QWidget):
         self.PR_is_empty_label.setVisible(self.main_mix.main_mix.PR_is_empty)
 
         if self.plot._add_warning:
-            ax.text(0.9, 0.9, '⚠︎', tranfmorm=fig.transFigure, fontsize=30, c='r', gid='warning_main_txt')
+            ax.text(0.9, 0.9, '⚠︎', transform=fig.transFigure, fontsize=30, c='r', gid='warning_main_txt')
 
         props = dict(edgecolor='white', facecolor='white', alpha=1)  # bbox features
         fig.canvas.draw_idle()
