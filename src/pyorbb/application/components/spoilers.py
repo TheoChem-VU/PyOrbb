@@ -36,12 +36,12 @@ class Spoilers(QtWidgets.QScrollArea):
         for spoiler in self.spoilers:
             spoiler.set_pixmap()
 
-    def addSpoiler(self, title, widget, icon=None):
+    def addSpoiler(self, title, widget, icon=None, tooltip=None):
         layout = QtWidgets.QVBoxLayout()
         layout.setSpacing(0)
         layout.setContentsMargins(0, 0, 0, 0)
         layout.addWidget(widget)
-        spoiler = Spoiler(self, title, icon=icon)
+        spoiler = Spoiler(self, title, icon=icon, tooltip=tooltip)
         spoiler.setContentLayout(layout)
         self.spoilers.append(spoiler)
         self.layout.insertWidget(self.layout.count() - 1, spoiler)
@@ -96,7 +96,7 @@ class Spoiler(QtWidgets.QWidget):
 
     _background_color_prop = QtCore.Property(QtGui.QColor, _readBG, _setBG)
 
-    def __init__(self, parent=None, title='', animationDuration=100, icon=None):
+    def __init__(self, parent=None, title='', animationDuration=100, icon=None, tooltip=None):
         """
         References:
             # Adapted from c++ version
@@ -108,6 +108,8 @@ class Spoiler(QtWidgets.QWidget):
         self.animationDuration = animationDuration
         self.toggleAnimation = QtCore.QParallelAnimationGroup()
         self.contentArea = QtWidgets.QScrollArea(self)
+        if tooltip is not None:
+            self.contentArea.setToolTip(tooltip)
         self.toggleButton = rich_widgets.HTMLToolButton(self)
         # self.toggleButton = QtWidgets.QToolButton(self)
         self.mainLayout = QtWidgets.QVBoxLayout()
@@ -131,7 +133,7 @@ class Spoiler(QtWidgets.QWidget):
 
         self.background_color = QtGui.QColor('transparent')
         self._last_toggle_forward_direction = False
-        self.contentArea.setStyleSheet("QScrollArea { background-color: transparent; border: none; }")
+        # self.contentArea.setStyleSheet("QScrollArea { background-color: transparent; border: none; }")
         self.contentArea.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff);
         # start out collapsed
         self.contentArea.setMaximumHeight(0)
