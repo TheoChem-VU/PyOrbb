@@ -10,10 +10,6 @@ concurrency:
 
 jobs:
   macos-build:
-    # - os: windows-latest
-    #   artifact_name: dist/PyOrbb-0.0.0.msi
-    #   asset_name: PyOrbb-${{ github.ref_name}}-Windows.msi
-    #   build_sh: build_windows_app.sh
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v3
@@ -33,7 +29,79 @@ jobs:
         uses: svenstaro/upload-release-action@v2
         with:
           file: dist/PyOrbb.dmg
-          asset_name: PyOrbb-${{ github.ref_name}}-macOS.dmg
+          asset_name: PyOrbb-${{ github.ref_name}}-macOS-ARM.dmg
+          tag: ${{ github.ref }}
+          overwrite: true
+
+  macos-intel-build:
+    runs-on: macos-26-intel
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python3.12
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.12"
+      - name: Install briefcase
+        run: |
+          python -m pip install --upgrade pip
+          pip install briefcase
+      - name: Build the app
+        run: |
+          chmod +x build_macos_app.sh
+          ./build_macos_app.sh
+      - name: Upload distributions to release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          file: dist/PyOrbb.dmg
+          asset_name: PyOrbb-${{ github.ref_name}}-macOS-Intel.dmg
+          tag: ${{ github.ref }}
+          overwrite: true
+
+  ubuntu-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python3.12
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.12"
+      - name: Install briefcase
+        run: |
+          python -m pip install --upgrade pip
+          pip install briefcase
+      - name: Build the app
+        run: |
+          chmod +x build_ubuntu_app.sh
+          ./build_ubuntu_app.sh
+      - name: Upload distributions to release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          file: dist/PyOrbb.dmg
+          asset_name: PyOrbb-${{ github.ref_name}}-Ubuntu-Intel.dmg
+          tag: ${{ github.ref }}
+          overwrite: true
+
+  ubuntu-arm-build:
+    runs-on: ubuntu-24.04-arm
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python3.12
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.12"
+      - name: Install briefcase
+        run: |
+          python -m pip install --upgrade pip
+          pip install briefcase
+      - name: Build the app
+        run: |
+          chmod +x build_ubuntu_app.sh
+          ./build_ubuntu_app.sh
+      - name: Upload distributions to release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          file: dist/PyOrbb.dmg
+          asset_name: PyOrbb-${{ github.ref_name}}-Ubuntu-arm.dmg
           tag: ${{ github.ref }}
           overwrite: true
 
