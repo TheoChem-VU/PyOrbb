@@ -488,11 +488,11 @@ def read_data(reader: plams.KFReader, SCF0_reader: plams.KFReader = None, output
             contr_pos = abs(contr)
             contr_pos = np.maximum(0, contr)
 
-            contr_artifact = (np.sum(abs(contr), axis=1, keepdims=True) + np.sum(abs(contr), axis=0, keepdims=True)) / 2
+            contr_artifact = (np.sum(contr_pos, axis=1, keepdims=True) + np.sum(contr_pos, axis=0, keepdims=True)) / 2
 
             contr_normed = contr_pos / contr_artifact
 
-            # contr_normed = (contr.T / np.sum(np.maximum(0, contr), axis=1)).T
+            # contr_normed = (contr.T / np.sum(np.maximum(0, contr), axis=0)).T
 
             # import matplotlib.pyplot as plt
 
