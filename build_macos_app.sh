@@ -6,11 +6,5 @@ git describe --tags --abbrev=0 | cut -c 2- > src/pyorbb/VERSION
 
 briefcase build -r
 
-# cp new_vtk.py build/pyorbb/macos/app/PyOrbb.app/Contents/Resources/app_packages/vtk.py
-# cat removed_files.txt | while read line 
-# do
-#    rm $line
-# done
-
 briefcase package --adhoc-sign
 mv dist/PyOrbb*.dmg dist/PyOrbb.dmg
