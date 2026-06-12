@@ -29,7 +29,8 @@ class Spoilers(QtWidgets.QScrollArea):
         # vertical box layout
         self.layout = QtWidgets.QVBoxLayout(content)
         self.layout.addStretch(1)
-        self.setStyleSheet('background-color: transparent;')
+        # self.setStyleSheet('background-color: transparent;')
+        self._setBG(QtGui.QColor(7, 175, 213, 0))
 
     def themechange(self):
         for spoiler in self.spoilers:
