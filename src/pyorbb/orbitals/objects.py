@@ -847,9 +847,10 @@ energies are required.
 
         if self._check_spurious_mulliken_contr():
             fmos = self.mulliken_unstable_fmos()
+            err = ''
             if len(fmos) > 0:
                 max_fmo_len = max([len(str(fmo)) for fmo, _ in fmos])
-                err = '\n  FMO'.ljust(max_fmo_len + 2) + '   Abs. Contr.\n'
+                err += '\n  FMO'.ljust(max_fmo_len + 2) + '   Abs. Contr.\n'
                 err += '  ' + '_' * (len('\n  FMO'.ljust(max_fmo_len + 2) + '   Abs. Contr.\n') - 4) + '\n'
                 for fmo, score in fmos:
                     err += f'  {str(fmo):{max_fmo_len}} {score: .1%}\n'
