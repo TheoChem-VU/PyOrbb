@@ -132,28 +132,65 @@ class Mixer2:
         self.oi_N = None
 
     def get_next_oi_threshold(self):
-        vals = [-val for val in self.mixes['OI'][self.energy_type].values() if -val < self.oi_threshold]
+        vals = [-val for val in self.mixes['OI'][self.energy_type].values() if -val <= self.oi_threshold]
         if len(vals) == 0:
             return self.oi_threshold
         return vals[0]
 
     def get_previous_oi_threshold(self):
-        vals = [-val for val in self.mixes['OI'][self.energy_type].values() if -val > self.oi_threshold]
+        vals = [-val for val in self.mixes['OI'][self.energy_type].values() if -val >= self.oi_threshold]
         if len(vals) == 0:
             return self.oi_threshold
         return vals[-1]
         
     def get_next_pr_threshold(self):
-        vals = [val for val in self.mixes['PR'][self.energy_type].values() if val < self.pr_threshold]
+        vals = [val for val in self.mixes['PR'][self.energy_type].values() if val <= self.pr_threshold]
         if len(vals) == 0:
             return self.pr_threshold
         return vals[0]
 
     def get_previous_pr_threshold(self):
-        vals = [val for val in self.mixes['PR'][self.energy_type].values() if val > self.pr_threshold]
+        vals = [val for val in self.mixes['PR'][self.energy_type].values() if val >= self.pr_threshold]
         if len(vals) == 0:
             return self.pr_threshold
         return vals[-1]
+
+    def get_oi_default_threshold(self, fraction=0.7):
+        '''
+        Get a threshold that makes sure that at least 80% of the OI interactions are included.
+        '''
+        vals = list(sorted([abs(val) for val in self.mixes['OI'][self.energy_type].values()]))[::-1]
+        total = sum(vals)
+        fracs = [val/total for val in vals]
+        cumsum = np.cumsum(fracs)
+        idx = np.where(cumsum >= fraction)[0][0]
+
+        plt.figure()
+        plt.plot(cumsum*100)
+        plt.xlabel('Number of Interactions')
+        plt.ylabel('CumSum (%)')
+        plt.plot([idx, idx], [0, 100])
+        plt.show()
+
+        return vals[idx]
+
+    def get_pr_default_threshold(self, fraction=0.1):
+        '''
+        Get a threshold that makes sure that at least 80% of the PR interactions are included.
+        '''
+        vals = list(sorted([abs(val) for val in self.mixes['PR'][self.energy_type].values()]))[::-1]
+        total = sum(vals)
+        fracs = [val/total for val in vals]
+        cumsum = np.cumsum(fracs)
+        idx = np.where(cumsum >= fraction)[0][0]
+        print(idx, vals)
+        plt.figure()
+        plt.plot(cumsum*100)
+        plt.xlabel('Number of Interactions')
+        plt.ylabel('CumSum (%)')
+        plt.plot([idx, idx], [0, 100])
+        plt.show()
+        return max(vals[idx], vals[2])
 
     def set_pr_threshold(self, thresh):
         self.pr_threshold = thresh

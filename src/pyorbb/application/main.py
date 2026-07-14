@@ -178,8 +178,18 @@ class ETypeDialog(QtWidgets.QDialog):
         for key, val in self.rbuttons.items():
             if val.isChecked():
                 self.parent._energytype_selection = key
+                self.parent.main_mix.set_energy_type(key)
 
-        print('before update_plot')
+        slider_OI_max = max(abs(v_) for v_ in self.parent.main_mix.mixes['OI'][self.parent._energytype_selection].values())
+        self.parent.slider_OI.setMaximum(floor(np.log10(slider_OI_max) * slider_resolution))
+        default_oi = self.parent.main_mix.get_oi_default_threshold()
+        self.parent.slider_OI.setSliderPosition(np.log10(default_oi) * slider_resolution-1)
+
+        slider_PR_max = max(abs(v_) for v_ in self.parent.main_mix.mixes['PR'][self.parent._energytype_selection].values())
+        self.parent.slider_PR.setMaximum(slider_PR_max * 1000 * slider_resolution)
+        default_pr = self.parent.main_mix.get_pr_default_threshold()
+        self.parent.slider_PR.setSliderPosition(floor(default_pr * 1000 * slider_resolution))
+
         self.parent._update_plot()
         self.hide()
 
@@ -1405,8 +1415,8 @@ class AnalysisWindow(QtWidgets.QWidget):
 
         self.slider_OI.setMinimum(np.log10(0.00000001) * slider_resolution)
         self.slider_OI.setMaximum(floor(np.log10(slider_OI_max) * slider_resolution))
-        self.slider_OI.setSliderPosition(np.log10(slider_OI_max/1.5) * slider_resolution)
-        self.main_mix.set_oi_threshold(slider_OI_max/1.5)
+        self.slider_OI.setSliderPosition(np.log10(self.main_mix.get_oi_default_threshold()) * slider_resolution-1)
+        self.main_mix.set_oi_threshold(self.main_mix.get_oi_default_threshold())
         slider_layout.addWidget(self.slider_OI, 0, 5)
 
         dec_oi_btn = QtWidgets.QPushButton('>')
@@ -1468,9 +1478,10 @@ class AnalysisWindow(QtWidgets.QWidget):
         slider_layout.addWidget(inc_pr_btn, 1, 4)
         self.slider_PR.setMinimum(0.001**2 * 1000 * slider_resolution)
         self.slider_PR.setMaximum(slider_PR_max * 1000 * slider_resolution)
-        self.slider_PR.setSliderPosition(slider_PR_max/1.5 * 1000 * slider_resolution)
+        default_pr = self.main_mix.get_pr_default_threshold()
+        self.slider_PR.setSliderPosition(default_pr*1000 * slider_resolution)
         self.slider_PR.setObjectName('slider_PR')
-        self.main_mix.set_pr_threshold(slider_PR_max/1.1)
+        self.main_mix.set_pr_threshold(default_pr)
         slider_layout.addWidget(self.slider_PR, 1, 5)
 
         dec_pr_btn = QtWidgets.QPushButton('>')
