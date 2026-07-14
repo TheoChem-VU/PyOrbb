@@ -39,14 +39,12 @@ extensions = [
     "sphinx.ext.autodoc",
     'sphinx.ext.napoleon',
     'sphinx.ext.viewcode',
-    # 'sphinx.ext.autosummary',
     "sphinx_autodoc_typehints",
     "sphinxarg.ext",
     "sphinx_design",
     "sphinx_tabs.tabs",
     "sphinxcontrib.video",
     "sphinx_new_tab_link",
-    "sphinxcontrib.lightbox2",
 ]
 
 hoverxref_auto_ref = True
