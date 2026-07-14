@@ -9,6 +9,18 @@ Errors
 Errors are generally produced when the calculation setup is not correct.
 
 
+Positive Orb. Int. Energy
+-------------------------
+
+Orbital interaction energies should always be a negative quantity (*i.e.* stabilizing). If it is positive it likely means that the electronic configuration was incorrectly set. Please check if the occupations are what you expect.
+
+
+Incorrect Electronic Preparation
+--------------------------------
+
+PyOrbb will detect large electron gains or depletions to or from FMOs. PyOrbb will list FMOs with an absolute difference between the initial occupation and the Mulliken gross population larger than 0.7 electrons. If you receive this error check if the electron configurations of the fragments are correctly set.
+
+
 
 Warnings
 ========
@@ -67,3 +79,13 @@ Given the Mulliken contribution matrix (:math:`C \in \mathbb{R}^{N\times N}`) of
 By definition of the Mulliken analysis, the sum over the contribution matrix is exactly equal to :math:`N`. Therefore, in the ideal case that all contributions :math:`0 >= C_{ij} >= 1` the score :math:`S = 1`. Also due to the definition,any negative Mulliken contributions must be compensated by larger positive contributions and the sum over the absolute elements of the contribution matrix will be larger than :math:`N`. In that case the score :math:`S > 1` and we therefore detected artifacts in the Mulliken analysis. PyOrbb will give a warning when the score :math:`S >= 1.05`.
 
 If PyOrbb gives a warning about the Mulliken analysis it will also provide the orbitals that are most affected. 
+
+
+Fractional Occupations
+----------------------
+
+In some systems the FMOs may be fractionally occupied due to the symmetry of the fragment. For instance, this is very common when using atomic fragments. In reality, the FMOs should be occupied with an integer number of electrons. To remedy this, you may manually specify the occupations of the FMOs of the affected fragment.
+
+.. seealso::
+	
+	`Click here <https://www.scm.com/doc/ADF/Input/Electronic_Configuration.html#orbital-occupations-electronic-configuration-excited-states>`_ for more information about occupation settings in ADF.
