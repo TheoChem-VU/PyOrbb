@@ -1,16 +1,14 @@
 Getting Started
 ###############
 
-PyOrbb is a tool designed to help you perform orbital interaction analyses. It provides you with an intuitive user-interface capable of producing intuitive orbital interaction diagrams.
-
-.. note::
-	Some functionality of PyOrbb requires a valid installation of the AMS program.
-
-
-In this tutorial we will walk through the process of performing a basic PyOrbb analysis using the Graphical User Interace (GUI) of PyOrbb. Throughout this tutorial we will be using the results of a calculation containing the H\ :sub:`3`\ N→BH\ :sub:`3` Lewis acid-base pair, which you can download here: :download:`NH3_BH3.rkf <NH3_BH3.rkf>`.
+PyOrbb is a tool designed to help you perform orbital interaction analyses. It provides you with an intuitive user-interface capable of producing intuitive orbital interaction diagrams. In this tutorial we will walk through the process of performing a basic PyOrbb analysis using the Graphical User Interace (GUI) of PyOrbb. Throughout this tutorial we will be using the results of a calculation containing the H\ :sub:`3`\ N→BH\ :sub:`3` Lewis acid-base pair, which you can download here: :download:`NH3_BH3.rkf <NH3_BH3.rkf>`.
 
 .. seealso::
 	`Click here <https://www.scm.com/doc/Tutorials/Analysis/FragmentAnalysis.html>`_ for a tutorial on the AMS website on how to perform fragment calculations yourself.
+
+.. note::
+   Some functionality of PyOrbb requires a valid installation of the AMS program.
+
 
 
 Starting PyOrbb
@@ -98,7 +96,7 @@ When a valid ``NH3_BH3.rkf`` file is provided, PyOrbb will automatically analyse
 
 
 	  .. admonition:: Interactive elements
-		 :class: note
+		 :class: seealso
 
 		 **Several elements are clickable in the diagram:**
 
@@ -112,37 +110,68 @@ When a valid ``NH3_BH3.rkf`` file is provided, PyOrbb will automatically analyse
 
       **Main information sections**
 
-      The information tabs show you information related to orbitals, molecules, the overall system, and any errors or warnings that were detected during loading of the calculation results. The information is organized in 3 tabs
-	  .. tab-set::
+      The information tabs show you information related to orbitals, molecules, the overall system, and any errors or warnings that were detected during loading of the calculation results. The information is organized in 3 tabs. The information can be viewed by clicking the headers inside the tabs.
 
-	     .. tab-item:: Orbitals
+      **Orbitals**
 
-	     	When clicking an orbital or a connection in the main diagram, PyOrbb will display relevant information in this tab.
+      When clicking an orbital or a connection in the main diagram, PyOrbb will display relevant information in this tab. This includes basic information such as orbital energies, overlaps, coefficients and Mulliken contributions and populations. If two interaction orbitals are selected (by using shift + click to select multiple objects at once), the details of the orbital interaction analysis are shown, including each term that went into calculating the orbital interaction or Pauli repulsive interaction ranking numbers.
 
+      **System**
 
-	     .. tab-item:: System
+      PyOrbb provides information about the general system, the complex molecule and each of the fragments.
 
-	     	PyOrbb provides
+      **Notices**
 
+      PyOrbb will give notice of any warnings or errors that it detected during the loading of the ``NH3_BH3.rkf`` file. These will show up here. Clicking on any exclamation marks in the diagram will also highlight the error/warning message associated with it.
 
-	     .. tab-item:: Notices
-
-	     	PyOrbb will give notice of any warnings or errors that it detected during the loading of the ``NH3_BH3.rkf`` file. These will show up here. Clicking on any exclamation marks in the diagram will also highlight the error/warning message associated with it.
-
-	     	.. seealso::
-	     		For an overview of all warnings and errors that PyOrbb detects, please see `this page <notices.html>`_.
-
+      .. seealso::
+		   For an overview of all warnings and errors that PyOrbb detects, please see `this page <notices.html>`_.
 
    .. tab-item:: Sliders
 
-      The main view renders your document in real time.
+      **Setting orbital interaction ranking thresholds**
+
+      The sliders are used to adjust the thresholds that PyOrbb uses to determine which interactions to include. The lower the threshold value is the more interactions are included in the main diagram.
+
+      .. seealso::
+         See Section 3.2 in the `main article <notices.html>`_ for more information about the orbital interaction ranking algorithm.
 
 
    .. tab-item:: Filters & Options
 
-      The main view renders your document in real time.
+      PyOrbb gives a multitude of options to tune, filter, or visualize the orbital interactions shown.
+
+      **Draw Orbitals**
+
+      When orbitals or connections are selected in the main diagram the Draw Orbitals button is activated. Clicking it will then show you a dropdown menu with several options for drawing the orbitals involved.
+
+      .. note::
+         To draw orbitals, PyOrbb needs access to the ``densf`` program provided by AMS. Set the path to your AMS installation using Preferences → Open Settings → Densf → AMS Application
+
+      **Filter**
+
+      When one or more orbitals have been selected the Filter button is activated. If clicked, PyOrbb will ensure that all interactions drawn in the diagram involve the selected orbitals. Clicking the Filter button again deactivates the filter.
+
+      **Energy Type**
+
+      PyOrbb will attempt to gather various FMO energy types when loading the results of a calculation. By default the regular energies are used (*i.e.* the FMO energies in density of the complex), but other options are also available if they are present in the provided file. PyOrbb will also always provide the option to use approximate effective energies.
+
+      .. seealso::
+         See Section S1 in the `supporting information <notices.html>`_ for more information about the FMO energy types and their uses.
+
+      **Orbitals**
+
+      One can also manually include or exclude specific orbitals from the interaction. This also includes the option to remove orbitals of specific spin-types or irreducible representations.
 
 
    .. tab-item:: Save Buttons
 
-      The main view renders your document in real time.
+      **Producing the main output of PyOrbb**
+
+      When you are happy with the diagram shown you can export the main orbital interaction diagram using the Save Figure button. PyOrbb also provides the option to generate a spreadsheet containing an overview of information about the calculation, mostly usefull for manual inspection of the data.
+
+
+Orbital Interaction Mechanisms
+==============================
+
+After loading the 
