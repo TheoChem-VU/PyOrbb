@@ -1,6 +1,6 @@
 import xlsxwriter as xl
-from tcutility import formula
-from tcutility.report import character
+from tcmu import formula
+from tcmu.report import character
 from scm import plams
 import numpy as np
 import pyorbb  # noqa
@@ -633,7 +633,7 @@ def to_excel(orbs: pyorbb.Orbitals, out_file: str = 'pyorbb.xlsx'):
 
 if __name__ == '__main__':
     import pyorbb  # noqa
-    from tcutility import timer
+    from tcmu import timer
     from time import perf_counter
     import matplotlib.pyplot as plt
 

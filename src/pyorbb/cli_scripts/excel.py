@@ -1,6 +1,6 @@
 """ Module containing functions for quickly submitting geometry optimization jobs via the command line """
 import argparse
-import pyfmo
+import pyorbb
 
 
 def create_subparser(parent_parser: argparse.ArgumentParser):
@@ -9,12 +9,15 @@ def create_subparser(parent_parser: argparse.ArgumentParser):
     subparser.add_argument("-o", "--output", 
                            type=str, 
                            help="Set the output Excel file to write to.", 
-                           default="pyfmo.xlsx")
+                           default=None)
     subparser.add_argument("rkf",
                            type=str,
                            help="The path to the `adf.rkf` file to summarize in an Excel file.")
 
 
 def main(args: argparse.Namespace):
-    orbs = pyfmo.Orbitals(args.rkf)
-    orbs.write_excel(args.output)
+    orbs = pyorbb.Orbitals(args.rkf)
+    out = args.output
+    if out is None:
+        out = args.rkf + '.xlsx'
+    orbs.write_excel(out)
