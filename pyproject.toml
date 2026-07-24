@@ -1,6 +1,16 @@
+[build-system]
+requires = ["setuptools", "wheel", "setuptools-git-versioning<2"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools-git-versioning]
+enabled = true
+template = "{tag}"
+dev_template = "{tag}"
+dirty_template = "{tag}"
+
 [project]
 name = "pyorbb"
-version = "0.3.1"
+# version = "%REPLACE_VERSION"
 authors = [
   { name="Yuman Hordijk", email="y.hordijk@vu.nl"},
   { name="Steven E. Beutick", email="s.e.beutick@vu.nl"},
@@ -19,15 +29,7 @@ classifiers = [
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent"]
 
-[build-system]
-requires = ["setuptools", "wheel", "setuptools-git-versioning<2"]
-build-backend = "setuptools.build_meta"
-
-[tool.setuptools-git-versioning]
-enabled = true
-template = "{tag}"
-dev_template = "{tag}"
-dirty_template = "{tag}"
+dynamic = ["version"]
 
 [dependency-groups]
 docs = [
@@ -44,12 +46,11 @@ docs = [
 [project.scripts]
 pyorbb = "pyorbb.cli_scripts.pyorbbparser:main"
 
-
 # content below this line added by briefcase convert
 # This project was generated with 0.3.25 using template: https://github.com/beeware/briefcase-template @ v0.3.25
 [tool.briefcase]
 project_name = "PyOrbb"
-version= "0.9.0"
+version= "%REPLACE_VERSION"
 bundle = "nl.theochem"
 url = "https://theochem.nl/pyorbb"
 license.file = "LICENSE"
