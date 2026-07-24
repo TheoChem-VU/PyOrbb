@@ -1867,14 +1867,7 @@ class AnalysisWindow(QtWidgets.QWidget):
         self.slider_OI.setSliderPosition(ceil(np.log10(next_val) * slider_resolution))
 
     def get_sheets_save_file(self):
-        print('hello')
-        d = os.path.join(os.path.split(self.orbs.kfpath)[0], 'pyorbb.xlsx')
-        filename, v = QtWidgets.QFileDialog.getSaveFileName(None, "Save File")
-        
-        print('after', repr(filename), repr(v))
-        if not filename.strip():
-            return
-
+        filename, v = QtWidgets.QFileDialog.getSaveFileName(self.parent, "Save File", self.orbs.kfpath + '.xlsx')
         self.orbs.write_excel(filename)
         os.system(f'open {filename}')
 
