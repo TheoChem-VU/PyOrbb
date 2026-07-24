@@ -15,6 +15,7 @@ class SettingSelectionWidget(QtWidgets.QFrame):
     def reset(self):
         self.setValue(self.default)
 
+
 class LineEditFileDialogWidget(QtWidgets.QLineEdit):
     def __init__(self, parent=None, filetype="filename", **filedialog_settings):
         super(LineEditFileDialogWidget, self).__init__(parent)
@@ -260,6 +261,7 @@ class SettingsTab(QtWidgets.QWidget):
         self.set_funcs = {}
         self.set_default_funcs = {}
         self.reset_funcs = {}
+        self._reset_btns = []
 
     def __enter__(self):
         return self
@@ -267,6 +269,13 @@ class SettingsTab(QtWidgets.QWidget):
     def __exit__(self, *args):
         self.layout.addStretch()        
         pass
+
+    def update_icons(self):
+        for btn in self._reset_btns:
+            if QtWidgets.QApplication.instance().isDarkMode:
+                btn.setIcon(QtWidgets.QApplication.instance()._ICONS['reset_dark'])
+            else:
+                btn.setIcon(QtWidgets.QApplication.instance()._ICONS['reset'])
 
     def _add_generic_setting(self, name, variable_name, setting_widget, default):
         reset_btn = QtWidgets.QPushButton(self)
@@ -277,6 +286,7 @@ class SettingsTab(QtWidgets.QWidget):
             reset_btn.setIcon(QtWidgets.QApplication.instance()._ICONS['reset_dark'])
         else:
             reset_btn.setIcon(QtWidgets.QApplication.instance()._ICONS['reset'])
+        self._reset_btns.append(reset_btn)
 
         setting_widget.setDefault(default)
         # shadow.apply(setting_widget)
@@ -391,6 +401,10 @@ class SettingsSection(QtWidgets.QWidget):
     def __exit__(self, *args):
         self.build()
 
+    def update_icons(self):
+        for tab in self.tabs.values():
+            tab.update_icons()
+
     def add_tab(self, name):
         self.tabs[name] = SettingsTab(self)
         return self.tabs[name]
@@ -486,6 +500,10 @@ class SettingsDialog(QtWidgets.QDialog):
         buttons_layout.addWidget(cancel_button)
         buttons_layout.addWidget(reset_button)
         self.layout.addWidget(buttons_frame)
+
+    def update_icons(self):
+        for section in self.sections.values():
+            section.update_icons()
 
     def add_section(self, name):
         self.sections[name] = SettingsSection(self)
