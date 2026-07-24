@@ -13,14 +13,12 @@ class Spoilers(QtWidgets.QScrollArea):
     _background_color_prop = QtCore.Property(QtGui.QColor, _readBG, _setBG)
 
     def __init__(self, parent=None):
-        # making widget resizable
         super().__init__(parent=parent)
         self.parent = parent
         self.setWidgetResizable(True)
         self.horizontalScrollBar().setEnabled(False)
         self.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff);
         self.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff);
-        # making qwidget object
         content = QtWidgets.QWidget(self)
         self.setWidget(content)
         self.spoilers = []
@@ -59,19 +57,22 @@ class Spoilers(QtWidgets.QScrollArea):
 
     def empty(self):
         for i in range(self.layout.count()):
-            widget = self.layout.takeAt(0)
-
-            if widget is None:
-                break
-
-            widget = widget.widget()
-            if widget is None:
-                break
-
-            widget.setParent(None)
-            widget.destroy()
-
+            self.remove_spoiler(0)
         self.layout.addStretch(1)
+
+    def remove_spoiler(self, idx: int):
+        widget = self.layout.takeAt(idx)
+
+        if widget is None:
+            return
+
+        widget = widget.widget()
+        if widget is None:
+            return
+
+        self.spoilers.remove(widget)
+        widget.setParent(None)
+        widget.destroy()
 
     def __len__(self):
         return len(self.spoilers)
