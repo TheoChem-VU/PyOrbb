@@ -396,12 +396,9 @@ class MplCanvas(FigureCanvas):
                 scene.draw_text(str(orb[0]) + ' * ' + str(orb[1]))
 
     def draw_molecule(self, mol=None):
-        print('before loaded tcviewer')
         import tcviewer
-        print('loaded tcviewer')
         # get or make a new viewer
         if self.parent.tcviewer_screen is None or self.parent.tcviewer_screen.isclosed:
-            print('making a screen')
             self.parent.tcviewer_screen = tcviewer.screen._ScreenWindow()
             self.parent.tcviewer_screen.setWindowIcon(self.parent.parent._ICONS['pyorbb'])
             self.parent.tcviewer_screen.setWindowTitle('PyOrbb Viewer')
@@ -410,9 +407,7 @@ class MplCanvas(FigureCanvas):
             app = QtWidgets.QApplication.instance()
             app.windows.append(self.parent.tcviewer_screen)
 
-        print('made a screen')
         with self.parent.tcviewer_screen.add_molscene() as scene:
-            print('drawing mol')
             scene.draw_molecule(mol)
 
     def _set_orbital_info_box(self):
@@ -1803,13 +1798,10 @@ class AnalysisWindow(QtWidgets.QWidget):
         label.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
         layout.addWidget(label, row, 1, 1, 1)
 
-        # print(self.orbs.data['calc_info']['fmo_spinpolarizations'])
         frag_spin_pols = self.orbs.data['calc_info']['fmo_spinpolarizations'][frag]
-        # print(frag_spin_pols)
         total_spin_pols = 0
         for irrep, spin_pols in frag_spin_pols.items():
             total_spin_pols += spin_pols[0] - spin_pols[1]
-            # print(irrep, spin_pols)
 
             row += 1
             layout.addWidget(QtWidgets.QLabel(f'<b>Spin-Polarization ({pyorbb.translate_irrep_label(irrep, mode="html")})</b>'), row, 0, 1, 1)
