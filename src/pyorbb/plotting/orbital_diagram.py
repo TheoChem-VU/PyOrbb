@@ -44,7 +44,7 @@ def anchored_text(ax, x, y, text, offset_axes=(0.0, 0.1), **kwargs):
 
 
 def arrow_tail_with_axes_offset(ax, anchor, displacement_axes=(0.0, 0.1), anchor_axes=(0.0, 0.0),
-                                arrowstyle="<|-", **kwargs):
+                                arrowstyle="<|-", alpha=1, **kwargs):
     """
     Draw an arrow whose tail is fixed to `anchor` in data coords,
     but whose head is offset from the tail by `displacement_axes` measured in
@@ -58,8 +58,7 @@ def arrow_tail_with_axes_offset(ax, anchor, displacement_axes=(0.0, 0.1), anchor
     patch = mpatches.ConnectionPatch(
         anchor, (0, 0), 
         coordsA=ax.transData, coordsB=ax.transData,
-        arrowstyle=arrowstyle, shrinkA=0, shrinkB=0, 
-        **kwargs
+        arrowstyle=arrowstyle, shrinkA=0, shrinkB=0, **kwargs
     )
     ax.add_patch(patch)
 
@@ -82,6 +81,9 @@ def arrow_tail_with_axes_offset(ax, anchor, displacement_axes=(0.0, 0.1), anchor
 
     # Do an initial update to set correct head position now
     update_patch()
+
+    patch.orig_alpha = alpha
+    patch.set_alpha(alpha)
 
     return patch
 
