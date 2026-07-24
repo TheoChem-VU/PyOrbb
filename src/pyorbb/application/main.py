@@ -2061,6 +2061,7 @@ class PyOrbbWindow(QtWidgets.QMainWindow):
     def set_style(self):
         shadow.update_style()
         for window in self.windows:
+            window.update_icons()
             window.recent_publish_carousel.update_background_color()
             if window._loaded_analysis:
                 window.orbital_info_box.themechange()
