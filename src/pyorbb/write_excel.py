@@ -298,7 +298,7 @@ def to_excel(orbs: pyorbb.Orbitals, out_file: str = 'pyorbb.xlsx'):
 
         for i, row in enumerate(rows):
             for j, val in enumerate(row):
-                if isinstance(val, float):
+                if isinstance(val, (float, int)):
                     fmt = col_fmts.get(j, float_fmt)
                     sheet.write(i + 3, j + 1, val, fmt)
                     val = str(round(val, 5))
