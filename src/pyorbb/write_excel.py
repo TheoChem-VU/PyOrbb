@@ -174,8 +174,6 @@ def to_excel(orbs: pyorbb.Orbitals, out_file: str = 'pyorbb.xlsx'):
             worksheet.write(2, 3+i, name, bottom_border_fmt)
 
         for i, orby in enumerate(orbsy):
-            # print(i, orby)
-            # print(column_widths[i])
             name = orby.name
             if isinstance(orby, pyorbb.orbitals.objects.FMO) and not orbs.data['calc_info']['used_regions']:
                 name = f'{orby.fragment}({orby.name})'
