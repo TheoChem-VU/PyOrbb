@@ -1873,7 +1873,7 @@ class AnalysisWindow(QtWidgets.QWidget):
 
     def get_figure_save_file(self):
         d = os.path.join(os.path.split(self.orbs.kfpath)[0], 'pyorbb.png')
-        filename, _ = QtWidgets.QFileDialog.getSaveFileName(self, "Save File", dir=d, filter="PNG file (*.png);;Any file (*)")
+        filename, _ = QtWidgets.QFileDialog.getSaveFileName(self.parent, "Save File", dir=d, filter="PNG file (*.png);;Any file (*)")
         
         if not filename.strip():
             return
