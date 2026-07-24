@@ -537,6 +537,8 @@ class OrbitalSelectionDialog(QtWidgets.QDialog):
         self.tab_stor[new_name] = self.tab_stor.pop(old_name)
         if isinstance(self.tab_stor[new_name].state_key, str):
             self.tab_stor[new_name].state_key = new_name
+            for child in self.tab_stor[new_name].children():
+                child.state_key = new_name
             self.state.rename(old_name, new_name)
 
     def reset(self, tab=None):
