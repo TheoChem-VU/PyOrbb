@@ -2056,7 +2056,7 @@ class PyOrbbWindow(QtWidgets.QMainWindow):
         else:
             self.theme_switcher.set_auto_theme()
         self.changeEvent(QtCore.QEvent(QtCore.QEvent.Type.ThemeChange))
-        self.set_style()
+        # self.set_style()
 
     def set_style(self):
         shadow.update_style()
