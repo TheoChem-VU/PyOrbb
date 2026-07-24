@@ -1228,6 +1228,37 @@ class AnalysisWindow(QtWidgets.QWidget):
 
         ax.clear()
         ax.yaxis.set_major_formatter('{x: 3.0f}')
+
+        idx_to_delete = -1
+        for i, notice in enumerate(self.notice_tab.spoilers):
+            if notice.title == 'Incorrect FMO Occupations':
+                idx_to_delete = i
+                self.notice_tab.remove_spoiler(idx_to_delete)
+                break
+        
+        # remove any orbs that have a gid related to opening a spoiler for the sanitization step
+        to_delete = []
+        for (orb, gid) in self.plot._add_warning_orbs:
+            if gid.startswith(f'OPENSPOILERS_{idx_to_delete}'):
+                to_delete.append((orb, gid))
+
+        for d in to_delete:
+            self.plot._add_warning_orbs.remove(d)
+
+        sanitization_error_fmos = []
+        for fmo in self.main_mix.fmos:
+            if hasattr(fmo, '_display_occupation'):
+                sanitization_error_fmos.append(fmo)
+
+        if len(sanitization_error_fmos) > 0:
+            text = f'We detected some orbital interactions\nwith mismatched MO and FMO occupations.\nWe changed the occupations as follows:\n\n'
+            max_len = max(len(str(fmo)) for fmo in sanitization_error_fmos)
+            for fmo in sanitization_error_fmos:
+                text += f'    {str(fmo).rjust(max_len)}: {fmo.occupation:3.1f}->{fmo._display_occupation:3.1f} electrons\n'
+            text += '\nCheck the Mulliken gross populations\nand the electronic configuration!'
+
+            self.add_warning_notice('Incorrect FMO Occupations', text, sanitization_error_fmos)
+
         self.main_mix.draw_diagram(ax=ax, ylim=ylim, highlighted_orbitals=self.filtered_orbitals, warning_orbs=self.plot._add_warning_orbs, use_darkmode=False, **kwargs)
         if self.new_tick_labels is not None:
             self.plot.axes.set_xticklabels(self.new_tick_labels)
