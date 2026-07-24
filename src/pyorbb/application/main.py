@@ -2103,11 +2103,13 @@ class PyOrbbWindow(QtWidgets.QMainWindow):
                 # window._set_orbital_filter_button_icon()
             else:
                 window.update_icons()
-
+        self.settings_dialog.update_icons()
         if self.isDarkMode:
+            self.theme_switcher.set_dark_theme()
             with open(os.path.split(__file__)[0] + '/style_dark.qss') as style:
                 self.setStyleSheet(style.read())
         else:
+            self.theme_switcher.set_light_theme()
             with open(os.path.split(__file__)[0] + '/style.qss') as style:
                 self.setStyleSheet(style.read())
 
