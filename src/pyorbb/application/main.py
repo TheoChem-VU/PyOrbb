@@ -964,10 +964,10 @@ Rpr
             faded_artists.append(artist)
 
         for artist in faded_artists:
-            artist.set_color('white')
-            artist.set_alpha(1)
-            self.axes.draw_artist(artist)
-            self.fig.canvas.draw_idle()
+            # artist.set_color('white')
+            # artist.set_alpha(1)
+            # self.axes.draw_artist(artist)
+            # self.fig.canvas.draw_idle()
 
             artist.set_color(artist.orig_color)
             artist.set_alpha(0.075)
@@ -981,10 +981,10 @@ Rpr
             if artist in faded_artists:
                 continue
 
-            artist.set_color('white')
-            artist.set_alpha(1)
-            self.axes.draw_artist(artist)
-            self.fig.canvas.draw_idle()
+            # artist.set_color('white')
+            # artist.set_alpha(1)
+            # self.axes.draw_artist(artist)
+            # self.fig.canvas.draw_idle()
 
             artist.set_color(artist.orig_color)
             artist.set_alpha(artist.orig_alpha)
