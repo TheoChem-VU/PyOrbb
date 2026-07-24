@@ -12,6 +12,7 @@ ensure_list = lambda x: [x] if not isinstance(x, (list, tuple, set)) else list(x
 
 INTERACTION_COLORS = {'OI': '#00FF00', 'PR': '#FF0000', 'Sanitization': '#FF00FF', 'Multiple': '#000000'}
 
+
 class Mixer2:
     def __init__(self, orbs: pyorbb.Orbitals or str, pr_min_thresh=1e-3, oi_min_thresh=1e-7, oi_max_N=50, pr_max_N=50):
         self.orbs = orbs
@@ -157,7 +158,7 @@ class Mixer2:
 
     def get_oi_default_threshold(self, fraction=0.7):
         '''
-        Get a threshold that makes sure that at least 80% of the OI interactions are included.
+        Get a threshold that makes sure that at least 70% of the OI interactions are included.
         '''
         vals = list(sorted([abs(val) for val in self.mixes['OI'][self.energy_type].values()]))[::-1]
         total = sum(vals)
@@ -165,32 +166,22 @@ class Mixer2:
         cumsum = np.cumsum(fracs)
         idx = np.where(cumsum >= fraction)[0][0]
 
-        plt.figure()
-        plt.plot(cumsum*100)
-        plt.xlabel('Number of Interactions')
-        plt.ylabel('CumSum (%)')
-        plt.plot([idx, idx], [0, 100])
-        plt.show()
-
         return vals[idx]
 
     def get_pr_default_threshold(self, fraction=0.1):
         '''
-        Get a threshold that makes sure that at least 80% of the PR interactions are included.
+        Get a threshold that makes sure that at least 10% of the PR interactions are included.
         '''
         vals = list(sorted([abs(val) for val in self.mixes['PR'][self.energy_type].values()]))[::-1]
         total = sum(vals)
         fracs = [val/total for val in vals]
         cumsum = np.cumsum(fracs)
         idx = np.where(cumsum >= fraction)[0][0]
-        print(idx, vals)
-        plt.figure()
-        plt.plot(cumsum*100)
-        plt.xlabel('Number of Interactions')
-        plt.ylabel('CumSum (%)')
-        plt.plot([idx, idx], [0, 100])
-        plt.show()
-        return max(vals[idx], vals[2])
+
+        if len(vals) > 2:
+            return max(vals[idx], vals[2])
+        return vals[idx]
+
     def get_oi_fraction(self, threshold):
         '''
         Get the fraction of the total OI captured by a specific threshold.
