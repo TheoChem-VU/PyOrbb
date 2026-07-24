@@ -360,25 +360,41 @@ def to_excel(orbs: pyorbb.Orbitals, out_file: str = 'pyorbb.xlsx'):
         mixer.set_energy_type(energy_type)
         rows = []
         total_strength = sum(mixer.mixes['OI'][energy_type].values())
+        frac_cumsum = 0
         for mix, strength in mixer.mixes['OI'][energy_type].items():
-            rows.append((str(mix.fmos[0]),
+            frac = strength/total_strength
+            frac_cumsum += frac
+            rows.append(
+                    (str(mix.fmos[0]),
+                     mix.fmos[0].occupation,
+                     mix.fmos[0].gross_population,
                      str(mix.fmos[1]),
+                     mix.fmos[1].occupation,
+                     mix.fmos[1].gross_population,
                      str(mix.mos[0]),
                      str(mix.mos[1]),
-                     strength, 
-                     strength/total_strength, 
                      abs(mix.fmos[0] @ mix.fmos[1]), 
-                     abs(getattr(mix.fmos[0], mix.energy_type) - getattr(mix.fmos[1], mix.energy_type)),
-                     abs(mix.fmos[0].mulliken_contribution(mix.mos[0])),
-                     abs(mix.fmos[1].mulliken_contribution(mix.mos[0])),
-                     abs(mix.fmos[0].mulliken_contribution(mix.mos[1])),
-                     abs(mix.fmos[1].mulliken_contribution(mix.mos[1]))))
+                     abs(getattr(mix.fmos[0], energy_type) - getattr(mix.fmos[1], energy_type)),
+                     strength, 
+                     frac,
+                     frac_cumsum,
+                     abs(mix.fmos[0].mulliken_contribution(mix.mos[0], normalized=True)),
+                     abs(mix.fmos[1].mulliken_contribution(mix.mos[0], normalized=True)),
+                     abs(mix.fmos[0].mulliken_contribution(mix.mos[1], normalized=True)),
+                     abs(mix.fmos[1].mulliken_contribution(mix.mos[1], normalized=True))))
 
         energy_label = {'energy': 'regular', 'site_energy': 'effective', 'approx_site_energy': 'effective (approx.)'}[energy_type]
         energy_label_short = {'energy': 'reg.', 'site_energy': 'eff.', 'approx_site_energy': 'appr.'}[energy_type]
         make_table_sheet(f'Rᴼᴵ ({energy_label_short})', f'Orbital Interactions ({energy_label} orbital energies)', rows, 
-                header=['FMO1', 'FMO2', 'MO1', 'MO2', 'Ranking', 'Frac.*', 'S', 'Δε (eV)**', 'Contr. FMO1->MO1', 'Contr. FMO2->MO1', 'Contr. FMO1->MO2', 'Contr. FMO2->MO2'],
-                col_fmts={4: table_val_sci_fmt, 5: table_val_pctg_fmt},
+                header=['ψᵢ', 'oᵢ', 'pᵢ', 'ψⱼ', 'oⱼ', 'pⱼ', 'Ψₖ', 'Ψₗ', 'S', 'Δε (eV)**', 'Rᴼᴵ', 'Frac.*', '∑Frac.', 'μᵢₖ', 'μⱼₖ', 'μᵢₗ', 'μⱼₗ'],
+                col_fmts={
+                    10: table_val_sci_fmt, 
+                    11: table_val_pctg_fmt, 
+                    12: table_val_pctg_fmt, 
+                    13: table_val_pctg_fmt, 
+                    14: table_val_pctg_fmt, 
+                    15: table_val_pctg_fmt, 
+                    16: table_val_pctg_fmt},
                 asterisks=[
                     '* Frac. represents the relative amount of orbital interaction explained by this interaction',
                     f'** FMO energy type: {energy_label}'], tab_color='ACF3AE')
@@ -386,22 +402,34 @@ def to_excel(orbs: pyorbb.Orbitals, out_file: str = 'pyorbb.xlsx'):
     # write information about the mixing
     rows = []
     total_strength = sum(mixer.mixes['PR']['energy'].values())
+    frac_cumsum = 0
     for mix, strength in mixer.mixes['PR']['energy'].items():
+        frac = strength/total_strength
+        frac_cumsum += frac
         rows.append((str(mix.fmos[0]),
+                 mix.fmos[0].occupation,
                  str(mix.fmos[1]),
+                 mix.fmos[1].occupation,
                  str(mix.mos[0]),
                  str(mix.mos[1]),
-                 strength, 
-                 strength/total_strength,
                  abs(mix.fmos[0] @ mix.fmos[1]),
-                 abs(mix.fmos[0].mulliken_contribution(mix.mos[0])),
-                 abs(mix.fmos[1].mulliken_contribution(mix.mos[0])),
-                 abs(mix.fmos[0].mulliken_contribution(mix.mos[1])),
-                 abs(mix.fmos[1].mulliken_contribution(mix.mos[1]))))
+                 strength, 
+                 frac,
+                 frac_cumsum,
+                 abs(mix.fmos[0].mulliken_contribution(mix.mos[0], normalized=True)),
+                 abs(mix.fmos[1].mulliken_contribution(mix.mos[0], normalized=True)),
+                 abs(mix.fmos[0].mulliken_contribution(mix.mos[1], normalized=True)),
+                 abs(mix.fmos[1].mulliken_contribution(mix.mos[1], normalized=True))))
 
     make_table_sheet('Rᴾᴿ', 'Pauli Repulsive Interactions', rows, 
-            header=['FMO1', 'FMO2', 'MO1', 'MO2', 'Rᴾᴿ', 'Frac.*', 'S', 'FMO1->MO1', 'FMO2->MO1', 'FMO1->MO2', 'FMO2->MO2'],
-            col_fmts={4: table_val_sci_fmt, 5: table_val_pctg_fmt},
+            header=['ψᵢ', 'oᵢ', 'ψⱼ', 'oⱼ', 'Ψₖ', 'Ψₗ', 'S', 'Rᴾᴿ', 'Frac.*', '∑Frac.', 'μᵢₖ', 'μⱼₖ', 'μᵢₗ', 'μⱼₗ'],
+            col_fmts={
+                8: table_val_pctg_fmt, 
+                9: table_val_pctg_fmt, 
+                10: table_val_pctg_fmt, 
+                11: table_val_pctg_fmt, 
+                12: table_val_pctg_fmt, 
+                13: table_val_pctg_fmt},
             asterisks=['* Frac. represents the relative amount of Pauli repulsion explained by this interaction'], tab_color='FA6B84')
 
     has_kinetic = False
@@ -630,49 +658,8 @@ def to_excel(orbs: pyorbb.Orbitals, out_file: str = 'pyorbb.xlsx'):
 
 
 if __name__ == '__main__':
-    import pyorbb  # noqa
-    from tcmu import timer
-    from time import perf_counter
-    import matplotlib.pyplot as plt
+    import pyorbb
+    import glob
 
-    norbs = []
-    load_time_new = []
-    load_time_old = []
-    # for alkyl in ['C1', 'C2', 'C3', 'C4', 'C5']:
-    for alkyl in ['C1']:
-        load_time_new.append([])
-        load_time_old.append([])
-        for _ in range(1):
-            with timer.timer('new_orbitals.load_rkf'):
-                start = perf_counter()
-                orbs = pyorbb.orbitals.objects.Orbitals(f'../../calculations/PyOrbb_testing_2022/Alkyl/{alkyl}.rkf')
-                orbs.write_excel2()
-                load_time_new[-1].append(perf_counter() - start)
-                norbs.append(len(orbs.mos))
-            # with timer.timer('new_orbitals.write_excel'):
-            #     orbs.write_excel2()
-
-            # with timer.timer('old_orbitals.load_rkf'):
-            #     start = perf_counter()
-            #     orbs_old = pyorbb.orbitals.Orbitals(f'../../calculations/PyOrb_testing_2022/Alkyl/{alkyl}/EDA.results/adf.rkf')
-            #     _contribution_mat(orbs_old, orbs_old.fmos.sfos, orbs_old.mos.mos)
-            #     orbs_old.write_excel()
-            #     load_time_old[-1].append(perf_counter() - start)
-            # # with timer.timer('old_orbitals.mulliken_analysis'):
-            # #     _contribution_mat(orbs_old, orbs_old.sfos.sfos, orbs_old.mos.mos)
-            # # with timer.timer('old_orbitals.write_excel'):
-            #     orbs_old.write_excel()
-
-    print(norbs, load_time_new)
-    plt.scatter(norbs, np.array(load_time_new))
-    plt.scatter(norbs, np.array(load_time_old))
-
-    plt.title('Comparison Old and New method (incl. writing excel file)')
-    plt.plot(np.unique(norbs), [np.mean(times) for times in load_time_new], label='New')
-    plt.plot(np.unique(norbs), [np.mean(times) for times in load_time_old], label='Old')
-    plt.yscale('log')
-    plt.xlabel('Nº MOs')
-    plt.ylabel('Loading time (s)')
-
-    plt.legend()
-    plt.show()
+    for rkf in glob.glob('../../examples/ExamplesFromPaper/*/*.rkf', recursive=True):
+        to_excel(pyorbb.Orbitals(rkf), f'{rkf}.xlsx')
