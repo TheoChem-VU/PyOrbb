@@ -13,18 +13,18 @@ try:
 
 	    def set_dark_theme(self):
 	        NSApp = NSApplication.sharedApplication()
-	        dark_appearance = NSAppearance.appearanceNamed_(self.DARK)
-	        NSApp.setAppearance_(dark_appearance)
+	        appearance = NSAppearance.appearanceNamed_(self.DARK)
+	        NSApp.setAppearance_(appearance)
 
 	    def set_light_theme(self):
 	        NSApp = NSApplication.sharedApplication()
-	        dark_appearance = NSAppearance.appearanceNamed_(self.LIGHT)
-	        NSApp.setAppearance_(dark_appearance)
+	        appearance = NSAppearance.appearanceNamed_(self.LIGHT)
+	        NSApp.setAppearance_(appearance)
 
 	    def set_auto_theme(self):
 	        NSApp = NSApplication.sharedApplication()
-	        dark_appearance = NSAppearance.appearanceNamed_(None)
-	        NSApp.setAppearance_(dark_appearance)
+	        appearance = NSAppearance.appearanceNamed_(None)
+	        NSApp.setAppearance_(appearance)
 
 except:
 	# on other platforms this is not possible yet
