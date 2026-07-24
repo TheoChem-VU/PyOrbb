@@ -191,6 +191,23 @@ class Mixer2:
         plt.plot([idx, idx], [0, 100])
         plt.show()
         return max(vals[idx], vals[2])
+    def get_oi_fraction(self, threshold):
+        '''
+        Get the fraction of the total OI captured by a specific threshold.
+        '''
+        vals = list(sorted([abs(val) for val in self.mixes['OI'][self.energy_type].values()]))
+        total = sum(vals)
+        fracs = [val/total for val in vals if val >= threshold]
+        return sum(fracs)
+
+    def get_pr_fraction(self, threshold):
+        '''
+        Get the fraction of the total OI captured by a specific threshold.
+        '''
+        vals = list(sorted([abs(val) for val in self.mixes['PR'][self.energy_type].values()]))
+        total = sum(vals)
+        fracs = [val/total for val in vals if val >= threshold]
+        return sum(fracs)
 
     def set_pr_threshold(self, thresh):
         self.pr_threshold = thresh
