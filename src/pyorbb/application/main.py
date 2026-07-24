@@ -1420,7 +1420,7 @@ class AnalysisWindow(QtWidgets.QWidget):
         self.OI_is_empty_label.setSizePolicy(sp_retain)
 
         self.cbox_OI = QtWidgets.QCheckBox('Show OI')
-        self.cbox_OI.setStyleSheet('QLabel{ font: 12pt}')
+        # self.cbox_OI.setStyleSheet('QLabel{ font: 12pt}')
         self.cbox_OI.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.cbox_OI.setChecked(True)
         slider_layout.addWidget(self.cbox_OI, 0, 1)
