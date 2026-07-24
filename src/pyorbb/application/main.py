@@ -1299,6 +1299,14 @@ class AnalysisWindow(QtWidgets.QWidget):
 
         # self.orbital_filter_button.setEnabled(len(self.plot._selected_orbitals) > 0 or self.orbital_filter_button._is_checked)
 
+    def _set_slider_OI_text(self, value):
+        thresh = 10**(value/slider_resolution)
+        self.label_value_OI.setText(f'{thresh:.2E} ({self.main_mix.get_oi_fraction(thresh): >6.1%})')
+
+    def _set_slider_PR_text(self, value):
+        thresh = value/slider_resolution/1000
+        self.label_value_PR.setText(f'{thresh:.4f}   ({self.main_mix.get_pr_fraction(thresh): >6.1%})')
+
     def load_analysis(self, file):
         try:
             self.orbs = pyorbb.Orbitals(file)
