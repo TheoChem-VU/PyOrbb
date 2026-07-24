@@ -47,8 +47,16 @@ class FadeWidget(QtWidgets.QWidget):
 
 @tcmu.cache_file("cited_by.json", datetime.timedelta(weeks=1))
 def _get_citedby_data(url: str):
-    headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.142 Safari/537.36"}
-    res = requests.get(url, headers=headers, allow_redirects=True).content
+    headers = {
+    "User-Agent": (
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+        "AppleWebKit/537.36 (KHTML, like Gecko) "
+        "Chrome/126.0 Safari/537.36"
+        ),
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+    "Accept-Language": "en-US,en;q=0.9",
+        }
+    res = requests.get(url, headers=headers, allow_redirects=True, timeout=1.5).content
     # with open('/Users/yumanhordijk/Desktop/test.html') as inp:
     #     res = inp.read()
     soup = BeautifulSoup(res, 'html.parser')
@@ -115,8 +123,14 @@ def _get_citedby_data(url: str):
 
     return citation_data
 
-# url = "https://scholar.google.com/scholar?hl=nl&num=20&as_sdt=2005&sciodt=0,5&cites=13608188881403064766&scipsc=&q=&scisbd=1"
-# _get_citedby_data(url)
+
+
+# # url = "http://webcache.googleusercontent.com/search?q=cache:https://scholar.google.com/scholar?hl=en&num=20&as_sdt=2005&sciodt=0,5&cites=13608188881403064766&scipsc=&q=&scisbd=1"
+# url = "https://www.scopus.com/pages/publications/85208784619#tab=citedBy"
+# print(_get_citedby_data(url))
+# # print(_get_citedby_data(url))
+# # print(_get_citedby_data(url))
+# # print(_get_citedby_data(url))
 # exit()
 
 class PublicationWidget(QtWidgets.QFrame):
@@ -302,7 +316,7 @@ class PublicationCarousel(Carousel):
         super().__init__(parent=parent, title='<b>Recent Publications Citing PyOrbb</b>')
 
     def setup(self):
-        url = "https://scholar.google.com/scholar?hl=nl&as_sdt=2005&sciodt=0,5&cites=8000893946037734095&scipsc=&q=&scisbd=1"
+        url = "https://scholar.google.com/scholar?hl=en&as_sdt=2005&sciodt=0,5&cites=8000893946037734095&scipsc=&q=&scisbd=1"
         # url = "bla"
         # try to get data
         try:
