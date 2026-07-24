@@ -422,6 +422,24 @@ class Mixer2:
                     for i in range(int(N_virt_FMO_missing)):
                         self.main_mix.add_fmo(candidate_virt_fmos[i][0])
 
+        [delattr(fmo, '_display_occupation') for fmo in self.main_mix.fmos if hasattr(fmo, '_display_occupation')]
+        for mix in self.split():
+            # check if there are too many electrons in the mos compared to the fmos
+            total_mo_occ = sum(mo.occupation for mo in mix.mos)
+            total_fmo_occ = sum(fmo.occupation for fmo in mix.fmos)
+            diff = total_mo_occ - total_fmo_occ
+            # if there are more electrons in the mos we add an electron to the FMOs
+            if diff > 0:
+                while diff > 0:
+                    max_fmo = max([fmo for fmo in mix.fmos if not hasattr(fmo, '_display_occupation')], key=lambda fmo: fmo.gross_population)
+                    max_fmo._display_occupation = min(diff, max_pop)
+                    diff -= max_fmo._display_occupation
+            else:
+                while diff < 0:
+                    min_fmo = min([fmo for fmo in mix.fmos if not hasattr(fmo, '_display_occupation')], key=lambda fmo: fmo.gross_population)
+                    min_fmo._display_occupation = min_fmo.occupation - min(min_fmo.occupation, abs(diff))
+                    # print(min_fmo, min_fmo._display_occupation, to_remove, diff)
+                    diff += min(min_fmo.occupation, abs(diff))
 
     def split(self):
         return self.main_mix.split()
