@@ -65,20 +65,20 @@ PyOrbb will warn you if it could not detect effective energies in the calculatio
 	For more information on the use of the energy types, see the PyOrbb main article and Supporting Information Section S1.
 
 
-Mulliken Stability Score
+Mulliken Artifacts
 ------------------------
 
-Mulliken analysis is known to be sensitive to systems with large orbital overlaps, and especially when large basis sets are employed. In those systems artifacts may appear leading to negative Mulliken gross populations and negative Mulliken contributions. PyOrbb identifies orbitals that are likely suffering from these artifacts by calculating a score for each 
+Mulliken analysis is known to be sensitive to systems with large orbital overlaps, and especially when large basis sets are employed. In those systems artifacts may appear in the form of negative Mulliken contributions. These negative contributions may lead to negative or larger than physically allowed Mulliken gross populations, and also affect the reliability of the approximate effective energies. PyOrbb identifies orbitals that are likely suffering from these artifacts by summing over the absolute contributions from or to the orbital.
 
-PyOrbb calculates a score to measure the likelihood that these artifacts appeared in the provided calculation.
+Given the Mulliken contribution matrix (:math:`M \in \mathbb{R}^{N\times N}`) of the system and an FMO :math:`\psi_i` we give a warning if 
 
-Given the Mulliken contribution matrix (:math:`C \in \mathbb{R}^{N\times N}`) of the system we calculate the stability score :math:`S` as:
+:math:`\sum_{l=1}^{N} |M_{il}| > 1.3`.
 
-:math:`S = \frac{1}{N} \sum_{i=1}^{N} \sum_{j=1}^{N} |C_{ij}|`.
+For an MO :math:`\Psi_k` we give a warning if
 
-By definition of the Mulliken analysis, the sum over the contribution matrix is exactly equal to :math:`N`. Therefore, in the ideal case that all contributions :math:`0 >= C_{ij} >= 1` the score :math:`S = 1`. Also due to the definition,any negative Mulliken contributions must be compensated by larger positive contributions and the sum over the absolute elements of the contribution matrix will be larger than :math:`N`. In that case the score :math:`S > 1` and we therefore detected artifacts in the Mulliken analysis. PyOrbb will give a warning when the score :math:`S >= 1.05`.
+:math:`\sum_{j=1}^{N} |M_{jk}| > 1.3`.
 
-If PyOrbb gives a warning about the Mulliken analysis it will also provide the orbitals that are most affected. 
+The warning notice in the PyOrbb GUI will contain an overview of the affected orbitals. 
 
 
 Fractional Occupations
