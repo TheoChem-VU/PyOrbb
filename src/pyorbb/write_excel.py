@@ -282,7 +282,7 @@ def to_excel(orbs: pyorbb.Orbitals, out_file: str = 'pyorbb.xlsx'):
         return len(rows) + len(asterisks) + start_row + 1, start_column + len(rows[0]) - 1
 
 
-    def make_table_sheet(sheet_name, sheet_title, rows, header, col_fmts={}, tab_color=None, asterisks=[]):
+    def make_table_sheet(sheet_name, sheet_title, rows, header, col_fmts={}, tab_color=None, asterisks=[], tooltips={}):
         sheet = workbook.add_worksheet(sheet_name.replace(':', '')[:31])
         if tab_color is not None:
             sheet.set_tab_color(tab_color)
@@ -293,6 +293,9 @@ def to_excel(orbs: pyorbb.Orbitals, out_file: str = 'pyorbb.xlsx'):
         for j, col in enumerate(header):
             sheet.write(2, j+1, col, table_header_fmt)
             column_widths.append(character.text_width(col))
+
+            if j in tooltips:
+                sheet.data_validation(2, j+1, 2, j+1, {'validate': 'any', 'input_title': col, 'input_message': tooltips[j]})
 
         for i, row in enumerate(rows):
             for j, val in enumerate(row):
@@ -385,19 +388,40 @@ def to_excel(orbs: pyorbb.Orbitals, out_file: str = 'pyorbb.xlsx'):
 
         energy_label = {'energy': 'regular', 'site_energy': 'effective', 'approx_site_energy': 'effective (approx.)'}[energy_type]
         energy_label_short = {'energy': 'reg.', 'site_energy': 'eff.', 'approx_site_energy': 'appr.'}[energy_type]
+        
+        tooltips = {
+            0: 'Fragment molecular orbital ψᵢ.',
+            1: 'Initial occupation of FMO ψᵢ.',
+            2: 'Gross Mulliken population of FMO ψᵢ.',
+            3: 'Fragment molecular orbital ψⱼ.',
+            4: 'Initial occupation of FMO ψⱼ.',
+            5: 'Gross Mulliken population of FMO ψⱼ.',
+            6: 'Molecular orbital Ψₖ.',
+            7: 'Molecular orbital Ψₗ.',
+            8: 'Overlap between FMOs ψᵢ and ψⱼ.',
+            9: f'Orbital energy gap between FMOs ψᵢ and ψⱼ. The orbital energies used here are the {energy_label} energies and are given in eV.',
+            10: 'Ranking value for the two-FMO orbital interactions.',
+            11: 'The fraction of the sum of all ranking values explained by this interaction.',
+            12: 'The cumulative sum over the fractions, up to this interaction.',
+            13: 'The normalized Mulliken contribution between FMO ψᵢ and Ψₖ.',
+            14: 'The normalized Mulliken contribution between FMO ψⱼ and Ψₖ.',
+            15: 'The normalized Mulliken contribution between FMO ψᵢ and Ψₗ.',
+            16: 'The normalized Mulliken contribution between FMO ψⱼ and Ψₗ.',
+            }
+        col_fmts = {
+            10: table_val_sci_fmt, 
+            11: table_val_pctg_fmt, 
+            12: table_val_pctg_fmt, 
+            13: table_val_pctg_fmt, 
+            14: table_val_pctg_fmt, 
+            15: table_val_pctg_fmt, 
+            16: table_val_pctg_fmt
+            }
         make_table_sheet(f'Rᴼᴵ ({energy_label_short})', f'Orbital Interactions ({energy_label} orbital energies)', rows, 
-                header=['ψᵢ', 'oᵢ', 'pᵢ', 'ψⱼ', 'oⱼ', 'pⱼ', 'Ψₖ', 'Ψₗ', 'S', 'Δε (eV)**', 'Rᴼᴵ', 'Frac.*', '∑Frac.', 'μᵢₖ', 'μⱼₖ', 'μᵢₗ', 'μⱼₗ'],
-                col_fmts={
-                    10: table_val_sci_fmt, 
-                    11: table_val_pctg_fmt, 
-                    12: table_val_pctg_fmt, 
-                    13: table_val_pctg_fmt, 
-                    14: table_val_pctg_fmt, 
-                    15: table_val_pctg_fmt, 
-                    16: table_val_pctg_fmt},
-                asterisks=[
-                    '* Frac. represents the relative amount of orbital interaction explained by this interaction',
-                    f'** FMO energy type: {energy_label}'], tab_color='ACF3AE')
+                header=['ψᵢ', 'oᵢ', 'pᵢ', 'ψⱼ', 'oⱼ', 'pⱼ', 'Ψₖ', 'Ψₗ', 'S', 'Δε', 'Rᴼᴵ', 'Frac.', '∑Frac.', 'μᵢₖ', 'μⱼₖ', 'μᵢₗ', 'μⱼₗ'],
+                col_fmts=col_fmts,
+                tooltips=tooltips,
+                tab_color='ACF3AE')
 
     # write information about the mixing
     rows = []
@@ -421,16 +445,35 @@ def to_excel(orbs: pyorbb.Orbitals, out_file: str = 'pyorbb.xlsx'):
                  abs(mix.fmos[0].mulliken_contribution(mix.mos[1], normalized=True)),
                  abs(mix.fmos[1].mulliken_contribution(mix.mos[1], normalized=True))))
 
+    tooltips = {
+        0: 'Fragment molecular orbital ψᵢ.',
+        1: 'Initial occupation of FMO ψᵢ.',
+        2: 'Fragment molecular orbital ψⱼ.',
+        3: 'Initial occupation of FMO ψⱼ.',
+        4: 'Molecular orbital Ψₖ.',
+        5: 'Molecular orbital Ψₗ.',
+        6: 'Overlap between FMOs ψᵢ and ψⱼ.',
+        7: 'Ranking value for the two-FMO Pauli repulsive interactions.',
+        8: 'The fraction of the sum of all ranking values explained by this interaction.',
+        9: 'The cumulative sum over the fractions, up to this interaction.',
+        10: 'The normalized Mulliken contribution between FMO ψᵢ and Ψₖ.',
+        11: 'The normalized Mulliken contribution between FMO ψⱼ and Ψₖ.',
+        12: 'The normalized Mulliken contribution between FMO ψᵢ and Ψₗ.',
+        13: 'The normalized Mulliken contribution between FMO ψⱼ and Ψₗ.',
+        }
+    col_fmts = {
+        8: table_val_pctg_fmt, 
+        9: table_val_pctg_fmt, 
+        10: table_val_pctg_fmt, 
+        11: table_val_pctg_fmt, 
+        12: table_val_pctg_fmt, 
+        13: table_val_pctg_fmt
+        }
     make_table_sheet('Rᴾᴿ', 'Pauli Repulsive Interactions', rows, 
-            header=['ψᵢ', 'oᵢ', 'ψⱼ', 'oⱼ', 'Ψₖ', 'Ψₗ', 'S', 'Rᴾᴿ', 'Frac.*', '∑Frac.', 'μᵢₖ', 'μⱼₖ', 'μᵢₗ', 'μⱼₗ'],
-            col_fmts={
-                8: table_val_pctg_fmt, 
-                9: table_val_pctg_fmt, 
-                10: table_val_pctg_fmt, 
-                11: table_val_pctg_fmt, 
-                12: table_val_pctg_fmt, 
-                13: table_val_pctg_fmt},
-            asterisks=['* Frac. represents the relative amount of Pauli repulsion explained by this interaction'], tab_color='FA6B84')
+            header=['ψᵢ', 'oᵢ', 'ψⱼ', 'oⱼ', 'Ψₖ', 'Ψₗ', 'S', 'Rᴾᴿ', 'Frac.', '∑Frac.', 'μᵢₖ', 'μⱼₖ', 'μᵢₗ', 'μⱼₗ'],
+            col_fmts=col_fmts,
+            tooltips=tooltips,
+            tab_color='FA6B84')
 
     has_kinetic = False
     # write a table with MO and FMO energies
