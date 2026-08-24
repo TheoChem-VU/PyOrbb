@@ -316,16 +316,13 @@ class PublicationCarousel(Carousel):
         super().__init__(parent=parent, title='<b>Recent Publications Citing PyOrbb</b>')
 
     def setup(self):
-        url = "https://scholar.google.com/scholar?hl=en&as_sdt=2005&sciodt=0,5&cites=8000893946037734095&scipsc=&q=&scisbd=1"
-        # url = "bla"
+        url = "https://scholar.google.com/scholar?cites=8000893946037734095&scisbd=1"
         # try to get data
         try:
             data = _get_citedby_data(url)
-            # print(data)
         # otherwise we display a 404 error message
         except:
             self._carousel_layout.addWidget(QtWidgets.QLabel('Sorry! Could not find the right data.'))
-
             return
 
         for row in data:
