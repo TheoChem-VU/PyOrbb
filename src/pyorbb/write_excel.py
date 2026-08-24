@@ -288,32 +288,29 @@ def to_excel(orbs: pyorbb.Orbitals, out_file: str = 'pyorbb.xlsx'):
             sheet.set_tab_color(tab_color)
 
         sheet.write(0, 0, sheet_title, title_fmt)
+        sheet.write(2, 1, '❗ Click on a header for more information ❗')
 
         column_widths = []
         for j, col in enumerate(header):
-            sheet.write(2, j+1, col, table_header_fmt)
+            sheet.write(4, j+1, col, table_header_fmt)
             column_widths.append(character.text_width(col))
 
             if j in tooltips:
-                sheet.data_validation(2, j+1, 2, j+1, {'validate': 'any', 'input_title': col, 'input_message': tooltips[j]})
+                sheet.data_validation(4, j+1, 4, j+1, {'validate': 'any', 'input_title': col, 'input_message': tooltips[j]})
 
         for i, row in enumerate(rows):
             for j, val in enumerate(row):
                 if isinstance(val, (float, int)):
                     fmt = col_fmts.get(j, float_fmt)
-                    sheet.write(i + 3, j + 1, val, fmt)
+                    sheet.write(i + 5, j + 1, val, fmt)
                     val = str(round(val, 5))
                 else:
-                    sheet.write(i + 3, j + 1, val)
+                    sheet.write(i + 5, j + 1, val)
 
                 column_widths[j] = max(column_widths[j], character.text_width(val))
 
         for i, width in enumerate(column_widths, start=1):
             sheet.set_column_pixels(i, i, width + 20)
-
-        for i, asterisk in enumerate(asterisks):
-            sheet.write(4 + i, len(header) + 3, asterisk)
-
 
         sheet.freeze_panes('A4')
         sheet.autofilter(2, 1, 1+len(rows), len(header))
