@@ -518,6 +518,8 @@ def read_data(reader: plams.KFReader, SCF0_reader: plams.KFReader = None, output
     if K is not None:
         ret.set('MOs', 'kinetic_energy', K)
 
+    if 'fock' in ret['matrices']:
+        ret.set('matrices', 'fock', 'total',               _compose_matrix(ret['matrices']['fock'],                   ret['calc_info']['fmo_spins']))
     ret.set('matrices', 'overlap', 'total',                _compose_matrix(ret['matrices']['overlap'],                ret['calc_info']['fmo_spins']))
     ret.set('matrices', 'coefficients', 'total',           _compose_matrix(ret['matrices']['coefficients'],           ret['calc_info']['mo_spins']))
     ret.set('matrices', 'mulliken_contribution', 'total',  _compose_matrix(ret['matrices']['mulliken_contribution'],  ret['calc_info']['mo_spins']))
