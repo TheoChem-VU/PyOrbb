@@ -73,19 +73,12 @@ plt.close()
 # we generate videos of the tracked MOs to show that they indeed are correctly tracked
 transforms = tcmu.geometry.Transform()
 transforms.rotate(y=90/180*pi)
-# pyorbb.analysis.movie.make_orbital_movie('tracked_12SIGMA.mp4', T.track_mo('12SIGMA'), transform=transforms, fps=15)
-# pyorbb.analysis.movie.make_orbital_movie('tracked_13SIGMA.mp4', T.track_mo('13SIGMA'), transform=transforms, fps=15)
-# pyorbb.analysis.movie.make_orbital_movie('tracked_14SIGMA.mp4', T.track_mo('14SIGMA'), transform=transforms, fps=15)
-# pyorbb.analysis.movie.make_orbital_movie('tracked_15SIGMA.mp4', T.track_mo('15SIGMA'), transform=transforms, fps=15)
+pyorbb.analysis.movie.make_orbital_movie('tracked_12SIGMA.mp4', T.track_mo('12SIGMA'), transform=transforms, fps=15)
+pyorbb.analysis.movie.make_orbital_movie('tracked_13SIGMA.mp4', T.track_mo('13SIGMA'), transform=transforms, fps=15)
+pyorbb.analysis.movie.make_orbital_movie('tracked_14SIGMA.mp4', T.track_mo('14SIGMA'), transform=transforms, fps=15)
+pyorbb.analysis.movie.make_orbital_movie('tracked_15SIGMA.mp4', T.track_mo('15SIGMA'), transform=transforms, fps=15)
 
-# pyorbb.analysis.movie.make_orbital_movie('untracked_12SIGMA.mp4', [orbs.mos['12SIGMA'] for orbs in T.orbital_objects], transform=transforms, fps=15)
-# pyorbb.analysis.movie.make_orbital_movie('untracked_13SIGMA.mp4', [orbs.mos['13SIGMA'] for orbs in T.orbital_objects], transform=transforms, fps=15)
-# pyorbb.analysis.movie.make_orbital_movie('untracked_14SIGMA.mp4', [orbs.mos['14SIGMA'] for orbs in T.orbital_objects], transform=transforms, fps=15)
-# pyorbb.analysis.movie.make_orbital_movie('untracked_15SIGMA.mp4', [orbs.mos['15SIGMA'] for orbs in T.orbital_objects], transform=transforms, fps=15)
-
-
-for orb in T.orbital_objects:
-	rkf = orb.reader
-	old_path = rkf.path
-	new_path = old_path.replace('/rkfs/', '/rkfs_minimal/')
-	rkf.write_accessed(new_path)
+pyorbb.analysis.movie.make_orbital_movie('untracked_12SIGMA.mp4', [orbs.mos['12SIGMA'] for orbs in T.orbital_objects], transform=transforms, fps=15)
+pyorbb.analysis.movie.make_orbital_movie('untracked_13SIGMA.mp4', [orbs.mos['13SIGMA'] for orbs in T.orbital_objects], transform=transforms, fps=15)
+pyorbb.analysis.movie.make_orbital_movie('untracked_14SIGMA.mp4', [orbs.mos['14SIGMA'] for orbs in T.orbital_objects], transform=transforms, fps=15)
+pyorbb.analysis.movie.make_orbital_movie('untracked_15SIGMA.mp4', [orbs.mos['15SIGMA'] for orbs in T.orbital_objects], transform=transforms, fps=15)
