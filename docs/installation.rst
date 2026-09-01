@@ -1,14 +1,24 @@
-Installation Guide
-==================
+Installing PyOrbb |ProjectVersion|
+==================================
 
-Installation of PyOrbb is straightforwardly done via ``pip``:
+Download and install the latest PyOrbb version here:
+
+`<https://github.com/TheoChem-VU/PyOrbb/releases/latest>`_
+
+Select the appropriate installer for your operating system and follow the installation instructions.
+
+
+Installing the PyOrbb Python Library
+====================================
+
+Installation of PyOrbb for use with Python is straightforwardly done via ``pip``:
 
 .. code-block::
 
 	python -m "pip install pyorbb"
 
 
-For expert users who would like to work on the code we also offer installation of the source code:
+Expert users who would like to work on the code may also install the source code:
 
 .. code-block::
 	
@@ -27,12 +37,12 @@ which should output:
 
 .. code-block::
 
-	usage: pyorbb [-h] {excel,analyse} ...
+	usage: pyorbb [-h] {excel,open} ...
 
 	options:
-	  -h, --help       show this help message and exit
+	  -h, --help    show this help message and exit
 
 	PyOrbb command-line scripts:
-	  {excel,analyse}
-	    excel          Read orbital information from an ADF calculation and write them to an Excel file.
-	    analyse        Start an interactive PyOrbb orbital diagram.
+	  {excel,open}
+	    excel       Read orbital information from an ADF calculation and write them to an Excel file.
+	    open        Start the PyOrbb analysis program

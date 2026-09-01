@@ -445,7 +445,11 @@ class MplCanvas(FigureCanvas):
                     s += f'\n{str(mo):19.19} {orb.mulliken_contribution(mo): >6.1%} {orb.mulliken_contribution(mo, normalized=True): >6.1%} {orb.coefficient(mo): >6.3f}'
                 title = f"{orb.fragment}({pyorbb.generate_label(orb, mode='latex')})"
                 
-                tooltip = '''M
+                tooltip = '''S
+    Overlap between this FMO and the FMO
+dE
+    Energy difference
+M
     Mulliken contribution between this FMO and the MO
 μ
     Normalized Mulliken contribution between this FMO and the MO
@@ -1170,8 +1174,6 @@ class AnalysisWindow(QtWidgets.QWidget):
                 fname = str(url.toLocalFile())
                 if not self._loaded_analysis:
                     self.load_analysis(fname)
-                    self.parent.tabs.setTabText(self.parent.tabs.currentIndex(), os.path.split(fname)[1])
-                    self.parent.tabs.setTabToolTip(self.parent.tabs.currentIndex(), fname)
                     return
                 else:
                     window = self.parent._add_analysis_tab(tabname=os.path.split(fname)[1])
@@ -1666,8 +1668,9 @@ class AnalysisWindow(QtWidgets.QWidget):
             QtWidgets.QMessageBox.critical(self, msg_title, msg_text)
             self.plot.add_warning()
 
+        self.parent.tabs.setTabText(self.parent.tabs.currentIndex(), os.path.split(file)[1])
+        self.parent.tabs.setTabToolTip(self.parent.tabs.currentIndex(), file)
         self._update_plot()
-
 
     def add_info_notice(self, title, text, relevant_orbitals):
         label = QtWidgets.QLabel(text)

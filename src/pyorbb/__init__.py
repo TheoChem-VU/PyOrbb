@@ -8,6 +8,8 @@ else:
 
 from . import orbitals  # noqa
 Orbitals = orbitals.objects.Orbitals
+MO = orbitals.objects.MO
+FMO = orbitals.objects.FMO
 from . import plotting  # noqa
 from . import analysis  # noqa
 from . import application  # noqa

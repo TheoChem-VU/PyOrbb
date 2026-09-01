@@ -12,5 +12,5 @@ Module contents:
 
 .. automodule:: pyorbb.plotting
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:

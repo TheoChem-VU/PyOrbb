@@ -10,3 +10,6 @@ presentations/
 build/
 uv.lock
 logs
+*densf//densf.in
+*densf//densf.out
+*densf//densf.run

@@ -6,10 +6,12 @@ Submodules:
    :maxdepth: 4
 
    pyorbb.analysis.mixing
+   pyorbb.analysis.movie
+   pyorbb.analysis.sequential
 
 Module contents:
 
 .. automodule:: pyorbb.analysis
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:

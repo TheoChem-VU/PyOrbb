@@ -124,6 +124,7 @@ def to_excel(orbs: pyorbb.Orbitals, out_file: str = 'pyorbb.xlsx'):
     bold_centered_rotated_fmt = workbook.add_format({'bold': True, 'font_size': 16, 'align': 'center', 'valign': 'vcenter', 'rotation': 90})
     table_key_fmt = workbook.add_format({'bold': True})
     table_val_fmt = workbook.add_format({'bold': False})
+    table_val_int_fmt = workbook.add_format({'bold': False, 'num_format': '0'})
     table_val_float_fmt = workbook.add_format({'bold': False, 'num_format': '0.00'})
     table_val_pctg_fmt = workbook.add_format({'bold': False, 'num_format': '0.0%'})
     table_val_sci_fmt = workbook.add_format({'bold': False, 'num_format': '0.00E+0'})
@@ -312,8 +313,8 @@ def to_excel(orbs: pyorbb.Orbitals, out_file: str = 'pyorbb.xlsx'):
         for i, width in enumerate(column_widths, start=1):
             sheet.set_column_pixels(i, i, width + 20)
 
-        sheet.freeze_panes('A4')
-        sheet.autofilter(2, 1, 1+len(rows), len(header))
+        sheet.freeze_panes('A6')
+        sheet.autofilter(4, 1, 1+len(rows), len(header))
 
     # we will write some basic info about the calcualtion in the first sheet
     sheet = workbook.add_worksheet('🛈 Info')
@@ -505,10 +506,30 @@ def to_excel(orbs: pyorbb.Orbitals, out_file: str = 'pyorbb.xlsx'):
     if has_kinetic:
         headers.append('Kinetic Energy (eV)')
 
+    tooltips = {
+        0: 'The internal index of the FMO',
+        1: 'Initial occupation of FMO ψᵢ.',
+        2: 'Gross Mulliken population of FMO ψᵢ.',
+        3: 'Fragment molecular orbital ψⱼ.',
+        4: 'Initial occupation of FMO ψⱼ.',
+        5: 'Gross Mulliken population of FMO ψⱼ.',
+        6: 'Molecular orbital Ψₖ.',
+        7: 'Molecular orbital Ψₗ.',
+        8: 'Overlap between FMOs ψᵢ and ψⱼ.',
+        9: f'Orbital energy gap between FMOs ψᵢ and ψⱼ. The orbital energies used here are the {energy_label} energies and are given in eV.',
+        10: 'Ranking value for the two-FMO orbital interactions.',
+        11: 'The fraction of the sum of all ranking values explained by this interaction.',
+        12: 'The cumulative sum over the fractions, up to this interaction.',
+        13: 'The normalized Mulliken contribution between FMO ψᵢ and Ψₖ.',
+        14: 'The normalized Mulliken contribution between FMO ψⱼ and Ψₖ.',
+        15: 'The normalized Mulliken contribution between FMO ψᵢ and Ψₗ.',
+        16: 'The normalized Mulliken contribution between FMO ψⱼ and Ψₗ.',
+        }
+
     for fragment in orbs.fragments:
         headers.append(f'{fragment} Character')
 
-    make_table_sheet('MOs', 'Molecular Orbitals', rows, headers, tab_color='D6D1CD')
+    make_table_sheet('MOs', 'Molecular Orbitals', rows, headers, tab_color='D6D1CD', tooltips=tooltips)
 
     has_site = False
     has_site_approx = False

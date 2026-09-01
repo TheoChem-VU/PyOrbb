@@ -1,3 +1,6 @@
+pyorbb
+======
+
 .. toctree::
    :maxdepth: 4
 

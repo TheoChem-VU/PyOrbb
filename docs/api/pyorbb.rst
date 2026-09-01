@@ -14,11 +14,12 @@ Submodules:
 .. toctree::
    :maxdepth: 4
 
+   pyorbb.nested_dict
    pyorbb.write_excel
 
 Module contents:
 
 .. automodule:: pyorbb
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:

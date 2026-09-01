@@ -691,6 +691,39 @@ class FMO(Orbital):
             return f'LUMO+{order}' if order > 0 else 'LUMO'
 
 
+
+class TrackedKFReader(plams.KFReader):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.accessed = set()
+
+    def read(self, *args):
+        self.accessed.add(args)
+
+        return super().read(*args)
+
+    def write_accessed(self, new_path):
+        kffile = plams.KFFile(new_path)
+
+        for section, var in self.accessed:
+            data = self.read(section, var)
+            typ = self.variable_type(section, var)
+            kffile.write(section, var, data, typ)
+            kffile.save()
+
+
+    def write_accessed(self, new_path):
+        kffile = plams.KFFile(new_path, autosave=False)
+
+        for section, var in self:
+            if section in ('ZlmFit_SumFrg', 'ZlmFit_Ort', 'ZlmFit_ActiveFrag'):
+                continue
+            data = self.read(section, var)
+            typ = self.variable_type(section, var)
+            kffile.write(section, var, data, typ)
+            kffile.save()
+
+
 class Orbitals:
     '''
     Container class that stores information about both |MOs| and |FMOs|.
@@ -708,7 +741,7 @@ class Orbitals:
             This is required to read the kinetic energies for the MOs.
     '''
     def __init__(self, path: str, path_SCF0: str = None, path_fragments: Dict[str, str] = None, path_output: str = None):
-        self.reader = plams.KFReader(path)
+        self.reader = TrackedKFReader(path)
         self.kfpath = os.path.abspath(path)
         self.SCF0_kfpath = path_SCF0
         self.SCF0_reader = plams.KFReader(path_SCF0) if path_SCF0 else None

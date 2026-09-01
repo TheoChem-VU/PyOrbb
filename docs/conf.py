@@ -44,7 +44,6 @@ extensions = [
     "sphinx_design",
     "sphinx_tabs.tabs",
     "sphinxcontrib.video",
-    "sphinx_new_tab_link",
 ]
 
 hoverxref_auto_ref = True
@@ -99,4 +98,8 @@ rst_epilog = f"""
 .. |MO| replace:: :class:`~pyorbb.orbitals.objects.MO`
 .. |FMOs| replace:: :class:`~pyorbb.orbitals.objects.FMOs`
 .. |FMO| replace:: :class:`~pyorbb.orbitals.objects.FMO`
+.. |PyOrbb| replace:: :program:`PyOrbb`
+.. |AMS| replace:: :program:`AMS`
+.. |ADF| replace:: :program:`ADF`
+.. |densf| replace:: :program:`densf`
 """

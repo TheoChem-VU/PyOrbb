@@ -190,7 +190,7 @@ class MOTracker:
             # retrieve the data associated with the initial MO
             # we need the overlap matrix S and coefficient vector C
             S_prev = initial_orb.data['matrices']['overlap']['total']
-            C_prev = np.array([[sfo.coefficient(initial_mo) for sfo in initial_orb.sfos.orbitals]])
+            C_prev = np.array([[fmo.coefficient(initial_mo) for fmo in initial_orb.fmos.orbitals]])
 
             # we calculate the initial overlap population P
             P_prev = C_prev.T * C_prev * S_prev
@@ -250,7 +250,7 @@ class MOTracker:
 if __name__ == '__main__':
     import matplotlib.pyplot as plt
 
-    calc_dir = '/Users/yumanhordijk/PhD/formartin/calcs'
+    calc_dir = '/Users/yumanhordijk/PhD/Projects/Colleagues/formartin/calcs'
     calc_files = [f for f in os.listdir(calc_dir) if f.startswith('complex')]
     calc_files = list(sorted(calc_files, key=lambda f: int(f.split('.')[1].removeprefix('0'))))
     adf_rkf_files = [os.path.join(calc_dir, f, 'adf.rkf') for f in calc_files]
@@ -277,6 +277,7 @@ if __name__ == '__main__':
     plt.gca().spines[['right', 'top']].set_visible(False)
     plt.tight_layout()
     plt.show()
+
 
 # # print(adf_rkf_files)
 # # adf_rkf_files = list(sorted(adf_rkf_files, key=lambda f: int(f.split('(')[1].split(')')[0])))

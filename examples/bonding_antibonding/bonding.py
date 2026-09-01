@@ -9,39 +9,39 @@ The C-Cl bond was homolytically cleaved.
 import pyorbb
 
 
-def bonding_score(mo, sfos1, sfos2):
+def bond_order(mo, fmos1, fmos2):
 	'''
-	This function calculates the bonding score for an MO between two sets of SFOs.
-	The bonding score is the sum of all products of coefficients and overlaps of the
-	SFOs contributing to the MO.
+	This function calculates the bond order for an MO between two sets of FMOS.
+	The bonding order is the sum of all overlap populations between the two
+	sets of FMOs.
 	'''
 	total = 0
-	for sfo1 in sfos1:
-		c1 = sfo1.coefficient(mo)
-		for sfo2 in sfos2:
-			c2 = sfo2.coefficient(mo)
-			S = sfo1.overlap(sfo2)
-			total += c1 * c2 * S
+	for fmo1 in fmos1:
+		c1 = fmo1.coefficient(mo)
+		for fmo2 in fmos2:
+			c2 = fmo2.coefficient(mo)
+			S = fmo1.overlap(fmo2)
+			# this is the overlap population between fmo1 and fmo2
+			total += 2 * mo.occupation * c1 * c2 * S
 
 	return total
 
 # load the orbital data
 orbs = pyorbb.Orbitals('bonding.adf.rkf')
 
-# and filter the correct orbitals
-# for clarity we only show the filled alpha orbitals
-mos = orbs.mos.filter(occupation=('fully_occupied', 'partially_occupied'), spin='A')
+# split FMOS between the two fragments
+fmos_fragment1 = orbs.fmos.filter(fragment='LeavingGroup')
+fmos_fragment2 = orbs.fmos.filter(fragment='Substrate')
 
-# split SFOs between the two fragments
-sfos_fragment1 = orbs.sfos.filter(fragment='LeavingGroup')
-sfos_fragment2 = orbs.sfos.filter(fragment='Substrate')
+# to simplify we only consider one spin type for the MOs
+mos = orbs.mos.filter(spin='A')
 
-# go through each MO and calculate the score
 rows = []
-total_score = 0
+total_bond_order = 0
+# go through each MO and calculate the score
 for mo in mos:
-	score = bonding_score(mo, sfos_fragment1, sfos_fragment2)
-	total_score += score
+	score = bond_order(mo, fmos_fragment1, fmos_fragment2)
+	total_bond_order += score
 
 	# if the score is too low we don't show it
 	if abs(score) < 1e-3:
@@ -51,7 +51,7 @@ for mo in mos:
 	rows.append([mo, score > 0, score])
 
 # add a total row
-rows.append(['Total', total_score > 0, total_score])
+rows.append(['Total', total_bond_order > 0, total_bond_order])
 
 # print the gathered data
 print('   MO  Bonding?  Score')

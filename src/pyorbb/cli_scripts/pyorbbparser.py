@@ -1,4 +1,4 @@
-from pyorbb.cli_scripts import excel
+from pyorbb.cli_scripts import excel, open_GUI
 from pyorbb import __main__
 
 # to add a script:
@@ -7,6 +7,7 @@ from pyorbb import __main__
 # 3. Add it to the dictionary below {program_name: script-module}.
 sub_programs = {
     "excel": excel,
+    "open": open_GUI
 }
 
 
