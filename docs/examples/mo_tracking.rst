@@ -122,8 +122,11 @@ Visualization
 Script and Resources
 ---------------------
 
+The rkf files have been split into two separate zip files. Make sure to extract them into the same folder.
 
-**Download** :download:`rkfs.zip <../../examples/mo_tracking/rkfs.zip>`
+**Download** :download:`rkfs.1.zip <../../examples/mo_tracking/rkfs.1.zip>`
+
+**Download** :download:`rkfs.2.zip <../../examples/mo_tracking/rkfs.2.zip>`
 
 **Download** :download:`sequential_example.py <../../examples/mo_tracking/sequential_example.py>`
 
