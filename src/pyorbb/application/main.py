@@ -395,6 +395,8 @@ class MplCanvas(FigureCanvas):
                 
                 scene.draw_text(str(orb[0]) + ' * ' + str(orb[1]))
 
+        self.parent.tcviewer_screen.raise_()
+
     def draw_molecule(self, mol=None):
         import tcviewer
         # get or make a new viewer
