@@ -7,7 +7,7 @@ Example PyOrbb Analyses
 .. grid:: 3
     :gutter: 4
 
-    .. grid-item-card:: Getting Started: H3B←NH3 Lewis Adduct
+    .. grid-item-card:: Getting Started: H\ :sub:`3`\ B←NH\ :sub:`3` Lewis Adduct
       :link: ../get_started.html
 
       .. image:: figures/NH3BH3/thumb.png
@@ -16,7 +16,7 @@ Example PyOrbb Analyses
 
 
 
-    .. grid-item-card:: Oxidative Addition: C-H Bond Activation by Fe(CO)4
+    .. grid-item-card:: Oxidative Addition: C-H Bond Activation by Fe(CO)\ :sub:`4`
       :link: oxidative_addition.html
 
       .. image:: figures/oxadd/thumb.png
