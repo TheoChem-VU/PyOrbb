@@ -105,3 +105,15 @@ Learn how to use PyOrbb's Python library to perform custom orbital analyses for 
          :align: center
 
       An overview of the main command-line tools provided by PyOrbb.
+
+
+
+
+.. toctree::
+    :hidden:
+
+    installation.rst
+    GUI_examples/index.rst
+    notices.rst
+
+

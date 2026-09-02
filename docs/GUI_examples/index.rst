@@ -78,4 +78,10 @@ Example PyOrbb Analyses
          :align: center
 
 
+.. toctree::
+	:maxdepth: 1
+	:hidden:
+
+	../get_started.rst
+	Oxidative_addition.rst
 
