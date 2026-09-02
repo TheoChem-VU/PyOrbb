@@ -1,9 +1,5 @@
-.. template documentation master file, created by
-   sphinx-quickstart on Tue Oct 10 13:54:26 2023.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
 ********************************************
-|ProjectName| |ProjectVersion| documentation
+|ProjectName| |ProjectVersion| Documentation
 ********************************************
 
 **PyOrbb** is an orbital interaction analysis tool and Python library enabling expert and non-expert users to perform high quality Kohn-Sham MO analyses. This is the documentation website for both the Python library provided by PyOrbb and the graphical user interface.
@@ -112,8 +108,7 @@ Learn how to use PyOrbb's Python library to perform custom orbital analyses for 
 .. toctree::
     :hidden:
 
-    installation.rst
-    GUI_examples/index.rst
-    notices.rst
+    application.rst
+    python_library.rst
 
 
