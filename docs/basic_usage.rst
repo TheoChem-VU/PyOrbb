@@ -1,4 +1,6 @@
 
+.. note:: This is documentation related to the PyOrbb Python library. For documentation related to the PyOrbb application, please `click here <get_started.html>`_.
+
 Basic Usage
 ===========
 
