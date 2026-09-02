@@ -2,88 +2,80 @@
 Example PyOrbb Analyses
 =======================
 
-We have ...
 
-.. grid:: 2
-    :gutter: 2
 
-    .. grid-item-card:: Donor–Acceptor Bonding: H3B←NH3 Lewis Adduct
-      :link: pi_orbitals.html
+.. grid:: 3
+    :gutter: 4
 
-      .. image:: pi_orbitals.png
-         :height: 250px
+    .. grid-item-card:: Getting Started: H3B←NH3 Lewis Adduct
+      :link: ../get_started.html
+
+      .. image:: figures/NH3BH3/thumb.png
+         :width: 75%
          :align: center
 
-      PyOrbb script to differentiate π- and σ-orbitals.
 
 
     .. grid-item-card:: Oxidative Addition: C-H Bond Activation by Fe(CO)4
-      :link: tracking.html
+      :link: oxidative_addition.html
 
-      .. image:: orbint.gif
-         :height: 250px
+      .. image:: figures/oxadd/thumb.png
+         :width: 50%
          :align: center
 
-      PyOrbb script to generate movies of orbital interaction during a reaction.
 
 
     .. grid-item-card:: Diels-Alder Transition State
-      :link: excitations.html
+      :link: DA_TS.html
 
-      .. image:: EDA_complex_orbs.png
-         :height: 250px
+      .. image:: figures/DA_TS/thumb.png
+         :width: 50%
          :align: center
 
-      PyOrbb script to analyse and filter data from UV/VIS excitation data.
 
 
     .. grid-item-card:: Lewis-Acid Catalysis: Diels-Alder
-      :link: bonding.html
+      :link: DA_TS_LA.html
 
-      .. image:: bonding.png
-         :height: 250px
+      .. image:: figures/DA_TS_LA/thumb.png
+         :width: 75%
          :align: center
 
-      PyOrbb script to distinguish bonding and antibonding MOs.
 
 
     .. grid-item-card:: Hydrogen-Bonding: Guanine–Cytosine Base Pair
-      :link: movie.html
+      :link: HB.html
 
-      .. image:: orbitals.gif
-         :height: 250px
+      .. image:: figures/HB/thumb.png
+         :width: 75%
          :align: center
 
-      PyOrbb script to generate a movie showing orbitals during a reaction.
 
 
     .. grid-item-card:: Homolytic Bond Cleavage: Ethane
-      :link: mo_tracking.html
+      :link: Ethane.html
 
-      .. image:: mo_tracking.png
-         :height: 250px
+      .. image:: figures/Ethane/thumb.png
+         :width: 75%
          :align: center
 
-      PyOrbb script to generate a movie showing orbitals during a reaction.
 
 
     .. grid-item-card:: The Methyl Radical
-      :link: mo_tracking.html
+      :link: Methyl.html
 
-      .. image:: mo_tracking.png
-         :height: 250px
+      .. image:: figures/Methyl/thumb.png
+         :width: 50%
          :align: center
 
-      PyOrbb script to generate a movie showing orbitals during a reaction.
 
 
-    .. grid-item-card:: Hetero/homolytic Bond Cleavage: Fluoromethane
-      :link: mo_tracking.html
+    .. grid-item-card:: Hetero-/Homolytic Bond Cleavage: Fluoromethane
+      :link: FCH3.html
 
-      .. image:: mo_tracking.png
-         :height: 250px
+      .. image:: figures/FCH3/thumb.png
+         :width: 75%
          :align: center
 
-      PyOrbb script to generate a movie showing orbitals during a reaction.
 
 
