@@ -102,4 +102,5 @@ rst_epilog = f"""
 .. |AMS| replace:: :program:`AMS`
 .. |ADF| replace:: :program:`ADF`
 .. |densf| replace:: :program:`densf`
+.. |main art| replace:: Yuman Hordijk, Steven E. Beutick, Xiaobo Sun, Laurens Groot, Tori Gijzen, Jordi Poater, Trevor A. Hamlin, F. Matthias Bickelhaupt, Célia Fonseca Guerra, "PyOrbb – Automated Analyses of Orbital-Interaction Mechanisms" Journal of Computational Chemistry, *under review*.
 """
