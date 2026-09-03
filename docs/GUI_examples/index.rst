@@ -35,7 +35,7 @@ Example PyOrbb Analyses
 
 
     .. grid-item-card:: Lewis-Acid Catalysis: Diels-Alder
-      :link: DA_TS_LA.html
+      :link: DA_LA.html
 
       .. image:: figures/DA_TS_LA/thumb.png
          :width: 75%
@@ -44,7 +44,7 @@ Example PyOrbb Analyses
 
 
     .. grid-item-card:: Hydrogen-Bonding: Guanine–Cytosine Base Pair
-      :link: HB.html
+      :link: GC_basepair.html
 
       .. image:: figures/HB/thumb.png
          :width: 75%
@@ -53,7 +53,7 @@ Example PyOrbb Analyses
 
 
     .. grid-item-card:: Homolytic Bond Cleavage: Ethane
-      :link: Ethane.html
+      :link: Homolytic_Ethane.html
 
       .. image:: figures/Ethane/thumb.png
          :width: 75%
@@ -62,7 +62,7 @@ Example PyOrbb Analyses
 
 
     .. grid-item-card:: The Methyl Radical
-      :link: Methyl.html
+      :link: Methyl_rad.html
 
       .. image:: figures/Methyl/thumb.png
          :width: 50%
@@ -71,7 +71,7 @@ Example PyOrbb Analyses
 
 
     .. grid-item-card:: Hetero-/Homolytic Bond Cleavage: Fluoromethane
-      :link: FCH3.html
+      :link: Hetero_vs_homo.html
 
       .. image:: figures/FCH3/thumb.png
          :width: 75%

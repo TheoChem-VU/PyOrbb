@@ -1,5 +1,5 @@
 
-Oxidative Addition: C-H Bond Activation by Fe(CO)4
+Oxidative Addition: C-–H Bond Activation by Fe(CO)4
 ====================================================
 
 Usage
@@ -27,24 +27,17 @@ to reproduce the following analysis [1]_ [2]_.
 Analysis
 --------
 
-Catalytic reactions are indispensable tools in modern synthetic
-chemistry. The oxidative addition step is often the first and
-rate-determining step in transition metal catalysis. In this
-example, we analyze the transition state of the oxidative addition
-of an iron complex into the methane C--H bond. PyOrbb correctly
-identified the key orbital interaction mechanism (See below).
+Catalytic reactions are indispensable tools in modern synthetic chemistry. 
+The oxidative addition step is often the first and rate-determining step in transition metal catalysis.
+In this example, we analyze the transition state of the oxidative addition of an iron complex into the methane C--H bond. 
+PyOrbb correctly identified the key orbital interaction mechanism (See below).
 
-We see two major orbital interaction patterns, namely, the
-interaction between CH\ :sub:`4`\ (5A) and Fe(CO)\ :sub:`4`\ (42A),
-which corresponds to the :math:`\sigma`-donation from the C--H
-orbital of CH\ :sub:`4` to the d orbital of Fe(CO)\ :sub:`4`. PyOrbb
-also finds the :math:`\pi`-backdonation interaction between
-CH\ :sub:`4`\ (6A) and Fe(CO)\ :sub:`4`\ (41A), which involves
-donation of electrons from the d orbital of Fe(CO)\ :sub:`4` to the
-:math:`\sigma^{*}`-C--H orbital of CH\ :sub:`4`.
+We see two major orbital interaction patterns, namely, the interaction between CH\ :sub:`4`\ (5A) and Fe(CO)\ :sub:`4`\ (42A),
+which corresponds to the :math:`\sigma`-donation from the C--H orbital of CH\ :sub:`4` to the d orbital of Fe(CO)\ :sub:`4`. 
+PyOrbb also finds the :math:`\pi`-backdonation interaction between CH\ :sub:`4`\ (6A) and Fe(CO)\ :sub:`4`\ (41A), which involves donation of electrons from the d orbital of Fe(CO)\ :sub:`4` to the :math:`\sigma^{*}`-C--H orbital of CH\ :sub:`4`.
 
 References
 ----------
 
-.. [1] X. Sun, M. V. J. Rocha, T. A. Hamlin, J. Poater, and F. M. Bickelhaupt, "Understanding the differences between iron and palladium in cross-coupling reactions," Physical Chemistry Chemical Physics 21 (2019): 9651–9664, https://doi.org/10.1039/c8cp07671e.
+.. [1] \ X. Sun, M. V. J. Rocha, T. A. Hamlin, J. Poater, and F. M. Bickelhaupt, "Understanding the differences between iron and palladium in cross-coupling reactions," Physical Chemistry Chemical Physics 21 (2019): 9651–9664, https://doi.org/10.1039/c8cp07671e.
 .. [2] |main art|
