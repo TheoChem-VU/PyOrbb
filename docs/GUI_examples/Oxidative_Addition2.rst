@@ -1,4 +1,3 @@
-
 Oxidative Addition: C-H Bond Activation by Fe(CO)4
 ====================================================
 
@@ -7,7 +6,7 @@ Usage
 
 The adf.rkf file for this example can be downloaded here:
 
-1. **Download** :download:`Oxidative_Addition.adf.rkf <./../../examples/ExamplesFromPaper/CoordinationBondFeCO4CH4/FeCO4_CH4.rkf>`
+1. **Download** :download:`bonding.adf.rkf <../../examples/bonding_antibonding/bonding.adf.rkf>`
 2. Open the PyOrbb application.
 3. Drag the .adf.rkf file to the GUI.
 
@@ -22,7 +21,7 @@ Now the PyOrbb viewer window will open with many options for drawing
 the orbitals.
 
 Once the previous steps have been completed, the user should be able
-to reproduce the following analysis [1]_ [2]_.
+to reproduce the following analysis :sup:`1,2`.
 
 Analysis
 --------
@@ -46,5 +45,6 @@ donation of electrons from the d orbital of Fe(CO)\ :sub:`4` to the
 References
 ----------
 
-.. [1] X. Sun, M. V. J. Rocha, T. A. Hamlin, J. Poater, and F. M. Bickelhaupt, "Understanding the differences between iron and palladium in cross-coupling reactions," Physical Chemistry Chemical Physics 21 (2019): 9651–9664, https://doi.org/10.1039/c8cp07671e.
-.. [2] |main art|
+1. Author, A. B.; Author, C. D. Title of the paper. *Journal Name*
+   **Year**, *Volume*, pages.
+2. Author, E. F. Title of the paper or book. Publisher, City, Year.
