@@ -69,3 +69,14 @@ These examples have all been used and applied in real research applications over
       PyOrbb script to generate a movie showing orbitals during a reaction.
 
 
+
+.. toctree::
+    :maxdepth: 1
+    :hidden:
+
+    pi_orbitals.rst
+    tracking.rst
+    excitations.rst
+    bonding.rst
+    movie.rst
+    mo_tracking.rst

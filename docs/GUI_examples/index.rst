@@ -2,7 +2,7 @@
 Example PyOrbb Analyses
 =======================
 
-
+PyOrbb is applicable to a large variety of chemical systems, ranging from simple donor-acceptor complexes to hydrogen bonding to oxidative addition reactions with transition metal catalysts. These examples have been described in detail in the PyOrbb paper\ [1]_. We have collected these examples below for you to try out on your own. Click any of the example systems to get started!
 
 .. grid:: 3
     :gutter: 4
@@ -85,3 +85,8 @@ Example PyOrbb Analyses
 	../get_started.rst
 	Oxidative_addition.rst
 
+
+References
+----------
+
+.. [1] |main art|
