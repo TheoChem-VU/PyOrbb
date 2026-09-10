@@ -77,7 +77,6 @@ html_theme_options = {
   "navbar_start": ['logo'],
 }
 
-html_css_files = ['custom.css']
 
 html_js_files = ['gui_tabs.js']
 
