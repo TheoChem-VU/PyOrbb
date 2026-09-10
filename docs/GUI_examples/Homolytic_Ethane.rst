@@ -25,7 +25,7 @@ As the diene fragment is consistent in both complexes, one can select the orbita
 
 Now the PyOrbb viewer window will open with many options for drawing the orbitals.
 
-Once the previous steps have been completed, the user should be able to reproduce the following analysis [1]_ [2]_ [3]_.
+Once the previous steps have been completed, the user should be able to reproduce the following analysis [1]_ [2]_.
 
 
 
