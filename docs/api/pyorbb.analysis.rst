@@ -1,3 +1,5 @@
+analysis
+========
 
 Submodules:
 
@@ -14,4 +16,5 @@ Module contents:
 .. automodule:: pyorbb.analysis
    :members:
    :show-inheritance:
+   :inherited-members:
    :undoc-members:
