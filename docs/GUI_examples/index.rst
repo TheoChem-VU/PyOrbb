@@ -17,7 +17,7 @@ PyOrbb is applicable to a large variety of chemical systems, ranging from simple
 
 
     .. grid-item-card:: Oxidative Addition: C-H Bond Activation by Fe(CO)\ :sub:`4`
-      :link: oxidative_addition.html
+      :link: Oxidative_addition.html
 
       .. image:: figures/oxadd/thumb.png
          :width: 50%
@@ -79,11 +79,18 @@ PyOrbb is applicable to a large variety of chemical systems, ranging from simple
 
 
 .. toctree::
-	:maxdepth: 1
-	:hidden:
+   :maxdepth: 2
+   :hidden:
 
-	../get_started.rst
-	Oxidative_addition.rst
+   ../get_started.rst
+   Oxidative_addition.rst
+   DielsAlder.rst
+   DA_LA.rst
+   GC_basepair.rst
+   Hetero_vs_homo.rst
+   Homolytic_Ethane.rst
+   Methyl_rad.rst
+
 
 
 References
