@@ -1,14 +1,25 @@
+"""Module defining the main classes used to access orbital data.
+
+Data is organised hierarchically. The top-level |Orbitals| objects provide access to the |FMOs| and |MOs| objects, which provide access to individual |FMO| and |MO| objects.
+The |Orbitals| objects serves as the loader of the calculation results.
+
+Typical usage example:
+
+  orbs = Orbitals('path/to/adf.rkf')
+  
+
+"""
 import pyorbb
 from scm import plams
 import functools
 import os
-from typing import List, Dict
+from typing import List, Dict, Tuple
 import math
 import platformdirs
 import re
 import numpy as np
 
-ensure_list = lambda x: [x] if not isinstance(x, (list, tuple, set)) else list(x)  # noqa: E731
+_ensure_list = lambda x: [x] if not isinstance(x, (list, tuple, set)) else list(x)  # noqa: E731
 
 
 class Orbital:
@@ -245,7 +256,7 @@ class Orbital:
              isovalue: float = 0.03, 
              overwrite: bool = False, 
              screen: "tcviewer.screen.Screen" = None,  # noqa: F821
-             tranfmorm: "tcmu.geometry.Tranfmorm" = None):  # noqa: F821
+             transform: "tcmu.geometry.Transform" = None):  # noqa: F821
         '''
         Generate and draw a cube-file for this |Orbital| object.
 
@@ -255,7 +266,7 @@ class Orbital:
             overwrite: whether to overwrite the previous calculation if found.
             screen: the ``tcviewer.screen.Screen`` object to use to draw this orbital. 
                 If not given we start a new screen.
-            tranfmorm: the geometrical tranfmormation to use with this orbital.
+            transform: the geometrical tranfmormation to use with this orbital.
 
         .. seealso::
             :meth:`Orbital.cube_file` to generate and return a cube-file for this |Orbital|.
@@ -276,8 +287,8 @@ class Orbital:
         # and draw it with a specified isovalue
         with scr.add_molscene() as scene:
             c1, c2 = ([1, 0, 0], [0, 0, 1]) if self.occupied else ([1, .5, 0], [0, 1, 1])
-            if tranfmorm is not None:
-                scene.tranfmorm = tranfmorm.to_vtkTranfmorm()
+            if transform is not None:
+                scene.transform = transform.to_vtkTransform()
 
             scene.draw_molecule(self.molecule)
             scene.draw_isosurface(cub, -0.03, c1)
@@ -294,7 +305,7 @@ class Orbital:
                    gridsize: str = 'medium', 
                    isovalue: float = 0.03, 
                    overwrite: bool = False, 
-                   tranfmorm: "tcmu.geometry.Tranfmorm" = None) -> str:  # noqa: F821
+                   transform: "tcmu.geometry.Transform" = None) -> str:  # noqa: F821
         '''
         Generate a screenshot for this |Orbital| object.
 
@@ -305,7 +316,7 @@ class Orbital:
             overwrite: whether to overwrite the previous calculation if found.
             screen: the ``tcviewer.screen.Screen`` object to use to draw this orbital. 
                 If not given we start a new screen.
-            tranfmorm: the geometrical tranfmormation to use with this orbital.
+            transform: the geometrical tranfmormation to use with this orbital.
 
         .. seealso::
             :meth:`Orbital.cube_file` to generate and return a cube-file for this |Orbital|.
@@ -323,8 +334,8 @@ class Orbital:
         with tcviewer.Screen(headless=True) as scr:
             with scr.add_molscene() as scene:
                 c1, c2 = ([1, 0, 0], [0, 0, 1]) if self.occupied else ([1, .5, 0], [0, 1, 1])
-                if tranfmorm is not None:
-                    scene.tranfmorm = tranfmorm.to_vtkTranfmorm()
+                if transform is not None:
+                    scene.transform = transform.to_vtkTransform()
 
                 scene.draw_molecule(self.molecule)
                 scene.draw_isosurface(cub, -0.03, c1)
@@ -369,7 +380,7 @@ class MO(Orbital):
     '''
     Class holding data specifically for molecular orbitals.
 
-    Each |MO| holds the following data:
+    Each |MO| holds the following data that can be accessed like attributes.
 
     .. list-table:: 
         :header-rows: 1
@@ -459,7 +470,7 @@ class FMO(Orbital):
     '''
     Class holding data specifically for symmetry-adapted fragment orbitals.
 
-    Each |FMO| holds the following data:
+    Each |FMO| holds the following data that can be accessed like attributes.
 
     .. list-table:: 
         :header-rows: 1
@@ -892,17 +903,17 @@ is positive for the following irreps:
         # check the electronic preparation
         for frag in self.fragments:
             fmos = [fmo for fmo in self.fmos if fmo.fragment == frag]
-            res = self.polarization(fmos)
-            if len(res['polarized_fmos']) > 0:
+            polarized_fmos = self._polarized_fmos(fmos)
+            if len(polarized_fmos) > 0:
                 s = f'The "{frag}" fragment has at least\none large electronic shift\n\nMain polarized FMOs:\n'
 
-                fmo_name_len = max([len(str(fmo)) for fmo, _ in res["polarized_fmos"]])
-                for (fmo, dp) in res["polarized_fmos"]:
+                fmo_name_len = max([len(str(fmo)) for fmo, _ in polarized_fmos])
+                for (fmo, dp) in polarized_fmos:
                     s += f'    {str(fmo):>{fmo_name_len}s}: {dp:+.2f} electrons\n'
 
                 s += '\nCheck the electronic configuration!'
 
-                self.notices['error'].append(('Incorrect electronic preparation', s, [r[0] for r in res['polarized_fmos']]))
+                self.notices['error'].append(('Incorrect electronic preparation', s, [r[0] for r in polarized_fmos]))
 
         if self._check_noninteger_occs():
             wrong_fmos = self._get_noninteger_occs()
@@ -919,21 +930,25 @@ is positive for the following irreps:
             self.notices['warning'].append(('Fractional occupations', s, wrong_fmos))
 
 
-    def polarization(self, fmos):
-        dp = [fmo.gross_population - fmo.occupation for fmo in fmos]
-        dp_abs = sum([abs(max(0, fmo.gross_population) - fmo.occupation) for fmo in fmos])
-        charge = sum([fmo.occupation for fmo in fmos]) - sum([fmo.gross_population for fmo in fmos])
+    def _polarized_fmos(self, fmos: List[FMO]) -> List[Tuple[FMO, float]]:
+        '''
+        Check given |FMO| objects for large changes in electronic population.
 
-        polarization = dp_abs - abs(charge)
+        Args:
+            fmos: A list of |FMO| objects to check.
 
+        Returns:
+            A list of tuples with |FMO| objects and their difference in gross-population and occupation. The difference must be at least 0.7 electrons.
+        '''
         polarized_fmos = []
-        for fmo, dp in zip(fmos, dp):
+        for fmo in fmos:
+            dp = fmo.gross_population - fmo.occupation
             if abs(dp) > 0.7:
                 polarized_fmos.append((fmo, dp))
 
         polarized_fmos = sorted(polarized_fmos, key=lambda r: -abs(r[1]))
 
-        return {'polarization': polarization, 'charge': charge, 'polarized_fmos': polarized_fmos}
+        return polarized_fmos
 
     def _check_noninteger_occs(self):
         for fmo in self.fmos:
@@ -1287,32 +1302,32 @@ class OrbitalSelector:
         orbs = self.orbitals
         # filter down the orbitals in this object
         if index:
-            orbs = [orb for orb in orbs if orb.index in ensure_list(index)]
+            orbs = [orb for orb in orbs if orb.index in _ensure_list(index)]
         if symmetry is not None:
-            orbs = [orb for orb in orbs if orb.symmetry in ensure_list(symmetry)]
+            orbs = [orb for orb in orbs if orb.symmetry in _ensure_list(symmetry)]
         if subspecies is not None:
-            orbs = [orb for orb in orbs if orb.subspecies in ensure_list(subspecies)]
+            orbs = [orb for orb in orbs if orb.subspecies in _ensure_list(subspecies)]
         if spin is not None:
-            orbs = [orb for orb in orbs if orb.spin in ensure_list(spin)]
+            orbs = [orb for orb in orbs if orb.spin in _ensure_list(spin)]
 
         # we match based on either fragment or fragment_unique
         # this ensures that if we select for instance "C(1P:x)" we match ALL carbons
         # if we match "C:1(1P:x)" we match only the first carbon
         if fragment is not None:
-            orbs = [orb for orb in orbs if orb.fragment in ensure_list(fragment)]
+            orbs = [orb for orb in orbs if orb.fragment in _ensure_list(fragment)]
 
         if fragment_index is not None:
-            orbs = [orb for orb in orbs if orb.fragment_index in ensure_list(fragment_index)]
+            orbs = [orb for orb in orbs if orb.fragment_index in _ensure_list(fragment_index)]
 
         # orbname can be either the proper name or the relative name
         if orbname is not None:
-            orbs = [orb for orb in orbs if orb.name in ensure_list(orbname) or orb.relative_name in ensure_list(orbname)]
+            orbs = [orb for orb in orbs if orb.name in _ensure_list(orbname) or orb.relative_name in _ensure_list(orbname)]
 
         # check for the occupation of the orbitals
         if occupation is not None:
             orbs_ = []
             for orb in orbs:
-                for occ in ensure_list(occupation):
+                for occ in _ensure_list(occupation):
                     if isinstance(occ, float):
                         if round(orb.occupation, 2) == round(occ, 2):
                             orbs_.append(orb)
