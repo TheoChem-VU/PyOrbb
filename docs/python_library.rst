@@ -8,4 +8,4 @@ PyOrbb Python Library
 	basic_usage.rst
 	examples/index.rst
 	cli.rst
-	api/pyorbb.rsrt
+	api/pyorbb
