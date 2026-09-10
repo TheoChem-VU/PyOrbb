@@ -76,7 +76,7 @@ Learn how to use PyOrbb's Python library to perform custom orbital analyses for 
       Get a quick overview of the basic functionalities of the PyOrbb Python API.
 
     .. grid-item-card:: Full API
-      :link: api/modules.html
+      :link: api/pyorbb.html
 
       .. image:: _static/images/cards/api.png
          :width: 150px
@@ -108,7 +108,7 @@ Learn how to use PyOrbb's Python library to perform custom orbital analyses for 
 .. toctree::
     :hidden:
 
-    application.rst
-    python_library.rst
+    application
+    python_library
 
 
