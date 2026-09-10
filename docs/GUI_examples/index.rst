@@ -15,7 +15,6 @@ PyOrbb is applicable to a large variety of chemical systems, ranging from simple
          :align: center
 
 
-
     .. grid-item-card:: Oxidative Addition: C-H Bond Activation by Fe(CO)\ :sub:`4`
       :link: Oxidative_addition.html
 
@@ -24,14 +23,12 @@ PyOrbb is applicable to a large variety of chemical systems, ranging from simple
          :align: center
 
 
-
     .. grid-item-card:: Diels-Alder Transition State
-      :link: DA_TS.html
+      :link: DielsAlder.html
 
       .. image:: figures/DA_TS/thumb.png
          :width: 50%
          :align: center
-
 
 
     .. grid-item-card:: Lewis-Acid Catalysis: Diels-Alder
@@ -42,7 +39,6 @@ PyOrbb is applicable to a large variety of chemical systems, ranging from simple
          :align: center
 
 
-
     .. grid-item-card:: Hydrogen-Bonding: Guanine–Cytosine Base Pair
       :link: GC_basepair.html
 
@@ -50,6 +46,13 @@ PyOrbb is applicable to a large variety of chemical systems, ranging from simple
          :width: 75%
          :align: center
 
+
+    .. grid-item-card:: Hetero-/Homolytic Bond Cleavage: Fluoromethane
+      :link: Hetero_vs_homo.html
+
+      .. image:: figures/FCH3/thumb.png
+         :width: 75%
+         :align: center
 
 
     .. grid-item-card:: Homolytic Bond Cleavage: Ethane
@@ -68,14 +71,6 @@ PyOrbb is applicable to a large variety of chemical systems, ranging from simple
          :width: 50%
          :align: center
 
-
-
-    .. grid-item-card:: Hetero-/Homolytic Bond Cleavage: Fluoromethane
-      :link: Hetero_vs_homo.html
-
-      .. image:: figures/FCH3/thumb.png
-         :width: 75%
-         :align: center
 
 
 .. toctree::
