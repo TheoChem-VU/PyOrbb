@@ -7,9 +7,7 @@ else:
     __version__ = '0.0.0'
 
 from . import orbitals  # noqa
-Orbitals = orbitals.objects.Orbitals
-MO = orbitals.objects.MO
-FMO = orbitals.objects.FMO
+from .orbitals import Orbitals, MO, FMO
 from . import plotting  # noqa
 from . import analysis  # noqa
 from . import application  # noqa
