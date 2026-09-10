@@ -69,6 +69,7 @@ autodoc_default_options = {
 modindex_common_prefix = ['template.']
 
 html_theme_options = {
+  "show_toc_level": 2,
   # "show_nav_level": 2,
   # "navigation_depth": 2,
   "navbar_end": ["star"],
@@ -76,8 +77,11 @@ html_theme_options = {
   "navbar_start": ['logo'],
 }
 
+html_css_files = ['custom.css']
+
 html_js_files = ['gui_tabs.js']
 
+toc_object_entries_show_parents = 'all'
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
@@ -85,6 +89,7 @@ html_favicon = 'https://avatars.githubusercontent.com/u/119413491'
 html_theme = 'pydata_sphinx_theme'  # pip install pydata-sphinx-theme
 html_static_path = ['_static']
 add_module_names = False
+toc_object_entries_show_parents = 'all'
 
 # custom variables
 rst_epilog = f"""
