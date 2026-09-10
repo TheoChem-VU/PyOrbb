@@ -1,8 +1,21 @@
+PyOrbb API
+##########
+
+
+Module contents:
+
+.. automodule:: pyorbb
+   :members:
+   :imported-members:
+   :show-inheritance:
+   :inherited-members:
+   :undoc-members:
+
 
 Subpackages:
 
 .. toctree::
-   :maxdepth: 4
+   :maxdepth: 1
 
    pyorbb.analysis
    pyorbb.orbitals
@@ -12,14 +25,7 @@ Submodules:
 
 
 .. toctree::
-   :maxdepth: 4
+   :maxdepth: 1
 
    pyorbb.nested_dict
    pyorbb.write_excel
-
-Module contents:
-
-.. automodule:: pyorbb
-   :members:
-   :show-inheritance:
-   :undoc-members:
