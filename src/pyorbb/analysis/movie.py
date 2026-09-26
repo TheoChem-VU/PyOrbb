@@ -3,7 +3,6 @@ import os
 import numpy as np
 import tcviewer
 from typing import List
-import cv2
 import moviepy as mvp
 import uuid
 import tcmu
