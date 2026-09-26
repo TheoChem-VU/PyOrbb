@@ -7,7 +7,6 @@ The following pages are related to the PyOrbb Python library. For an overview of
 .. toctree::
 	:maxdepth: 1
 
-	installation.rst
 	basic_usage.rst
 	examples/index.rst
 	cli.rst
