@@ -1,5 +1,5 @@
 Installation Manual PyOrbb |ProjectVersion|
-###########################################
+##################################################
 
 PyOrbb Graphical User Interface
 ===============================
