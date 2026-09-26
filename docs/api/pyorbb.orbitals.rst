@@ -9,6 +9,7 @@ Module contents:
    :show-inheritance:
    :imported-members:
    :undoc-members:
+   :member-order: bysource
 
 
 Submodules:
