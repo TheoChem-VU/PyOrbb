@@ -8,6 +8,5 @@ The following pages are related to the PyOrbb graphical user interface. For an o
 .. toctree::
 	:maxdepth: 1
 
-	installation
 	notices
 	GUI_examples/index
