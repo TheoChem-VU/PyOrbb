@@ -6,7 +6,6 @@ def main():
     import traceback
     # import faulthandler
 
-
     # faulthandler.enable()
     
     log_dir = platformdirs.user_log_dir(appname="PyOrbb", appauthor="TheoCheMVU", ensure_exists=True)
