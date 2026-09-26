@@ -13,7 +13,7 @@ ensure_list = lambda x: [x] if not isinstance(x, (list, tuple, set)) else list(x
 INTERACTION_COLORS = {'OI': '#00FF00', 'PR': '#FF0000', 'Sanitization': '#FF00FF', 'Multiple': '#000000'}
 
 
-class Mixer2:
+class Mixer:
     def __init__(self, orbs: pyorbb.Orbitals or str, pr_min_thresh=1e-3, oi_min_thresh=1e-7, oi_max_N=50, pr_max_N=50):
         self.orbs = orbs
         if isinstance(orbs, str):
@@ -182,6 +182,7 @@ class Mixer2:
             return max(vals[idx], vals[2])
         return vals[idx]
 
+
     def get_oi_fraction(self, threshold):
         '''
         Get the fraction of the total OI captured by a specific threshold.
@@ -190,6 +191,7 @@ class Mixer2:
         total = sum(vals)
         fracs = [val/total for val in vals if val >= threshold]
         return sum(fracs)
+
 
     def get_pr_fraction(self, threshold):
         '''
@@ -200,17 +202,21 @@ class Mixer2:
         fracs = [val/total for val in vals if val >= threshold]
         return sum(fracs)
 
+
     def set_pr_threshold(self, thresh):
         self.pr_threshold = thresh
         self.pr_N = None
+
 
     def set_oi_N(self, N):
         self.oi_threshold = None
         self.oi_N = N
 
+
     def set_pr_N(self, N):
         self.pr_threshold = None
         self.pr_N = N
+
 
     def set_energy_type(self, typ):
         self.energy_type = typ
@@ -219,13 +225,16 @@ class Mixer2:
         if typ not in self.mixes['PR']:
             self._get_pauli_repulsions()
 
+
     def _get_orbital_interactions(self):
         Eoi, Eoi_order = self.data[self.energy_type][0], self.data[self.energy_type][1]
         self._get_mixes(Eoi, Eoi_order, self.oi_min_thresh, 'OI')
 
+
     def _get_pauli_repulsions(self):
         Epr, Epr_order = self.data[self.energy_type][2], self.data[self.energy_type][3]
         self._get_mixes(Epr, Epr_order, self.pr_min_thresh, 'PR')
+
 
     def _get_mixes(self, 
                    M, 
@@ -260,6 +269,7 @@ class Mixer2:
             else:
                 if n == self.pr_max_N:
                     break
+
 
     def _get_mos(self, fmo1, fmo2, interaction_type=None):
         fmo1_contr = np.array([fmo1.mulliken_contribution(mo, normalized=True) for mo in self.orbs.mos.orbitals])
@@ -443,7 +453,7 @@ class Mixer2:
         return self.main_mix.connections
 
 
-class Mixer:
+class _Mixer:
     '''
     The main class responsible for generating 2-mixing situations.
 
@@ -461,7 +471,7 @@ class Mixer:
         self.fmos_vir = {}
         self.fmos_energy = {}
         for i, frag in enumerate(self.orbs.fmos.fragments):
-            self.fmos[frag] = [fmo for fmo in self.orbs.fmos if fmo.fragment_unique == frag]
+            self.fmos[frag] = [fmo for fmo in self.orbs.fmos if fmo.fragment == frag]
             self.fmos_occ[frag] = np.array([fmo.occupation > 0 for fmo in self.fmos[frag]]).reshape(-1, 1)
             if not self.orbs.fmos.unrestricted:
                 self.fmos_vir[frag] = np.array([fmo.occupation < 2 for fmo in self.fmos[frag]]).reshape(-1, 1)
@@ -799,7 +809,7 @@ class Mixing:
 
     @property
     def fragments(self):
-        return set(fmo.fragment_unique for fmo in self.fmos)
+        return set(fmo.fragment for fmo in self.fmos)
 
     @property
     def lowest_contribution(self):
