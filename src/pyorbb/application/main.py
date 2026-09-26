@@ -2105,9 +2105,10 @@ class PyOrbbWindow(QtWidgets.QMainWindow):
                 window.system_info_box.themechange()
                 window.notice_tab.themechange()
                 window._orb_selection_dialog.themechange()
-                # window._set_orbital_filter_button_icon()
             else:
                 window.update_icons()
+                window.recent_publish_carousel.themechange()
+                
         self.settings_dialog.update_icons()
         if self.isDarkMode:
             self.theme_switcher.set_dark_theme()
