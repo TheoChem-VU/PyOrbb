@@ -146,10 +146,10 @@ def _get_calc_info(reader: plams.KFReader) -> dict:
     ret.set('fmo_spinpolarizations', spin_pols)
 
     # determine if we have access to effective orbital energies
-    if ('SFOs', 'site_energy') in reader or 'SFO_Fock_A' in reader or 'SFO_Fock' in reader:
-        ret.set('has_site_energy', True)
+    if ('SFOs', 'effective_energy') in reader or 'SFO_Fock_A' in reader or 'SFO_Fock' in reader:
+        ret.set('has_effective_energy', True)
     else:
-        ret.set('has_site_energy', False)
+        ret.set('has_effective_energy', False)
 
     return ret
 
@@ -208,16 +208,16 @@ def read_data(reader: plams.KFReader, SCF0_reader: plams.KFReader = None, output
         # concatenate vectors of all spins
         return np.hstack([data[spin] for spin in spins])
 
-    def _read_site_energy(spin, scf0=False):
+    def _read_effective_energy(spin, scf0=False):
         # function used to read site energies from rkf file with specific spin
         # also can read from scf0 kfreader if specified
         R = SCF0_reader if scf0 else reader
 
-        site_energy = _read_spin_indep('SFOs', 'site_energy', fmo_spin, R)
-        if site_energy:
-            return np.atleast_1d(site_energy)
+        effective_energy = _read_spin_indep('SFOs', 'effective_energy', fmo_spin, R)
+        if effective_energy:
+            return np.atleast_1d(effective_energy)
 
-        site_energy = []
+        effective_energy = []
         for symlabel in ret['calc_info']['symlabels']:
             # This is to correct for symlable being split up into :1, :2, etc., e.g. 1E:1 becomes 1E
             if ':' in symlabel and symlabel.split(':')[1].isdigit():
@@ -242,11 +242,11 @@ def read_data(reader: plams.KFReader, SCF0_reader: plams.KFReader = None, output
                 idx = 0
                 loop = 2
                 while idx <= len(fmat):
-                    site_energy.append(fmat[idx])
+                    effective_energy.append(fmat[idx])
                     idx += loop
                     loop += 1
 
-        return np.atleast_1d(site_energy)
+        return np.atleast_1d(effective_energy)
 
     def _read_kinetic_energy():
         # the kinetic energy is read from the output file
@@ -383,23 +383,23 @@ def read_data(reader: plams.KFReader, SCF0_reader: plams.KFReader = None, output
         ret.set('FMOs', 'occupation', fmo_spin, np.atleast_1d(_read_spin_indep('SFOs', 'occupation', fmo_spin)))
         # the order in terms of the energy of the FMO
         ret.set('FMOs', 'order', fmo_spin, np.argsort(ret['FMOs']['energy'][fmo_spin]))
-        s =  _read_site_energy(fmo_spin, False)
+        s =  _read_effective_energy(fmo_spin, False)
         if s is not None:
-            ret.set('FMOs', 'site_energy', fmo_spin, s)
+            ret.set('FMOs', 'effective_energy', fmo_spin, s)
         if SCF0_reader:
-            s = _read_site_energy(fmo_spin, True)
+            s = _read_effective_energy(fmo_spin, True)
             if s is not None:
-                ret.set('FMOs', 'site_energy_SCF0', fmo_spin, s)
+                ret.set('FMOs', 'effective_energy_SCF0', fmo_spin, s)
 
         for symlabel in ret['calc_info']['symlabels']:
             energy_by_symlabel = ret['FMOs']['energy'][fmo_spin][ret['FMOs']['subspecies_fixed'] == symlabel]
             ret.set('FMOs', 'order_by_symlabel', symlabel, fmo_spin, np.argsort(energy_by_symlabel))
 
-    if 'site_energy' in ret['FMOs']:
-        ret.set('FMOs', 'site_energy', 'total', _compose_vector(ret['FMOs']['site_energy'], ret['calc_info']['fmo_spins']))
+    if 'effective_energy' in ret['FMOs']:
+        ret.set('FMOs', 'effective_energy', 'total', _compose_vector(ret['FMOs']['effective_energy'], ret['calc_info']['fmo_spins']))
 
-    if 'site_energy_SCF0' in ret['FMOs']:
-        ret.set('FMOs', 'site_energy_SCF0', 'total', _compose_vector(ret['FMOs']['site_energy_SCF0'], ret['calc_info']['fmo_spins']))
+    if 'effective_energy_SCF0' in ret['FMOs']:
+        ret.set('FMOs', 'effective_energy_SCF0', 'total', _compose_vector(ret['FMOs']['effective_energy_SCF0'], ret['calc_info']['fmo_spins']))
 
     ret.set('FMOs', 'energy', 'total', _compose_vector(ret['FMOs']['energy'], ret['calc_info']['fmo_spins']))
     ret.set('FMOs', 'occupation', 'total', _compose_vector(ret['FMOs']['occupation'], ret['calc_info']['fmo_spins']))
@@ -532,7 +532,7 @@ def read_data(reader: plams.KFReader, SCF0_reader: plams.KFReader = None, output
 
     for mo_spin in ret['calc_info']['mo_spins']:
         ret.set('FMOs', 'gross_population', mo_spin, [])
-        ret.set('FMOs', 'approx_site_energy', mo_spin, [])
+        ret.set('FMOs', 'approx_effective_energy', mo_spin, [])
 
     for symlabel in ret['calc_info']['symlabels']:
         norb = ret['MOs']['number'][symlabel][ret['calc_info']['mo_spins'][0]]
@@ -548,9 +548,9 @@ def read_data(reader: plams.KFReader, SCF0_reader: plams.KFReader = None, output
             contr = ret['matrices']['mulliken_contribution'][symlabel][mo_spin]
             mo_energy = ret['MOs']['energy'][symlabel][mo_spin]
             approx_site = mo_energy @ contr
-            ret['FMOs']['approx_site_energy'][mo_spin].extend(approx_site.tolist())
+            ret['FMOs']['approx_effective_energy'][mo_spin].extend(approx_site.tolist())
 
     ret.set('FMOs', 'gross_population', 'total', _compose_vector(ret['FMOs']['gross_population'], ret['calc_info']['mo_spins']))
-    ret.set('FMOs', 'approx_site_energy', 'total', _compose_vector(ret['FMOs']['approx_site_energy'], ret['calc_info']['mo_spins']))
+    ret.set('FMOs', 'approx_effective_energy', 'total', _compose_vector(ret['FMOs']['approx_effective_energy'], ret['calc_info']['mo_spins']))
 
     return ret

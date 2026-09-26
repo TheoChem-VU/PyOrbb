@@ -145,9 +145,9 @@ class ETypeDialog(QtWidgets.QDialog):
 
         display_names = {
             'energy': 'Regular',
-            'approx_site_energy': 'Effective (approximate)',
-            'site_energy': 'Effective',
-            'site_energy_SCF0': 'Effective (initial density)',
+            'approx_effective_energy': 'Effective (approximate)',
+            'effective_energy': 'Effective',
+            'effective_energy_SCF0': 'Effective (initial density)',
         }
 
         self.rbuttons = {}
@@ -1330,7 +1330,7 @@ class AnalysisWindow(QtWidgets.QWidget):
             traceback.print_exc(e)
             return
 
-        self.main_mix = pyorbb.analysis.mixing.Mixer2(self.orbs, pr_min_thresh=0.001**2, oi_min_thresh=0.00000001)
+        self.main_mix = pyorbb.Mixer(self.orbs, pr_min_thresh=0.001**2, oi_min_thresh=0.00000001)
 
         self._energytype_selection = 'energy'
 
