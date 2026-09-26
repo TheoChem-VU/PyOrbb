@@ -1,10 +1,6 @@
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
-from matplotlib.path import Path
-from matplotlib.bezier import (
-    NonIntersectingPathException, get_cos_sin, get_intersection,
-    get_parallels, inside_circle, make_wedged_bezier2,
-    split_bezier_intersecting_with_closedpath, split_path_inout)
+import matplotlib.patheffects as pe
 import numpy as np
 import pyorbb
 import re
@@ -19,7 +15,7 @@ def anchored_text(ax, x, y, text, offset_axes=(0.0, 0.1), **kwargs):
     fig = ax.figure
 
     # initial dummy head (will be updated immediately)
-    T = ax.text(x, y, text, **kwargs) 
+    T = ax.text(x, y, text, path_effects=[pe.withStroke(linewidth=4, foreground='white')], **kwargs) 
     def update_artist(event=None):
         # 1) get tail position in display coords
         anchor_disp = ax.transData.transform((x, y))  # display (pixel) coords
@@ -95,51 +91,46 @@ def draw_interaction(fmos, mos, connections,
         ax=None,
         ylim=None,
         highlighted_orbitals=None,
-        use_darkmode=False,
         mo_column_name='Complex',
-        xtick_order=None,
+        fragment_order=None,
         warning_orbs=None,
         **kwargs):
     
-    arrow_length        = kwargs.get('arrow_length', 0.25)
-    arrow_width         = kwargs.get('arrow_width', .005)
-    arrow_head_width    = kwargs.get('arrow_head_width', .025)
-    arrow_head_length   = kwargs.get('arrow_head_length', .1 / 4.8280888207)
-    arrow_spacing       = kwargs.get('arrow_spacing', .06)
-    arrow_color         = kwargs.get('arrow_color', '#000000')
 
-    level_width         = kwargs.get('level_width', .08)
-    level_thickness     = kwargs.get('level_thickness', 3)
-    highlight_thickness = kwargs.get('highlight_thickness', 2)
+    # load some parameters that we use for plotting
+    # we take by default the parameters from rcParams unless they were provided with the function call
+    arrow_length         = kwargs.get('arrow_length',         pyorbb.rcParams['plotting']['arrows']['arrow_length'])
+    arrow_width          = kwargs.get('arrow_width',          pyorbb.rcParams['plotting']['arrows']['arrow_width'])
+    arrow_head_width     = kwargs.get('arrow_head_width',     pyorbb.rcParams['plotting']['arrows']['arrow_head_width'])
+    arrow_head_length    = kwargs.get('arrow_head_length',    pyorbb.rcParams['plotting']['arrows']['arrow_head_length'])
+    arrow_spacing        = kwargs.get('arrow_spacing',        pyorbb.rcParams['plotting']['arrows']['arrow_spacing'])
+    arrow_color          = kwargs.get('arrow_color',          pyorbb.rcParams['plotting']['arrows']['arrow_color'])
 
-    font_name           = kwargs.get('font_name', 'monospace')
-    font_size           = kwargs.get('font_size', 9)
+    level_width          = kwargs.get('level_width',          pyorbb.rcParams['plotting']['levels']['level_width'])
+    level_thickness      = kwargs.get('level_thickness',      pyorbb.rcParams['plotting']['levels']['level_thickness'])
+    level_color          = kwargs.get('level_color',          pyorbb.rcParams['plotting']['levels']['level_color'])
+    highlight_thickness  = kwargs.get('highlight_thickness',  pyorbb.rcParams['plotting']['levels']['highlight_thickness'])
+    highlight_color      = kwargs.get('highlight_color',      pyorbb.rcParams['plotting']['levels']['highlight_color'])
+    degeneracy_threshold = kwargs.get('degeneracy_threshold', pyorbb.rcParams['plotting']['levels']['degeneracy_threshold'])
 
-    draw_mo_labels      = kwargs.get('draw_mo_labels', False)
-    draw_sfo_labels     = kwargs.get('draw_sfo_labels', True)
+    font_name            = kwargs.get('font_name',            pyorbb.rcParams['plotting']['font']['font_name'])
+    font_size            = kwargs.get('font_size',            pyorbb.rcParams['plotting']['font']['font_size'])
 
-    orb_label_offset    = kwargs.get('orb_label_offset', -.28)
+    draw_mo_labels       = kwargs.get('draw_mo_labels',       pyorbb.rcParams['plotting']['labels']['draw_mo_labels'])
+    draw_sfo_labels      = kwargs.get('draw_sfo_labels',      pyorbb.rcParams['plotting']['labels']['draw_sfo_labels'])
+    orb_label_offset     = kwargs.get('orb_label_offset',     pyorbb.rcParams['plotting']['labels']['orb_label_offset'])
+    axis_label_color     = kwargs.get('axis_label_color',     pyorbb.rcParams['plotting']['labels']['axis_label_color'])
+    axis_label_font_size = kwargs.get('axis_label_font_size', pyorbb.rcParams['plotting']['labels']['axis_label_font_size'])
+    label_color          = kwargs.get('label_color',          pyorbb.rcParams['plotting']['labels']['label_color'])
 
-    alpha_range         = kwargs.get('alpha_range', (0.1, 1))
+    alpha_range          = kwargs.get('alpha_range',          pyorbb.rcParams['plotting']['connections']['alpha_range'])
+    OI_color             = kwargs.get('OI_color',             pyorbb.rcParams['plotting']['connections']['OI_color'])
+    PR_color             = kwargs.get('PR_color',             pyorbb.rcParams['plotting']['connections']['PR_color'])
+    sanitization_color   = kwargs.get('sanitization_color',   pyorbb.rcParams['plotting']['connections']['sanitization_color'])
+    multiple_color       = kwargs.get('multiple_color',       pyorbb.rcParams['plotting']['connections']['multiple_color'])
+    connection_width     = kwargs.get('connection_width',     pyorbb.rcParams['plotting']['connections']['line_width'])
 
-    degeneracy_threshold = kwargs.get('degeneracy_threshold', 0.07)
-
-
-    if use_darkmode: 
-        highlight_color = '#36B8FF'
-        level_color = '#BCBCBC'
-        label_color = 'lightgrey'
-        axis_label_color = 'white'
-        spine_color = 'white'
-        
-        ax.set_facecolor('#3d3d3d')
-        ax.get_figure().patch.set_facecolor('#3d3d3d')
-    else:
-        highlight_color = '#36B8FF'
-        level_color = 'k'
-        label_color = 'grey'
-        axis_label_color = 'black'
-        spine_color = 'k'
+    spine_color          = kwargs.get('spine_color',          pyorbb.rcParams['plotting']['spine']['spine_color'])
 
     if highlighted_orbitals is None:
         highlighted_orbitals = []
@@ -165,9 +156,16 @@ def draw_interaction(fmos, mos, connections,
         if fmo.fragment not in frags:
             frags.append(fmo.fragment)
 
-    if xtick_order is None:
+    if fragment_order is None:
         xtick_order = {mo_column_name: .5}
         for i, frag in enumerate(frags):
+            if i == 0:
+                xtick_order[frag] = -.5
+            else:
+                xtick_order[frag] = i + .5
+    else:
+        xtick_order = {mo_column_name: .5}
+        for i, frag in enumerate(fragment_order):
             if i == 0:
                 xtick_order[frag] = -.5
             else:
@@ -334,12 +332,12 @@ def draw_interaction(fmos, mos, connections,
         mo_index = mo.parent.orbitals.index(mo)
         typ = connection_types.get((fmo, mo), 'Multiple')
         if typ == 'Multiple':
-            c = kwargs.get('Multiple_color', '#000000')
+            c = multiple_color
         elif typ == 'PR':
-            c = kwargs.get('PR_color', '#FF0000')
+            c = PR_color
         elif typ == 'OI':
-            c = kwargs.get('OI_color', '#00FF00')
+            c = OI_color
         elif typ == 'Sanitization':
-            c = kwargs.get('Sanitization_color', '#b37fb9')
+            c = sanitization_color
 
-        ax.plot([psfo, pmo], [getattr(fmo, energy_type), mo.energy], c=c, linewidth=1.5, alpha=np.clip(fmo.mulliken_contribution(mo), *alpha_range), gid=f'MIX_{sfo_index} -> {mo_index}', zorder=-10)
+        ax.plot([psfo, pmo], [getattr(fmo, energy_type), mo.energy], c=c, linewidth=connection_width, alpha=np.clip(fmo.mulliken_contribution(mo), *alpha_range), gid=f'MIX_{sfo_index} -> {mo_index}', zorder=-10)

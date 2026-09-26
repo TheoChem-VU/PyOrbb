@@ -1,0 +1,47 @@
+application:
+  theme:                  "Auto"
+
+densf:
+  amsbin:                 "guess"  # default is to try and guess the location of amsbin
+  grid:                   "Medium"
+
+plotting:
+  arrows:
+    arrow_length:         0.25
+    arrow_width:          0.05
+    arrow_head_width:     0.15
+    arrow_head_length:    0.4
+    arrow_spacing:        0.06
+    arrow_color:          '#000000'
+
+  labels:
+    draw_mo_labels:       False
+    draw_sfo_labels:      True
+    orb_label_offset:     -0.28
+    label_color:          "#808080"
+    axis_label_color:     "#000000"
+    axis_label_font_size: 12
+
+  levels:
+    level_width:          0.08
+    level_thickness:      3.0
+    level_color:          "#000000"
+    highlight_thickness:  2.0
+    highlight_color:      "#36B8FF"
+    mo_column_name:       "Complex"
+    degeneracy_threshold: 0.07
+
+  connections:
+    OI_color:             "#008000"
+    PR_color:             "#ff0000"
+    sanitization_color:   "#bf00bf"
+    multiple_color:       "#000000"
+    alpha_range:          [0, 1.0]
+    line_width:           1.5
+
+  font:
+    font_size:            9
+    font_name:            "monospace"
+
+  spine:
+    spine_color:          "#000000"
