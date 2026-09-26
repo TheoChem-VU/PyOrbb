@@ -205,7 +205,7 @@ def draw_interaction(fmos, mos, connections,
             poss[orb] = base_pos + 1 / deg_degree * deg_idx
 
     ax.set_title(title)
-    ax.set_ylabel('Orbital Energy / eV', color=axis_label_color)
+    ax.set_ylabel('Orbital Energy / eV', size=axis_label_font_size, color=axis_label_color)
     ax.set_xticks(list(xtick_order.values()), list(xtick_order.keys()), color=spine_color)
     for i, artist in enumerate(ax.get_xticklabels()):
         if list(xtick_order.keys())[i] == mo_column_name:
@@ -217,7 +217,7 @@ def draw_interaction(fmos, mos, connections,
     ax.yaxis.label.set_color(spine_color)
     ax.tick_params(axis='y', colors=spine_color)
 
-    ax.tick_params('x', labelsize=12, labelcolor=label_color)
+    ax.tick_params('x', labelsize=axis_label_font_size, labelcolor=label_color)
     ax.tick_params(bottom = False)
     for orb in poss:
         E = orb.energy
