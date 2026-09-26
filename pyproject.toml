@@ -81,7 +81,7 @@ requires = [
     "pyperclip",
     "platformdirs",
     "beautifulsoup4",
-    "yaml",
+    "pyyaml",
     ]
 test_sources = [
     "test",
