@@ -1,4 +1,13 @@
 import os
+import re
+import yaml
+
+from . import orbitals  # noqa
+from .orbitals import Orbitals, MO, FMO
+from . import plotting  # noqa
+from . import analysis  # noqa
+from .analysis import Mixer  # noqa
+from . import application  # noqa
 
 if os.path.exists(os.path.join(os.path.split(__file__)[0], 'VERSION')):
     with open(os.path.join(os.path.split(__file__)[0], 'VERSION')) as version:
@@ -6,12 +15,7 @@ if os.path.exists(os.path.join(os.path.split(__file__)[0], 'VERSION')):
 else:
     __version__ = '0.0.0'
 
-from . import orbitals  # noqa
-from .orbitals import Orbitals, MO, FMO
-from . import plotting  # noqa
-from . import analysis  # noqa
-from . import application  # noqa
-import re
+
 
 IRREP_TRANSLATION_LATEX = {
     "E1:1": r"E$_\mathrm{1}^\mathrm{1}$",
@@ -82,6 +86,28 @@ IRREP_TRANSLATION_HTML = {
     "D": "<i>d</i>",
     "F": "<i>f</i>",
 }
+
+rcParams_dir = os.path.join(os.path.split(__file__)[0], 'rcParams')
+if os.path.exists(os.path.join(rcParams_dir, 'user.yaml')):
+    rcParams_path = os.path.join(rcParams_dir, 'user.yaml')
+else:
+    rcParams_path = os.path.join(rcParams_dir, 'default.yaml')
+
+with open(rcParams_path) as config:
+    rcParams = yaml.safe_load(config)
+
+
+def save_rcParams():
+    with open(os.path.join(rcParams_dir, 'user.yaml'), 'w+') as user_config:
+        yaml.dump(rcParams, user_config)
+
+
+def reset_rcParams():
+    global rcParams
+
+    with open(os.path.join(rcParams_dir, 'default.yaml')) as config:
+        rcParams = yaml.safe_load(config)
+
 
 def translate_irrep_label(symm_label: str, mode='latex', use_formatting=True) -> str:
     if mode == 'latex':
