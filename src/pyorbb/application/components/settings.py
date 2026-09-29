@@ -452,10 +452,6 @@ class SettingsDialog(QtWidgets.QDialog):
         return len(self.setting_widgets)
 
     def build(self):
-        def change_widget(current, previous):
-            new_index = list_widget.indexFromItem(current).row()
-            stack_widget.setCurrentIndex(new_index)
-
         self.layout = QtWidgets.QVBoxLayout(self)
 
         # build the title label
