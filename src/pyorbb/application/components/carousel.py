@@ -43,7 +43,7 @@ class FadeWidget(QtWidgets.QWidget):
         self.background_color = '#3E3E3E' if darkmode else '#F7F7F7'
 
 
-@tcmu.cache_file("cited_by.json", datetime.timedelta(weeks=1))
+# @tcmu.cache_file("cited_by.json", datetime.timedelta(weeks=1))
 def _get_citedby_data(url: str):
     headers = {
     "User-Agent": (
@@ -147,38 +147,13 @@ class PublicationWidget(QtWidgets.QFrame):
         self.setup()
         shadow.apply(self, radius=10)
 
-        # grad = QtGui.QGradient(QtGui.QGradient.Preset.WarmFlame)
-        # print(grad)
-        # gradient = QLinearGradient(0, 0, 0, widget.height())  # top to bottom
-        # gradient.setColorAt(0.0, QColor("#4facfe"))  # start color
-        # gradient.setColorAt(1.0, QColor("#00f2fe"))  # end color
-
-        # palette = self.palette()
-        # palette.setBrush(QtGui.QPalette.ColorRole.Window, QtGui.QBrush(grad))
-        # self.setPalette(palette)
-        # self.setAutoFillBackground(True)
-
         self.setSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum)
 
         self.setToolTip(self._link)
 
-    # def paintEvent(self, event):
-    #     super().paintEvent(event)
-    #     painter = QtGui.QPainter(self)
-
-    #     preset = QtGui.QGradient(QtGui.QGradient.Preset.ShadyWater)
-    #     stops = preset.stops()
-
-    #     gradient = QtGui.QLinearGradient(0, 0, 0, 1)  # top to bottom
-    #     gradient.setCoordinateMode(QtGui.QGradient.CoordinateMode.ObjectMode)
-    #     gradient.setStops(stops)
-
-    #     painter.fillRect(self.rect(), gradient)
-
 
     def mousePressEvent(self, event):
-        import webbrowser
-        ret = webbrowser.open(self._link)
+        webbrowser.open(self._link)
 
     def setup(self):
         month_name = {1: 'Jan', 2: 'Feb', 3: 'Mar', 4: 'Apr', 5: 'May', 6: 'Jun', 7: 'Jul', 8: 'Aug', 9: 'Sept', 10: 'Oct', 11: 'Nov', 12: 'Dec'}
@@ -251,9 +226,6 @@ class Carousel(QtWidgets.QWidget):
 
         self.fade_width = 35
 
-        # Connect scroll updates
-        scrollbar = self.scroll_area.horizontalScrollBar()
-
         _layout.addWidget(self.scroll_area)
 
         self.setup()
@@ -285,24 +257,9 @@ class Carousel(QtWidgets.QWidget):
             self.fade_width,
             self.scroll_area.height()
             )
-        # self.fade_top.setGeometry(
-        #     120, 
-        #     self.scroll_area.height() - self.fade_width, 
-        #     self.scroll_area.width() - 240, 
-        #     self.fade_width
-        #     )
-        # self.fade_bottom.setGeometry(
-        #     120, 
-        #     0,
-        #     self.scroll_area.width() - 240, 
-        #     self.fade_width
-        #     )
-
         # Ensure fades are above scroll area
         self.fade_left.raise_()
         self.fade_right.raise_()
-        # self.fade_top.raise_()
-        # self.fade_bottom.raise_()
         ...
 
     def setup(self):
@@ -326,14 +283,14 @@ class PublicationCarousel(Carousel):
             self._carousel_layout.addWidget(QtWidgets.QLabel('Could not reach scholar.google.com.\nPlease check your internet connection.'))
             return
 
-        except:
+        except:  # noqa
             self._carousel_layout.addWidget(QtWidgets.QLabel('Sorry! Could not find the right data.'))
             return
 
         for row in data:
             try:
                 self._carousel_layout.addWidget(PublicationWidget(self, row))
-            except:
+            except:  # noqa
                 pass
 
         self._carousel_layout.addStretch()
