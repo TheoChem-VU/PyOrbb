@@ -23,6 +23,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
+          pip install .
           pip install uv
           uv sync
           uv add ruff==0.0.177
