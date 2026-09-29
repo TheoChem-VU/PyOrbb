@@ -43,7 +43,7 @@ class FadeWidget(QtWidgets.QWidget):
         self.background_color = '#3E3E3E' if darkmode else '#F7F7F7'
 
 
-# @tcmu.cache_file("cited_by.json", datetime.timedelta(weeks=1))
+@tcmu.cache_file("cited_by.json", datetime.timedelta(weeks=1))
 def _get_citedby_data(url: str):
     headers = {
     "User-Agent": (
