@@ -13,13 +13,13 @@ def get_fragments_data(reader: plams.KFReader) -> Dict:
     Returns:
         :Dictionary containing information about the fragments:
 
-            - **used_atomic_fragments (bool)** – whether atomic or molecular fragments were used.
-            - **fragment_names (List[str])** - a list of the fragment names.
-            - **fragment_molecules (Dict[str, plams.Molecule])** - a dictionary containing, for each fragment, 
-                the molecule containing the atoms that belong to the fragment.
-            - **sfo_fragtype_to_fragname_map (Dict[int, str])** - a dictionary containing, for each SFO fragment type,
-                the fragment name that belongs to it.
-            - **complex_molecule (plams.Molecule)** - the molecule of the complex.
+        - **used_atomic_fragments (bool)** – whether atomic or molecular fragments were used.
+        - **fragment_names (List[str])** - a list of the fragment names.
+        - **fragment_molecules (Dict[str, plams.Molecule])** - a dictionary containing, for each fragment, 
+          the molecule containing the atoms that belong to the fragment.
+        - **fmo_fragtype_to_fragname_map (Dict[int, str])** - a dictionary containing, for each FMO fragment type,
+          the fragment name that belongs to it.
+        - **complex_molecule (plams.Molecule)** - the molecule of the complex.
     """
     def get_atoms() -> List[plams.Atom]:
         '''
@@ -51,7 +51,7 @@ def get_fragments_data(reader: plams.KFReader) -> Dict:
         rkf_atomtype_order   = rkf_atomtype_order[len(rkf_atomtype_order)//2:]
         rkf_napp             = np.atleast_1d(reader.read('Symmetry', 'napp')).astype(int)
         rkf_notyps           = np.atleast_1d(reader.read('Symmetry', 'notyps')).astype(int)
-        rkf_sfo_fragments    = np.atleast_1d(reader.read('SFOs', 'fragment')).astype(int)
+        rkf_fmo_fragments    = np.atleast_1d(reader.read('SFOs', 'fragment')).astype(int)
 
         notyp_atom_types = rkf_atomtypes[rkf_notyps-1]
 
@@ -83,17 +83,17 @@ def get_fragments_data(reader: plams.KFReader) -> Dict:
             fragment_molecules.setdefault(fragment_name, plams.Molecule())
             fragment_molecules[fragment_name].add_atom(atoms[i])
         
-        sfo_unique_fragments = np.unique(rkf_sfo_fragments)
-        sfo_fragtype_to_name_map = {fragment_number: fragment_name for fragment_number, fragment_name in zip(sfo_unique_fragments, fragment_names)}
+        fmo_unique_fragments = np.unique(rkf_fmo_fragments)
+        fmo_fragtype_to_name_map = {fragment_number: fragment_name for fragment_number, fragment_name in zip(fmo_unique_fragments, fragment_names)}
 
         ret['fragment_names'] = fragment_names
         ret['fragment_molecules'] = fragment_molecules
-        ret['fmo_fragtype_to_fragname_map'] = sfo_fragtype_to_name_map
+        ret['fmo_fragtype_to_fragname_map'] = fmo_fragtype_to_name_map
     else:
         rkf_fragtype_indices = np.atleast_1d(reader.read('Geometry', 'fragment and atomtype index')).astype(int)
         rkf_fragtype_indices = rkf_fragtype_indices[:len(rkf_fragtype_indices)//2]
         rkf_fragmenttypes    = np.atleast_1d(reader.read('Geometry', 'fragmenttype').split()).astype(str)
-        rkf_sfo_fragments    = np.atleast_1d(reader.read('SFOs', 'fragment')).astype(int)
+        rkf_fmo_fragments    = np.atleast_1d(reader.read('SFOs', 'fragment')).astype(int)
 
         atoms = get_atoms()
         fragment_molecules = {}
@@ -102,12 +102,12 @@ def get_fragments_data(reader: plams.KFReader) -> Dict:
             fragment_molecules.setdefault(str(fragment_name), plams.Molecule())
             fragment_molecules[str(fragment_name)].add_atom(atoms[i])
 
-        sfo_unique_fragments = np.unique(rkf_sfo_fragments)
-        sfo_fragtype_to_name_map = {fragment_number: str(fragment_name) for fragment_number, fragment_name in zip(sfo_unique_fragments, rkf_fragmenttypes)}
+        fmo_unique_fragments = np.unique(rkf_fmo_fragments)
+        fmo_fragtype_to_name_map = {fragment_number: str(fragment_name) for fragment_number, fragment_name in zip(fmo_unique_fragments, rkf_fragmenttypes)}
 
         ret['fragment_names'] = rkf_fragmenttypes
         ret['fragment_molecules'] = fragment_molecules
-        ret['fmo_fragtype_to_fragname_map'] = sfo_fragtype_to_name_map
+        ret['fmo_fragtype_to_fragname_map'] = fmo_fragtype_to_name_map
 
     ret['complex_molecule'] = plams.Molecule()
     [ret['complex_molecule'].add_atom(atom) for atom in get_atoms()]

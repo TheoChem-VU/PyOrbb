@@ -8,7 +8,6 @@
 # https://creativecommons.org/publicdomain/zero/1.0/
 # https://creativecommons.org/publicdomain/zero/1.0/legalcode
 
-import sys
 from PySide6 import QtWidgets, QtGui, QtCore
 
 class HTMLStyle(QtWidgets.QProxyStyle):

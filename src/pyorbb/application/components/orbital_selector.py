@@ -185,7 +185,7 @@ class OrbitalSelectionTable(QtWidgets.QTableWidget):
             headers.remove('Gross Pop.')
             headers.remove('Rel. Name (Subsp.)')
 
-        if not self.parent.parent.orbs.data['calc_info']['has_site_energy'] or is_MO:
+        if not self.parent.parent.orbs.data['calc_info']['has_effective_energy'] or is_MO:
             headers.remove('Energy (eff.)')
 
         super().__init__(len(orbitals), len(headers), parent=parent)

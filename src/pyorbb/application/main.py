@@ -2,7 +2,6 @@ from PySide6 import QtWidgets, QtCore, QtGui
 import pyorbb
 from .components import (
     orbital_selector,
-    rich_widgets,
     latex_renderer,
     action_widget,
     settings,
@@ -68,7 +67,6 @@ def _determine_formal_charges(orbs):
 def _determine_vdd_charges(orbs):
     # build up the effective charges of the atoms
     # this takes into account the atom number and number of frozen core electrons
-    atomtypes = np.atleast_1d(orbs.reader.read('Geometry', 'atomtype').split())
     vdd_charges = np.atleast_1d(orbs.reader.read('Properties', 'AtomCharge_SCF Voronoi')) - np.atleast_1d(orbs.reader.read('Properties', 'AtomCharge_initial Voronoi'))
 
     def get_atom_indices(mol):
@@ -140,14 +138,13 @@ class ETypeDialog(QtWidgets.QDialog):
         self.setLayout(layout)
         layout.addWidget(QtWidgets.QLabel('<b>Select energy type for FMOs:</b>\n'), 0, 0, 1, 2)
         rbtn_layout = QtWidgets.QGridLayout()
-        rbtn_group = QtWidgets.QButtonGroup()
         layout.addLayout(rbtn_layout, 1, 0, 1, 2)
 
         display_names = {
             'energy': 'Regular',
-            'approx_site_energy': 'Effective (approximate)',
-            'site_energy': 'Effective',
-            'site_energy_SCF0': 'Effective (initial density)',
+            'approx_effective_energy': 'Effective (approximate)',
+            'effective_energy': 'Effective',
+            'effective_energy_SCF0': 'Effective (initial density)',
         }
 
         self.rbuttons = {}
@@ -323,8 +320,6 @@ class MplCanvas(FigureCanvas):
             QtWidgets.QMessageBox.critical(self, 'Error', 'The adf.rkf path contains a space. We will not be able to run Densf properly.\nPlease move the file to a different location.')
             return
 
-        import tcviewer
-
         amsloc = self.parent.parent.settings_dialog.get("Densf", "General", "amsbin")
         if platform.system() == "Windows":
             preambles = [f'set AMSHOME={os.path.split(self.parent.parent.settings_dialog.get("Densf", "General", "amsbin"))[0]}', f'set AMSBIN={os.path.split(self.parent.parent.settings_dialog.get("Densf", "General", "amsbin"))[0]}/bin']
@@ -395,8 +390,9 @@ class MplCanvas(FigureCanvas):
                 
                 scene.draw_text(str(orb[0]) + ' * ' + str(orb[1]))
 
+        self.parent.tcviewer_screen.raise_()
+
     def draw_molecule(self, mol=None):
-        import tcviewer
         # get or make a new viewer
         if self.parent.tcviewer_screen is None or self.parent.tcviewer_screen.isclosed:
             self.parent.tcviewer_screen = tcviewer.screen._ScreenWindow()
@@ -522,13 +518,13 @@ C
                 else:
                     s += '\nOrbital Interaction\n───────────────────\n'
                 s += '\n' + name_mo1.center(23)
-                s += f'\n        ╱       ╲'
-                s += f'\n       ╱         ╲'
-                s += f'\n      ╱           ╲'
+                s += '\n        ╱       ╲'
+                s += '\n       ╱         ╲'
+                s += '\n      ╱           ╲'
                 s += '\n' + name_fmo1 + ' ' * (18 - len(name_fmo1)) + name_fmo2
-                s += f'\n      ╲           ╱'
-                s += f'\n       ╲         ╱'
-                s += f'\n        ╲       ╱'
+                s += '\n      ╲           ╱'
+                s += '\n       ╲         ╱'
+                s += '\n        ╲       ╱'
                 s += '\n' + name_mo2.center(23)
                 s += f'\n\n𝛙i          {name_fmo1}'
                 s += f'\n𝛙j          {name_fmo2}'
@@ -633,8 +629,8 @@ Rpr
 
                 try:
                     self.parent.system_info_box.renameSpoiler(artist.get_text(), new_txt)
-                except ValueError as e:
-                    QtWidgets.QMessageBox.critical(self, 'Error', f'Cannot rename, name is already taken!')
+                except ValueError:
+                    QtWidgets.QMessageBox.critical(self, 'Error', 'Cannot rename, name is already taken!')
                     break
 
 
@@ -678,7 +674,6 @@ Rpr
                 self.parent.notice_tab.spoilers[idx].emphasize()
                 break
 
-            s = ''
             if gid.startswith('MO_'):
                 mo = self.parent.orbs.mos.orbitals[int(gid[3:])]
                 if isinstance(mo, list):
@@ -1188,9 +1183,6 @@ class AnalysisWindow(QtWidgets.QWidget):
     def open_sheets_filedialog(self):
         self.new_sheets_filedialog.open(self, QtCore.SLOT("get_sheets_file_from_dialog()"))
 
-    def open_figure_filedialog(self):
-        self.new_figure_filedialog.open(self, QtCore.SLOT("get_figure_file_from_dialog()"))
-
     def open_errorialog(self, message):
         self.errordialog.open(self, QtCore.SLOT("get_file_from_dialog()"))
 
@@ -1198,10 +1190,6 @@ class AnalysisWindow(QtWidgets.QWidget):
     def get_file_from_dialog(self):
         file = self.open_rkf_filedialog.selectedFiles()[0]
         self.load_analysis(file)
-
-    @QtCore.Slot()
-    def get_figure_file_from_dialog(self):
-        file = self.new_figure_filedialog.selectedFiles()[0]
 
     def _update_plot(self):
         settings = self.parent.settings_dialog.get_flat_state()
@@ -1253,7 +1241,7 @@ class AnalysisWindow(QtWidgets.QWidget):
                 sanitization_error_fmos.append(fmo)
 
         if len(sanitization_error_fmos) > 0:
-            text = f'We detected some orbital interactions\nwith mismatched MO and FMO occupations.\nWe changed the occupations as follows:\n\n'
+            text = 'We detected some orbital interactions\nwith mismatched MO and FMO occupations.\nWe changed the occupations as follows:\n\n'
             max_len = max(len(str(fmo)) for fmo in sanitization_error_fmos)
             for fmo in sanitization_error_fmos:
                 text += f'    {str(fmo).rjust(max_len)}: {fmo.occupation:3.1f}->{fmo._display_occupation:3.1f} electrons\n'
@@ -1271,7 +1259,6 @@ class AnalysisWindow(QtWidgets.QWidget):
         if self.plot._add_warning:
             ax.text(0.9, 0.9, '⚠︎', transform=fig.transFigure, fontsize=30, c='r', gid='warning_main_txt')
 
-        props = dict(edgecolor='white', facecolor='white', alpha=1)  # bbox features
         fig.canvas.draw_idle()
 
     def _set_orbital_filter(self):
@@ -1328,7 +1315,7 @@ class AnalysisWindow(QtWidgets.QWidget):
             traceback.print_exc(e)
             return
 
-        self.main_mix = pyorbb.analysis.mixing.Mixer2(self.orbs, pr_min_thresh=0.001**2, oi_min_thresh=0.00000001)
+        self.main_mix = pyorbb.Mixer(self.orbs, pr_min_thresh=0.001**2, oi_min_thresh=0.00000001)
 
         self._energytype_selection = 'energy'
 
@@ -1352,7 +1339,6 @@ class AnalysisWindow(QtWidgets.QWidget):
         self.central_layout.addWidget(self._analysis_page_frame)
         layout = QtWidgets.QGridLayout(self._analysis_page_frame)
 
-        plot_container_layout = QtWidgets.QVBoxLayout()
         plot_container = QtWidgets.QSplitter()
         plot_container.setStyleSheet("QSplitter::handle { border: 2px black; }")
         plot_container.setHandleWidth(10)
@@ -2052,7 +2038,6 @@ class PyOrbbWindow(QtWidgets.QMainWindow):
         action = fileMenu.addAction("New PyOrbb Viewer window")
         action.triggered.connect(QtWidgets.QApplication.instance().open_empty_viewer)
 
-        plot_menu = menuBar.addMenu("Plot")
 
         quit = QtGui.QAction("&Quit", self)
         quit.setShortcut("Ctrl+Q")
@@ -2103,9 +2088,10 @@ class PyOrbbWindow(QtWidgets.QMainWindow):
                 window.system_info_box.themechange()
                 window.notice_tab.themechange()
                 window._orb_selection_dialog.themechange()
-                # window._set_orbital_filter_button_icon()
             else:
                 window.update_icons()
+                window.recent_publish_carousel.themechange()
+
         self.settings_dialog.update_icons()
         if self.isDarkMode:
             self.theme_switcher.set_dark_theme()
@@ -2189,7 +2175,6 @@ class PyOrbbApp(QtWidgets.QApplication):
             return self.windows[0].isDarkMode
 
     def open_empty_viewer(self):
-        import tcviewer
         tcviewer_screen = tcviewer.screen._ScreenWindow()
         tcviewer_screen.setWindowIcon(self._ICONS['pyorbb'])
         tcviewer_screen.setWindowTitle('PyOrbb Viewer')

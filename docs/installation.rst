@@ -1,5 +1,8 @@
-Installing PyOrbb |ProjectVersion|
-==================================
+Installation Manual PyOrbb |ProjectVersion|
+##################################################
+
+PyOrbb Graphical User Interface
+===============================
 
 Download and install the latest PyOrbb version here:
 
@@ -8,8 +11,9 @@ Download and install the latest PyOrbb version here:
 Select the appropriate installer for your operating system and follow the installation instructions.
 
 
-Installing the PyOrbb Python Library
-====================================
+
+PyOrbb Python Library
+=====================
 
 Installation of PyOrbb for use with Python is straightforwardly done via ``pip``:
 

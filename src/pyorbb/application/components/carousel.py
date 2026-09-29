@@ -4,8 +4,6 @@ import requests
 from bs4 import BeautifulSoup
 import tcmu
 import datetime
-import json
-import pprint
 from pyorbb.application.components import shadow
 
 
@@ -149,38 +147,13 @@ class PublicationWidget(QtWidgets.QFrame):
         self.setup()
         shadow.apply(self, radius=10)
 
-        # grad = QtGui.QGradient(QtGui.QGradient.Preset.WarmFlame)
-        # print(grad)
-        # gradient = QLinearGradient(0, 0, 0, widget.height())  # top to bottom
-        # gradient.setColorAt(0.0, QColor("#4facfe"))  # start color
-        # gradient.setColorAt(1.0, QColor("#00f2fe"))  # end color
-
-        # palette = self.palette()
-        # palette.setBrush(QtGui.QPalette.ColorRole.Window, QtGui.QBrush(grad))
-        # self.setPalette(palette)
-        # self.setAutoFillBackground(True)
-
         self.setSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum)
 
         self.setToolTip(self._link)
 
-    # def paintEvent(self, event):
-    #     super().paintEvent(event)
-    #     painter = QtGui.QPainter(self)
-
-    #     preset = QtGui.QGradient(QtGui.QGradient.Preset.ShadyWater)
-    #     stops = preset.stops()
-
-    #     gradient = QtGui.QLinearGradient(0, 0, 0, 1)  # top to bottom
-    #     gradient.setCoordinateMode(QtGui.QGradient.CoordinateMode.ObjectMode)
-    #     gradient.setStops(stops)
-
-    #     painter.fillRect(self.rect(), gradient)
-
 
     def mousePressEvent(self, event):
-        import webbrowser
-        ret = webbrowser.open(self._link)
+        webbrowser.open(self._link)
 
     def setup(self):
         month_name = {1: 'Jan', 2: 'Feb', 3: 'Mar', 4: 'Apr', 5: 'May', 6: 'Jun', 7: 'Jul', 8: 'Aug', 9: 'Sept', 10: 'Oct', 11: 'Nov', 12: 'Dec'}
@@ -253,9 +226,6 @@ class Carousel(QtWidgets.QWidget):
 
         self.fade_width = 35
 
-        # Connect scroll updates
-        scrollbar = self.scroll_area.horizontalScrollBar()
-
         _layout.addWidget(self.scroll_area)
 
         self.setup()
@@ -287,24 +257,9 @@ class Carousel(QtWidgets.QWidget):
             self.fade_width,
             self.scroll_area.height()
             )
-        # self.fade_top.setGeometry(
-        #     120, 
-        #     self.scroll_area.height() - self.fade_width, 
-        #     self.scroll_area.width() - 240, 
-        #     self.fade_width
-        #     )
-        # self.fade_bottom.setGeometry(
-        #     120, 
-        #     0,
-        #     self.scroll_area.width() - 240, 
-        #     self.fade_width
-        #     )
-
         # Ensure fades are above scroll area
         self.fade_left.raise_()
         self.fade_right.raise_()
-        # self.fade_top.raise_()
-        # self.fade_bottom.raise_()
         ...
 
     def setup(self):
@@ -313,7 +268,9 @@ class Carousel(QtWidgets.QWidget):
 
 class PublicationCarousel(Carousel):
     def __init__(self, parent):
+        self._noconnection_label = QtWidgets.QLabel()
         super().__init__(parent=parent, title='<b>Recent Publications Citing PyOrbb</b>')
+        self.themechange()
 
     def setup(self):
         url = "https://scholar.google.com/scholar?cites=8000893946037734095&scisbd=1"
@@ -321,14 +278,31 @@ class PublicationCarousel(Carousel):
         try:
             data = _get_citedby_data(url)
         # otherwise we display a 404 error message
-        except:
+        except requests.exceptions.ConnectionError:
+            self._carousel_layout.addWidget(self._noconnection_label)
+            self._carousel_layout.addWidget(QtWidgets.QLabel('Could not reach scholar.google.com.\nPlease check your internet connection.'))
+            return
+
+        except:  # noqa
             self._carousel_layout.addWidget(QtWidgets.QLabel('Sorry! Could not find the right data.'))
             return
 
         for row in data:
             try:
                 self._carousel_layout.addWidget(PublicationWidget(self, row))
-            except:
+            except:  # noqa
                 pass
 
         self._carousel_layout.addStretch()
+
+    def themechange(self):
+        app = QtWidgets.QApplication.instance()
+        darkmode = app.isDarkMode
+        if darkmode:
+            self._noconnection_label.setPixmap(self.parent.parent._PIXMAPS["noconnection_dark"])
+        else:
+            self._noconnection_label.setPixmap(self.parent.parent._PIXMAPS["noconnection"])
+
+
+if __name__ == '__main__':
+    print(_get_citedby_data("https://scholar.google.com/scholar?cites=8000893946037734095&scisbd=1"))

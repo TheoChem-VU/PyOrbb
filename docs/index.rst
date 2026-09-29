@@ -1,16 +1,8 @@
-.. template documentation master file, created by
-   sphinx-quickstart on Tue Oct 10 13:54:26 2023.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
-********************************************
-|ProjectName| |ProjectVersion| documentation
-********************************************
+***************************************************
+|logo| |ProjectName| |ProjectVersion| Documentation
+***************************************************
 
-**PyOrbb** is an orbital interaction analysis tool and Python library enabling expert and non-expert users to perform high quality Kohn-Sham MO analyses. This is the documentation website for both the Python library provided by PyOrbb and the graphical user interface.
-
-
-Learn about PyOrbb
-------------------
+**PyOrbb** is an orbital interaction analysis tool and Python library enabling expert and non-expert users to perform high quality canonical MO analyses. This is the documentation website for both the Python library provided by PyOrbb and the graphical user interface.
 
 .. grid:: 3
     :gutter: 3
@@ -33,14 +25,41 @@ Learn about PyOrbb
 
       Read the accompanying PyOrbb publication.
 
-    .. grid-item-card:: Warnings and Errors
-      :link: notices.html
+    .. grid-item-card:: PyOrbb GitHub Repository
+      :link: https://github.com/TheoChem-VU/PyOrbb
 
-      .. image:: _static/images/cards/notices.png
+      .. image:: _static/images/cards/github.jpg
          :width: 150px
          :align: center
 
-      An overview of warnings and errors provided by PyOrbb.
+      Visit the open source PyOrbb GitHub repository.
+
+    .. grid-item-card:: Problems?
+      :link: https://github.com/TheoChem-VU/TCMU/issues/new
+
+      .. image:: _static/images/cards/question_mark.png
+         :width: 100px
+         :align: center
+
+      Open an issue for the developers.
+
+    .. grid-item-card:: TheoCheM
+      :link: https://www.theochem.nl/
+
+      .. image:: _static/images/theochem_logo.png
+         :width: 100%
+         :align: center
+         :class: largepadding
+
+      Learn about our research group!
+
+      
+
+Learn about PyOrbb
+------------------
+
+.. grid:: 3
+    :gutter: 3
 
     .. grid-item-card:: Getting Started
       :link: get_started.html
@@ -51,6 +70,15 @@ Learn about PyOrbb
 
       Get started with using the PyOrbb program.
 
+    .. grid-item-card:: Warnings and Errors
+      :link: notices.html
+
+      .. image:: _static/images/cards/notices.png
+         :width: 150px
+         :align: center
+
+      An overview of warnings and errors provided by PyOrbb.
+
     .. grid-item-card:: Examples
       :link: GUI_examples/index.html
 
@@ -58,11 +86,11 @@ Learn about PyOrbb
          :width: 150px
          :align: center
 
-      Get started with using the PyOrbb program.
+      Example PyOrbb analyses.
 
 
-PyOrbb Python library overview
-------------------------------
+PyOrbb Python library
+---------------------
 
 Learn how to use PyOrbb's Python library to perform custom orbital analyses for your projects.
 
@@ -80,7 +108,7 @@ Learn how to use PyOrbb's Python library to perform custom orbital analyses for 
       Get a quick overview of the basic functionalities of the PyOrbb Python API.
 
     .. grid-item-card:: Full API
-      :link: api/modules.html
+      :link: api/pyorbb.html
 
       .. image:: _static/images/cards/api.png
          :width: 150px
@@ -105,3 +133,15 @@ Learn how to use PyOrbb's Python library to perform custom orbital analyses for 
          :align: center
 
       An overview of the main command-line tools provided by PyOrbb.
+
+
+
+
+.. toctree::
+    :hidden:
+
+    installation.rst
+    application.rst
+    python_library.rst
+
+

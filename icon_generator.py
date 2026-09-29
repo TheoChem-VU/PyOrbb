@@ -1,5 +1,4 @@
 import matplotlib.pyplot as plt
-from matplotlib.transforms import Bbox
 import numpy as np
 from PIL.ImageDraw import ImageDraw
 from PIL import Image
@@ -111,8 +110,8 @@ def make_icon(
 
     elif bground_style == 'shaded':
 
-        squircle_bg = drawer.rounded_rectangle(xy=[((margin), (margin)), (resolution-(margin), resolution-(margin))], radius=int(120/512 * resolution), fill=(255, 255, 255), outline=(1, 1, 1), width=5, corners=None)
-        squircle_bg = np.array(im.getdata()).reshape(im.size[0], im.size[1], 3)[:, :, 0]
+        # squircle_bg = drawer.rounded_rectangle(xy=[((margin), (margin)), (resolution-(margin), resolution-(margin))], radius=int(120/512 * resolution), fill=(255, 255, 255), outline=(1, 1, 1), width=5, corners=None)
+        # squircle_bg = np.array(im.getdata()).reshape(im.size[0], im.size[1], 3)[:, :, 0]
         psi_bg = psi.copy()
         # psi_bg[psi != 0] = None
         # psi_bg[psi == 0] = 0

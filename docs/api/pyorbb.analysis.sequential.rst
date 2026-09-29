@@ -1,7 +1,8 @@
-pyorbb.analysis.sequential module
-=================================
+sequential
+==========
 
 .. automodule:: pyorbb.analysis.sequential
    :members:
    :show-inheritance:
+   :inherited-members:
    :undoc-members:

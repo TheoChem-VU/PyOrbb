@@ -57,7 +57,7 @@ new_tab_link_show_external_link_icon = True
 lightbox2_image_fade_duration = 300
 lightbox2_resize_duration = 300
 lightbox2_disable_scrolling = True
-
+home_page_in_toc = True
 templates_path = ['_templates']
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 
@@ -69,15 +69,25 @@ autodoc_default_options = {
 modindex_common_prefix = ['template.']
 
 html_theme_options = {
-  # "show_nav_level": 2,
+  # "show_toc_level": 2,
+  "show_nav_level": 2,
   # "navigation_depth": 2,
-  "navbar_end": ["star"],
+  # "navbar_end": ["star"],
   "navbar_center": [],
-  "navbar_start": ['logo'],
+  # "navbar_start": ['logo'],
+"logo": {
+    # In a left-to-right context, screen readers will read the alt text
+    # first, then the text, so this example will be read as "P-G-G-P-Y
+    # (short pause) Home A pretty good geometry package"
+    "text": f"PyOrbb {release} documentation",
+    "image_light": "_static/images/icon_12.png",
+    "image_dark": "_static/images/icon_12.png",
+    }
 }
 
 html_js_files = ['gui_tabs.js']
 
+toc_object_entries_show_parents = 'all'
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
@@ -85,10 +95,16 @@ html_favicon = 'https://avatars.githubusercontent.com/u/119413491'
 html_theme = 'pydata_sphinx_theme'  # pip install pydata-sphinx-theme
 html_static_path = ['_static']
 add_module_names = False
+toc_object_entries_show_parents = 'all'
+# html_sidebars = { '**': ['globaltoc.html'] }
 
 # custom variables
 rst_epilog = f"""
-.. |ProjectName| replace:: {project}
+.. |ProjectName| replace:: {project} 
+.. |logo| image:: /_static/images/icon_12.png
+    :height: 70px
+    :align: middle
+    :class: no-scaled-link
 .. |ProjectVersion| replace:: {release}
 .. |eV| replace:: :math:`\\text{{eV}}`
 .. |kcal/mol| replace:: :math:`\\text{{kcal mol}}^{{-1}}`
@@ -102,4 +118,5 @@ rst_epilog = f"""
 .. |AMS| replace:: :program:`AMS`
 .. |ADF| replace:: :program:`ADF`
 .. |densf| replace:: :program:`densf`
+.. |main art| replace:: Yuman Hordijk, Steven E. Beutick, Xiaobo Sun, Laurens Groot, Tori Gijzen, Jordi Poater, Trevor A. Hamlin, F. Matthias Bickelhaupt, Célia Fonseca Guerra, "PyOrbb – Automated Analyses of Orbital-Interaction Mechanisms" Journal of Computational Chemistry, *under review*.
 """

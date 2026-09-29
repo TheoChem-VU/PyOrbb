@@ -83,15 +83,10 @@ class WindowTabBar(QtWidgets.QTabBar):
     def timerEvent(self, event=None):
         super().timerEvent(event)
 
-        index = self.parent.currentIndex()
-        widg = self.parent.widget(index)
-
         time_since_crossed = perf_counter() - self.mouseCrossedWindowTime
         self.labelShrinkage = self.labelShrinkage + (self.targetLabelShrinkage - self.labelShrinkage) * time_since_crossed * 2
 
-
         pixmap = self.orig_pixmap.scaled(self.orig_pixmap.width()/self.labelShrinkage, self.orig_pixmap.height()/self.labelShrinkage)
-        rect = pixmap.rect()
         # make the pixmap transparent
         painter = QtGui.QPainter()
         painter.begin(pixmap)
@@ -198,6 +193,5 @@ class WindowTabBar(QtWidgets.QTabBar):
         for window in QtWidgets.QApplication.instance().windows:
             if window is self.parent.parent:
                 continue
-            rect = window.rect()
             if window.rect().contains(window.mapFromGlobal(event.globalPos())):
                 return window

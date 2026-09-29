@@ -452,10 +452,6 @@ class SettingsDialog(QtWidgets.QDialog):
         return len(self.setting_widgets)
 
     def build(self):
-        def change_widget(current, previous):
-            new_index = list_widget.indexFromItem(current).row()
-            stack_widget.setCurrentIndex(new_index)
-
         self.layout = QtWidgets.QVBoxLayout(self)
 
         # build the title label
@@ -469,7 +465,6 @@ class SettingsDialog(QtWidgets.QDialog):
         section_tabs.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         self.layout.addWidget(section_tabs)
         # and build the section widgets
-        items = []
         for section_name, section_widget in self.sections.items():
             section_tabs.addTab(section_widget, section_name)
         section_tabs.setCurrentIndex(0)

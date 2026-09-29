@@ -12,10 +12,13 @@ class NestedDict(dict):
 		for setting a nested key in one call.
 	
 		Args:
-			*args: an unpacked tuple of firstly keys and then the value to be set.
+			args: an unpacked tuple of firstly keys and then the value to be set.
 			priority: the priority for setting this value. If the given priority 
 				is higher than a previously set priority we set the value, 
 				otherwise we ignore it.
+
+		Raises:
+			ValueError: If there are not at least 2 arguments provided.
 
 		Examples:
 			.. code-block:: python
@@ -29,7 +32,11 @@ class NestedDict(dict):
 				{'a': {'b': {'c': 15}}}
 				>>> nd.get('a', 'b', 'c')
 				15
+
 		'''
+		if len(args) < 2:
+			raise ValueError('You must provide at least 2 arguments, one for the key and one for the value.')
+
 		keys, val = args[:-1], args[-1]
 
 		if self._priorities.get(keys, 0) > priority:
@@ -50,7 +57,7 @@ class NestedDict(dict):
 		Get a nested value from this dict.
 
 		Args:
-			*keys: an unpacked tuple of keys used to access the value.
+			keys: an unpacked tuple of keys used to access the value.
 
 		Example:
 			.. code-block:: python

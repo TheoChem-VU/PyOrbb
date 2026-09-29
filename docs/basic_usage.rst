@@ -1,4 +1,6 @@
 
+.. note:: This is documentation related to the PyOrbb Python library. For documentation related to the PyOrbb application, please `click here <get_started.html>`_.
+
 Basic Usage
 ===========
 
@@ -95,23 +97,8 @@ Or to obtain the coefficient of an |FMO| into an |MO|.
    0.02125011726149327
 
 
-More Examples
--------------
 
-More basic examples are available in the `basic examples <../examples/index.html>`_ section of this site.
+Examples
+--------
 
-.. toctree::
-
-   ../examples
-
-
-Advanced Examples
------------------
-
-For more advanced examples please see the `advanced examples <../examples/index.html>`_ section of this site.
-
-.. toctree::
-   :glob:
-   :maxdepth: 1
-
-   ../examples/*
+For more advanced examples please see the `Example PyOrbb Analysis Scripts <../examples/index.html>`_ section of this site.

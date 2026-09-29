@@ -49,7 +49,7 @@ class Spoilers(QtWidgets.QScrollArea):
         # check if there is already a spoiler with this title first:
         for spoiler in self.spoilers:
             if spoiler.title == new_title:
-                raise ValueError(f'Cannot rename Spoiler. There is already one with the same name!')
+                raise ValueError('Cannot rename Spoiler. There is already one with the same name!')
 
         for spoiler in self.spoilers:
             if spoiler.title == old_title:

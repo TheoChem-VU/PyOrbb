@@ -2,88 +2,93 @@
 Example PyOrbb Analyses
 =======================
 
-We have ...
+PyOrbb is applicable to a large variety of chemical systems, ranging from simple donor-acceptor complexes to hydrogen bonding to oxidative addition reactions with transition metal catalysts. These examples have been described in detail in the PyOrbb paper\ [1]_. We have collected these examples below for you to try out on your own. Click any of the example systems to get started!
 
-.. grid:: 2
-    :gutter: 2
+.. grid:: 3
+    :gutter: 4
 
-    .. grid-item-card:: Donor–Acceptor Bonding: H3B←NH3 Lewis Adduct
-      :link: pi_orbitals.html
+    .. grid-item-card:: Getting Started: H\ :sub:`3`\ B←NH\ :sub:`3` Lewis Adduct
+      :link: ../get_started.html
 
-      .. image:: pi_orbitals.png
-         :height: 250px
+      .. image:: figures/NH3BH3/thumb.png
+         :width: 75%
          :align: center
 
-      PyOrbb script to differentiate π- and σ-orbitals.
 
+    .. grid-item-card:: Oxidative Addition: C-H Bond Activation by Fe(CO)\ :sub:`4`
+      :link: Oxidative_addition.html
 
-    .. grid-item-card:: Oxidative Addition: C-H Bond Activation by Fe(CO)4
-      :link: tracking.html
-
-      .. image:: orbint.gif
-         :height: 250px
+      .. image:: figures/oxadd/thumb.png
+         :width: 50%
          :align: center
-
-      PyOrbb script to generate movies of orbital interaction during a reaction.
 
 
     .. grid-item-card:: Diels-Alder Transition State
-      :link: excitations.html
+      :link: DielsAlder.html
 
-      .. image:: EDA_complex_orbs.png
-         :height: 250px
+      .. image:: figures/DA_TS/thumb.png
+         :width: 50%
          :align: center
-
-      PyOrbb script to analyse and filter data from UV/VIS excitation data.
 
 
     .. grid-item-card:: Lewis-Acid Catalysis: Diels-Alder
-      :link: bonding.html
+      :link: DA_LA.html
 
-      .. image:: bonding.png
-         :height: 250px
+      .. image:: figures/DA_TS_LA/thumb.png
+         :width: 75%
          :align: center
-
-      PyOrbb script to distinguish bonding and antibonding MOs.
 
 
     .. grid-item-card:: Hydrogen-Bonding: Guanine–Cytosine Base Pair
-      :link: movie.html
+      :link: GC_basepair.html
 
-      .. image:: orbitals.gif
-         :height: 250px
+      .. image:: figures/HB/thumb.png
+         :width: 75%
          :align: center
 
-      PyOrbb script to generate a movie showing orbitals during a reaction.
+
+    .. grid-item-card:: Hetero-/Homolytic Bond Cleavage: Fluoromethane
+      :link: Hetero_vs_homo.html
+
+      .. image:: figures/FCH3/thumb.png
+         :width: 75%
+         :align: center
 
 
     .. grid-item-card:: Homolytic Bond Cleavage: Ethane
-      :link: mo_tracking.html
+      :link: Homolytic_Ethane.html
 
-      .. image:: mo_tracking.png
-         :height: 250px
+      .. image:: figures/Ethane/thumb.png
+         :width: 75%
          :align: center
 
-      PyOrbb script to generate a movie showing orbitals during a reaction.
 
 
     .. grid-item-card:: The Methyl Radical
-      :link: mo_tracking.html
+      :link: Methyl_rad.html
 
-      .. image:: mo_tracking.png
-         :height: 250px
+      .. image:: figures/Methyl/thumb.png
+         :width: 50%
          :align: center
 
-      PyOrbb script to generate a movie showing orbitals during a reaction.
 
 
-    .. grid-item-card:: Hetero/homolytic Bond Cleavage: Fluoromethane
-      :link: mo_tracking.html
+.. toctree::
+   :maxdepth: 2
+   :hidden:
 
-      .. image:: mo_tracking.png
-         :height: 250px
-         :align: center
+   ../get_started.rst
+   Oxidative_addition.rst
+   DielsAlder.rst
+   DA_LA.rst
+   GC_basepair.rst
+   Hetero_vs_homo.rst
+   Homolytic_Ethane.rst
+   Methyl_rad.rst
 
-      PyOrbb script to generate a movie showing orbitals during a reaction.
 
 
+References
+----------
+
+.. [1] |main art|

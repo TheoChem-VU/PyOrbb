@@ -2,6 +2,7 @@ import pyorbb
 import tcmu
 import os
 import numpy as np
+import PIL
 from typing import List, Union
 
 
@@ -62,7 +63,7 @@ class MOTracker:
         elif isinstance(value, os.PathLike):
             self.orbital_objects.append(pyorbb.Orbitals(value))
         else:
-            raise TypeError(f'Appended value must be of pyorbb.Orbitals type or os.PathLike type.')
+            raise TypeError('Appended value must be of pyorbb.Orbitals type or os.PathLike type.')
 
     def insert(self, pos: int, value: Union[pyorbb.Orbitals, os.PathLike]):
         '''
@@ -78,7 +79,7 @@ class MOTracker:
         elif isinstance(value, os.PathLike):
             self.orbital_objects.insert(pos, pyorbb.Orbitals(value))
         else:
-            raise TypeError(f'Inserted value must be of pyorbb.Orbitals type or os.PathLike type.')
+            raise TypeError('Inserted value must be of pyorbb.Orbitals type or os.PathLike type.')
 
     def remove(self, value: Union[pyorbb.Orbitals, os.PathLike]):
         '''
@@ -94,7 +95,7 @@ class MOTracker:
             orbs = [orbs for orbs in self.orbital_objects if os.path.samefile(orbs.kfpath, value)]
             self.orbital_objects.remove(orbs)
         else:
-            raise TypeError(f'Removed value must be of pyorbb.Orbitals type or os.PathLike type.')
+            raise TypeError('Removed value must be of pyorbb.Orbitals type or os.PathLike type.')
 
     def index(self, value: Union[pyorbb.Orbitals, os.PathLike]) -> int:
         '''
@@ -110,7 +111,7 @@ class MOTracker:
             orbs = [orbs for orbs in self.orbital_objects if os.path.samefile(orbs.kfpath, value)]
             return self.orbital_objects.index(orbs)
         else:
-            raise TypeError(f'Indexed value must be of pyorbb.Orbitals type or os.PathLike type.')
+            raise TypeError('Indexed value must be of pyorbb.Orbitals type or os.PathLike type.')
 
     def reverse(self):
         '''

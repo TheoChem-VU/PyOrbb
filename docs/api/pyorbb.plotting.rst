@@ -1,3 +1,6 @@
+plotting
+========
+
 
 Submodules:
 
@@ -13,4 +16,5 @@ Module contents:
 .. automodule:: pyorbb.plotting
    :members:
    :show-inheritance:
+   :inherited-members:
    :undoc-members:

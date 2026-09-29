@@ -8,41 +8,41 @@ import warnings
 
 warnings.filterwarnings('ignore', category=UserWarning, module='xlsxwriter')
 
-ensure_list = lambda x: [x] if not isinstance(x, (list, tuple, set)) else list(x)  # noqa: E731
+_ensure_list = lambda x: [x] if not isinstance(x, (list, tuple, set)) else list(x)  # noqa: E731
 
 
 def _overlap_mat(fmos1, fmos2):
     ret = []
-    for fmo1 in ensure_list(fmos1):
+    for fmo1 in _ensure_list(fmos1):
         ret.append([])
-        for fmo2 in ensure_list(fmos2):
+        for fmo2 in _ensure_list(fmos2):
             ret[-1].append((fmo1 @ fmo2))
     return np.atleast_2d(np.array(ret).squeeze())
 
 
 def _fock_mat(fmos1, fmos2):
     ret = []
-    for fmo1 in ensure_list(fmos1):
+    for fmo1 in _ensure_list(fmos1):
         ret.append([])
-        for fmo2 in ensure_list(fmos2):
+        for fmo2 in _ensure_list(fmos2):
             ret[-1].append(fmo1.fock(fmo2))
     return np.atleast_2d(np.array(ret).squeeze())
 
 
 def _energy_gap_mat(fmos1, fmos2):
     ret = []
-    for fmo1 in ensure_list(fmos1):
+    for fmo1 in _ensure_list(fmos1):
         ret.append([])
-        for fmo2 in ensure_list(fmos2):
+        for fmo2 in _ensure_list(fmos2):
             ret[-1].append(abs(fmo1.energy - fmo2.energy))
     return np.atleast_2d(np.array(ret).squeeze())
 
 
 def _orbint_mat(fmos1, fmos2):
     ret = []
-    for fmo1 in ensure_list(fmos1):
+    for fmo1 in _ensure_list(fmos1):
         ret.append([])
-        for fmo2 in ensure_list(fmos2):
+        for fmo2 in _ensure_list(fmos2):
             if fmo1.occupation == fmo2.occupation:
                 ret[-1].append(np.nan)
             else:
@@ -52,18 +52,18 @@ def _orbint_mat(fmos1, fmos2):
 
 def _contribution_mat(orbs, fmos, mos):
     ret = []
-    for mo in ensure_list(mos):
+    for mo in _ensure_list(mos):
         ret.append([])
-        for fmo in ensure_list(fmos):
+        for fmo in _ensure_list(fmos):
             ret[-1].append(fmo.mulliken_contribution(mo))
     return np.atleast_2d(np.array(ret).squeeze())
 
 
 def _coefficient_mat(orbs, fmos, mos):
     ret = []
-    for mo in ensure_list(mos):
+    for mo in _ensure_list(mos):
         ret.append([])
-        for fmo in ensure_list(fmos):
+        for fmo in _ensure_list(fmos):
             ret[-1].append(fmo.coefficient(mo))
     return np.atleast_2d(np.array(ret).squeeze())
 
@@ -82,9 +82,9 @@ def _get_molecules(reader):
     coords = np.array(reader.read('Geometry', 'xyz')).reshape(-1, 3) * 0.529177249
     atoms = np.array(reader.read('Geometry', 'atomtype').split())
 
-    order_index = np.array(ensure_list(reader.read('Geometry', 'atom order index'))[:coords.shape[0]]) - 1
-    fragment_index = np.array(ensure_list(reader.read('Geometry', 'fragment and atomtype index'))[:coords.shape[0]]) - 1
-    symbol_index = np.array(ensure_list(reader.read('Geometry', 'fragment and atomtype index'))[coords.shape[0]:]) - 1
+    order_index = np.array(_ensure_list(reader.read('Geometry', 'atom order index'))[:coords.shape[0]]) - 1
+    fragment_index = np.array(_ensure_list(reader.read('Geometry', 'fragment and atomtype index'))[:coords.shape[0]]) - 1
+    symbol_index = np.array(_ensure_list(reader.read('Geometry', 'fragment and atomtype index'))[coords.shape[0]:]) - 1
 
     coords = coords[order_index]
     atoms = atoms[symbol_index][order_index]
@@ -105,11 +105,15 @@ def _get_molecules(reader):
 
 def to_excel(orbs: pyorbb.Orbitals, out_file: str = 'pyorbb.xlsx'):
     '''
-    Write data about orbitals and general information about the calculation to a nicely formatted excel file.
+    Collect and write orbital and general about the provided calculation to a nicely formatted excel file.
 
     Args:
         orbs: the orbitals object to write the Excel file for.
         out_file: the path to write the Excel file to.
+
+    .. seealso::
+    
+        The :class:`pyorbb.Orbitals <pyorbb.orbitals.objects.Orbitals>` class also provides a useful method that directly calls this function: :meth:`pyorbb.Orbitals.write_excel <pyorbb.orbitals.objects.Orbitals.write_excel>`
     '''
     workbook = xl.Workbook(out_file)
 
