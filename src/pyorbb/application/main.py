@@ -2,7 +2,6 @@ from PySide6 import QtWidgets, QtCore, QtGui
 import pyorbb
 from .components import (
     orbital_selector,
-    rich_widgets,
     latex_renderer,
     action_widget,
     settings,
@@ -68,7 +67,6 @@ def _determine_formal_charges(orbs):
 def _determine_vdd_charges(orbs):
     # build up the effective charges of the atoms
     # this takes into account the atom number and number of frozen core electrons
-    atomtypes = np.atleast_1d(orbs.reader.read('Geometry', 'atomtype').split())
     vdd_charges = np.atleast_1d(orbs.reader.read('Properties', 'AtomCharge_SCF Voronoi')) - np.atleast_1d(orbs.reader.read('Properties', 'AtomCharge_initial Voronoi'))
 
     def get_atom_indices(mol):
@@ -140,7 +138,6 @@ class ETypeDialog(QtWidgets.QDialog):
         self.setLayout(layout)
         layout.addWidget(QtWidgets.QLabel('<b>Select energy type for FMOs:</b>\n'), 0, 0, 1, 2)
         rbtn_layout = QtWidgets.QGridLayout()
-        rbtn_group = QtWidgets.QButtonGroup()
         layout.addLayout(rbtn_layout, 1, 0, 1, 2)
 
         display_names = {
@@ -323,8 +320,6 @@ class MplCanvas(FigureCanvas):
             QtWidgets.QMessageBox.critical(self, 'Error', 'The adf.rkf path contains a space. We will not be able to run Densf properly.\nPlease move the file to a different location.')
             return
 
-        import tcviewer
-
         amsloc = self.parent.parent.settings_dialog.get("Densf", "General", "amsbin")
         if platform.system() == "Windows":
             preambles = [f'set AMSHOME={os.path.split(self.parent.parent.settings_dialog.get("Densf", "General", "amsbin"))[0]}', f'set AMSBIN={os.path.split(self.parent.parent.settings_dialog.get("Densf", "General", "amsbin"))[0]}/bin']
@@ -398,7 +393,6 @@ class MplCanvas(FigureCanvas):
         self.parent.tcviewer_screen.raise_()
 
     def draw_molecule(self, mol=None):
-        import tcviewer
         # get or make a new viewer
         if self.parent.tcviewer_screen is None or self.parent.tcviewer_screen.isclosed:
             self.parent.tcviewer_screen = tcviewer.screen._ScreenWindow()
@@ -2108,7 +2102,7 @@ class PyOrbbWindow(QtWidgets.QMainWindow):
             else:
                 window.update_icons()
                 window.recent_publish_carousel.themechange()
-                
+
         self.settings_dialog.update_icons()
         if self.isDarkMode:
             self.theme_switcher.set_dark_theme()
@@ -2192,7 +2186,6 @@ class PyOrbbApp(QtWidgets.QApplication):
             return self.windows[0].isDarkMode
 
     def open_empty_viewer(self):
-        import tcviewer
         tcviewer_screen = tcviewer.screen._ScreenWindow()
         tcviewer_screen.setWindowIcon(self._ICONS['pyorbb'])
         tcviewer_screen.setWindowTitle('PyOrbb Viewer')
