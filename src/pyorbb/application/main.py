@@ -518,13 +518,13 @@ C
                 else:
                     s += '\nOrbital Interaction\n───────────────────\n'
                 s += '\n' + name_mo1.center(23)
-                s += f'\n        ╱       ╲'
-                s += f'\n       ╱         ╲'
-                s += f'\n      ╱           ╲'
+                s += '\n        ╱       ╲'
+                s += '\n       ╱         ╲'
+                s += '\n      ╱           ╲'
                 s += '\n' + name_fmo1 + ' ' * (18 - len(name_fmo1)) + name_fmo2
-                s += f'\n      ╲           ╱'
-                s += f'\n       ╲         ╱'
-                s += f'\n        ╲       ╱'
+                s += '\n      ╲           ╱'
+                s += '\n       ╲         ╱'
+                s += '\n        ╲       ╱'
                 s += '\n' + name_mo2.center(23)
                 s += f'\n\n𝛙i          {name_fmo1}'
                 s += f'\n𝛙j          {name_fmo2}'
@@ -629,7 +629,7 @@ Rpr
 
                 try:
                     self.parent.system_info_box.renameSpoiler(artist.get_text(), new_txt)
-                except ValueError as e:
+                except ValueError:
                     QtWidgets.QMessageBox.critical(self, 'Error', f'Cannot rename, name is already taken!')
                     break
 
@@ -674,7 +674,6 @@ Rpr
                 self.parent.notice_tab.spoilers[idx].emphasize()
                 break
 
-            s = ''
             if gid.startswith('MO_'):
                 mo = self.parent.orbs.mos.orbitals[int(gid[3:])]
                 if isinstance(mo, list):
@@ -1184,9 +1183,6 @@ class AnalysisWindow(QtWidgets.QWidget):
     def open_sheets_filedialog(self):
         self.new_sheets_filedialog.open(self, QtCore.SLOT("get_sheets_file_from_dialog()"))
 
-    def open_figure_filedialog(self):
-        self.new_figure_filedialog.open(self, QtCore.SLOT("get_figure_file_from_dialog()"))
-
     def open_errorialog(self, message):
         self.errordialog.open(self, QtCore.SLOT("get_file_from_dialog()"))
 
@@ -1194,10 +1190,6 @@ class AnalysisWindow(QtWidgets.QWidget):
     def get_file_from_dialog(self):
         file = self.open_rkf_filedialog.selectedFiles()[0]
         self.load_analysis(file)
-
-    @QtCore.Slot()
-    def get_figure_file_from_dialog(self):
-        file = self.new_figure_filedialog.selectedFiles()[0]
 
     def _update_plot(self):
         settings = self.parent.settings_dialog.get_flat_state()
