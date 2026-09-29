@@ -3,7 +3,7 @@ import re
 import yaml
 
 from . import orbitals  # noqa
-from .orbitals import Orbitals, MO, FMO
+from .orbitals import Orbitals, MO, FMO  # noqa
 from . import plotting  # noqa
 from . import analysis  # noqa
 from .analysis import Mixer  # noqa
@@ -192,16 +192,6 @@ def generate_label(orb, mode='latex', include_fragment=False, use_formatting=Tru
             orb_name = f'{fragname}({orb_name})'
         if orb.spin != 'AB':
             orb_name += spin_part
-
-        # if orb.subspecies.startswith('P:'):
-        #     principal_qn = orb_name.split(':')[0][:-1]
-        #     orb_name = orb_name.replace(principal_qn, str(int(principal_qn) + 1), 1)
-        # if orb.subspecies.startswith('D:'):
-        #     principal_qn = orb_name.split(':')[0][:-1]
-        #     orb_name = orb_name.replace(principal_qn, str(int(principal_qn) + 2), 1)
-        # if orb.subspecies.startswith('F:'):
-        #     principal_qn = orb_name.split(':')[0][:-1]
-        #     orb_name = orb_name.replace(principal_qn, str(int(principal_qn) + 3), 1)
 
         orb_name = orb_name.replace(orb.subspecies, translate_irrep_label(orb.subspecies, mode=mode))
 
