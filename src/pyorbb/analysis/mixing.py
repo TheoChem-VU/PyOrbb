@@ -1,5 +1,4 @@
 import pyorbb
-import functools
 import numpy as np
 import itertools as it  # noqa: F401
 import matplotlib.pyplot as plt
