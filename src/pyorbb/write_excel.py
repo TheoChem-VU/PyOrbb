@@ -128,7 +128,6 @@ def to_excel(orbs: pyorbb.Orbitals, out_file: str = 'pyorbb.xlsx'):
     bold_centered_rotated_fmt = workbook.add_format({'bold': True, 'font_size': 16, 'align': 'center', 'valign': 'vcenter', 'rotation': 90})
     table_key_fmt = workbook.add_format({'bold': True})
     table_val_fmt = workbook.add_format({'bold': False})
-    table_val_int_fmt = workbook.add_format({'bold': False, 'num_format': '0'})
     table_val_float_fmt = workbook.add_format({'bold': False, 'num_format': '0.00'})
     table_val_pctg_fmt = workbook.add_format({'bold': False, 'num_format': '0.0%'})
     table_val_sci_fmt = workbook.add_format({'bold': False, 'num_format': '0.00E+0'})

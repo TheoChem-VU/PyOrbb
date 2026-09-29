@@ -13,10 +13,8 @@ def create_subparser(parent_parser: argparse.ArgumentParser):
 
 
 def main(args: argparse.Namespace):
-    import platformdirs
     import traceback
 
-    log_dir = platformdirs.user_log_dir(appname="PyOrbb", appauthor="TheoCheMVU", ensure_exists=True)
     try:
         from pyorbb.application import main
 

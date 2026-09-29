@@ -15,9 +15,7 @@ import functools
 import os
 from typing import List, Dict, Tuple, Union
 import math
-import platformdirs
 import re
-import numpy as np
 
 _ensure_list = lambda x: [x] if not isinstance(x, (list, tuple, set)) else list(x)  # noqa: E731
 
@@ -905,7 +903,7 @@ energies from the following orbitals:
 
         if len(positive_eoi_irreps) > 0:
             s = r"    \n".join(positive_eoi_irreps)
-            self.notices['error'].append((f'Positive orb. int. energy', 
+            self.notices['error'].append(('Positive orb. int. energy', 
 f'''The orbital interaction energy
 is positive for the following irreps:
     {s}''', None))

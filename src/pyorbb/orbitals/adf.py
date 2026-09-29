@@ -137,7 +137,6 @@ def _get_calc_info(reader: plams.KFReader) -> dict:
         subspecies = np.array([subsp.split(':')[0] for subsp in reader.read('SFOs', 'subspecies').split()])
         occs_A = np.array(reader.read('SFOs', 'occupation'))
         occs_B = np.array(reader.read('SFOs', 'occupation_B'))
-        occ_diff = occs_A - occs_B
         for i, frag in enumerate(ret['fragments'], start=1):
             subspecies_of_frag = subspecies[frag_index == i]
             for subsp in np.unique(subspecies_of_frag):

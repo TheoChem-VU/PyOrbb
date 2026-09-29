@@ -3,7 +3,6 @@ import matplotlib.patches as mpatches
 import matplotlib.patheffects as pe
 import numpy as np
 import pyorbb
-import re
 
 
 def anchored_text(ax, x, y, text, offset_axes=(0.0, 0.1), **kwargs):
@@ -100,7 +99,6 @@ def draw_interaction(fmos, mos, connections,
     # load some parameters that we use for plotting
     # we take by default the parameters from rcParams unless they were provided with the function call
     arrow_length         = kwargs.get('arrow_length',         pyorbb.rcParams['plotting']['arrows']['arrow_length'])
-    arrow_width          = kwargs.get('arrow_width',          pyorbb.rcParams['plotting']['arrows']['arrow_width'])
     arrow_head_width     = kwargs.get('arrow_head_width',     pyorbb.rcParams['plotting']['arrows']['arrow_head_width'])
     arrow_head_length    = kwargs.get('arrow_head_length',    pyorbb.rcParams['plotting']['arrows']['arrow_head_length'])
     arrow_spacing        = kwargs.get('arrow_spacing',        pyorbb.rcParams['plotting']['arrows']['arrow_spacing'])
@@ -297,7 +295,6 @@ def draw_interaction(fmos, mos, connections,
             if orb.spin != 'AB':
                 offset_x = 0
 
-            anchor = (poss[orb] + offset_x, E)
             style = mpatches.ArrowStyle.CurveB(
                 head_length=arrow_head_length, 
                 head_width=arrow_head_width
