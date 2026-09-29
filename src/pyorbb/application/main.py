@@ -630,7 +630,7 @@ Rpr
                 try:
                     self.parent.system_info_box.renameSpoiler(artist.get_text(), new_txt)
                 except ValueError:
-                    QtWidgets.QMessageBox.critical(self, 'Error', f'Cannot rename, name is already taken!')
+                    QtWidgets.QMessageBox.critical(self, 'Error', 'Cannot rename, name is already taken!')
                     break
 
 
@@ -1241,7 +1241,7 @@ class AnalysisWindow(QtWidgets.QWidget):
                 sanitization_error_fmos.append(fmo)
 
         if len(sanitization_error_fmos) > 0:
-            text = f'We detected some orbital interactions\nwith mismatched MO and FMO occupations.\nWe changed the occupations as follows:\n\n'
+            text = 'We detected some orbital interactions\nwith mismatched MO and FMO occupations.\nWe changed the occupations as follows:\n\n'
             max_len = max(len(str(fmo)) for fmo in sanitization_error_fmos)
             for fmo in sanitization_error_fmos:
                 text += f'    {str(fmo).rjust(max_len)}: {fmo.occupation:3.1f}->{fmo._display_occupation:3.1f} electrons\n'
@@ -1259,7 +1259,6 @@ class AnalysisWindow(QtWidgets.QWidget):
         if self.plot._add_warning:
             ax.text(0.9, 0.9, '⚠︎', transform=fig.transFigure, fontsize=30, c='r', gid='warning_main_txt')
 
-        props = dict(edgecolor='white', facecolor='white', alpha=1)  # bbox features
         fig.canvas.draw_idle()
 
     def _set_orbital_filter(self):
@@ -1340,7 +1339,6 @@ class AnalysisWindow(QtWidgets.QWidget):
         self.central_layout.addWidget(self._analysis_page_frame)
         layout = QtWidgets.QGridLayout(self._analysis_page_frame)
 
-        plot_container_layout = QtWidgets.QVBoxLayout()
         plot_container = QtWidgets.QSplitter()
         plot_container.setStyleSheet("QSplitter::handle { border: 2px black; }")
         plot_container.setHandleWidth(10)
@@ -2040,7 +2038,6 @@ class PyOrbbWindow(QtWidgets.QMainWindow):
         action = fileMenu.addAction("New PyOrbb Viewer window")
         action.triggered.connect(QtWidgets.QApplication.instance().open_empty_viewer)
 
-        plot_menu = menuBar.addMenu("Plot")
 
         quit = QtGui.QAction("&Quit", self)
         quit.setShortcut("Ctrl+Q")
