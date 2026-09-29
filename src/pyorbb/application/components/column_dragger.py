@@ -1,6 +1,3 @@
-import matplotlib.pyplot as plt
-
-
 class Dragger:
 	def __init__(self, fig, release_callback=None, move_callback=None):
 		self.fig = fig
@@ -116,7 +113,6 @@ class Dragger:
 			self.move_callback(self.xtick_positions)
 
 	def update_xtick_positions(self):
-		xticks = self.fig.axes[0].get_xticklabels()
 		pos = list(self.xtick_positions.values())
 		labs = list(self.xtick_labels.values())
 		self.fig.axes[0].set_xticks(pos, labs)
