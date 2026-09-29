@@ -30,6 +30,25 @@ classifiers = [
     "Operating System :: OS Independent"]
 
 dynamic = ["version"]
+dependencies = [
+    "pyside6-essentials==6.7.3",
+    "git+https://github.com/TheoChem-VU/TCviewer@version2",
+    "git+https://github.com/TheoChem-VU/TCMU.git",
+    "numpy",
+    "matplotlib>=3.5.3",
+    "networkx>=2.6.3",
+    "numpy>=1.21.6",
+    "plams>=2024.106",
+    "xlsxwriter>=3.2.2",
+    "tcintegral>=1.0.3",
+    "pyperclip",
+    "platformdirs",
+    "beautifulsoup4",
+    "moviepy",
+    "scipy",
+    "pyyaml",
+    "ruff==0.0.177",
+]
 
 [dependency-groups]
 docs = [
@@ -67,24 +86,7 @@ icon = "icon_12"
 sources = [
     "src/pyorbb",
 ]
-requires = [
-    "pyside6-essentials==6.7.3",
-    "git+https://github.com/TheoChem-VU/TCviewer@version2",
-    "git+https://github.com/TheoChem-VU/TCMU.git",
-    "numpy",
-    "matplotlib>=3.5.3",
-    "networkx>=2.6.3",
-    "numpy>=1.21.6",
-    "plams>=2024.106",
-    "xlsxwriter>=3.2.2",
-    "tcintegral>=1.0.3",
-    "pyperclip",
-    "platformdirs",
-    "beautifulsoup4",
-    "moviepy",
-    "scipy",
-    "pyyaml",
-    ]
+requires = []
 test_sources = [
     "test",
 ]
