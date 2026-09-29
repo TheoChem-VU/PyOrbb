@@ -4,8 +4,6 @@ import requests
 from bs4 import BeautifulSoup
 import tcmu
 import datetime
-import json
-import pprint
 from pyorbb.application.components import shadow
 
 
