@@ -1,6 +1,5 @@
 from PySide6 import QtWidgets, QtCore
 from . import rich_widgets, latex_renderer
-from functools import partial
 
 
 class DrawAction(QtWidgets.QWidgetAction):
