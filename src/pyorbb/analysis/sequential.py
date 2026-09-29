@@ -2,6 +2,7 @@ import pyorbb
 import tcmu
 import os
 import numpy as np
+import PIL
 from typing import List, Union
 
 
