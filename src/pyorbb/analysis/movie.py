@@ -3,7 +3,6 @@ import os
 import numpy as np
 import tcviewer
 from typing import List
-import moviepy as mvp
 import uuid
 import tcmu
 
@@ -95,6 +94,8 @@ def make_orbital_movie(file: str, *args, fps: float = 60, **kwargs):
 
     .. seealso:: make_frames
     '''
+    import moviepy as mvp
+    
     if os.path.exists(file):
         return
 
