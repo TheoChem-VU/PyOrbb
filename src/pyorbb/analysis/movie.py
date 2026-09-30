@@ -6,7 +6,6 @@ from typing import List
 import moviepy as mvp
 import uuid
 import tcmu
-from scipy.interpolate import RegularGridInterpolator
 
 
 def make_frames(orbs: List[pyorbb.MO or pyorbb.FMO], 
@@ -15,6 +14,7 @@ def make_frames(orbs: List[pyorbb.MO or pyorbb.FMO],
         isovalue: float = 0.03, 
         color1=(1, 0, 0), 
         color2=(0, 0, 1)) -> List[str]:
+    from scipy.interpolate import RegularGridInterpolator
     '''
     Generate frames for a movie showing the given orbitals and their molecules.
 
