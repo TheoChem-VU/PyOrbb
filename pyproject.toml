@@ -45,7 +45,6 @@ dependencies = [
     "platformdirs",
     "beautifulsoup4",
     "moviepy",
-    "scipy",
     "pyyaml",
     "ruff==0.0.177",
 ]
