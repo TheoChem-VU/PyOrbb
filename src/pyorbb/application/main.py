@@ -1957,7 +1957,7 @@ class AnalysisWindow(QtWidgets.QWidget):
         open_article_btn = QtWidgets.QPushButton('Open the PyOrbb Article')
         open_article_btn.setStyleSheet("margin-left: 20px; margin-right: 20px")
         shadow.apply(open_article_btn, radius=30)
-        open_article_btn.clicked.connect(lambda: webbrowser.open('https://github.com/TheoChem-VU/PyOrbb'))
+        open_article_btn.clicked.connect(lambda: webbrowser.open('https://onlinelibrary.wiley.com/doi/10.1002/jcc.70512'))
         open_article_btn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         drop_area_layout.addWidget(open_article_btn, 1, 0)
 
