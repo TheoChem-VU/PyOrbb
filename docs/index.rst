@@ -17,7 +17,7 @@
       Installation guide for PyOrbb.
 
     .. grid-item-card:: Main Publication
-      :link: https://aces.onlinelibrary.wiley.com/doi/pdfdirect/10.1002/asia.202001127
+      :link: https://onlinelibrary.wiley.com/doi/10.1002/jcc.70512
 
       .. image:: _static/images/cards/publication.png
          :width: 150px
