@@ -13,4 +13,4 @@ git describe --tags --abbrev=0 | cut -c 2- > src/pyorbb/VERSION
 briefcase build -r --target ubuntu:24.04
 
 briefcase package --adhoc-sign --target ubuntu:24.04
-mv dist/PyOrbb*.deb dist/PyOrbb.deb
+mv dist/pyorbb*.deb dist/PyOrbb.deb
