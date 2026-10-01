@@ -343,9 +343,12 @@ class MplCanvas(FigureCanvas):
                 scene.draw_molecule(orb.molecule)
                 try:
                     data = orb.vtk_file(gridsize=gridsize, preambles=preambles)
-                except Exception as e:
-                    print("".join(traceback.format_exception(type(e), e, e.__traceback__)))
-                    QtWidgets.QMessageBox.critical(self, 'Error', 'There was an issue with running densf.\nUse preferences > Set AMS Path to set the AMS installation path.')
+                except Exception:
+                    try:
+                        data = orb.vtk_file(gridsize=gridsize, preambles=preambles, overwrite=True)
+                    except Exception as e:
+                        print("".join(traceback.format_exception(type(e), e, e.__traceback__)))
+                        QtWidgets.QMessageBox.critical(self, 'Error', 'There was an issue with running densf.\nUse preferences > Set AMS Path to set the AMS installation path.')
                 scene.draw_dual_isosurface(data, colorm=c1, colorp=c2)
                 scene.draw_text(str(orb))
 
