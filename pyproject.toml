@@ -33,7 +33,7 @@ dynamic = ["version"]
 dependencies = [
     "pyside6-essentials==6.7.3",
     "git+https://github.com/TheoChem-VU/TCviewer@version2",
-    "git+https://github.com/TheoChem-VU/TCMU.git"
+    "git+https://github.com/TheoChem-VU/TCMU.git",
     "numpy",
     "matplotlib>=3.5.3",
     "networkx>=2.6.3",
