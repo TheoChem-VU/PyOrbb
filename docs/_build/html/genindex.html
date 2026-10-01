@@ -1,0 +1,998 @@
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="./" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Index &#8212; PyOrbb v0.12.13 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=64cc4de3f052d77215f0" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=64cc4de3f052d77215f0" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="_static/scripts/fontawesome.js?digest=64cc4de3f052d77215f0"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=64cc4de3f052d77215f0" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=64cc4de3f052d77215f0" />
+
+    <script src="_static/documentation_options.js?v=c07b2078"></script>
+    <script src="_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'genindex';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <script src="_static/gui_tabs.js?v=ea04d928"></script>
+    <link rel="icon" href="https://avatars.githubusercontent.com/u/119413491"/>
+    <link rel="index" title="Index" href="#" />
+    <link rel="search" title="Search" href="search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  
+    
+    <script src="_static/searchtools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script src="searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button type="button" class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="_static/icon_12.png" class="logo__image only-light" alt=""/>
+    <img src="_static/icon_12.png" class="logo__image only-dark pst-js-only" alt=""/>
+  
+  
+    <p class="title logo__title">PyOrbb v0.12.13 documentation</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none"></div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+
+<h1 id="index">Index</h1>
+
+<div class="genindex-jumpbox">
+ <a href="#A"><strong>A</strong></a>
+ | <a href="#C"><strong>C</strong></a>
+ | <a href="#D"><strong>D</strong></a>
+ | <a href="#E"><strong>E</strong></a>
+ | <a href="#F"><strong>F</strong></a>
+ | <a href="#G"><strong>G</strong></a>
+ | <a href="#I"><strong>I</strong></a>
+ | <a href="#K"><strong>K</strong></a>
+ | <a href="#L"><strong>L</strong></a>
+ | <a href="#M"><strong>M</strong></a>
+ | <a href="#N"><strong>N</strong></a>
+ | <a href="#O"><strong>O</strong></a>
+ | <a href="#P"><strong>P</strong></a>
+ | <a href="#R"><strong>R</strong></a>
+ | <a href="#S"><strong>S</strong></a>
+ | <a href="#T"><strong>T</strong></a>
+ | <a href="#U"><strong>U</strong></a>
+ | <a href="#V"><strong>V</strong></a>
+ | <a href="#W"><strong>W</strong></a>
+ | <a href="#X"><strong>X</strong></a>
+ 
+</div>
+<h2 id="A">A</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/pyorbb.analysis.mixing.html#pyorbb.analysis.mixing.Mixing.add_fmo">add_fmo() (Mixing method)</a>
+</li>
+      <li><a href="api/pyorbb.analysis.mixing.html#pyorbb.analysis.mixing.Mixing.add_mo">add_mo() (Mixing method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/pyorbb.plotting.orbital_diagram.html#pyorbb.plotting.orbital_diagram.anchored_text">anchored_text() (in module pyorbb.plotting.orbital_diagram)</a>
+</li>
+      <li><a href="api/pyorbb.analysis.mixing.html#pyorbb.analysis.mixing.argNmax">argNmax() (in module pyorbb.analysis.mixing)</a>
+</li>
+      <li><a href="api/pyorbb.plotting.orbital_diagram.html#pyorbb.plotting.orbital_diagram.arrow_tail_with_axes_offset">arrow_tail_with_axes_offset() (in module pyorbb.plotting.orbital_diagram)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="C">C</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/pyorbb.orbitals.html#pyorbb.orbitals.Orbitals.charges">charges (Orbitals attribute)</a>, <a href="api/pyorbb.orbitals.objects.html#pyorbb.orbitals.objects.Orbitals.charges">[1]</a>
+</li>
+      <li><a href="api/pyorbb.nested_dict.html#pyorbb.nested_dict.NestedDict.clear">clear() (NestedDict method)</a>
+</li>
+      <li><a href="api/pyorbb.orbitals.html#pyorbb.orbitals.FMO.coefficient">coefficient() (FMO method)</a>, <a href="api/pyorbb.orbitals.objects.html#pyorbb.orbitals.objects.FMO.coefficient">[1]</a>
+
+      <ul>
+        <li><a href="api/pyorbb.orbitals.html#pyorbb.orbitals.MO.coefficient">(MO method)</a>, <a href="api/pyorbb.orbitals.objects.html#pyorbb.orbitals.objects.MO.coefficient">[1]</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/pyorbb.analysis.mixing.html#pyorbb.analysis.mixing.Mixer.connections">connections (Mixer property)</a>
+</li>
+      <li><a href="api/pyorbb.nested_dict.html#pyorbb.nested_dict.NestedDict.copy">copy() (NestedDict method)</a>
+</li>
+      <li><a href="api/pyorbb.orbitals.objects.html#pyorbb.orbitals.objects.FMO.cube_file">cube_file() (FMO method)</a>
+
+      <ul>
+        <li><a href="api/pyorbb.orbitals.objects.html#pyorbb.orbitals.objects.MO.cube_file">(MO method)</a>
+</li>
+        <li><a href="api/pyorbb.orbitals.objects.html#pyorbb.orbitals.objects.Orbital.cube_file">(Orbital method)</a>
+</li>
+      </ul></li>
+  </ul></td>
+</tr></table>
+
+<h2 id="D">D</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/pyorbb.orbitals.objects.html#pyorbb.orbitals.objects.FMOs.decode_key">decode_key() (FMOs method)</a>
+
+      <ul>
+        <li><a href="api/pyorbb.orbitals.objects.html#pyorbb.orbitals.objects.MOs.decode_key">(MOs method)</a>
+</li>
+        <li><a href="api/pyorbb.orbitals.objects.html#pyorbb.orbitals.objects.OrbitalSelector.decode_key">(OrbitalSelector method)</a>
+</li>
+      </ul></li>
+      <li><a href="api/pyorbb.orbitals.objects.html#pyorbb.orbitals.objects.FMO.degeneracy">degeneracy (FMO property)</a>
+
+      <ul>
+        <li><a href="api/pyorbb.orbitals.objects.html#pyorbb.orbitals.objects.MO.degeneracy">(MO property)</a>
+</li>
+        <li><a href="api/pyorbb.orbitals.objects.html#pyorbb.orbitals.objects.Orbital.degeneracy">(Orbital property)</a>
+</li>
+      </ul></li>
+      <li><a href="api/pyorbb.orbitals.objects.html#pyorbb.orbitals.objects.FMO.degeneracy_index">degeneracy_index (FMO property)</a>
+
+      <ul>
+        <li><a href="api/pyorbb.orbitals.objects.html#pyorbb.orbitals.objects.MO.degeneracy_index">(MO property)</a>
+</li>
+        <li><a href="api/pyorbb.orbitals.objects.html#pyorbb.orbitals.objects.Orbital.degeneracy_index">(Orbital property)</a>
+</li>
+      </ul></li>
+      <li><a href="api/pyorbb.orbitals.objects.html#pyorbb.orbitals.objects.FMO.degenerate">degenerate (FMO property)</a>
+
+      <ul>
+        <li><a href="api/pyorbb.orbitals.objects.html#pyorbb.orbitals.objects.MO.degenerate">(MO property)</a>
+</li>
+        <li><a href="api/pyorbb.orbitals.objects.html#pyorbb.orbitals.objects.Orbital.degenerate">(Orbital property)</a>
+</li>
+      </ul></li>
+      <li><a href="api/pyorbb.orbitals.objects.html#pyorbb.orbitals.objects.FMO.degenerate_orbitals">degenerate_orbitals (FMO property)</a>
+
+      <ul>
+        <li><a href="api/pyorbb.orbitals.objects.html#pyorbb.orbitals.objects.MO.degenerate_orbitals">(MO property)</a>
+</li>
+        <li><a href="api/pyorbb.orbitals.objects.html#pyorbb.orbitals.objects.Orbital.degenerate_orbitals">(Orbital property)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/pyorbb.orbitals.objects.html#pyorbb.orbitals.objects.FMO.doubly_occupied">doubly_occupied (FMO property)</a>
+
+      <ul>
+        <li><a href="api/pyorbb.orbitals.objects.html#pyorbb.orbitals.objects.MO.doubly_occupied">(MO property)</a>
+</li>
+        <li><a href="api/pyorbb.orbitals.objects.html#pyorbb.orbitals.objects.Orbital.doubly_occupied">(Orbital property)</a>
+</li>
+      </ul></li>
+      <li><a href="api/pyorbb.orbitals.objects.html#pyorbb.orbitals.objects.FMO.draw">draw() (FMO method)</a>
+
+      <ul>
+        <li><a href="api/pyorbb.orbitals.objects.html#pyorbb.orbitals.objects.MO.draw">(MO method)</a>
+</li>
+        <li><a href="api/pyorbb.orbitals.objects.html#pyorbb.orbitals.objects.Orbital.draw">(Orbital method)</a>
+</li>
+      </ul></li>
+      <li><a href="api/pyorbb.analysis.mixing.html#pyorbb.analysis.mixing.Mixer.draw_diagram">draw_diagram() (Mixer method)</a>
+
+      <ul>
+        <li><a href="api/pyorbb.analysis.mixing.html#pyorbb.analysis.mixing.Mixing.draw_diagram">(Mixing method)</a>
+</li>
+      </ul></li>
+      <li><a href="api/pyorbb.analysis.mixing.html#pyorbb.analysis.mixing.Mixing.draw_fmos">draw_fmos() (Mixing method)</a>
+</li>
+      <li><a href="api/pyorbb.plotting.orbital_diagram.html#pyorbb.plotting.orbital_diagram.draw_interaction">draw_interaction() (in module pyorbb.plotting.orbital_diagram)</a>
+
+      <ul>
+        <li><a href="api/pyorbb.plotting.simple_orbital_diagram.html#pyorbb.plotting.simple_orbital_diagram.draw_interaction">(in module pyorbb.plotting.simple_orbital_diagram)</a>
+</li>
+      </ul></li>
+  </ul></td>
+</tr></table>
+
+<h2 id="E">E</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/pyorbb.orbitals.html#pyorbb.orbitals.FMOs.energy_types">energy_types (FMOs property)</a>, <a href="api/pyorbb.orbitals.objects.html#pyorbb.orbitals.objects.FMOs.energy_types">[1]</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/pyorbb.analysis.mixing.html#pyorbb.analysis.mixing.ensure_list">ensure_list() (in module pyorbb.analysis.mixing)</a>
+
+      <ul>
+        <li><a href="api/pyorbb.orbitals.adf.html#pyorbb.orbitals.adf.ensure_list">(in module pyorbb.orbitals.adf)</a>
+</li>
+      </ul></li>
+  </ul></td>
+</tr></table>
+
+<h2 id="F">F</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/pyorbb.orbitals.objects.html#pyorbb.orbitals.objects.FMOs.filter">filter() (FMOs method)</a>
+
+      <ul>
+        <li><a href="api/pyorbb.orbitals.objects.html#pyorbb.orbitals.objects.MOs.filter">(MOs method)</a>
+</li>
+        <li><a href="api/pyorbb.orbitals.objects.html#pyorbb.orbitals.objects.OrbitalSelector.filter">(OrbitalSelector method)</a>
+</li>
+      </ul></li>
+      <li><a href="api/pyorbb.analysis.mixing.html#pyorbb.analysis.mixing.Mixing.find_closed_interactions">find_closed_interactions() (Mixing method)</a>
+</li>
+      <li><a href="api/pyorbb.analysis.mixing.html#pyorbb.analysis.mixing.Mixer.find_two_mixing">find_two_mixing() (Mixer method)</a>
+</li>
+      <li><a href="api/pyorbb.analysis.mixing.html#pyorbb.analysis.mixing.Mixing.fits">fits() (Mixing method)</a>
+</li>
+      <li><a href="api/pyorbb.orbitals.html#pyorbb.orbitals.FMO">FMO (class in pyorbb.orbitals)</a>
+
+      <ul>
+        <li><a href="api/pyorbb.orbitals.objects.html#pyorbb.orbitals.objects.FMO">(class in pyorbb.orbitals.objects)</a>
+</li>
+      </ul></li>
+      <li><a href="api/pyorbb.orbitals.html#pyorbb.orbitals.Orbitals.fmo_energy_types">fmo_energy_types (Orbitals property)</a>, <a href="api/pyorbb.orbitals.objects.html#pyorbb.orbitals.objects.Orbitals.fmo_energy_types">[1]</a>
+</li>
+      <li><a href="api/pyorbb.orbitals.html#pyorbb.orbitals.FMOs">FMOs (class in pyorbb.orbitals)</a>
+
+      <ul>
+        <li><a href="api/pyorbb.orbitals.objects.html#pyorbb.orbitals.objects.FMOs">(class in pyorbb.orbitals.objects)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/pyorbb.orbitals.html#pyorbb.orbitals.Orbitals.fmos">fmos (Orbitals attribute)</a>, <a href="api/pyorbb.orbitals.objects.html#pyorbb.orbitals.objects.Orbitals.fmos">[1]</a>
+</li>
+      <li><a href="api/pyorbb.orbitals.html#pyorbb.orbitals.FMO.fock">fock() (FMO method)</a>, <a href="api/pyorbb.orbitals.objects.html#pyorbb.orbitals.objects.FMO.fock">[1]</a>
+</li>
+      <li><a href="api/pyorbb.orbitals.html#pyorbb.orbitals.MO.fragment_character">fragment_character() (MO method)</a>, <a href="api/pyorbb.orbitals.objects.html#pyorbb.orbitals.objects.MO.fragment_character">[1]</a>
+</li>
+      <li><a href="api/pyorbb.orbitals.html#pyorbb.orbitals.FMOs.fragments">fragments (FMOs property)</a>, <a href="api/pyorbb.orbitals.objects.html#pyorbb.orbitals.objects.FMOs.fragments">[1]</a>
+
+      <ul>
+        <li><a href="api/pyorbb.analysis.mixing.html#pyorbb.analysis.mixing.Mixing.fragments">(Mixing property)</a>
+</li>
+        <li><a href="api/pyorbb.orbitals.html#pyorbb.orbitals.Orbitals.fragments">(Orbitals property)</a>, <a href="api/pyorbb.orbitals.objects.html#pyorbb.orbitals.objects.Orbitals.fragments">[1]</a>
+</li>
+      </ul></li>
+      <li><a href="api/pyorbb.nested_dict.html#pyorbb.nested_dict.NestedDict.fromkeys">fromkeys() (NestedDict class method)</a>
+</li>
+      <li><a href="api/pyorbb.orbitals.objects.html#pyorbb.orbitals.objects.FMO.fully_occupied">fully_occupied (FMO property)</a>
+
+      <ul>
+        <li><a href="api/pyorbb.orbitals.objects.html#pyorbb.orbitals.objects.MO.fully_occupied">(MO property)</a>
+</li>
+        <li><a href="api/pyorbb.orbitals.objects.html#pyorbb.orbitals.objects.Orbital.fully_occupied">(Orbital property)</a>
+</li>
+      </ul></li>
+  </ul></td>
+</tr></table>
+
+<h2 id="G">G</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/pyorbb.orbitals.objects.html#pyorbb.orbitals.objects.FMOs.get">get() (FMOs method)</a>
+
+      <ul>
+        <li><a href="api/pyorbb.orbitals.objects.html#pyorbb.orbitals.objects.MOs.get">(MOs method)</a>
+</li>
+        <li><a href="api/pyorbb.nested_dict.html#pyorbb.nested_dict.NestedDict.get">(NestedDict method)</a>, <a href="api/pyorbb.orbitals.adf.html#pyorbb.orbitals.adf.NestedDict.get">[1]</a>
+</li>
+        <li><a href="api/pyorbb.orbitals.objects.html#pyorbb.orbitals.objects.OrbitalSelector.get">(OrbitalSelector method)</a>
+</li>
+      </ul></li>
+      <li><a href="api/pyorbb.orbitals.fragments.html#pyorbb.orbitals.fragments.get_fragments_data">get_fragments_data() (in module pyorbb.orbitals.fragments)</a>
+</li>
+      <li><a href="api/pyorbb.orbitals.html#pyorbb.orbitals.Orbitals.get_mixer">get_mixer() (Orbitals method)</a>, <a href="api/pyorbb.orbitals.objects.html#pyorbb.orbitals.objects.Orbitals.get_mixer">[1]</a>
+</li>
+      <li><a href="api/pyorbb.analysis.mixing.html#pyorbb.analysis.mixing.Mixer.get_next_oi_threshold">get_next_oi_threshold() (Mixer method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/pyorbb.analysis.mixing.html#pyorbb.analysis.mixing.Mixer.get_next_pr_threshold">get_next_pr_threshold() (Mixer method)</a>
+</li>
+      <li><a href="api/pyorbb.analysis.mixing.html#pyorbb.analysis.mixing.Mixer.get_oi_default_threshold">get_oi_default_threshold() (Mixer method)</a>
+</li>
+      <li><a href="api/pyorbb.analysis.mixing.html#pyorbb.analysis.mixing.Mixer.get_oi_fraction">get_oi_fraction() (Mixer method)</a>
+</li>
+      <li><a href="api/pyorbb.analysis.mixing.html#pyorbb.analysis.mixing.Mixer.get_pr_default_threshold">get_pr_default_threshold() (Mixer method)</a>
+</li>
+      <li><a href="api/pyorbb.analysis.mixing.html#pyorbb.analysis.mixing.Mixer.get_pr_fraction">get_pr_fraction() (Mixer method)</a>
+</li>
+      <li><a href="api/pyorbb.analysis.mixing.html#pyorbb.analysis.mixing.Mixer.get_previous_oi_threshold">get_previous_oi_threshold() (Mixer method)</a>
+</li>
+      <li><a href="api/pyorbb.analysis.mixing.html#pyorbb.analysis.mixing.Mixer.get_previous_pr_threshold">get_previous_pr_threshold() (Mixer method)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="I">I</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/pyorbb.analysis.mixing.html#pyorbb.analysis.mixing.Mixing.irrep">irrep (Mixing property)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/pyorbb.nested_dict.html#pyorbb.nested_dict.NestedDict.items">items() (NestedDict method)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="K">K</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/pyorbb.nested_dict.html#pyorbb.nested_dict.NestedDict.keys">keys() (NestedDict method)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="L">L</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/pyorbb.analysis.mixing.html#pyorbb.analysis.mixing.Mixing.lowest_contribution">lowest_contribution (Mixing property)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="M">M</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/pyorbb.orbitals.html#pyorbb.orbitals.FMO.make_name">make_name() (FMO method)</a>, <a href="api/pyorbb.orbitals.objects.html#pyorbb.orbitals.objects.FMO.make_name">[1]</a>
+</li>
+      <li><a href="api/pyorbb.analysis.mixing.html#pyorbb.analysis.mixing.Mixer">Mixer (class in pyorbb.analysis.mixing)</a>
+</li>
+      <li><a href="api/pyorbb.analysis.mixing.html#pyorbb.analysis.mixing.Mixing">Mixing (class in pyorbb.analysis.mixing)</a>
+</li>
+      <li><a href="api/pyorbb.orbitals.html#pyorbb.orbitals.MO">MO (class in pyorbb.orbitals)</a>
+
+      <ul>
+        <li><a href="api/pyorbb.orbitals.objects.html#pyorbb.orbitals.objects.MO">(class in pyorbb.orbitals.objects)</a>
+</li>
+      </ul></li>
+      <li>
+    module
+
+      <ul>
+        <li><a href="api/pyorbb.analysis.mixing.html#module-pyorbb.analysis.mixing">pyorbb.analysis.mixing</a>
+</li>
+        <li><a href="api/pyorbb.nested_dict.html#module-pyorbb.nested_dict">pyorbb.nested_dict</a>
+</li>
+        <li><a href="api/pyorbb.orbitals.html#module-pyorbb.orbitals">pyorbb.orbitals</a>
+</li>
+        <li><a href="api/pyorbb.orbitals.adf.html#module-pyorbb.orbitals.adf">pyorbb.orbitals.adf</a>
+</li>
+        <li><a href="api/pyorbb.orbitals.fragments.html#module-pyorbb.orbitals.fragments">pyorbb.orbitals.fragments</a>
+</li>
+        <li><a href="api/pyorbb.orbitals.objects.html#module-pyorbb.orbitals.objects">pyorbb.orbitals.objects</a>
+</li>
+        <li><a href="api/pyorbb.plotting.html#module-pyorbb.plotting">pyorbb.plotting</a>
+</li>
+        <li><a href="api/pyorbb.plotting.orbital_diagram.html#module-pyorbb.plotting.orbital_diagram">pyorbb.plotting.orbital_diagram</a>
+</li>
+        <li><a href="api/pyorbb.plotting.simple_orbital_diagram.html#module-pyorbb.plotting.simple_orbital_diagram">pyorbb.plotting.simple_orbital_diagram</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/pyorbb.orbitals.html#pyorbb.orbitals.Orbitals.molecule">molecule (Orbitals property)</a>, <a href="api/pyorbb.orbitals.objects.html#pyorbb.orbitals.objects.Orbitals.molecule">[1]</a>
+</li>
+      <li><a href="api/pyorbb.orbitals.html#pyorbb.orbitals.MOs">MOs (class in pyorbb.orbitals)</a>
+
+      <ul>
+        <li><a href="api/pyorbb.orbitals.objects.html#pyorbb.orbitals.objects.MOs">(class in pyorbb.orbitals.objects)</a>
+</li>
+      </ul></li>
+      <li><a href="api/pyorbb.orbitals.html#pyorbb.orbitals.Orbitals.mos">mos (Orbitals attribute)</a>, <a href="api/pyorbb.orbitals.objects.html#pyorbb.orbitals.objects.Orbitals.mos">[1]</a>
+</li>
+      <li><a href="api/pyorbb.orbitals.html#pyorbb.orbitals.FMO.mulliken_contribution">mulliken_contribution() (FMO method)</a>, <a href="api/pyorbb.orbitals.objects.html#pyorbb.orbitals.objects.FMO.mulliken_contribution">[1]</a>
+
+      <ul>
+        <li><a href="api/pyorbb.orbitals.html#pyorbb.orbitals.MO.mulliken_contribution">(MO method)</a>, <a href="api/pyorbb.orbitals.objects.html#pyorbb.orbitals.objects.MO.mulliken_contribution">[1]</a>
+</li>
+      </ul></li>
+  </ul></td>
+</tr></table>
+
+<h2 id="N">N</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/pyorbb.analysis.mixing.html#pyorbb.analysis.mixing.Mixing.nelectrons">nelectrons() (Mixing method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/pyorbb.nested_dict.html#pyorbb.nested_dict.NestedDict">NestedDict (class in pyorbb.nested_dict)</a>
+
+      <ul>
+        <li><a href="api/pyorbb.orbitals.adf.html#pyorbb.orbitals.adf.NestedDict">(class in pyorbb.orbitals.adf)</a>
+</li>
+      </ul></li>
+  </ul></td>
+</tr></table>
+
+<h2 id="O">O</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/pyorbb.analysis.mixing.html#pyorbb.analysis.mixing.Mixing.OI_is_empty">OI_is_empty (Mixing property)</a>
+</li>
+      <li><a href="api/pyorbb.orbitals.objects.html#pyorbb.orbitals.objects.Orbital">Orbital (class in pyorbb.orbitals.objects)</a>
+</li>
+      <li><a href="api/pyorbb.orbitals.html#pyorbb.orbitals.Orbitals">Orbitals (class in pyorbb.orbitals)</a>
+
+      <ul>
+        <li><a href="api/pyorbb.orbitals.objects.html#pyorbb.orbitals.objects.Orbitals">(class in pyorbb.orbitals.objects)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/pyorbb.orbitals.objects.html#pyorbb.orbitals.objects.OrbitalSelector">OrbitalSelector (class in pyorbb.orbitals.objects)</a>
+</li>
+      <li><a href="api/pyorbb.orbitals.html#pyorbb.orbitals.FMO.overlap">overlap() (FMO method)</a>, <a href="api/pyorbb.orbitals.objects.html#pyorbb.orbitals.objects.FMO.overlap">[1]</a>
+</li>
+      <li><a href="api/pyorbb.analysis.mixing.html#pyorbb.analysis.mixing.overlap_mat">overlap_mat() (in module pyorbb.analysis.mixing)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="P">P</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/pyorbb.orbitals.objects.html#pyorbb.orbitals.objects.FMO.partially_occupied">partially_occupied (FMO property)</a>
+
+      <ul>
+        <li><a href="api/pyorbb.orbitals.objects.html#pyorbb.orbitals.objects.MO.partially_occupied">(MO property)</a>
+</li>
+        <li><a href="api/pyorbb.orbitals.objects.html#pyorbb.orbitals.objects.Orbital.partially_occupied">(Orbital property)</a>
+</li>
+      </ul></li>
+      <li><a href="api/pyorbb.nested_dict.html#pyorbb.nested_dict.NestedDict.pop">pop() (NestedDict method)</a>
+</li>
+      <li><a href="api/pyorbb.nested_dict.html#pyorbb.nested_dict.NestedDict.popitem">popitem() (NestedDict method)</a>
+</li>
+      <li><a href="api/pyorbb.analysis.mixing.html#pyorbb.analysis.mixing.Mixing.PR_is_empty">PR_is_empty (Mixing property)</a>
+</li>
+      <li>
+    pyorbb.analysis.mixing
+
+      <ul>
+        <li><a href="api/pyorbb.analysis.mixing.html#module-pyorbb.analysis.mixing">module</a>
+</li>
+      </ul></li>
+      <li>
+    pyorbb.nested_dict
+
+      <ul>
+        <li><a href="api/pyorbb.nested_dict.html#module-pyorbb.nested_dict">module</a>
+</li>
+      </ul></li>
+      <li>
+    pyorbb.orbitals
+
+      <ul>
+        <li><a href="api/pyorbb.orbitals.html#module-pyorbb.orbitals">module</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li>
+    pyorbb.orbitals.adf
+
+      <ul>
+        <li><a href="api/pyorbb.orbitals.adf.html#module-pyorbb.orbitals.adf">module</a>
+</li>
+      </ul></li>
+      <li>
+    pyorbb.orbitals.fragments
+
+      <ul>
+        <li><a href="api/pyorbb.orbitals.fragments.html#module-pyorbb.orbitals.fragments">module</a>
+</li>
+      </ul></li>
+      <li>
+    pyorbb.orbitals.objects
+
+      <ul>
+        <li><a href="api/pyorbb.orbitals.objects.html#module-pyorbb.orbitals.objects">module</a>
+</li>
+      </ul></li>
+      <li>
+    pyorbb.plotting
+
+      <ul>
+        <li><a href="api/pyorbb.plotting.html#module-pyorbb.plotting">module</a>
+</li>
+      </ul></li>
+      <li>
+    pyorbb.plotting.orbital_diagram
+
+      <ul>
+        <li><a href="api/pyorbb.plotting.orbital_diagram.html#module-pyorbb.plotting.orbital_diagram">module</a>
+</li>
+      </ul></li>
+      <li>
+    pyorbb.plotting.simple_orbital_diagram
+
+      <ul>
+        <li><a href="api/pyorbb.plotting.simple_orbital_diagram.html#module-pyorbb.plotting.simple_orbital_diagram">module</a>
+</li>
+      </ul></li>
+  </ul></td>
+</tr></table>
+
+<h2 id="R">R</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/pyorbb.orbitals.adf.html#pyorbb.orbitals.adf.read_data">read_data() (in module pyorbb.orbitals.adf)</a>
+</li>
+      <li><a href="api/pyorbb.orbitals.objects.html#pyorbb.orbitals.objects.FMO.relative_name">relative_name (FMO property)</a>
+
+      <ul>
+        <li><a href="api/pyorbb.orbitals.objects.html#pyorbb.orbitals.objects.MO.relative_name">(MO property)</a>
+</li>
+        <li><a href="api/pyorbb.orbitals.objects.html#pyorbb.orbitals.objects.Orbital.relative_name">(Orbital property)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/pyorbb.orbitals.html#pyorbb.orbitals.Orbitals.rename_fragment">rename_fragment() (Orbitals method)</a>, <a href="api/pyorbb.orbitals.objects.html#pyorbb.orbitals.objects.Orbitals.rename_fragment">[1]</a>
+</li>
+      <li><a href="api/pyorbb.analysis.mixing.html#pyorbb.analysis.mixing.Mixer.reset_mixes">reset_mixes() (Mixer method)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="S">S</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/pyorbb.analysis.mixing.html#pyorbb.analysis.mixing.Mixer.sanitize">sanitize() (Mixer method)</a>
+</li>
+      <li><a href="api/pyorbb.orbitals.objects.html#pyorbb.orbitals.objects.FMO.screenshot">screenshot() (FMO method)</a>
+
+      <ul>
+        <li><a href="api/pyorbb.orbitals.objects.html#pyorbb.orbitals.objects.MO.screenshot">(MO method)</a>
+</li>
+        <li><a href="api/pyorbb.orbitals.objects.html#pyorbb.orbitals.objects.Orbital.screenshot">(Orbital method)</a>
+</li>
+      </ul></li>
+      <li><a href="api/pyorbb.analysis.mixing.html#pyorbb.analysis.mixing.Mixing.screenshot_fmos">screenshot_fmos() (Mixing method)</a>
+</li>
+      <li><a href="api/pyorbb.nested_dict.html#pyorbb.nested_dict.NestedDict.set">set() (NestedDict method)</a>, <a href="api/pyorbb.orbitals.adf.html#pyorbb.orbitals.adf.NestedDict.set">[1]</a>
+</li>
+      <li><a href="api/pyorbb.analysis.mixing.html#pyorbb.analysis.mixing.Mixer.set_allowed_fmos">set_allowed_fmos() (Mixer method)</a>
+</li>
+      <li><a href="api/pyorbb.analysis.mixing.html#pyorbb.analysis.mixing.Mixer.set_allowed_mos">set_allowed_mos() (Mixer method)</a>
+</li>
+      <li><a href="api/pyorbb.analysis.mixing.html#pyorbb.analysis.mixing.Mixer.set_enable_oi">set_enable_oi() (Mixer method)</a>
+</li>
+      <li><a href="api/pyorbb.analysis.mixing.html#pyorbb.analysis.mixing.Mixer.set_enable_pr">set_enable_pr() (Mixer method)</a>
+</li>
+      <li><a href="api/pyorbb.analysis.mixing.html#pyorbb.analysis.mixing.Mixer.set_energy_type">set_energy_type() (Mixer method)</a>
+</li>
+      <li><a href="api/pyorbb.analysis.mixing.html#pyorbb.analysis.mixing.Mixer.set_oi_N">set_oi_N() (Mixer method)</a>
+</li>
+      <li><a href="api/pyorbb.analysis.mixing.html#pyorbb.analysis.mixing.Mixer.set_oi_threshold">set_oi_threshold() (Mixer method)</a>
+</li>
+      <li><a href="api/pyorbb.analysis.mixing.html#pyorbb.analysis.mixing.Mixer.set_pr_N">set_pr_N() (Mixer method)</a>
+</li>
+      <li><a href="api/pyorbb.analysis.mixing.html#pyorbb.analysis.mixing.Mixer.set_pr_threshold">set_pr_threshold() (Mixer method)</a>
+</li>
+      <li><a href="api/pyorbb.nested_dict.html#pyorbb.nested_dict.NestedDict.setdefault">setdefault() (NestedDict method)</a>
+</li>
+      <li><a href="api/pyorbb.orbitals.objects.html#pyorbb.orbitals.objects.FMO.singly_occupied">singly_occupied (FMO property)</a>
+
+      <ul>
+        <li><a href="api/pyorbb.orbitals.objects.html#pyorbb.orbitals.objects.MO.singly_occupied">(MO property)</a>
+</li>
+        <li><a href="api/pyorbb.orbitals.objects.html#pyorbb.orbitals.objects.Orbital.singly_occupied">(Orbital property)</a>
+</li>
+      </ul></li>
+      <li><a href="api/pyorbb.analysis.mixing.html#pyorbb.analysis.mixing.Mixing.spin">spin (Mixing property)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/pyorbb.orbitals.objects.html#pyorbb.orbitals.objects.FMO.spin_match_orbs">spin_match_orbs (FMO property)</a>
+
+      <ul>
+        <li><a href="api/pyorbb.orbitals.objects.html#pyorbb.orbitals.objects.MO.spin_match_orbs">(MO property)</a>
+</li>
+        <li><a href="api/pyorbb.orbitals.objects.html#pyorbb.orbitals.objects.Orbital.spin_match_orbs">(Orbital property)</a>
+</li>
+      </ul></li>
+      <li><a href="api/pyorbb.orbitals.objects.html#pyorbb.orbitals.objects.FMO.spin_total_occupation">spin_total_occupation (FMO property)</a>
+
+      <ul>
+        <li><a href="api/pyorbb.orbitals.objects.html#pyorbb.orbitals.objects.MO.spin_total_occupation">(MO property)</a>
+</li>
+        <li><a href="api/pyorbb.orbitals.objects.html#pyorbb.orbitals.objects.Orbital.spin_total_occupation">(Orbital property)</a>
+</li>
+      </ul></li>
+      <li><a href="api/pyorbb.orbitals.objects.html#pyorbb.orbitals.objects.FMOs.spins">spins (FMOs property)</a>
+
+      <ul>
+        <li><a href="api/pyorbb.orbitals.objects.html#pyorbb.orbitals.objects.MOs.spins">(MOs property)</a>
+</li>
+        <li><a href="api/pyorbb.orbitals.objects.html#pyorbb.orbitals.objects.OrbitalSelector.spins">(OrbitalSelector property)</a>
+</li>
+      </ul></li>
+      <li><a href="api/pyorbb.analysis.mixing.html#pyorbb.analysis.mixing.Mixer.split">split() (Mixer method)</a>
+
+      <ul>
+        <li><a href="api/pyorbb.analysis.mixing.html#pyorbb.analysis.mixing.Mixing.split">(Mixing method)</a>
+</li>
+      </ul></li>
+      <li><a href="api/pyorbb.orbitals.adf.html#pyorbb.orbitals.adf.sqrt">sqrt() (in module pyorbb.orbitals.adf)</a>
+</li>
+      <li><a href="api/pyorbb.orbitals.html#pyorbb.orbitals.FMOs.subspecies">subspecies (FMOs property)</a>, <a href="api/pyorbb.orbitals.objects.html#pyorbb.orbitals.objects.FMOs.subspecies">[1]</a>
+</li>
+      <li><a href="api/pyorbb.orbitals.html#pyorbb.orbitals.FMO.subspecies_relative_name">subspecies_relative_name (FMO property)</a>, <a href="api/pyorbb.orbitals.objects.html#pyorbb.orbitals.objects.FMO.subspecies_relative_name">[1]</a>
+</li>
+      <li><a href="api/pyorbb.orbitals.objects.html#pyorbb.orbitals.objects.FMOs.symmetry">symmetry (FMOs property)</a>
+
+      <ul>
+        <li><a href="api/pyorbb.orbitals.objects.html#pyorbb.orbitals.objects.MOs.symmetry">(MOs property)</a>
+</li>
+        <li><a href="api/pyorbb.orbitals.objects.html#pyorbb.orbitals.objects.OrbitalSelector.symmetry">(OrbitalSelector property)</a>
+</li>
+      </ul></li>
+      <li><a href="api/pyorbb.orbitals.objects.html#pyorbb.orbitals.objects.FMO.symmetry_relative_name">symmetry_relative_name (FMO property)</a>
+
+      <ul>
+        <li><a href="api/pyorbb.orbitals.objects.html#pyorbb.orbitals.objects.MO.symmetry_relative_name">(MO property)</a>
+</li>
+        <li><a href="api/pyorbb.orbitals.objects.html#pyorbb.orbitals.objects.Orbital.symmetry_relative_name">(Orbital property)</a>
+</li>
+      </ul></li>
+  </ul></td>
+</tr></table>
+
+<h2 id="T">T</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/pyorbb.analysis.mixing.html#pyorbb.analysis.mixing.track_mixing">track_mixing() (in module pyorbb.analysis.mixing)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="U">U</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/pyorbb.orbitals.objects.html#pyorbb.orbitals.objects.FMO.unoccupied">unoccupied (FMO property)</a>
+
+      <ul>
+        <li><a href="api/pyorbb.orbitals.objects.html#pyorbb.orbitals.objects.MO.unoccupied">(MO property)</a>
+</li>
+        <li><a href="api/pyorbb.orbitals.objects.html#pyorbb.orbitals.objects.Orbital.unoccupied">(Orbital property)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/pyorbb.orbitals.objects.html#pyorbb.orbitals.objects.FMOs.unrestricted">unrestricted (FMOs property)</a>
+
+      <ul>
+        <li><a href="api/pyorbb.orbitals.objects.html#pyorbb.orbitals.objects.MOs.unrestricted">(MOs property)</a>
+</li>
+        <li><a href="api/pyorbb.orbitals.objects.html#pyorbb.orbitals.objects.OrbitalSelector.unrestricted">(OrbitalSelector property)</a>
+</li>
+      </ul></li>
+      <li><a href="api/pyorbb.nested_dict.html#pyorbb.nested_dict.NestedDict.update">update() (NestedDict method)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="V">V</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/pyorbb.nested_dict.html#pyorbb.nested_dict.NestedDict.values">values() (NestedDict method)</a>
+</li>
+      <li><a href="api/pyorbb.orbitals.objects.html#pyorbb.orbitals.objects.FMO.vtk_file">vtk_file() (FMO method)</a>
+
+      <ul>
+        <li><a href="api/pyorbb.orbitals.objects.html#pyorbb.orbitals.objects.MO.vtk_file">(MO method)</a>
+</li>
+        <li><a href="api/pyorbb.orbitals.objects.html#pyorbb.orbitals.objects.Orbital.vtk_file">(Orbital method)</a>
+</li>
+      </ul></li>
+  </ul></td>
+</tr></table>
+
+<h2 id="W">W</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/pyorbb.orbitals.html#pyorbb.orbitals.Orbitals.write_excel">write_excel() (Orbitals method)</a>, <a href="api/pyorbb.orbitals.objects.html#pyorbb.orbitals.objects.Orbitals.write_excel">[1]</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="X">X</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/pyorbb.analysis.mixing.html#pyorbb.analysis.mixing.Mixing.xiaobo_check">xiaobo_check() (Mixing method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/pyorbb.analysis.mixing.html#pyorbb.analysis.mixing.Mixing.xiaobo_value">xiaobo_value() (Mixing method)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="_static/scripts/bootstrap.js?digest=64cc4de3f052d77215f0"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=64cc4de3f052d77215f0"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, TheoCheM VU Amsterdam.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.22.0.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>
