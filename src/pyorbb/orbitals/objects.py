@@ -217,10 +217,14 @@ class Orbital:
             else:
                 job.gridsize(gridsize, extend=gridextend)
 
+            if overwrite:
+                os.remove(job.output_cub_paths[self])
+
             if job.can_skip():
                 skipped = True
             else:
                 skipped = False
+
 
         # add meta-data to the vtk file
         if not skipped:
