@@ -43,8 +43,8 @@ jobs:
           uv sync --group docs
         
       - name: Build the docs
-        run: cd docs; sh build_docs.sh
-        
+        run: cd docs; sphinx-build . ./_build/html
+
       - name: Upload build to repo
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
