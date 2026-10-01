@@ -76,8 +76,8 @@ jobs:
       - name: Upload distributions to release
         uses: svenstaro/upload-release-action@v2
         with:
-          file: dist/PyOrbb.dmg
-          asset_name: PyOrbb-${{ github.ref_name}}-Ubuntu-Intel.dmg
+          file: dist/PyOrbb.deb
+          asset_name: PyOrbb-${{ github.ref_name}}-Ubuntu-Intel.deb
           tag: ${{ github.ref }}
           overwrite: true
 
@@ -100,8 +100,8 @@ jobs:
       - name: Upload distributions to release
         uses: svenstaro/upload-release-action@v2
         with:
-          file: dist/PyOrbb.dmg
-          asset_name: PyOrbb-${{ github.ref_name}}-Ubuntu-arm.dmg
+          file: dist/PyOrbb.deb
+          asset_name: PyOrbb-${{ github.ref_name}}-Ubuntu-ARM.deb
           tag: ${{ github.ref }}
           overwrite: true
 
