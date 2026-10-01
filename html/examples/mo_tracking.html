@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Tracking Molecular Orbitals Along a Reaction Pathway &#8212; PyOrbb v0.12.7 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=64cc4de3f052d77215f0" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=64cc4de3f052d77215f0" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/tabs.css?v=a5c4661c" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../_static/scripts/fontawesome.js?digest=64cc4de3f052d77215f0"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=64cc4de3f052d77215f0" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=64cc4de3f052d77215f0" />
+
+    <script src="../_static/documentation_options.js?v=016fa88a"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <script src="../_static/tabs.js?v=3030b3cb"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'examples/mo_tracking';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <script src="../_static/gui_tabs.js?v=ea04d928"></script>
+    <link rel="icon" href="https://avatars.githubusercontent.com/u/119413491"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="PyOrbb Command-Line Tools" href="../cli.html" />
+    <link rel="prev" title="Orbital Evolution Along a Reaction Pathway" href="movie.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  
+    
+    <script src="../_static/searchtools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button type="button" class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/icon_12.png" class="logo__image only-light" alt=""/>
+    <img src="../_static/icon_12.png" class="logo__image only-dark pst-js-only" alt=""/>
+  
+  
+    <p class="title logo__title">PyOrbb v0.12.7 documentation</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button type="button" class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item pst-sidebar-collapse"><button type="button" id="pst-collapse-sidebar-button" aria-expanded="true" aria-controls="pst-primary-sidebar">
+  <svg class="pst-icon" role="img" aria-hidden="true" focusable="false" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+    <path fill="currentColor" d="M3 15.5C2.36232 15.5 1.74874 15.2564 1.28478 14.8189C0.820828 14.3815 0.541576 13.7832 0.504167 13.1467L0.5 13L0.5 3C0.499965 2.36232 0.743605 1.74874 1.18107 1.28478C1.61854 0.820828 2.21676 0.541576 2.85333 0.504167L3 0.5L13 0.5C13.6377 0.499965 14.2513 0.743605 14.7152 1.18107C15.1792 1.61854 15.4584 2.21676 15.4958 2.85333L15.5 3L15.5 13C15.5 13.6377 15.2564 14.2513 14.8189 14.7152C14.3815 15.1792 13.7832 15.4584 13.1467 15.4958L13 15.5L3 15.5ZM3 13.8333L10.5 13.8333L10.5 2.16667L3 2.16667C2.79589 2.16669 2.59889 2.24163 2.44636 2.37726C2.29383 2.5129 2.19638 2.69979 2.1725 2.9025L2.16667 3L2.16667 13C2.16669 13.2041 2.24163 13.4011 2.37726 13.5536C2.5129 13.7062 2.69979 13.8036 2.9025 13.8275L3 13.8333ZM6.65583 10.325L6.5775 10.2558L4.91083 8.58917C4.76735 8.44567 4.68116 8.25476 4.66843 8.05223C4.65569 7.84971 4.71729 7.6495 4.84167 7.48917L4.91083 7.41083L6.5775 5.74417C6.72747 5.59471 6.9287 5.50794 7.14032 5.50148C7.35194 5.49502 7.55809 5.56935 7.7169 5.70937C7.8757 5.8494 7.97525 6.04463 7.99533 6.25539C8.01541 6.46616 7.95451 6.67667 7.825 6.84417L7.75583 6.9225L6.67917 8L7.75583 9.0775C7.89931 9.22099 7.98551 9.41191 7.99824 9.61443C8.01097 9.81695 7.94938 10.0172 7.825 10.1775L7.75583 10.2558C7.61234 10.3993 7.42142 10.4855 7.2189 10.4982C7.01638 10.511 6.81617 10.4494 6.65583 10.325Z"/>
+  </svg>
+  <span class="pst-collapse-sidebar-label">Collapse Sidebar</span>
+  <span class="pst-expand-sidebar-label">Expand Sidebar</span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Section navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">
+    Site Navigation
+  </p>
+  <div class="bd-toc-item navbar-nav">
+    <ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation Manual PyOrbb v0.12.7</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../application.html">PyOrbb Application</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../notices.html">Warnings and Errors in PyOrbb</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../GUI_examples/index.html">Example PyOrbb Analyses</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../get_started.html">Getting Started: H<sub>3</sub>B←NH<sub>3</sub> Lewis Adduct</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../GUI_examples/Oxidative_addition.html">Oxidative Addition: C-–H Bond Activation by Fe(CO)4</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../GUI_examples/DielsAlder.html">Diels-Alder Transition State</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../GUI_examples/DA_LA.html">Lewis-Acid Catalysis: Diels-Alder</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../GUI_examples/GC_basepair.html">Hydrogen-Bonding: Guanine–Cytosine Base Pair</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../GUI_examples/Hetero_vs_homo.html">Hetero- and Homolytic Bond Cleavage of Fluoromethane</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../GUI_examples/Homolytic_Ethane.html">C–-C Bond Formation in Ethane</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../GUI_examples/Methyl_rad.html">Formation of the Methyl Radical</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../python_library.html">PyOrbb Python Library</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../basic_usage.html">Basic Usage</a></li>
+<li class="toctree-l2 current active has-children"><a class="reference internal" href="index.html">Example PyOrbb Analysis Scripts</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="pi_orbitals.html">Detection of π-Orbitals</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tracking.html">Orbital Interaction Mechanism Along a Reaction Pathway</a></li>
+<li class="toctree-l3"><a class="reference internal" href="excitations.html">Analysis of Electronic Excitations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bonding.html">Bonding or Antibonding?</a></li>
+<li class="toctree-l3"><a class="reference internal" href="movie.html">Orbital Evolution Along a Reaction Pathway</a></li>
+<li class="toctree-l3 current active"><a aria-current="page" class="current reference internal" href="#">Tracking Molecular Orbitals Along a Reaction Pathway</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../cli.html">PyOrbb Command-Line Tools</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../api/pyorbb.html">PyOrbb API</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../api/pyorbb.analysis.html">analysis</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/pyorbb.analysis.mixing.html">mixing</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/pyorbb.analysis.movie.html">movie</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/pyorbb.analysis.sequential.html">sequential</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../api/pyorbb.orbitals.html">orbitals</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/pyorbb.orbitals.adf.html">adf</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/pyorbb.orbitals.fragments.html">fragments</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/pyorbb.orbitals.objects.html">objects</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../api/pyorbb.plotting.html">plotting</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/pyorbb.plotting.orbital_diagram.html">orbital_diagram</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/pyorbb.plotting.simple_orbital_diagram.html">simple_orbital_diagram</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/pyorbb.nested_dict.html">nested_dict</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/pyorbb.write_excel.html">write_excel</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+
+  </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../python_library.html" class="nav-link">PyOrbb Python Library</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="index.html" class="nav-link">Example PyOrbb Analysis Scripts</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Tracking Molecular Orbitals Along a Reaction Pathway</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="tracking-molecular-orbitals-along-a-reaction-pathway">
+<h1>Tracking Molecular Orbitals Along a Reaction Pathway<a class="headerlink" href="#tracking-molecular-orbitals-along-a-reaction-pathway" title="Link to this heading">#</a></h1>
+<p>It can often be insightful to investigate the evolution of orbitals along the potential energy surface of a chemical system. However, when investigating systems with large geometric deformations, there may be cases where the ordering of the molecular orbitals changes from one step to the next. In this example we investigate the MO energies along the stretching of the Cr-Cr bond of the chromium(I) hydride dimer.</p>
+<figure class="align-center" id="id1">
+<img alt="../_images/CrH_dimer.png" class="no-scaled-link" src="../_images/CrH_dimer.png" style="width: 400px;" />
+<figcaption>
+<p><span class="caption-text">The chromium(I) hydride dimer we investigate in this example. The Cr–Cr bond distance is varied between 1.2 and 3.0 angstrom over 30 steps.</span><a class="headerlink" href="#id1" title="Link to this image">#</a></p>
+</figcaption>
+</figure>
+<section id="without-tracking">
+<h2>Without tracking<a class="headerlink" href="#without-tracking" title="Link to this heading">#</a></h2>
+<p>To illustrate the problem we will obtain the MO energies of the 12Σ, 13Σ, 14Σ, and 15Σ MOs along the stretching coordinate. Selecting means that we simply take the energies of the MOs named “12Σ”, “13Σ”, “14Σ”, and “15Σ” from the adf.rkf files. In the figure below we see that the MOs 12Σ (blue line) and 13Σ (orange line) switch ordering around 1.6 Å when the energy of 13Σ dips below that of 12Σ. Similarly, around 2.8 Å we see that 15Σ should become more stable than 14Σ.</p>
+<figure class="align-center" id="id2">
+<img alt="../_images/untracked.png" class="no-scaled-link" src="../_images/untracked.png" style="width: 600px;" />
+<figcaption>
+<p><span class="caption-text">Energies of the 12Σ, 13Σ, 14Σ, and 15Σ orbitals along the bond stretching coordinate of the chromium(I) hydride dimer (HCr–CrH).</span><a class="headerlink" href="#id2" title="Link to this image">#</a></p>
+</figcaption>
+</figure>
+</section>
+<section id="orbital-tracking">
+<h2>Orbital tracking<a class="headerlink" href="#orbital-tracking" title="Link to this heading">#</a></h2>
+<p>To obtain the correct energies of the MOs in question we rely on calculating and comparing the overlap populations of the MOs and FMOs between each step. We compute for each step (<span class="math notranslate nohighlight">\(T\)</span>) an order-3 tensor containing the overlap population of each MO <span class="math notranslate nohighlight">\(\Psi_i^T\)</span> and to each pair of FMOs <span class="math notranslate nohighlight">\(\psi_j^T\)</span> and <span class="math notranslate nohighlight">\(\psi_k^T\)</span> of step <span class="math notranslate nohighlight">\(T\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[P_{ijk}^T = \langle \psi_j^T | \Psi_i^T \rangle \langle \psi_k^T | \Psi_i^T \rangle \langle \psi_j^T | \psi_k^T \rangle,\]</div>
+<p>where <span class="math notranslate nohighlight">\(\langle \psi_j^T | \Psi_i^T \rangle\)</span> is the mixing coefficient of <span class="math notranslate nohighlight">\(\psi_j^T\)</span> into <span class="math notranslate nohighlight">\(\Psi_i^T\)</span>, and <span class="math notranslate nohighlight">\(\langle \psi_j^T | \psi_k^T \rangle\)</span> is the overlap integral between <span class="math notranslate nohighlight">\(\psi_j^T\)</span> and <span class="math notranslate nohighlight">\(\psi_k^T\)</span>. Starting from the matrix slice corresponding to the inital MO (<em>e.g.</em>, <span class="math notranslate nohighlight">\(P_{12Σ,jk}^1\)</span> for MO 12Σ of the first step) we calculate the difference between the initial slice with all slices in the order-3 tensor of the next step. The MO corresponding to the slice with the smallest difference should be the most similar MO. We then continue this process for all given steps to “track” the MOs along the bond stretching coordinate.</p>
+<div class="math notranslate nohighlight">
+\[\mathrm{argmin}_i \sum_j\sum_k |P_{\mathrm{initial}, jk}^T - P_{ijk}^{T+1}|,\]</div>
+<p>where <span class="math notranslate nohighlight">\(P_{\mathrm{initial}, jk}^T\)</span> is the overlap population matrix for the initial MO at step <span class="math notranslate nohighlight">\(T\)</span>.</p>
+<p>PyOrbb includes an easy-to-use implementation for this algorithm (<code class="xref py py-class docutils literal notranslate"><span class="pre">pyorbb.analysis.sequential.MOTracker</span></code>). Using this implementation we obtain the correctly tracked MOs for our systems (see Figure below).</p>
+<figure class="align-center" id="id3">
+<img alt="../_images/tracked.png" class="no-scaled-link" src="../_images/tracked.png" style="width: 600px;" />
+<figcaption>
+<p><span class="caption-text">Energies of the 12Σ, 13Σ, 14Σ, and 15Σ orbitals tracked along the bond stretching coordinate of the chromium(I) hydride dimer (HCr–CrH).</span><a class="headerlink" href="#id3" title="Link to this image">#</a></p>
+</figcaption>
+</figure>
+<p>After tracking the MOs correctly we see that the MOs that previously switched order now cross each other. <em>E.g.</em>, 12Σ now correctly keeps increasing in energy and becomes higher in energy than 13Σ around 1.6 Å. The same happens for 14Σ and 15Σ around 2.8 Å. We can also generate movies of the evolution of the orbitals along the bond stretching. We see that the MOs stay consistent along the complete coordinate. Conversely, the movies showing the untracked orbitals show clearly that the orbitals are not consistent across the whole coordinate, with large changes in their shapes.</p>
+</section>
+<section id="visualization">
+<h2>Visualization<a class="headerlink" href="#visualization" title="Link to this heading">#</a></h2>
+<div class="sphinx-tabs docutils container">
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-0-0-0" aria-selected="true" class="sphinx-tabs-tab" id="tab-0-0-0" name="0-0" role="tab" tabindex="0">Tracked</button><button aria-controls="panel-0-0-1" aria-selected="false" class="sphinx-tabs-tab" id="tab-0-0-1" name="0-1" role="tab" tabindex="-1">Untracked</button></div><div aria-labelledby="tab-0-0-0" class="sphinx-tabs-panel" id="panel-0-0-0" name="0-0" role="tabpanel" tabindex="0"><div class="pst-scrollable-table-container"><table class="borderless table">
+<tbody>
+<tr class="row-odd"><td><figure  class="sphinx-contrib-video-container align-center"><video autoplay="True" controls="True" loop="True" preload="auto" width="100%"><source src="../_images/tracked_12SIGMA.mp4" type="video/mp4"></video><figcaption class="align-center"><p style="text-align: left; display:inline-block"><span class="caption-text">12Σ</span></p></figcaption></figure></td>
+<td><figure  class="sphinx-contrib-video-container align-center"><video autoplay="True" controls="True" loop="True" preload="auto" width="100%"><source src="../_images/tracked_13SIGMA.mp4" type="video/mp4"></video><figcaption class="align-center"><p style="text-align: left; display:inline-block"><span class="caption-text">13Σ</span></p></figcaption></figure></td>
+</tr>
+<tr class="row-even"><td><figure  class="sphinx-contrib-video-container align-center"><video autoplay="True" controls="True" loop="True" preload="auto" width="100%"><source src="../_images/tracked_14SIGMA.mp4" type="video/mp4"></video><figcaption class="align-center"><p style="text-align: left; display:inline-block"><span class="caption-text">14Σ</span></p></figcaption></figure></td>
+<td><figure  class="sphinx-contrib-video-container align-center"><video autoplay="True" controls="True" loop="True" preload="auto" width="100%"><source src="../_images/tracked_15SIGMA.mp4" type="video/mp4"></video><figcaption class="align-center"><p style="text-align: left; display:inline-block"><span class="caption-text">15Σ</span></p></figcaption></figure></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div><div aria-labelledby="tab-0-0-1" class="sphinx-tabs-panel" hidden="true" id="panel-0-0-1" name="0-1" role="tabpanel" tabindex="0"><div class="pst-scrollable-table-container"><table class="borderless table">
+<tbody>
+<tr class="row-odd"><td><figure  class="sphinx-contrib-video-container align-center"><video autoplay="True" controls="True" loop="True" preload="auto" width="100%"><source src="../_images/untracked_12SIGMA.mp4" type="video/mp4"></video><figcaption class="align-center"><p style="text-align: left; display:inline-block"><span class="caption-text">12Σ</span></p></figcaption></figure></td>
+<td><figure  class="sphinx-contrib-video-container align-center"><video autoplay="True" controls="True" loop="True" preload="auto" width="100%"><source src="../_images/untracked_13SIGMA.mp4" type="video/mp4"></video><figcaption class="align-center"><p style="text-align: left; display:inline-block"><span class="caption-text">13Σ</span></p></figcaption></figure></td>
+</tr>
+<tr class="row-even"><td><figure  class="sphinx-contrib-video-container align-center"><video autoplay="True" controls="True" loop="True" preload="auto" width="100%"><source src="../_images/untracked_14SIGMA.mp4" type="video/mp4"></video><figcaption class="align-center"><p style="text-align: left; display:inline-block"><span class="caption-text">14Σ</span></p></figcaption></figure></td>
+<td><figure  class="sphinx-contrib-video-container align-center"><video autoplay="True" controls="True" loop="True" preload="auto" width="100%"><source src="../_images/untracked_15SIGMA.mp4" type="video/mp4"></video><figcaption class="align-center"><p style="text-align: left; display:inline-block"><span class="caption-text">15Σ</span></p></figcaption></figure></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div></div>
+</section>
+<section id="script-and-resources">
+<h2>Script and Resources<a class="headerlink" href="#script-and-resources" title="Link to this heading">#</a></h2>
+<p>The rkf files have been split into two separate zip files. Make sure to extract them into the same folder.</p>
+<p><strong>Download</strong> <a class="reference download internal" download="" href="../_downloads/5e43f0bdb5b6633fb816a11779d367f7/rkfs.1.zip"><code class="xref download docutils literal notranslate"><span class="pre">rkfs.1.zip</span></code></a></p>
+<p><strong>Download</strong> <a class="reference download internal" download="" href="../_downloads/6fa17df8942d37688b0b24cc6fb1b6ae/rkfs.2.zip"><code class="xref download docutils literal notranslate"><span class="pre">rkfs.2.zip</span></code></a></p>
+<p><strong>Download</strong> <a class="reference download internal" download="" href="../_downloads/a6a17950927acaa4910a2c18eb9a38b3/sequential_example.py"><code class="xref download docutils literal notranslate"><span class="pre">sequential_example.py</span></code></a></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pyorbb</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">tcmu</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">math</span><span class="w"> </span><span class="kn">import</span> <span class="n">pi</span>
+
+<span class="c1"># the systems described are fragment analyses of two HCr fragments</span>
+<span class="c1"># each rkf file describes the system at different bond distances </span>
+<span class="c1"># between the Cr---Cr atoms</span>
+
+<span class="c1"># the folder is structured like this:</span>
+<span class="c1"># ./rkfs</span>
+<span class="c1"># |-- step1.rkf</span>
+<span class="c1"># |-- step2.rkf</span>
+<span class="c1"># |-- ...</span>
+<span class="c1"># |-- step30.rkf</span>
+
+<span class="c1"># Obtain all the adf.rkf files we want to analyse</span>
+<span class="c1"># sort them by the number in their name</span>
+<span class="n">rkfs_folder</span> <span class="o">=</span> <span class="s1">'./rkfs'</span>
+<span class="n">rkf_file_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">rkfs_folder</span><span class="p">)</span> <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">rkfs_folder</span><span class="p">,</span> <span class="n">f</span><span class="p">))</span> <span class="ow">and</span> <span class="n">f</span> <span class="o">!=</span> <span class="s1">'.DS_Store'</span><span class="p">]</span>
+<span class="n">rkf_file_names</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">rkf_file_names</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">f</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">removeprefix</span><span class="p">(</span><span class="s1">'step'</span><span class="p">)</span><span class="o">.</span><span class="n">removesuffix</span><span class="p">(</span><span class="s1">'.rkf'</span><span class="p">)))</span>
+
+<span class="c1"># construct the full paths of the sorted rkf file names</span>
+<span class="n">adf_rkf_files</span> <span class="o">=</span> <span class="p">[</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">rkfs_folder</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">rkf_file_names</span><span class="p">]</span>
+
+<span class="c1"># construct an MOTracker object with the obtained adf.rkf files</span>
+<span class="n">T</span> <span class="o">=</span> <span class="n">pyorbb</span><span class="o">.</span><span class="n">analysis</span><span class="o">.</span><span class="n">MOTracker</span><span class="p">(</span><span class="n">rkf_files</span><span class="o">=</span><span class="n">adf_rkf_files</span><span class="p">)</span>
+
+<span class="c1"># energies of the 12SIGMA and 13SIGMA MOs tracked along the steps</span>
+<span class="n">tracked_E_12SIGMA</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">energy</span><span class="p">(</span><span class="s1">'12SIGMA'</span><span class="p">)</span>
+<span class="n">tracked_E_13SIGMA</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">energy</span><span class="p">(</span><span class="s1">'13SIGMA'</span><span class="p">)</span>
+<span class="n">tracked_E_14SIGMA</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">energy</span><span class="p">(</span><span class="s1">'14SIGMA'</span><span class="p">)</span>
+<span class="n">tracked_E_15SIGMA</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">energy</span><span class="p">(</span><span class="s1">'15SIGMA'</span><span class="p">)</span>
+
+<span class="c1"># against the bond distance between the two Cr atoms (atoms 1 and 3)</span>
+<span class="n">coordinate</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">geometry</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="mi">3</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">'Tracked MO energies'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">coordinate</span><span class="p">,</span> <span class="n">tracked_E_12SIGMA</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">'12$\Sigma$'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">coordinate</span><span class="p">,</span> <span class="n">tracked_E_13SIGMA</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">'13$\Sigma$'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">coordinate</span><span class="p">,</span> <span class="n">tracked_E_14SIGMA</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">'14$\Sigma$'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">coordinate</span><span class="p">,</span> <span class="n">tracked_E_15SIGMA</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">'15$\Sigma$'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">'Cr---Cr distance / Å'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">'MO energy / eV'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">frameon</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">spines</span><span class="p">[[</span><span class="s1">'right'</span><span class="p">,</span> <span class="s1">'top'</span><span class="p">]]</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s1">'./tracked.png'</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">500</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+<span class="c1"># energies of the 12SIGMA and 13SIGMA MOs untracked</span>
+<span class="n">untracked_E_12SIGMA</span> <span class="o">=</span> <span class="p">[</span><span class="n">orbs</span><span class="o">.</span><span class="n">mos</span><span class="p">[</span><span class="s1">'12SIGMA'</span><span class="p">]</span><span class="o">.</span><span class="n">energy</span> <span class="k">for</span> <span class="n">orbs</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">orbital_objects</span><span class="p">]</span>
+<span class="n">untracked_E_13SIGMA</span> <span class="o">=</span> <span class="p">[</span><span class="n">orbs</span><span class="o">.</span><span class="n">mos</span><span class="p">[</span><span class="s1">'13SIGMA'</span><span class="p">]</span><span class="o">.</span><span class="n">energy</span> <span class="k">for</span> <span class="n">orbs</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">orbital_objects</span><span class="p">]</span>
+<span class="n">untracked_E_14SIGMA</span> <span class="o">=</span> <span class="p">[</span><span class="n">orbs</span><span class="o">.</span><span class="n">mos</span><span class="p">[</span><span class="s1">'14SIGMA'</span><span class="p">]</span><span class="o">.</span><span class="n">energy</span> <span class="k">for</span> <span class="n">orbs</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">orbital_objects</span><span class="p">]</span>
+<span class="n">untracked_E_15SIGMA</span> <span class="o">=</span> <span class="p">[</span><span class="n">orbs</span><span class="o">.</span><span class="n">mos</span><span class="p">[</span><span class="s1">'15SIGMA'</span><span class="p">]</span><span class="o">.</span><span class="n">energy</span> <span class="k">for</span> <span class="n">orbs</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">orbital_objects</span><span class="p">]</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="mi">3</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">'Untracked MO energies'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">coordinate</span><span class="p">,</span> <span class="n">untracked_E_12SIGMA</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">'12$\Sigma$'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">coordinate</span><span class="p">,</span> <span class="n">untracked_E_13SIGMA</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">'13$\Sigma$'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">coordinate</span><span class="p">,</span> <span class="n">untracked_E_14SIGMA</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">'14$\Sigma$'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">coordinate</span><span class="p">,</span> <span class="n">untracked_E_15SIGMA</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">'15$\Sigma$'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">'Cr---Cr distance / Å'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">'MO energy / eV'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">frameon</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">spines</span><span class="p">[[</span><span class="s1">'right'</span><span class="p">,</span> <span class="s1">'top'</span><span class="p">]]</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s1">'./untracked.png'</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">500</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+
+<span class="c1"># we generate videos of the tracked MOs to show that they indeed are correctly tracked</span>
+<span class="n">transforms</span> <span class="o">=</span> <span class="n">tcmu</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">Transform</span><span class="p">()</span>
+<span class="n">transforms</span><span class="o">.</span><span class="n">rotate</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="mi">90</span><span class="o">/</span><span class="mi">180</span><span class="o">*</span><span class="n">pi</span><span class="p">)</span>
+<span class="n">pyorbb</span><span class="o">.</span><span class="n">analysis</span><span class="o">.</span><span class="n">movie</span><span class="o">.</span><span class="n">make_orbital_movie</span><span class="p">(</span><span class="s1">'tracked_12SIGMA.mp4'</span><span class="p">,</span> <span class="n">T</span><span class="o">.</span><span class="n">track_mo</span><span class="p">(</span><span class="s1">'12SIGMA'</span><span class="p">),</span> <span class="n">transform</span><span class="o">=</span><span class="n">transforms</span><span class="p">,</span> <span class="n">fps</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
+<span class="n">pyorbb</span><span class="o">.</span><span class="n">analysis</span><span class="o">.</span><span class="n">movie</span><span class="o">.</span><span class="n">make_orbital_movie</span><span class="p">(</span><span class="s1">'tracked_13SIGMA.mp4'</span><span class="p">,</span> <span class="n">T</span><span class="o">.</span><span class="n">track_mo</span><span class="p">(</span><span class="s1">'13SIGMA'</span><span class="p">),</span> <span class="n">transform</span><span class="o">=</span><span class="n">transforms</span><span class="p">,</span> <span class="n">fps</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
+<span class="n">pyorbb</span><span class="o">.</span><span class="n">analysis</span><span class="o">.</span><span class="n">movie</span><span class="o">.</span><span class="n">make_orbital_movie</span><span class="p">(</span><span class="s1">'tracked_14SIGMA.mp4'</span><span class="p">,</span> <span class="n">T</span><span class="o">.</span><span class="n">track_mo</span><span class="p">(</span><span class="s1">'14SIGMA'</span><span class="p">),</span> <span class="n">transform</span><span class="o">=</span><span class="n">transforms</span><span class="p">,</span> <span class="n">fps</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
+<span class="n">pyorbb</span><span class="o">.</span><span class="n">analysis</span><span class="o">.</span><span class="n">movie</span><span class="o">.</span><span class="n">make_orbital_movie</span><span class="p">(</span><span class="s1">'tracked_15SIGMA.mp4'</span><span class="p">,</span> <span class="n">T</span><span class="o">.</span><span class="n">track_mo</span><span class="p">(</span><span class="s1">'15SIGMA'</span><span class="p">),</span> <span class="n">transform</span><span class="o">=</span><span class="n">transforms</span><span class="p">,</span> <span class="n">fps</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
+
+<span class="n">pyorbb</span><span class="o">.</span><span class="n">analysis</span><span class="o">.</span><span class="n">movie</span><span class="o">.</span><span class="n">make_orbital_movie</span><span class="p">(</span><span class="s1">'untracked_12SIGMA.mp4'</span><span class="p">,</span> <span class="p">[</span><span class="n">orbs</span><span class="o">.</span><span class="n">mos</span><span class="p">[</span><span class="s1">'12SIGMA'</span><span class="p">]</span> <span class="k">for</span> <span class="n">orbs</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">orbital_objects</span><span class="p">],</span> <span class="n">transform</span><span class="o">=</span><span class="n">transforms</span><span class="p">,</span> <span class="n">fps</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
+<span class="n">pyorbb</span><span class="o">.</span><span class="n">analysis</span><span class="o">.</span><span class="n">movie</span><span class="o">.</span><span class="n">make_orbital_movie</span><span class="p">(</span><span class="s1">'untracked_13SIGMA.mp4'</span><span class="p">,</span> <span class="p">[</span><span class="n">orbs</span><span class="o">.</span><span class="n">mos</span><span class="p">[</span><span class="s1">'13SIGMA'</span><span class="p">]</span> <span class="k">for</span> <span class="n">orbs</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">orbital_objects</span><span class="p">],</span> <span class="n">transform</span><span class="o">=</span><span class="n">transforms</span><span class="p">,</span> <span class="n">fps</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
+<span class="n">pyorbb</span><span class="o">.</span><span class="n">analysis</span><span class="o">.</span><span class="n">movie</span><span class="o">.</span><span class="n">make_orbital_movie</span><span class="p">(</span><span class="s1">'untracked_14SIGMA.mp4'</span><span class="p">,</span> <span class="p">[</span><span class="n">orbs</span><span class="o">.</span><span class="n">mos</span><span class="p">[</span><span class="s1">'14SIGMA'</span><span class="p">]</span> <span class="k">for</span> <span class="n">orbs</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">orbital_objects</span><span class="p">],</span> <span class="n">transform</span><span class="o">=</span><span class="n">transforms</span><span class="p">,</span> <span class="n">fps</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
+<span class="n">pyorbb</span><span class="o">.</span><span class="n">analysis</span><span class="o">.</span><span class="n">movie</span><span class="o">.</span><span class="n">make_orbital_movie</span><span class="p">(</span><span class="s1">'untracked_15SIGMA.mp4'</span><span class="p">,</span> <span class="p">[</span><span class="n">orbs</span><span class="o">.</span><span class="n">mos</span><span class="p">[</span><span class="s1">'15SIGMA'</span><span class="p">]</span> <span class="k">for</span> <span class="n">orbs</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">orbital_objects</span><span class="p">],</span> <span class="n">transform</span><span class="o">=</span><span class="n">transforms</span><span class="p">,</span> <span class="n">fps</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="movie.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Orbital Evolution Along a Reaction Pathway</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../cli.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">PyOrbb Command-Line Tools</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#without-tracking">Without tracking</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#orbital-tracking">Orbital tracking</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#visualization">Visualization</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#script-and-resources">Script and Resources</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+  <div class="tocsection sourcelink">
+    <a href="../_sources/examples/mo_tracking.rst.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=64cc4de3f052d77215f0"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=64cc4de3f052d77215f0"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, TheoCheM VU Amsterdam.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.22.0.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

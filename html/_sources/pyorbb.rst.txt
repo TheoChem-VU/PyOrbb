@@ -1,0 +1,39 @@
+pyorbb package
+==============
+
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   pyorbb.analysis
+   pyorbb.orbitals
+   pyorbb.plotting
+
+Submodules
+----------
+
+pyorbb.nested\_dict module
+--------------------------
+
+.. automodule:: pyorbb.nested_dict
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+pyorbb.write\_excel module
+--------------------------
+
+.. automodule:: pyorbb.write_excel
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+Module contents
+---------------
+
+.. automodule:: pyorbb
+   :members:
+   :show-inheritance:
+   :undoc-members:

@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Detection of π-Orbitals &#8212; PyOrbb v0.12.7 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=64cc4de3f052d77215f0" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=64cc4de3f052d77215f0" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/tabs.css?v=a5c4661c" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../_static/scripts/fontawesome.js?digest=64cc4de3f052d77215f0"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=64cc4de3f052d77215f0" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=64cc4de3f052d77215f0" />
+
+    <script src="../_static/documentation_options.js?v=016fa88a"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script src="../_static/tabs.js?v=3030b3cb"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'examples/pi_orbitals';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <script src="../_static/gui_tabs.js?v=ea04d928"></script>
+    <link rel="icon" href="https://avatars.githubusercontent.com/u/119413491"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Orbital Interaction Mechanism Along a Reaction Pathway" href="tracking.html" />
+    <link rel="prev" title="Example PyOrbb Analysis Scripts" href="index.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  
+    
+    <script src="../_static/searchtools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button type="button" class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/icon_12.png" class="logo__image only-light" alt=""/>
+    <img src="../_static/icon_12.png" class="logo__image only-dark pst-js-only" alt=""/>
+  
+  
+    <p class="title logo__title">PyOrbb v0.12.7 documentation</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button type="button" class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item pst-sidebar-collapse"><button type="button" id="pst-collapse-sidebar-button" aria-expanded="true" aria-controls="pst-primary-sidebar">
+  <svg class="pst-icon" role="img" aria-hidden="true" focusable="false" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+    <path fill="currentColor" d="M3 15.5C2.36232 15.5 1.74874 15.2564 1.28478 14.8189C0.820828 14.3815 0.541576 13.7832 0.504167 13.1467L0.5 13L0.5 3C0.499965 2.36232 0.743605 1.74874 1.18107 1.28478C1.61854 0.820828 2.21676 0.541576 2.85333 0.504167L3 0.5L13 0.5C13.6377 0.499965 14.2513 0.743605 14.7152 1.18107C15.1792 1.61854 15.4584 2.21676 15.4958 2.85333L15.5 3L15.5 13C15.5 13.6377 15.2564 14.2513 14.8189 14.7152C14.3815 15.1792 13.7832 15.4584 13.1467 15.4958L13 15.5L3 15.5ZM3 13.8333L10.5 13.8333L10.5 2.16667L3 2.16667C2.79589 2.16669 2.59889 2.24163 2.44636 2.37726C2.29383 2.5129 2.19638 2.69979 2.1725 2.9025L2.16667 3L2.16667 13C2.16669 13.2041 2.24163 13.4011 2.37726 13.5536C2.5129 13.7062 2.69979 13.8036 2.9025 13.8275L3 13.8333ZM6.65583 10.325L6.5775 10.2558L4.91083 8.58917C4.76735 8.44567 4.68116 8.25476 4.66843 8.05223C4.65569 7.84971 4.71729 7.6495 4.84167 7.48917L4.91083 7.41083L6.5775 5.74417C6.72747 5.59471 6.9287 5.50794 7.14032 5.50148C7.35194 5.49502 7.55809 5.56935 7.7169 5.70937C7.8757 5.8494 7.97525 6.04463 7.99533 6.25539C8.01541 6.46616 7.95451 6.67667 7.825 6.84417L7.75583 6.9225L6.67917 8L7.75583 9.0775C7.89931 9.22099 7.98551 9.41191 7.99824 9.61443C8.01097 9.81695 7.94938 10.0172 7.825 10.1775L7.75583 10.2558C7.61234 10.3993 7.42142 10.4855 7.2189 10.4982C7.01638 10.511 6.81617 10.4494 6.65583 10.325Z"/>
+  </svg>
+  <span class="pst-collapse-sidebar-label">Collapse Sidebar</span>
+  <span class="pst-expand-sidebar-label">Expand Sidebar</span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Section navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">
+    Site Navigation
+  </p>
+  <div class="bd-toc-item navbar-nav">
+    <ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation Manual PyOrbb v0.12.7</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../application.html">PyOrbb Application</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../notices.html">Warnings and Errors in PyOrbb</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../GUI_examples/index.html">Example PyOrbb Analyses</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../get_started.html">Getting Started: H<sub>3</sub>B←NH<sub>3</sub> Lewis Adduct</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../GUI_examples/Oxidative_addition.html">Oxidative Addition: C-–H Bond Activation by Fe(CO)4</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../GUI_examples/DielsAlder.html">Diels-Alder Transition State</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../GUI_examples/DA_LA.html">Lewis-Acid Catalysis: Diels-Alder</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../GUI_examples/GC_basepair.html">Hydrogen-Bonding: Guanine–Cytosine Base Pair</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../GUI_examples/Hetero_vs_homo.html">Hetero- and Homolytic Bond Cleavage of Fluoromethane</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../GUI_examples/Homolytic_Ethane.html">C–-C Bond Formation in Ethane</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../GUI_examples/Methyl_rad.html">Formation of the Methyl Radical</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../python_library.html">PyOrbb Python Library</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../basic_usage.html">Basic Usage</a></li>
+<li class="toctree-l2 current active has-children"><a class="reference internal" href="index.html">Example PyOrbb Analysis Scripts</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l3 current active"><a aria-current="page" class="current reference internal" href="#">Detection of π-Orbitals</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tracking.html">Orbital Interaction Mechanism Along a Reaction Pathway</a></li>
+<li class="toctree-l3"><a class="reference internal" href="excitations.html">Analysis of Electronic Excitations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bonding.html">Bonding or Antibonding?</a></li>
+<li class="toctree-l3"><a class="reference internal" href="movie.html">Orbital Evolution Along a Reaction Pathway</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mo_tracking.html">Tracking Molecular Orbitals Along a Reaction Pathway</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../cli.html">PyOrbb Command-Line Tools</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../api/pyorbb.html">PyOrbb API</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../api/pyorbb.analysis.html">analysis</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/pyorbb.analysis.mixing.html">mixing</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/pyorbb.analysis.movie.html">movie</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/pyorbb.analysis.sequential.html">sequential</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../api/pyorbb.orbitals.html">orbitals</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/pyorbb.orbitals.adf.html">adf</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/pyorbb.orbitals.fragments.html">fragments</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/pyorbb.orbitals.objects.html">objects</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../api/pyorbb.plotting.html">plotting</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/pyorbb.plotting.orbital_diagram.html">orbital_diagram</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/pyorbb.plotting.simple_orbital_diagram.html">simple_orbital_diagram</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/pyorbb.nested_dict.html">nested_dict</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/pyorbb.write_excel.html">write_excel</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+
+  </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../python_library.html" class="nav-link">PyOrbb Python Library</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="index.html" class="nav-link">Example PyOrbb Analysis Scripts</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Detection of π-Orbitals</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="detection-of-orbitals">
+<h1>Detection of π-Orbitals<a class="headerlink" href="#detection-of-orbitals" title="Link to this heading">#</a></h1>
+<p>It can often be important to differentiate between the symmetries of orbitals. Especially in the case of planar aromatic molecules it can be crucial to know which orbitals are π-symmetric and which ones are σ-symmetric.</p>
+<figure class="align-center">
+<img alt="../_images/pi_orbitals.png" class="no-scaled-link" src="../_images/pi_orbitals.png" style="width: 600px;" />
+</figure>
+<p>Differentiation of π- and σ-orbitals can be performed easily using the PyOrbb Python API.
+In this tutorial we consider the molecular orbitals of the indole molecule calculated at the OLYP/TZ2P level of theory using ADF2025. The input molecule was randomly oriented so we must first obtain the normal vector of the plane. We then calculate the alignment of the carbon and nitrogen 2p-orbitals with this normal vector to obtain an alignment score that should indicate either π- or σ-character.</p>
+<p>Download <a class="reference download internal" download="" href="../_downloads/4b6153e97022e504de885d2e53c157a5/indole.adf.rkf"><code class="xref download docutils literal notranslate"><span class="pre">indole.adf.rkf</span></code></a></p>
+<p>Download <a class="reference download internal" download="" href="../_downloads/c7f81f737c0a02e4a263553a0fcde4e3/pi_orbitals.py"><code class="xref download docutils literal notranslate"><span class="pre">pi_orbitals.py</span></code></a></p>
+<div class="sphinx-tabs docutils container">
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-0-0-0" aria-selected="true" class="sphinx-tabs-tab" id="tab-0-0-0" name="0-0" role="tab" tabindex="0"><code class="docutils literal notranslate"><span class="pre">pi_orbitals.py</span></code></button><button aria-controls="panel-0-0-1" aria-selected="false" class="sphinx-tabs-tab" id="tab-0-0-1" name="0-1" role="tab" tabindex="-1">Output</button></div><div aria-labelledby="tab-0-0-0" class="sphinx-tabs-panel" id="panel-0-0-0" name="0-0" role="tabpanel" tabindex="0"><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">'''</span>
+<span class="sd">This example shows how to find pi-orbitals of a heterocyclic compound using PyOrbb.</span>
+
+<span class="sd">This example uses an ADF calculation on indole in a random orientation </span>
+<span class="sd">calculated at the OLYP/TZ2P level of theory with a small frozen core.</span>
+<span class="sd">'''</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">pyorbb</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">scipy</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+
+<span class="c1"># load the orbital data</span>
+<span class="n">orbs</span> <span class="o">=</span> <span class="n">pyorbb</span><span class="o">.</span><span class="n">Orbitals</span><span class="p">(</span><span class="s1">'indole.adf.rkf'</span><span class="p">)</span>
+
+<span class="c1"># this molecule has a random orientation, so we must first find the</span>
+<span class="c1"># normal vector to the plane of the molecule to find the right pi-orbitals</span>
+<span class="n">molecule</span> <span class="o">=</span> <span class="n">orbs</span><span class="o">.</span><span class="n">molecule</span>
+
+<span class="c1"># find orthogonal components of the molecule using singular value decomposition</span>
+<span class="c1"># we only need the rotation matrix Vh in this case</span>
+<span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">Vh</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">svd</span><span class="p">(</span><span class="n">molecule</span><span class="o">.</span><span class="n">as_array</span><span class="p">())</span>
+
+<span class="c1"># the last row of Vh is the vector with the smallest component</span>
+<span class="c1"># this should be the normal vector of the planar indole molecule</span>
+<span class="n">n</span> <span class="o">=</span> <span class="n">Vh</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+<span class="c1"># we can then find the p-orbitals of the carbons and nitrogens</span>
+<span class="n">px_sfos</span> <span class="o">=</span> <span class="n">orbs</span><span class="o">.</span><span class="n">sfos</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">fragment</span><span class="o">=</span><span class="p">(</span><span class="s1">'N'</span><span class="p">,</span> <span class="s1">'C'</span><span class="p">),</span> <span class="n">orbname</span><span class="o">=</span><span class="s1">'1P:x'</span><span class="p">)</span>
+<span class="n">py_sfos</span> <span class="o">=</span> <span class="n">orbs</span><span class="o">.</span><span class="n">sfos</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">fragment</span><span class="o">=</span><span class="p">(</span><span class="s1">'N'</span><span class="p">,</span> <span class="s1">'C'</span><span class="p">),</span> <span class="n">orbname</span><span class="o">=</span><span class="s1">'1P:y'</span><span class="p">)</span>
+<span class="n">pz_sfos</span> <span class="o">=</span> <span class="n">orbs</span><span class="o">.</span><span class="n">sfos</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">fragment</span><span class="o">=</span><span class="p">(</span><span class="s1">'N'</span><span class="p">,</span> <span class="s1">'C'</span><span class="p">),</span> <span class="n">orbname</span><span class="o">=</span><span class="s1">'1P:z'</span><span class="p">)</span>
+
+<span class="n">pi_mos</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">sigma_mos</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="c1"># we then check every MO</span>
+<span class="k">for</span> <span class="n">mo</span> <span class="ow">in</span> <span class="n">orbs</span><span class="o">.</span><span class="n">mos</span><span class="p">:</span>
+    <span class="c1"># and obtain the coefficients of the px, py and pz orbitals</span>
+    <span class="n">px_coeffs</span> <span class="o">=</span> <span class="p">[</span><span class="n">sfo</span><span class="o">.</span><span class="n">coefficient</span><span class="p">(</span><span class="n">mo</span><span class="p">)</span> <span class="k">for</span> <span class="n">sfo</span> <span class="ow">in</span> <span class="n">px_sfos</span><span class="p">]</span>
+    <span class="n">py_coeffs</span> <span class="o">=</span> <span class="p">[</span><span class="n">sfo</span><span class="o">.</span><span class="n">coefficient</span><span class="p">(</span><span class="n">mo</span><span class="p">)</span> <span class="k">for</span> <span class="n">sfo</span> <span class="ow">in</span> <span class="n">py_sfos</span><span class="p">]</span>
+    <span class="n">pz_coeffs</span> <span class="o">=</span> <span class="p">[</span><span class="n">sfo</span><span class="o">.</span><span class="n">coefficient</span><span class="p">(</span><span class="n">mo</span><span class="p">)</span> <span class="k">for</span> <span class="n">sfo</span> <span class="ow">in</span> <span class="n">pz_sfos</span><span class="p">]</span>
+    <span class="c1"># we can now construct the direction of the p-orbitals</span>
+    <span class="n">p_vectors</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">px_coeffs</span><span class="p">,</span> <span class="n">py_coeffs</span><span class="p">,</span> <span class="n">pz_coeffs</span><span class="p">])</span><span class="o">.</span><span class="n">T</span>
+
+    <span class="c1"># and normalize the directions</span>
+    <span class="n">p_vectors</span> <span class="o">=</span> <span class="n">p_vectors</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">p_vectors</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># check if the directions are aligned with the normal vector</span>
+    <span class="n">alignments</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">p_vectors</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+
+    <span class="c1"># the total alignment can just be the product of all individual alignments</span>
+    <span class="n">alignment</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">product</span><span class="p">(</span><span class="n">alignments</span><span class="p">)</span>
+
+    <span class="c1"># if the total alignment is close to 1 it is most likely a pi-orbital</span>
+    <span class="k">if</span> <span class="n">alignment</span> <span class="o">&gt;</span> <span class="mf">0.999</span><span class="p">:</span>
+        <span class="n">pi_mos</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mo</span><span class="p">)</span>
+    <span class="c1"># otherwise it is probably a sigma-orbital</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">sigma_mos</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mo</span><span class="p">)</span>
+
+
+<span class="nb">print</span><span class="p">(</span><span class="s1">'π-MOs:'</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'</span><span class="se">\t</span><span class="s1">'</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">mo</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">rjust</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span> <span class="k">for</span> <span class="n">mo</span> <span class="ow">in</span> <span class="n">pi_mos</span><span class="p">]))</span>
+<span class="nb">print</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s1">'σ-MOs:'</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'</span><span class="se">\t</span><span class="s1">'</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">mo</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">rjust</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span> <span class="k">for</span> <span class="n">mo</span> <span class="ow">in</span> <span class="n">sigma_mos</span><span class="p">]))</span>
+</pre></div>
+</div>
+</div><div aria-labelledby="tab-0-0-1" class="sphinx-tabs-panel" hidden="true" id="panel-0-0-1" name="0-1" role="tabpanel" tabindex="0"><p>The expected output is as follows</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">π</span><span class="o">-</span><span class="n">MOs</span><span class="p">:</span>
+ <span class="mi">14</span><span class="n">A</span>     <span class="mi">20</span><span class="n">A</span>     <span class="mi">21</span><span class="n">A</span>     <span class="mi">22</span><span class="n">A</span>     <span class="mi">23</span><span class="n">A</span>     <span class="mi">35</span><span class="n">A</span>     <span class="mi">47</span><span class="n">A</span>     <span class="mi">56</span><span class="n">A</span>     <span class="mi">62</span><span class="n">A</span>     <span class="mi">68</span><span class="n">A</span>     <span class="mi">73</span><span class="n">A</span>     <span class="mi">78</span><span class="n">A</span>     <span class="mi">86</span><span class="n">A</span>
+ <span class="mi">97</span><span class="n">A</span>     <span class="mi">99</span><span class="n">A</span>    <span class="mi">107</span><span class="n">A</span>    <span class="mi">109</span><span class="n">A</span>    <span class="mi">132</span><span class="n">A</span>    <span class="mi">137</span><span class="n">A</span>    <span class="mi">180</span><span class="n">A</span>    <span class="mi">205</span><span class="n">A</span>    <span class="mi">242</span><span class="n">A</span>    <span class="mi">248</span><span class="n">A</span>    <span class="mi">249</span><span class="n">A</span>    <span class="mi">250</span><span class="n">A</span>    <span class="mi">259</span><span class="n">A</span>
+
+<span class="n">σ</span><span class="o">-</span><span class="n">MOs</span><span class="p">:</span>
+  <span class="mi">1</span><span class="n">A</span>      <span class="mi">2</span><span class="n">A</span>      <span class="mi">3</span><span class="n">A</span>      <span class="mi">4</span><span class="n">A</span>      <span class="mi">5</span><span class="n">A</span>      <span class="mi">6</span><span class="n">A</span>      <span class="mi">7</span><span class="n">A</span>      <span class="mi">8</span><span class="n">A</span>      <span class="mi">9</span><span class="n">A</span>     <span class="mi">10</span><span class="n">A</span>     <span class="mi">11</span><span class="n">A</span>     <span class="mi">12</span><span class="n">A</span>     <span class="mi">13</span><span class="n">A</span>
+  <span class="mi">15</span><span class="n">A</span>    <span class="mi">16</span><span class="n">A</span>     <span class="mi">17</span><span class="n">A</span>     <span class="mi">18</span><span class="n">A</span>     <span class="mi">19</span><span class="n">A</span>     <span class="mi">24</span><span class="n">A</span>     <span class="mi">25</span><span class="n">A</span>     <span class="mi">26</span><span class="n">A</span>     <span class="mi">27</span><span class="n">A</span>     <span class="mi">28</span><span class="n">A</span>     <span class="mi">29</span><span class="n">A</span>     <span class="mi">30</span><span class="n">A</span>     <span class="mi">31</span><span class="n">A</span>
+  <span class="mi">32</span><span class="n">A</span>    <span class="mi">33</span><span class="n">A</span>     <span class="mi">34</span><span class="n">A</span>     <span class="mi">36</span><span class="n">A</span>     <span class="mi">37</span><span class="n">A</span>     <span class="mi">38</span><span class="n">A</span>     <span class="mi">39</span><span class="n">A</span>     <span class="mi">40</span><span class="n">A</span>     <span class="mi">41</span><span class="n">A</span>     <span class="mi">42</span><span class="n">A</span>     <span class="mi">43</span><span class="n">A</span>     <span class="mi">44</span><span class="n">A</span>     <span class="mi">45</span><span class="n">A</span>
+  <span class="mi">46</span><span class="n">A</span>    <span class="mi">48</span><span class="n">A</span>     <span class="mi">49</span><span class="n">A</span>     <span class="mi">50</span><span class="n">A</span>     <span class="mi">51</span><span class="n">A</span>     <span class="mi">52</span><span class="n">A</span>     <span class="mi">53</span><span class="n">A</span>     <span class="mi">54</span><span class="n">A</span>     <span class="mi">55</span><span class="n">A</span>     <span class="mi">57</span><span class="n">A</span>     <span class="mi">58</span><span class="n">A</span>     <span class="mi">59</span><span class="n">A</span>     <span class="mi">60</span><span class="n">A</span>
+  <span class="mi">61</span><span class="n">A</span>    <span class="mi">63</span><span class="n">A</span>     <span class="mi">64</span><span class="n">A</span>     <span class="mi">65</span><span class="n">A</span>     <span class="mi">66</span><span class="n">A</span>     <span class="mi">67</span><span class="n">A</span>     <span class="mi">69</span><span class="n">A</span>     <span class="mi">70</span><span class="n">A</span>     <span class="mi">71</span><span class="n">A</span>     <span class="mi">72</span><span class="n">A</span>     <span class="mi">74</span><span class="n">A</span>     <span class="mi">75</span><span class="n">A</span>     <span class="mi">76</span><span class="n">A</span>
+  <span class="mi">77</span><span class="n">A</span>    <span class="mi">79</span><span class="n">A</span>     <span class="mi">80</span><span class="n">A</span>     <span class="mi">81</span><span class="n">A</span>     <span class="mi">82</span><span class="n">A</span>     <span class="mi">83</span><span class="n">A</span>     <span class="mi">84</span><span class="n">A</span>     <span class="mi">85</span><span class="n">A</span>     <span class="mi">87</span><span class="n">A</span>     <span class="mi">88</span><span class="n">A</span>     <span class="mi">89</span><span class="n">A</span>     <span class="mi">90</span><span class="n">A</span>     <span class="mi">91</span><span class="n">A</span>
+  <span class="mi">92</span><span class="n">A</span>    <span class="mi">93</span><span class="n">A</span>     <span class="mi">94</span><span class="n">A</span>     <span class="mi">95</span><span class="n">A</span>     <span class="mi">96</span><span class="n">A</span>     <span class="mi">98</span><span class="n">A</span>    <span class="mi">100</span><span class="n">A</span>    <span class="mi">101</span><span class="n">A</span>    <span class="mi">102</span><span class="n">A</span>    <span class="mi">103</span><span class="n">A</span>    <span class="mi">104</span><span class="n">A</span>    <span class="mi">105</span><span class="n">A</span>    <span class="mi">106</span><span class="n">A</span>
+  <span class="mi">108</span><span class="n">A</span>  <span class="mi">110</span><span class="n">A</span>    <span class="mi">111</span><span class="n">A</span>    <span class="mi">112</span><span class="n">A</span>    <span class="mi">113</span><span class="n">A</span>    <span class="mi">114</span><span class="n">A</span>    <span class="mi">115</span><span class="n">A</span>    <span class="mi">116</span><span class="n">A</span>    <span class="mi">117</span><span class="n">A</span>    <span class="mi">118</span><span class="n">A</span>    <span class="mi">119</span><span class="n">A</span>    <span class="mi">120</span><span class="n">A</span>    <span class="mi">121</span><span class="n">A</span>
+  <span class="mi">122</span><span class="n">A</span>  <span class="mi">123</span><span class="n">A</span>    <span class="mi">124</span><span class="n">A</span>    <span class="mi">125</span><span class="n">A</span>    <span class="mi">126</span><span class="n">A</span>    <span class="mi">127</span><span class="n">A</span>    <span class="mi">128</span><span class="n">A</span>    <span class="mi">129</span><span class="n">A</span>    <span class="mi">130</span><span class="n">A</span>    <span class="mi">131</span><span class="n">A</span>    <span class="mi">133</span><span class="n">A</span>    <span class="mi">134</span><span class="n">A</span>    <span class="mi">135</span><span class="n">A</span>
+  <span class="mi">136</span><span class="n">A</span>  <span class="mi">138</span><span class="n">A</span>    <span class="mi">139</span><span class="n">A</span>    <span class="mi">140</span><span class="n">A</span>    <span class="mi">141</span><span class="n">A</span>    <span class="mi">142</span><span class="n">A</span>    <span class="mi">143</span><span class="n">A</span>    <span class="mi">144</span><span class="n">A</span>    <span class="mi">145</span><span class="n">A</span>    <span class="mi">146</span><span class="n">A</span>    <span class="mi">147</span><span class="n">A</span>    <span class="mi">148</span><span class="n">A</span>    <span class="mi">149</span><span class="n">A</span>
+  <span class="mi">150</span><span class="n">A</span>  <span class="mi">151</span><span class="n">A</span>    <span class="mi">152</span><span class="n">A</span>    <span class="mi">153</span><span class="n">A</span>    <span class="mi">154</span><span class="n">A</span>    <span class="mi">155</span><span class="n">A</span>    <span class="mi">156</span><span class="n">A</span>    <span class="mi">157</span><span class="n">A</span>    <span class="mi">158</span><span class="n">A</span>    <span class="mi">159</span><span class="n">A</span>    <span class="mi">160</span><span class="n">A</span>    <span class="mi">161</span><span class="n">A</span>    <span class="mi">162</span><span class="n">A</span>
+  <span class="mi">163</span><span class="n">A</span>  <span class="mi">164</span><span class="n">A</span>    <span class="mi">165</span><span class="n">A</span>    <span class="mi">166</span><span class="n">A</span>    <span class="mi">167</span><span class="n">A</span>    <span class="mi">168</span><span class="n">A</span>    <span class="mi">169</span><span class="n">A</span>    <span class="mi">170</span><span class="n">A</span>    <span class="mi">171</span><span class="n">A</span>    <span class="mi">172</span><span class="n">A</span>    <span class="mi">173</span><span class="n">A</span>    <span class="mi">174</span><span class="n">A</span>    <span class="mi">175</span><span class="n">A</span>
+  <span class="mi">176</span><span class="n">A</span>  <span class="mi">177</span><span class="n">A</span>    <span class="mi">178</span><span class="n">A</span>    <span class="mi">179</span><span class="n">A</span>    <span class="mi">181</span><span class="n">A</span>    <span class="mi">182</span><span class="n">A</span>    <span class="mi">183</span><span class="n">A</span>    <span class="mi">184</span><span class="n">A</span>    <span class="mi">185</span><span class="n">A</span>    <span class="mi">186</span><span class="n">A</span>    <span class="mi">187</span><span class="n">A</span>    <span class="mi">188</span><span class="n">A</span>    <span class="mi">189</span><span class="n">A</span>
+  <span class="mi">190</span><span class="n">A</span>  <span class="mi">191</span><span class="n">A</span>    <span class="mi">192</span><span class="n">A</span>    <span class="mi">193</span><span class="n">A</span>    <span class="mi">194</span><span class="n">A</span>    <span class="mi">195</span><span class="n">A</span>    <span class="mi">196</span><span class="n">A</span>    <span class="mi">197</span><span class="n">A</span>    <span class="mi">198</span><span class="n">A</span>    <span class="mi">199</span><span class="n">A</span>    <span class="mi">200</span><span class="n">A</span>    <span class="mi">201</span><span class="n">A</span>    <span class="mi">202</span><span class="n">A</span>
+  <span class="mi">203</span><span class="n">A</span>  <span class="mi">204</span><span class="n">A</span>    <span class="mi">206</span><span class="n">A</span>    <span class="mi">207</span><span class="n">A</span>    <span class="mi">208</span><span class="n">A</span>    <span class="mi">209</span><span class="n">A</span>    <span class="mi">210</span><span class="n">A</span>    <span class="mi">211</span><span class="n">A</span>    <span class="mi">212</span><span class="n">A</span>    <span class="mi">213</span><span class="n">A</span>    <span class="mi">214</span><span class="n">A</span>    <span class="mi">215</span><span class="n">A</span>    <span class="mi">216</span><span class="n">A</span>
+  <span class="mi">217</span><span class="n">A</span>  <span class="mi">218</span><span class="n">A</span>    <span class="mi">219</span><span class="n">A</span>    <span class="mi">220</span><span class="n">A</span>    <span class="mi">221</span><span class="n">A</span>    <span class="mi">222</span><span class="n">A</span>    <span class="mi">223</span><span class="n">A</span>    <span class="mi">224</span><span class="n">A</span>    <span class="mi">225</span><span class="n">A</span>    <span class="mi">226</span><span class="n">A</span>    <span class="mi">227</span><span class="n">A</span>    <span class="mi">228</span><span class="n">A</span>    <span class="mi">229</span><span class="n">A</span>
+  <span class="mi">230</span><span class="n">A</span>  <span class="mi">231</span><span class="n">A</span>    <span class="mi">232</span><span class="n">A</span>    <span class="mi">233</span><span class="n">A</span>    <span class="mi">234</span><span class="n">A</span>    <span class="mi">235</span><span class="n">A</span>    <span class="mi">236</span><span class="n">A</span>    <span class="mi">237</span><span class="n">A</span>    <span class="mi">238</span><span class="n">A</span>    <span class="mi">239</span><span class="n">A</span>    <span class="mi">240</span><span class="n">A</span>    <span class="mi">241</span><span class="n">A</span>    <span class="mi">243</span><span class="n">A</span>
+  <span class="mi">244</span><span class="n">A</span>  <span class="mi">245</span><span class="n">A</span>    <span class="mi">246</span><span class="n">A</span>    <span class="mi">247</span><span class="n">A</span>    <span class="mi">251</span><span class="n">A</span>    <span class="mi">252</span><span class="n">A</span>    <span class="mi">253</span><span class="n">A</span>    <span class="mi">254</span><span class="n">A</span>    <span class="mi">255</span><span class="n">A</span>    <span class="mi">256</span><span class="n">A</span>    <span class="mi">257</span><span class="n">A</span>    <span class="mi">258</span><span class="n">A</span>    <span class="mi">260</span><span class="n">A</span>
+  <span class="mi">261</span><span class="n">A</span>  <span class="mi">262</span><span class="n">A</span>    <span class="mi">263</span><span class="n">A</span>    <span class="mi">264</span><span class="n">A</span>    <span class="mi">265</span><span class="n">A</span>    <span class="mi">266</span><span class="n">A</span>    <span class="mi">267</span><span class="n">A</span>    <span class="mi">268</span><span class="n">A</span>    <span class="mi">269</span><span class="n">A</span>    <span class="mi">270</span><span class="n">A</span>    <span class="mi">271</span><span class="n">A</span>    <span class="mi">272</span><span class="n">A</span>    <span class="mi">273</span><span class="n">A</span>
+  <span class="mi">274</span><span class="n">A</span>  <span class="mi">275</span><span class="n">A</span>    <span class="mi">276</span><span class="n">A</span>    <span class="mi">277</span><span class="n">A</span>    <span class="mi">278</span><span class="n">A</span>    <span class="mi">279</span><span class="n">A</span>    <span class="mi">280</span><span class="n">A</span>    <span class="mi">281</span><span class="n">A</span>    <span class="mi">282</span><span class="n">A</span>    <span class="mi">283</span><span class="n">A</span>    <span class="mi">284</span><span class="n">A</span>    <span class="mi">285</span><span class="n">A</span>    <span class="mi">286</span><span class="n">A</span>
+  <span class="mi">287</span><span class="n">A</span>  <span class="mi">288</span><span class="n">A</span>    <span class="mi">289</span><span class="n">A</span>    <span class="mi">290</span><span class="n">A</span>    <span class="mi">291</span><span class="n">A</span>    <span class="mi">292</span><span class="n">A</span>    <span class="mi">293</span><span class="n">A</span>
+</pre></div>
+</div>
+</div></div>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="index.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Example PyOrbb Analysis Scripts</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="tracking.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Orbital Interaction Mechanism Along a Reaction Pathway</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+
+  <div class="tocsection sourcelink">
+    <a href="../_sources/examples/pi_orbitals.rst.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=64cc4de3f052d77215f0"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=64cc4de3f052d77215f0"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, TheoCheM VU Amsterdam.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.22.0.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

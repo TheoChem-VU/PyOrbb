@@ -1,0 +1,37 @@
+pyorbb.analysis package
+=======================
+
+Submodules
+----------
+
+pyorbb.analysis.mixing module
+-----------------------------
+
+.. automodule:: pyorbb.analysis.mixing
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+pyorbb.analysis.movie module
+----------------------------
+
+.. automodule:: pyorbb.analysis.movie
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+pyorbb.analysis.sequential module
+---------------------------------
+
+.. automodule:: pyorbb.analysis.sequential
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+Module contents
+---------------
+
+.. automodule:: pyorbb.analysis
+   :members:
+   :show-inheritance:
+   :undoc-members:

@@ -1,0 +1,29 @@
+pyorbb.plotting package
+=======================
+
+Submodules
+----------
+
+pyorbb.plotting.orbital\_diagram module
+---------------------------------------
+
+.. automodule:: pyorbb.plotting.orbital_diagram
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+pyorbb.plotting.simple\_orbital\_diagram module
+-----------------------------------------------
+
+.. automodule:: pyorbb.plotting.simple_orbital_diagram
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+Module contents
+---------------
+
+.. automodule:: pyorbb.plotting
+   :members:
+   :show-inheritance:
+   :undoc-members:

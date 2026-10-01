@@ -1,0 +1,37 @@
+pyorbb.orbitals package
+=======================
+
+Submodules
+----------
+
+pyorbb.orbitals.adf module
+--------------------------
+
+.. automodule:: pyorbb.orbitals.adf
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+pyorbb.orbitals.fragments module
+--------------------------------
+
+.. automodule:: pyorbb.orbitals.fragments
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+pyorbb.orbitals.objects module
+------------------------------
+
+.. automodule:: pyorbb.orbitals.objects
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+Module contents
+---------------
+
+.. automodule:: pyorbb.orbitals
+   :members:
+   :show-inheritance:
+   :undoc-members:

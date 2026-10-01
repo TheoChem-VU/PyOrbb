@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="./" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Getting Started: H3B←NH3 Lewis Adduct &#8212; PyOrbb v0.12.7 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=64cc4de3f052d77215f0" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=64cc4de3f052d77215f0" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="_static/scripts/fontawesome.js?digest=64cc4de3f052d77215f0"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=64cc4de3f052d77215f0" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=64cc4de3f052d77215f0" />
+
+    <script src="_static/documentation_options.js?v=016fa88a"></script>
+    <script src="_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'get_started';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <script src="_static/gui_tabs.js?v=ea04d928"></script>
+    <link rel="icon" href="https://avatars.githubusercontent.com/u/119413491"/>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Oxidative Addition: C-–H Bond Activation by Fe(CO)4" href="GUI_examples/Oxidative_addition.html" />
+    <link rel="prev" title="Example PyOrbb Analyses" href="GUI_examples/index.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  
+    
+    <script src="_static/searchtools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script src="searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button type="button" class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="_static/icon_12.png" class="logo__image only-light" alt=""/>
+    <img src="_static/icon_12.png" class="logo__image only-dark pst-js-only" alt=""/>
+  
+  
+    <p class="title logo__title">PyOrbb v0.12.7 documentation</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button type="button" class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item pst-sidebar-collapse"><button type="button" id="pst-collapse-sidebar-button" aria-expanded="true" aria-controls="pst-primary-sidebar">
+  <svg class="pst-icon" role="img" aria-hidden="true" focusable="false" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+    <path fill="currentColor" d="M3 15.5C2.36232 15.5 1.74874 15.2564 1.28478 14.8189C0.820828 14.3815 0.541576 13.7832 0.504167 13.1467L0.5 13L0.5 3C0.499965 2.36232 0.743605 1.74874 1.18107 1.28478C1.61854 0.820828 2.21676 0.541576 2.85333 0.504167L3 0.5L13 0.5C13.6377 0.499965 14.2513 0.743605 14.7152 1.18107C15.1792 1.61854 15.4584 2.21676 15.4958 2.85333L15.5 3L15.5 13C15.5 13.6377 15.2564 14.2513 14.8189 14.7152C14.3815 15.1792 13.7832 15.4584 13.1467 15.4958L13 15.5L3 15.5ZM3 13.8333L10.5 13.8333L10.5 2.16667L3 2.16667C2.79589 2.16669 2.59889 2.24163 2.44636 2.37726C2.29383 2.5129 2.19638 2.69979 2.1725 2.9025L2.16667 3L2.16667 13C2.16669 13.2041 2.24163 13.4011 2.37726 13.5536C2.5129 13.7062 2.69979 13.8036 2.9025 13.8275L3 13.8333ZM6.65583 10.325L6.5775 10.2558L4.91083 8.58917C4.76735 8.44567 4.68116 8.25476 4.66843 8.05223C4.65569 7.84971 4.71729 7.6495 4.84167 7.48917L4.91083 7.41083L6.5775 5.74417C6.72747 5.59471 6.9287 5.50794 7.14032 5.50148C7.35194 5.49502 7.55809 5.56935 7.7169 5.70937C7.8757 5.8494 7.97525 6.04463 7.99533 6.25539C8.01541 6.46616 7.95451 6.67667 7.825 6.84417L7.75583 6.9225L6.67917 8L7.75583 9.0775C7.89931 9.22099 7.98551 9.41191 7.99824 9.61443C8.01097 9.81695 7.94938 10.0172 7.825 10.1775L7.75583 10.2558C7.61234 10.3993 7.42142 10.4855 7.2189 10.4982C7.01638 10.511 6.81617 10.4494 6.65583 10.325Z"/>
+  </svg>
+  <span class="pst-collapse-sidebar-label">Collapse Sidebar</span>
+  <span class="pst-expand-sidebar-label">Expand Sidebar</span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Section navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">
+    Site Navigation
+  </p>
+  <div class="bd-toc-item navbar-nav">
+    <ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation Manual PyOrbb v0.12.7</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="application.html">PyOrbb Application</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="notices.html">Warnings and Errors in PyOrbb</a></li>
+<li class="toctree-l2 current active has-children"><a class="reference internal" href="GUI_examples/index.html">Example PyOrbb Analyses</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l3 current active"><a aria-current="page" class="current reference internal" href="#">Getting Started: H<sub>3</sub>B←NH<sub>3</sub> Lewis Adduct</a></li>
+<li class="toctree-l3"><a class="reference internal" href="GUI_examples/Oxidative_addition.html">Oxidative Addition: C-–H Bond Activation by Fe(CO)4</a></li>
+<li class="toctree-l3"><a class="reference internal" href="GUI_examples/DielsAlder.html">Diels-Alder Transition State</a></li>
+<li class="toctree-l3"><a class="reference internal" href="GUI_examples/DA_LA.html">Lewis-Acid Catalysis: Diels-Alder</a></li>
+<li class="toctree-l3"><a class="reference internal" href="GUI_examples/GC_basepair.html">Hydrogen-Bonding: Guanine–Cytosine Base Pair</a></li>
+<li class="toctree-l3"><a class="reference internal" href="GUI_examples/Hetero_vs_homo.html">Hetero- and Homolytic Bond Cleavage of Fluoromethane</a></li>
+<li class="toctree-l3"><a class="reference internal" href="GUI_examples/Homolytic_Ethane.html">C–-C Bond Formation in Ethane</a></li>
+<li class="toctree-l3"><a class="reference internal" href="GUI_examples/Methyl_rad.html">Formation of the Methyl Radical</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="python_library.html">PyOrbb Python Library</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="basic_usage.html">Basic Usage</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="examples/index.html">Example PyOrbb Analysis Scripts</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="examples/pi_orbitals.html">Detection of π-Orbitals</a></li>
+<li class="toctree-l3"><a class="reference internal" href="examples/tracking.html">Orbital Interaction Mechanism Along a Reaction Pathway</a></li>
+<li class="toctree-l3"><a class="reference internal" href="examples/excitations.html">Analysis of Electronic Excitations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="examples/bonding.html">Bonding or Antibonding?</a></li>
+<li class="toctree-l3"><a class="reference internal" href="examples/movie.html">Orbital Evolution Along a Reaction Pathway</a></li>
+<li class="toctree-l3"><a class="reference internal" href="examples/mo_tracking.html">Tracking Molecular Orbitals Along a Reaction Pathway</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html">PyOrbb Command-Line Tools</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/pyorbb.html">PyOrbb API</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="api/pyorbb.analysis.html">analysis</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="api/pyorbb.analysis.mixing.html">mixing</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/pyorbb.analysis.movie.html">movie</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/pyorbb.analysis.sequential.html">sequential</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="api/pyorbb.orbitals.html">orbitals</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="api/pyorbb.orbitals.adf.html">adf</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/pyorbb.orbitals.fragments.html">fragments</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/pyorbb.orbitals.objects.html">objects</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="api/pyorbb.plotting.html">plotting</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="api/pyorbb.plotting.orbital_diagram.html">orbital_diagram</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/pyorbb.plotting.simple_orbital_diagram.html">simple_orbital_diagram</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3"><a class="reference internal" href="api/pyorbb.nested_dict.html">nested_dict</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/pyorbb.write_excel.html">write_excel</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+
+  </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="application.html" class="nav-link">PyOrbb Application</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="GUI_examples/index.html" class="nav-link">Example PyOrbb Analyses</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Getting Started: H<sub>3</sub>B←NH<sub>3</sub> Lewis Adduct</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="getting-started-h3bnh3-lewis-adduct">
+<h1>Getting Started: H<sub>3</sub>B←NH<sub>3</sub> Lewis Adduct<a class="headerlink" href="#getting-started-h3bnh3-lewis-adduct" title="Link to this heading">#</a></h1>
+<p><strong class="program">PyOrbb</strong> is a tool designed to help you perform orbital interaction analyses. It provides you with a user-interface capable of producing orbital interaction diagrams. In this tutorial we will walk through the process of performing a basic <strong class="program">PyOrbb</strong> analysis using the <abbr title="Graphical User Interace">GUI</abbr> of <strong class="program">PyOrbb</strong>. Throughout this tutorial we will be using the results of a calculation containing the H<sub>3</sub>N→BH<sub>3</sub> Lewis acid-base pair, which you can download here: <a class="reference download internal" download="" href="_downloads/45d8b822e89ca4b60d30a2180000b479/NH3_BH3.rkf"><code class="xref download docutils literal notranslate"><span class="pre">NH3_BH3.rkf</span></code></a>.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference external" href="https://www.scm.com/doc/Tutorials/Analysis/FragmentAnalysis.html">Click here</a> for a tutorial on the <strong class="program">AMS</strong> website on how to perform fragment calculations yourself.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Some functionality of <strong class="program">PyOrbb</strong> requires a valid installation of the <strong class="program">AMS</strong> program.</p>
+</div>
+<section id="starting-pyorbb">
+<h2>Starting PyOrbb<a class="headerlink" href="#starting-pyorbb" title="Link to this heading">#</a></h2>
+<p>When you open <strong class="program">PyOrbb</strong> you will be greeted by the welcome screen. Here you can find a link to the <strong class="program">PyOrbb</strong> article and the documentation page. You can also see articles that have been recently published that cite <strong class="program">PyOrbb</strong>.</p>
+<img alt="_images/new_window.png" class="only-light" src="_images/new_window.png" />
+<img alt="_images/new_window_dark.png" class="only-dark" src="_images/new_window_dark.png" />
+</section>
+<section id="loading-calculation-results">
+<h2>Loading Calculation Results<a class="headerlink" href="#loading-calculation-results" title="Link to this heading">#</a></h2>
+<div class="important admonition">
+<p class="admonition-title"><strong>Step 1</strong>: Load the calculation results</p>
+<p>Drag the <code class="file docutils literal notranslate"><span class="pre">NH3_BH3.rkf</span></code> file into the <strong class="program">PyOrbb</strong> window. Alternatively, click the “Select a File” button and navigate to and select the file’s location.</p>
+</div>
+<p>When a valid <code class="file docutils literal notranslate"><span class="pre">adf.rkf</span></code> (a result file from ADF) file is provided, <strong class="program">PyOrbb</strong> will automatically analyse the contents of the file and present you with a new screen showing the results of the analysis. The screen shows you the main orbital interaction mechanism as predicted by <strong class="program">PyOrbb</strong> and gives you various options to obtain information or manipulate the diagram shown.</p>
+<style>
+.gui-wrap { position: relative; display: inline-block; }
+.gui-wrap a.region {
+  position: absolute; display: block;
+  background: rgba(99,102,241,0.08);
+  border: 2px solid rgba(99,102,241,0.6);
+  border-radius: 4px; cursor: pointer;
+}
+.gui-wrap a.region .tooltip {
+  display: none; position: absolute; top: 105%; left: 0;
+  background: #1e1e2e; color: #fff; padding: 8px 12px;
+  border-radius: 6px; width: 220px; font-size: 0.85em; z-index: 10;
+}
+.gui-wrap a.region:hover { background: rgba(99,102,241,0.15); }
+.gui-wrap a.region:hover .tooltip { display: block; }
+</style>
+
+<div class="gui-wrap">
+  <img src="_static/images/get_started/analysis_open.png" class="only-light" width="100%">
+  <img src="_static/images/get_started/analysis_open_dark.png" class="only-dark" width="100%">
+  <!-- position each overlay div with top/left/width/height as % of image -->
+
+  <a class="region" data-tab="Diagram"
+     style="top:14.6008%; left:7.3005%; width:60.0170%; height:61.8697%">
+  </a>
+
+  <a class="region" data-tab="Information Tabs"
+     style="top:14.6008%; left:67.9117%; width:24.8727%; height:61.8697%">
+  </a>
+
+  <a class="region" data-tab="Sliders"
+     style="top:76.8908%; left:7.3005%; width:66.65%; height:8.2983%">
+  </a>
+
+  <a class="region" data-tab="Filters & Options"
+     style="top:76.8908%; left:74.4482%; width:18.4211%; height:8.2983%">
+  </a>
+
+  <a class="region" data-tab="Save Buttons"
+     style="top:85.7143%; left:7.3005%; width:65.9593%; height:4.0966%">
+  </a>
+</div><div class="sd-tab-set gui-tabs docutils">
+<input checked="checked" id="sd-tab-item-0" name="sd-tab-set-0" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-0">
+Diagram</label><div class="sd-tab-content docutils">
+<p><strong>Main orbital interaction diagram generated by |PyOrbb|</strong></p>
+<p>This part of the GUI shows you the orbital interactions identified by <strong class="program">PyOrbb</strong>.</p>
+<p>The small black horizontal lines are the energy-levels of the orbitals and are arranged by the molecular species they belong to. In this case the left and right columns are for the <abbr title="Fragment molecular orbitals">FMOs</abbr> and the middle column is for the <abbr title="Molecular orbitals">MOs</abbr>. The levels can be populated by 0, 1, or 2 electrons, indicated by the arrows, and the directions of the arrows indicate the spin they posses: pointing up corresponds to alpha-spin and down to beta-spin.</p>
+<p>The lines between the FMOs and MOs indicate whether there is a contribution from the FMO to the MO. The brightness is determined by the Mulliken contribution between the orbitals, and the color of it indicates what kind of interaction it is. Red indicates a Pauli-repulsive interaction, green indicates an orbital interaction, grey indicates a connection participating in both Pauli-repulsive and orbital interactions, and purple indicates connections added during the santization step of the algorithm.</p>
+<div class="seealso admonition">
+<p class="admonition-title">Interactive elements</p>
+<p><strong>Several elements are (double-)clickable in the diagram:</strong></p>
+<ol class="arabic simple">
+<li><p>Scrolling and dragging allows you to zoom in or out and shift the diagram up or down, respectively. Right-clicking resets the diagram to its original state.</p></li>
+<li><p>The names of the columns are double-clickable and renamble. You can also drag and drop them to reorder the columns however you like.</p></li>
+<li><p>The y-axis can be double-clicked to manually set the axis limits.</p></li>
+<li><p>The orbital levels and connections are clickable and will show information about them and their interaction in the Information Tab. You can hold shift to select multiple levels or connections at once.</p></li>
+<li><p>If there are notices (warnings or errors) related to the orbitals they will have a small warning sign next to them. Clicking these will open the corresponding notice on the right side for you.</p></li>
+</ol>
+</div>
+</div>
+<input id="sd-tab-item-1" name="sd-tab-set-0" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-1">
+Information Tabs</label><div class="sd-tab-content docutils">
+<p><strong>Main information sections</strong></p>
+<p>The information tabs show you information related to orbitals, molecules, the overall system, and any errors or warnings that were detected during loading of the calculation results. The information is organized in 3 tabs. The information can be viewed by clicking the headers inside the tabs.</p>
+<p><strong>Orbitals</strong></p>
+<p>When clicking an orbital or a connection in the main diagram, <strong class="program">PyOrbb</strong> will display relevant information in this tab. This includes basic information such as orbital energies, overlaps, coefficients and Mulliken contributions and populations. If two interacting orbitals are selected (by using shift + click to select multiple objects at once), the details of the orbital interaction analysis are shown, including each term that went into calculating the orbital interaction or Pauli repulsive interaction ranking numbers.</p>
+<p><strong>System</strong></p>
+<p><strong class="program">PyOrbb</strong> provides information about the general system, the complex molecule and each of the fragments. This includes charges, spin-polarizations and coordinates of the molecules. <strong class="program">PyOrbb</strong> also provides the energy terms from the energy decomposition analysis.</p>
+<p><strong>Notices</strong></p>
+<p><strong class="program">PyOrbb</strong> will give notice of any warnings or errors that it detected during the loading of a given <code class="file docutils literal notranslate"><span class="pre">adf.rkf</span></code> file. Clicking on any exclamation marks in the diagram will also highlight the error/warning message associated with it.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p>For an overview of all warnings and errors that <strong class="program">PyOrbb</strong> detects, please see <a class="reference external" href="notices.html">this page</a>.</p>
+</div>
+</div>
+<input id="sd-tab-item-2" name="sd-tab-set-0" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-2">
+Sliders</label><div class="sd-tab-content docutils">
+<p><strong>Setting orbital interaction ranking thresholds</strong></p>
+<p>The sliders are used to adjust the thresholds that <strong class="program">PyOrbb</strong> uses to determine which interactions to include. The lower the threshold value is the more interactions are included in the main diagram.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p>See Section 3.2 in the <a class="reference external" href="notices.html">main article</a> for more information about the orbital interaction ranking algorithm.</p>
+</div>
+</div>
+<input id="sd-tab-item-3" name="sd-tab-set-0" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-3">
+Filters &amp; Options</label><div class="sd-tab-content docutils">
+<p><strong>Draw Orbitals</strong></p>
+<p>When orbitals or connections are selected in the main diagram the Draw Orbitals button is activated. Clicking it will then show you a dropdown menu with several options for drawing the orbitals involved.</p>
+<p><strong>Filter</strong></p>
+<p>When one or more orbitals have been selected the Filter button is activated. If clicked, <strong class="program">PyOrbb</strong> will ensure that all interactions drawn in the diagram involve the selected orbitals. Clicking the Filter button again deactivates the filter.</p>
+<p><strong>Energy Type</strong></p>
+<p><strong class="program">PyOrbb</strong> will attempt to gather various FMO energy types when loading the results of a calculation. By default the regular energies are used (<em>i.e.</em> the FMO energies in density of the complex), but other options are also available if they are present in the provided file. <strong class="program">PyOrbb</strong> will also always provide the option to use approximate effective energies.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p>See Section S1 in the <a class="reference external" href="notices.html">supporting information</a> for more information about the FMO energy types and their uses.</p>
+</div>
+<p><strong>Orbitals</strong></p>
+<p>One can also manually include or exclude specific orbitals from the interaction. This also includes the option to include/exclude all orbitals of specific spin types or irreducible representations. <strong class="program">PyOrbb</strong> also provides information about all orbitals included in the system and also gives the option to draw them.</p>
+</div>
+<input id="sd-tab-item-4" name="sd-tab-set-0" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-4">
+Save Buttons</label><div class="sd-tab-content docutils">
+<p><strong>Producing the main output of |PyOrbb|</strong></p>
+<p>When you are satisfied with the diagram shown you can export the main orbital interaction diagram using the Save Figure button. <strong class="program">PyOrbb</strong> also provides the option to generate a spreadsheet containing an overview of information about the calculation which can be very usefull for manual analysis of the data.</p>
+</div>
+</div>
+</section>
+<section id="visualisation-and-obtaining-data">
+<h2>Visualisation and Obtaining Data<a class="headerlink" href="#visualisation-and-obtaining-data" title="Link to this heading">#</a></h2>
+<p>Having loaded the calculation, we can now start visualizing and obtaining data about the orbitals in our system.</p>
+<p><strong>Drawing Orbitals</strong></p>
+<p>Let’s start by visualizing the orbitals involved in the mixing of the occupied NH<sub>3</sub>(3A<sub>1</sub>) and the virtual BH<sub>3</sub>(3A<sub>1</sub>) orbitals.</p>
+<div class="important admonition">
+<p class="admonition-title"><strong>Step 2</strong>: Visualize NH<sub>3</sub>(3A<sub>1</sub>) and BH<sub>3</sub>(3A<sub>1</sub>)</p>
+<p>Hold down the <kbd class="kbd docutils literal notranslate">shift</kbd> key and click on the energy levels of the NH<sub>3</sub>(3A<sub>1</sub>) and BH<sub>3</sub>(3A<sub>1</sub>) orbitals. Click the “Draw Orbitals” button to open the visualization dropdown menu and select the bottom option with the green “<cite>&amp;</cite>” sign.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>To draw orbitals, <strong class="program">PyOrbb</strong> needs access to the <strong class="program">densf</strong> program provided by <strong class="program">AMS</strong>. Set the path to your <strong class="program">AMS</strong> installation using <span class="menuselection">Preferences ‣ Open Settings ‣ Densf ‣ AMS Application</span></p>
+</div>
+<img alt="_images/viewer_together.png" class="only-light" src="_images/viewer_together.png" />
+<img alt="_images/viewer_together_dark.png" class="only-dark" src="_images/viewer_together_dark.png" />
+<p>PyOrbb should open a window showing you the two overlaid orbitals. It should be obvious why this interaction was deemed the most important by <strong class="program">PyOrbb</strong>, the orbitals clearly have a very overlap, especially in the region between the boron and nitrogen atoms. PyOrbb also gives the option to visualize the overlap directly.</p>
+<p><strong>Drawing Orbital Overlap</strong></p>
+<div class="important admonition">
+<p class="admonition-title"><strong>Step 3</strong>: Visualize the overlap between NH<sub>3</sub>(3A<sub>1</sub>) and BH<sub>3</sub>(3A<sub>1</sub>)</p>
+<p>Again hold down the <kbd class="kbd docutils literal notranslate">shift</kbd> key and click on the energy levels of the NH<sub>3</sub>(3A<sub>1</sub>) and BH<sub>3</sub>(3A<sub>1</sub>) orbitals. Click the “Draw Orbitals” button to open the visualization dropdown menu and select the one to last option with the brown “<cite>S</cite>” sign.</p>
+</div>
+<img alt="_images/viewer_overlap.png" class="only-light" src="_images/viewer_overlap.png" />
+<img alt="_images/viewer_overlap_dark.png" class="only-dark" src="_images/viewer_overlap_dark.png" />
+<p>PyOrbb again should open a window, but this time shows the product of the selected orbitals. Purple shows regions with constructive overlap, while green shows destructive overlap. While there is both constructive and destructive overlap between the two orbitals, the constructive overlap between the boron and nitrogen atoms dominates, and should lead to a large value for the overlap.</p>
+<p><strong>Obtaining the Orbital Overlap values</strong></p>
+<p>PyOrbb also reports the actual value of the overlap integral between two orbitals of interest. In this case the overlap is equal to 0.353.</p>
+<div class="important admonition">
+<p class="admonition-title"><strong>Step 4</strong>: Obtain the overlap value between NH<sub>3</sub>(3A<sub>1</sub>) and BH<sub>3</sub>(3A<sub>1</sub>)</p>
+<p>Again hold down the <kbd class="kbd docutils literal notranslate">shift</kbd> key and click on the energy levels of the NH<sub>3</sub>(3A<sub>1</sub>) and BH<sub>3</sub>(3A<sub>1</sub>) orbitals. On the right side click the “Orbitals” tab to view the information related to the selected orbitals. Click the header that states NH<sub>3</sub>(3A<sub>1</sub>) ± BH<sub>3</sub>(3A<sub>1</sub>). Observe the value given for <code class="docutils literal notranslate"><span class="pre">Sij</span></code>.</p>
+</div>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="GUI_examples/index.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Example PyOrbb Analyses</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="GUI_examples/Oxidative_addition.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Oxidative Addition: C-–H Bond Activation by Fe(CO)4</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#starting-pyorbb">Starting PyOrbb</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#loading-calculation-results">Loading Calculation Results</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#visualisation-and-obtaining-data">Visualisation and Obtaining Data</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+  <div class="tocsection sourcelink">
+    <a href="_sources/get_started.rst.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="_static/scripts/bootstrap.js?digest=64cc4de3f052d77215f0"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=64cc4de3f052d77215f0"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, TheoCheM VU Amsterdam.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.22.0.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>
