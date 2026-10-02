@@ -71,7 +71,6 @@ jobs:
           pip install briefcase
       - name: Build the app
         run: |
-          sudo apt install python3.11
           sudo apt -y install socat
           sed -i "s/%REPLACE_VERSION/$(git describe --tags --abbrev=0 | cut -c 2-)/g" pyproject.toml
           git describe --tags --abbrev=0 | cut -c 2- > src/pyorbb/VERSION
